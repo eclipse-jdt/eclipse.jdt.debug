@@ -62,7 +62,6 @@ import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructur
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnCompilationErrorListener;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener;
-import org.eclipse.jdt.internal.debug.ui.breakpoints.ThreadNameChangeListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -103,11 +102,6 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * Breakpoint used to suspend on compilation errors
 	 */
 	private IJavaExceptionBreakpoint fSuspendOnErrorBreakpoint = null;
-
-	/**
-	 * Breakpoint used to listen on thread name changes
-	 */
-	private IJavaMethodEntryBreakpoint fThreadNameChangeBreakpoint;
 
 	/**
 	 * A label provider
@@ -173,18 +167,6 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 				bp.addBreakpointListener(SuspendOnUncaughtExceptionListener.ID_UNCAUGHT_EXCEPTION_LISTENER);
 				setSuspendOnUncaughtExceptionBreakpoint(bp);
 			} catch (CoreException e) {
-				status.add(e.getStatus());
-			}
-
-			// thread name change breakpoint
-			try {
-				IJavaMethodEntryBreakpoint bp = JDIDebugModel.createMethodEntryBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), "java.lang.Thread", "setName", //$NON-NLS-1$ //$NON-NLS-2$
-						"(Ljava/lang/String;)V", -1, -1, -1, 0, false, null); //$NON-NLS-1$
-				bp.setPersisted(false);
-				bp.addBreakpointListener(ThreadNameChangeListener.ID_THREAD_CHANGE_NAME_LISTENER);
-				setThreadNameChangeBreakpoint(bp);
-			}
-			catch (CoreException e) {
 				status.add(e.getStatus());
 			}
 
@@ -346,15 +328,6 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 				}
 				notifyTargets(breakpoint, kind);
 			}
-		} else if (property.equals(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES)) {
-			IBreakpoint breakpoint = getThreadNameChangeBreakpoint();
-			if (breakpoint != null) {
-				int kind = REMOVED;
-				if (isListeningOnThreadNameChanges()) {
-					kind = ADDED;
-				}
-				notifyTargets(breakpoint, kind);
-			}
 		} else if (fgDisplayOptions.contains(property)) {
 			variableViewSettingsChanged();
 		} else if (isUseFilterProperty(property)) {
@@ -425,40 +398,12 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	}
 
 	/**
-	 * Returns whether listening on thread name changes is enabled
-	 *
-	 * @return whether listening on thread name changes is enabled
-	 */
-	public boolean isListeningOnThreadNameChanges() {
-		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES);
-	}
-
-	/**
 	 * Sets the breakpoint used to suspend on uncaught exceptions
 	 *
 	 * @param breakpoint exception breakpoint
 	 */
 	private void setSuspendOnUncaughtExceptionBreakpoint(IJavaExceptionBreakpoint breakpoint) {
 		fSuspendOnExceptionBreakpoint = breakpoint;
-	}
-
-	/**
-	 * Sets the breakpoint used to listen to thread name changes
-	 *
-	 * @param breakpoint
-	 *            method entry breakpoint
-	 */
-	private void setThreadNameChangeBreakpoint(IJavaMethodEntryBreakpoint breakpoint) {
-		fThreadNameChangeBreakpoint = breakpoint;
-	}
-
-	/**
-	 * Returns the breakpoint used to listen to thread name changes
-	 *
-	 * @return method entry breakpoint
-	 */
-	public IJavaMethodEntryBreakpoint getThreadNameChangeBreakpoint() {
-		return fThreadNameChangeBreakpoint;
 	}
 
 	/**
@@ -569,11 +514,6 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					// compilation breakpoints
 					if (isSuspendOnCompilationErrors()) {
 						notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
-					}
-
-					// thread name change
-					if (isListeningOnThreadNameChanges()) {
-						notifyTarget(javaTarget, getThreadNameChangeBreakpoint(), ADDED);
 					}
 
 					// uncaught exception breakpoint

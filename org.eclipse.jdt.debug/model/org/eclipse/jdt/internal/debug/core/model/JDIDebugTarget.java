@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -93,7 +94,10 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
 import com.ibm.icu.text.MessageFormat;
+import com.sun.jdi.ClassType;
 import com.sun.jdi.InternalException;
+import com.sun.jdi.Location;
+import com.sun.jdi.Method;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadGroupReference;
@@ -103,6 +107,7 @@ import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.ThreadDeathEvent;
 import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
@@ -205,6 +210,11 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * The thread start event handler
 	 */
 	private ThreadStartHandler fThreadStartHandler;
+
+	/**
+	 * Handles changes in thread names, detected via a breakpoint in {@link java.lang.Thread#setName(String)}.
+	 */
+	private ThreadNameChangeHandler fThreadNameChangeHandler;
 
 	/**
 	 * Whether this VM is suspended.
@@ -597,6 +607,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	protected void initializeRequests() {
 		setThreadStartHandler(new ThreadStartHandler());
+		setThreadNameChangeHandler(new ThreadNameChangeHandler());
 		new ThreadDeathHandler();
 	}
 
@@ -842,7 +853,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 		try {
 			setDisconnecting(true);
-			disposeThreadHandler();
+			disposeThreadHandlers();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
 				vm.dispose();
@@ -863,10 +874,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Allows for ThreadStartHandler to do clean up/disposal.
 	 */
-	private void disposeThreadHandler() {
+	private void disposeThreadHandlers() {
 		ThreadStartHandler handler = getThreadStartHandler();
 		if (handler != null) {
 			handler.deleteRequest();
+		}
+		ThreadNameChangeHandler nameChangeHandler = getThreadNameChangeHandler();
+		if (nameChangeHandler != null) {
+			nameChangeHandler.deleteRequest();
 		}
 	}
 
@@ -1747,7 +1762,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 		try {
 			setTerminating(true);
-			disposeThreadHandler();
+			disposeThreadHandlers();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
 				vm.exit(1);
@@ -2360,6 +2375,93 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	}
 
+	/**
+	 * Triggers updates on a thread when {@link java.lang.Thread#setName(String)} is called on that thread, in the target JVM.
+	 */
+	class ThreadNameChangeHandler implements IJDIEventListener {
+
+		/**
+		 * Environment variable that can be passed down to Eclipse, to disable this listener.
+		 */
+		private static final String DISABLE_THREAD_NAME_CHANGE_LISTENER = "org.eclipse.jdt.internal.debug.core.model.ThreadNameChangeListener.disable"; //$NON-NLS-1$
+		private static final String TYPE_NAME = "java.lang.Thread"; //$NON-NLS-1$
+		private static final String METHOD_NAME = "setName"; //$NON-NLS-1$
+		private static final String METHOD_SIGNATURE = "(Ljava/lang/String;)V"; //$NON-NLS-1$
+
+		private EventRequest request;
+
+		ThreadNameChangeHandler() {
+			String disableListenerSystemProperty = System.getProperty(DISABLE_THREAD_NAME_CHANGE_LISTENER);
+			boolean isDisabled = String.valueOf(Boolean.TRUE).equals(disableListenerSystemProperty);
+			if (!isDisabled) {
+				createRequest();
+			}
+		}
+
+		/**
+		 * Creates a breakpoint request at {@link java.lang.Thread#setName(String)} that doesn't suspend the target JVM.
+		 */
+		void createRequest() {
+			EventRequestManager manager = getEventRequestManager();
+			if (manager != null) {
+				try {
+					Location location = setNameMethodLocation();
+					Assert.isNotNull(location, "Unable to locate Thread.setName method in debuggee JVM"); //$NON-NLS-1$
+					request = manager.createBreakpointRequest(location);
+					request.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+					request.enable();
+					addJDIEventListener(this, request);
+				} catch (RuntimeException e) {
+					String errorMessage = "Failed to add thread name change listener to debug target " + JDIDebugTarget.this; //$NON-NLS-1$
+					IStatus errorStatus = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), errorMessage, e);
+					JDIDebugPlugin.log(errorStatus);
+				}
+			}
+		}
+
+		private Location setNameMethodLocation() {
+			List<ReferenceType> types = jdiClassesByName(TYPE_NAME);
+			for (ReferenceType type : types) {
+				if (type instanceof ClassType) {
+					Method method = ((ClassType) type).concreteMethodByName(METHOD_NAME, METHOD_SIGNATURE);
+					if (method != null && !method.isNative()) {
+						Location location = method.location();
+						if (location != null && location.codeIndex() != -1) {
+							return location;
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+		void deleteRequest() {
+			if (request != null) {
+				removeJDIEventListener(this, request);
+			}
+		}
+
+		@Override
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspend, EventSet eventSet) {
+			ThreadReference ref = ((LocatableEvent) event).thread();
+			JDIThread thread = findThread(ref);
+			if (thread == null) {
+				thread = target.findThread(ref);
+			}
+			if (thread != null) {
+				// trigger updates on the thread
+				DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { new DebugEvent(thread, DebugEvent.CHANGE, DebugEvent.STATE) });
+			}
+			// we never suspend the thread
+			return true;
+		}
+
+		@Override
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
+			// nothing to do here, we do work in handleEvent
+		}
+	}
+
 	class CleanUpJob extends Job {
 
 		/**
@@ -2399,6 +2501,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	protected void setThreadStartHandler(ThreadStartHandler threadStartHandler) {
 		fThreadStartHandler = threadStartHandler;
+	}
+
+	private ThreadNameChangeHandler getThreadNameChangeHandler() {
+		return fThreadNameChangeHandler;
+	}
+
+	private void setThreadNameChangeHandler(ThreadNameChangeHandler threadNameChangeHandler) {
+		fThreadNameChangeHandler = threadNameChangeHandler;
 	}
 
 	/**
