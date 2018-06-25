@@ -316,14 +316,12 @@
       </environment>
       <environment
             description="%environment.description.13"
-            id="JavaSE-9"
-            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
+            id="JavaSE-9">
       </environment> 
       <environment
             description="%environment.description.14"
             id="JavaSE-10"
-            compliance="10"
-            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
+            compliance="10">
       </environment>            
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"
