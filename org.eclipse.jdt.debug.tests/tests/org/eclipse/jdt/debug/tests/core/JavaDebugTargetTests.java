@@ -23,7 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 
 /**
  * Tests IJavaDebugTarget API
@@ -178,7 +177,6 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 
 	private List<IBreakpoint> getUserBreakpoints(JDIDebugTarget target) {
 		List<IBreakpoint> breakpoints = target.getBreakpoints();
-		breakpoints.remove(JavaDebugOptionsManager.getDefault().getThreadNameChangeBreakpoint());
 		return breakpoints;
 	}
 

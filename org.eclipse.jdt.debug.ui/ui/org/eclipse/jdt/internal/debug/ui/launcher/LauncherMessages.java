@@ -197,6 +197,9 @@ public class LauncherMessages extends NLS {
 	public static String JreResolutionGenerator_open_ee_prefs;
 	public static String JreResolutionGenerator_opens_ee_prefs;
 
+	public static String JreResolutionGenerator_open_cc_props;
+	public static String JreResolutionGenerator_opens_cc_props;
+
 	public static String ProjectClasspathArugumentSelector_0;
 	public static String ProjectClasspathArugumentSelector_1;
 

@@ -255,6 +255,13 @@
       	 name= "%jreContainerMarkerProblemName">
       <super type="org.eclipse.core.resources.problemmarker"/>
       <persistent value="true"/>
+   </extension>
+   <extension
+         id="jreCompilerComplianceMarker"
+         name="%jreComplilerComplianceMarkerProblemName"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
    </extension> 
    
       <extension
@@ -314,14 +321,12 @@
       </environment>
       <environment
             description="%environment.description.13"
-            id="JavaSE-9"
-            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
+            id="JavaSE-9">
       </environment> 
       <environment
             description="%environment.description.14"
             id="JavaSE-10"
-            compliance="10"
-            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
+            compliance="10">
       </environment>
       <environment
             description="%environment.description.15"
@@ -344,6 +349,9 @@
                id="org.eclipse.jdt.launching.compilationParticipant.ee">
             <managedMarker
                   markerType="org.eclipse.jdt.launching.jreContainerMarker">
+            </managedMarker>
+            <managedMarker
+                  markerType="org.eclipse.jdt.launching.jreCompilerComplianceMarker">
             </managedMarker>
          </compilationParticipant>
       </extension>

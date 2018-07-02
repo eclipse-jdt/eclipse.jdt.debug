@@ -28,7 +28,6 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.debug.tests.TestUtil;
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -36,6 +35,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Home for breakpoint tests related to thread name change events
  */
 public class ThreadNameChangeTests extends AbstractDebugTest {
+
+	private static final String DISABLE_THREAD_NAME_CHANGE_LISTENER = "org.eclipse.jdt.internal.debug.core.model.ThreadNameChangeListener.disable";
 
 	/**
 	 * Constructor
@@ -59,8 +60,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
 		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		boolean oldValue = getPrefStore().getBoolean(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES);
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES, true);
 		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<DebugEvent>());
 		IDebugEventSetListener listener = new IDebugEventSetListener() {
 			@Override
@@ -84,7 +83,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 
 			// expect one single "CHANGE" event for second thread
 			List<DebugEvent> changeEvents = getStateChangeEvents(events, second);
-			assertEquals(1, changeEvents.size());
+			assertEquals("unexpected number of events: " + changeEvents, 1, changeEvents.size());
 
 			// expect that thread name is changed to "2"
 			assertEquals("2", second.getName());
@@ -93,7 +92,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
-			getPrefStore().setValue(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES, oldValue);
 		}
 	}
 
@@ -103,6 +101,8 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testListenToThreadNameChangeDisabled() throws Exception {
+		System.setProperty(DISABLE_THREAD_NAME_CHANGE_LISTENER, String.valueOf(Boolean.TRUE));
+
 		String typeName = "ThreadNameChange";
 		final int bpLine1 = 36;
 		final int bpLine2 = 40;
@@ -111,8 +111,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
 		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		boolean oldValue = getPrefStore().getBoolean(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES);
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES, false);
 		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<DebugEvent>());
 		IDebugEventSetListener listener = new IDebugEventSetListener() {
 			@Override
@@ -136,7 +134,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 
 			// expect no "CHANGE" events
 			List<DebugEvent> changeEvents = getStateChangeEvents(events, second);
-			assertEquals(0, changeEvents.size());
+			assertEquals("expected no events, instead got: " + changeEvents, 0, changeEvents.size());
 
 			// expect that thread name is changed to "2"
 			assertEquals("2", second.getName());
@@ -145,7 +143,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
-			getPrefStore().setValue(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES, oldValue);
+			System.getProperties().remove(DISABLE_THREAD_NAME_CHANGE_LISTENER);
 		}
 	}
 

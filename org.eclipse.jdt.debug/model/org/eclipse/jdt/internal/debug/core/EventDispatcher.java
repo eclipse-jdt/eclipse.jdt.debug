@@ -33,6 +33,7 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.ThreadDeathEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
@@ -189,6 +190,8 @@ public class EventDispatcher implements Runnable {
 			}
 		}
 
+		List<Runnable> threadDeathRunnables = new ArrayList<>();
+
 		// notify handlers of the end result
 		index = -1;
 		iter = eventSet.eventIterator();
@@ -198,12 +201,20 @@ public class EventDispatcher implements Runnable {
 			// notify registered listener, if any
 			IJDIEventListener listener = listeners[index];
 			if (listener != null) {
-				listener.eventSetComplete(event, fTarget, !resume, eventSet);
+				if (event instanceof ThreadDeathEvent) {
+					final boolean res = resume;
+					threadDeathRunnables.add(() -> listener.eventSetComplete(event, fTarget, !res, eventSet));
+				} else {
+					listener.eventSetComplete(event, fTarget, !resume, eventSet);
+				}
 			}
 		}
 
 		// fire queued DEBUG events
 		fireEvents(eventSet);
+
+		// Queue runnables which will remove terminated threads once other queued events are proceeded
+		threadDeathRunnables.forEach(runnable -> DebugPlugin.getDefault().asyncExec(runnable));
 
 		if (vote && resume) {
 			try {

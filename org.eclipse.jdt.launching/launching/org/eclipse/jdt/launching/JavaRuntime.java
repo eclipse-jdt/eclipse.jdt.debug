@@ -211,6 +211,13 @@ public final class JavaRuntime {
 	public static final String JRE_CONTAINER_MARKER = LaunchingPlugin.getUniqueIdentifier() + ".jreContainerMarker"; //$NON-NLS-1$
 
 	/**
+	 * Marker type identifier for JRE compiler compliance problems.
+	 *
+	 * @since 3.11
+	 */
+	public static final String JRE_COMPILER_COMPLIANCE_MARKER = LaunchingPlugin.getUniqueIdentifier() + ".jreCompilerComplianceMarker"; //$NON-NLS-1$
+
+	/**
 	 * A status code indicating that a JRE could not be resolved for a project.
 	 * When a JRE cannot be resolved for a project by this plug-in's container
 	 * initializer, an exception is thrown with this status code. A status handler

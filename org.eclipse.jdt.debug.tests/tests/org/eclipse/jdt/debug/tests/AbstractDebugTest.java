@@ -198,7 +198,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"bug329294", "bug401270", "org.eclipse.debug.tests.targets.HcrClass2", "org.eclipse.debug.tests.targets.HcrClass3", "org.eclipse.debug.tests.targets.HcrClass4",
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
-			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException" };
+			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
+			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen" };
 
 	/**
 	 * the default timeout
@@ -1124,6 +1125,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchAndSuspend(ILaunchConfiguration config) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 		Object suspendee = launchAndWait(config, waiter);
 		return (IJavaThread)suspendee;
 	}
@@ -1220,6 +1222,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config, boolean register) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		Object suspendee= launchAndWait(config, waiter, register);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread); //$NON-NLS-1$
@@ -1267,6 +1270,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaDebugTarget launchAndTerminate(ILaunchConfiguration config, int timeout, boolean register) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IJavaDebugTarget.class);
 		waiter.setTimeout(timeout);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		Object terminatee = launchAndWait(config, waiter, register);
 		assertNotNull("Program did not terminate.", terminatee); //$NON-NLS-1$
@@ -1317,6 +1321,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp, boolean register) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		Object suspendee= launchAndWait(config, waiter, register);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread); //$NON-NLS-1$
@@ -1379,6 +1384,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread resume(IJavaThread thread, int timeout) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(timeout);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		thread.resume();
 
@@ -1398,6 +1404,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread resumeToLineBreakpoint(IJavaThread resumeThread, ILineBreakpoint bp) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		resumeThread.resume();
 
@@ -1427,6 +1434,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected void exit(IJavaThread thread) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IProcess.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		thread.resume();
 
@@ -1445,6 +1453,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaDebugTarget resumeAndExit(IJavaThread thread) throws Exception {
 		DebugEventWaiter waiter= new DebugElementEventWaiter(DebugEvent.TERMINATE, thread.getDebugTarget());
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		thread.resume();
 
@@ -2083,6 +2092,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 
 			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
+			waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 			try {
 				removeAllBreakpoints();
 				IThread[] threads = debugTarget.getThreads();
@@ -2103,6 +2113,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		getLaunchManager().removeLaunch(launch);
         // ensure event queue is flushed
         DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.MODEL_SPECIFIC, this);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC)});
         waiter.waitForEvent();
 	}
@@ -2144,6 +2155,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IEvaluationResult evaluate(String snippet, IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(getProjectContext(), (IJavaDebugTarget)frame.getDebugTarget());
 		try {
@@ -2211,6 +2223,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepOver(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		frame.stepOver();
 
@@ -2228,6 +2241,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepOverToBreakpoint(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		frame.stepOver();
 
@@ -2245,6 +2259,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepInto(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		frame.stepInto();
 
@@ -2262,6 +2277,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepReturn(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		frame.stepReturn();
 
@@ -2291,6 +2307,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepIntoWithFilters(IJavaStackFrame frame, boolean stepThru) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		// turn filters on
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
@@ -2321,6 +2338,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepReturnWithFilters(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		// turn filters on
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
@@ -2350,6 +2368,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread stepOverWithFilters(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
 
 		// turn filters on
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
@@ -2788,6 +2807,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		finally {
 			engine.dispose();
 		}
+	}
+
+	/**
+	 * @return true if the UI event loop should be proicessed during wait operations on UI thread
+	 */
+	protected boolean enableUIEventLoopProcessingInWaiter() {
+		return false;
 	}
 
 }

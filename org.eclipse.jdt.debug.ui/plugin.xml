@@ -2889,6 +2889,10 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator"
             markerType="org.eclipse.jdt.launching.jreContainerMarker">
       </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator"
+            markerType="org.eclipse.jdt.launching.jreCompilerComplianceMarker">
+      </markerResolutionGenerator>
    </extension>
 <!-- Adds the launch and java debug actions whenever a java relevant part is open -->
    <extension
@@ -3500,7 +3504,11 @@ M4 = Platform-specific fourth key
        point="org.eclipse.ui.ide.markerSupport">
     <markerAttributeGrouping
           defaultGroupingEntry="org.eclipse.jdt.ui.category.buildpath"
-          markerType="org.eclipse.jdt.launching.jreContainerMarker"/>
+          markerType="org.eclipse.jdt.launching.jreContainerMarker">
+    </markerAttributeGrouping>
+    <markerAttributeGrouping
+          defaultGroupingEntry="org.eclipse.jdt.ui.category.buildpath"
+          markerType="org.eclipse.jdt.launching.jreCompilerComplianceMarker"/>
     <markerTypeCategory
           name="%JavaLineBPmarkerTypeCategory.name">
        <markerTypeReference
@@ -3605,10 +3613,6 @@ M4 = Platform-specific fourth key
     <breakpointListener
           class="org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener"
           id="org.eclipse.jdt.debug.ui.uncaughtExceptionListener">
-    </breakpointListener>
-    <breakpointListener
-          class="org.eclipse.jdt.internal.debug.ui.breakpoints.ThreadNameChangeListener"
-          id="org.eclipse.jdt.debug.ui.threadNameChangeListener">
     </breakpointListener>
  </extension>
  <extension

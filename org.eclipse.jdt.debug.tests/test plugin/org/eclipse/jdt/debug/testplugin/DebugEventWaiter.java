@@ -13,6 +13,8 @@ package org.eclipse.jdt.debug.testplugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The <code>DebugEventWaiter</code> is
@@ -50,6 +52,11 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * The event set that was accepted
 	 */
 	protected DebugEvent[] fEventSet;
+
+	/**
+	 * Process UI events while waiting in UI thread
+	 */
+	private boolean enableUIEventLoopProcessing;
 
 	/**
 	 * The default timeout value if none is given (20000).
@@ -147,7 +154,15 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	public synchronized Object waitForEvent() {
 		if (fEvent == null) {
 			try {
-				wait(fTimeout);
+				if (enableUIEventLoopProcessing && Display.getCurrent() != null) {
+					long endTime = System.currentTimeMillis() + fTimeout;
+					while (fEvent == null && System.currentTimeMillis() < endTime) {
+						wait(10);
+						TestUtil.runEventLoop();
+					}
+				} else {
+					wait(fTimeout);
+				}
 			} catch (InterruptedException ie) {
 				System.err.println("Interrupted waiting for event");
 			}
@@ -173,6 +188,10 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 */
 	public DebugEvent[] getEventSet() {
 		return fEventSet;
+	}
+
+	public void setEnableUIEventLoopProcessing(boolean on) {
+		enableUIEventLoopProcessing = on;
 	}
 }
 
