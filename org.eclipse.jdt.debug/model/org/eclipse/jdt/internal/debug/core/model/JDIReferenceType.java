@@ -290,7 +290,7 @@ public abstract class JDIReferenceType extends JDIType implements
 			}
 		}
 		String signature = type.signature();
-		StringBuffer res = new StringBuffer(getTypeName(signature));
+		StringBuilder res = new StringBuilder(getTypeName(signature));
 		String genericSignature = type.genericSignature();
 		if (genericSignature != null) {
 			String[] typeParameters = Signature
@@ -321,7 +321,7 @@ public abstract class JDIReferenceType extends JDIType implements
 			arrayDimension++;
 		}
 		int parameterStart = genericTypeSignature.indexOf('<');
-		StringBuffer name = new StringBuffer();
+		StringBuilder name = new StringBuilder();
 		if (parameterStart < 0) {
 			name.append(genericTypeSignature.substring(arrayDimension + 1,
 					genericTypeSignature.length() - 1).replace('/', '.'));

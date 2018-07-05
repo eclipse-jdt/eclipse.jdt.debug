@@ -56,7 +56,7 @@ public class StandardVM extends AbstractVMInstall {
             if (executable != null) {
                 String vmVersion = installType.getVMVersion(installLocation, executable);
                 // strip off extra info
-                StringBuffer version = new StringBuffer();
+                StringBuilder version = new StringBuilder();
                 for (int i = 0; i < vmVersion.length(); i++) {
                     char ch = vmVersion.charAt(i);
                     if (Character.isDigit(ch) || ch == '.') {

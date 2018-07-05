@@ -508,7 +508,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	protected String getMarkerMessage(boolean conditionEnabled,
 			String condition, int hitCount, int suspendPolicy, int lineNumber) {
-		StringBuffer message = new StringBuffer(super.getMarkerMessage(
+		StringBuilder message = new StringBuilder(super.getMarkerMessage(
 				hitCount, suspendPolicy));
 		if (lineNumber != -1) {
 			message.append(MessageFormat

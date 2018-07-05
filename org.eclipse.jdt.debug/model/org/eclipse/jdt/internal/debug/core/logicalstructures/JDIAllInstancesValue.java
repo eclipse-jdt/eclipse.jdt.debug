@@ -295,7 +295,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	 *         pane
 	 */
 	public String getDetailString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Object[] elements = getInstances();
 		if (elements.length == 0) {
 			buf.append(LogicalStructuresMessages.JDIAllInstancesValue_10);

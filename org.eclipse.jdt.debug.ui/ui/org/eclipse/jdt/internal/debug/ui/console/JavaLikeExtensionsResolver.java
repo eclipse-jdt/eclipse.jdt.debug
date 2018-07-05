@@ -25,7 +25,7 @@ public class JavaLikeExtensionsResolver implements IDynamicVariableResolver {
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		String[] javaLikeExtensions = JavaCore.getJavaLikeExtensions();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (javaLikeExtensions.length > 1) {
 			buffer.append("("); //$NON-NLS-1$
 		}

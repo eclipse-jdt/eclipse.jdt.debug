@@ -219,7 +219,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaVariable) {
 				return getVariableText((IJavaVariable) item);
 			} else if (item instanceof IStackFrame) {
-				StringBuffer label= new StringBuffer(getStackFrameText((IStackFrame) item));
+				StringBuilder label= new StringBuilder(getStackFrameText((IStackFrame) item));
 				if (item instanceof IJavaStackFrame) {
 					if (((IJavaStackFrame)item).isOutOfSynch()) {
 						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1);
@@ -249,7 +249,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else if (item instanceof NoMonitorInformationElement) {
                 return DebugUIMessages.JDIModelPresentation_5;
             } else {
-				StringBuffer label= new StringBuffer();
+				StringBuilder label= new StringBuilder();
 				if (item instanceof IJavaThread) {
 					label.append(getThreadText((IJavaThread) item, showQualified));
 					if (((IJavaThread)item).isOutOfSynch()) {
@@ -313,7 +313,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Build the text for an IJavaThread.
 	 */
 	protected String getThreadText(IJavaThread thread, boolean qualified) throws CoreException {
-		StringBuffer key = new StringBuffer("thread_"); //$NON-NLS-1$
+		StringBuilder key = new StringBuilder("thread_"); //$NON-NLS-1$
 		String[] args = null;
 		IBreakpoint[] breakpoints= thread.getBreakpoints();
 		if (thread.isDaemon()) {
@@ -461,7 +461,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		boolean isObject= isObjectValue(signature);
 		boolean isArray= value instanceof IJavaArray;
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		if(isUnknown(signature)) {
 			buffer.append(signature);
 		} else if (isObject && !isString && (refTypeName.length() > 0)) {
@@ -507,7 +507,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buffer.toString().trim();
 	}
 
-	private StringBuffer appendUnsignedText(IJavaValue value, StringBuffer buffer) throws DebugException {
+	private StringBuilder appendUnsignedText(IJavaValue value, StringBuilder buffer) throws DebugException {
 		String unsignedText= getValueUnsignedText(value);
 		if (unsignedText != null) {
 			buffer.append(" ["); //$NON-NLS-1$
@@ -517,7 +517,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buffer;
 	}
 
-	protected StringBuffer appendHexText(IJavaValue value, StringBuffer buffer) throws DebugException {
+	protected StringBuilder appendHexText(IJavaValue value, StringBuilder buffer) throws DebugException {
 		String hexText = getValueHexText(value);
 		if (hexText != null) {
 			buffer.append(" ["); //$NON-NLS-1$
@@ -527,7 +527,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buffer;
 	}
 
-	protected StringBuffer appendCharText(IJavaValue value, StringBuffer buffer) throws DebugException {
+	protected StringBuilder appendCharText(IJavaValue value, StringBuilder buffer) throws DebugException {
 		String charText= getValueCharText(value);
 		if (charText != null) {
 			buffer.append(" ["); //$NON-NLS-1$
@@ -634,7 +634,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return null;
 		}
 		char charValue= (char)longValue;
-		StringBuffer charText = new StringBuffer();
+		StringBuilder charText = new StringBuilder();
 		if (Character.getType(charValue) == Character.CONTROL) {
 			Character ctrl = new Character((char) (charValue + 64));
 			charText.append('^');
@@ -1276,7 +1276,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} catch (DebugException e1) {
 		}
 		boolean showTypes= isShowVariableTypeNames();
-		StringBuffer buff= new StringBuffer();
+		StringBuilder buff= new StringBuilder();
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
 		try {
 			typeName= var.getReferenceTypeName();
@@ -1399,7 +1399,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected String getExpressionText(IExpression expression) throws DebugException {
 		boolean showTypes= isShowVariableTypeNames();
-		StringBuffer buff= new StringBuffer();
+		StringBuilder buff= new StringBuilder();
 		IJavaValue javaValue= (IJavaValue) expression.getValue();
 		if (javaValue != null) {
 			String typeName=null;
@@ -1422,7 +1422,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		// Edit the snippet to make it easily viewable in one line
-		StringBuffer snippetBuffer = new StringBuffer();
+		StringBuilder snippetBuffer = new StringBuilder();
 		String snippet = expression.getExpressionText().trim();
 		snippetBuffer.append('"');
 		if (snippet.length() > 30){
@@ -1459,7 +1459,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (firstBracket < 0) {
 			return typeName;
 		}
-		StringBuffer buffer= new StringBuffer(typeName);
+		StringBuilder buffer= new StringBuilder(typeName);
 		buffer.insert(firstBracket + 1, Integer.toString(arrayIndex));
 		return buffer.toString();
 	}
@@ -1493,7 +1493,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return null;
 		}
 
-		StringBuffer buff= new StringBuffer();
+		StringBuilder buff= new StringBuilder();
 		long longValue;
 		char sigValue = sig.charAt(0);
 		try {
@@ -1572,7 +1572,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (suffix == null) {
 				return label;
 			}
-			StringBuffer buffer = new StringBuffer(label);
+			StringBuilder buffer = new StringBuilder(label);
 			buffer.append(suffix);
 			return buffer.toString();
 	    } catch (CoreException e) {
@@ -1603,7 +1603,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		        }
 		    }
 		}
-		StringBuffer label= new StringBuffer(sourceName);
+		StringBuilder label= new StringBuilder(sourceName);
 		appendLineNumber(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
@@ -1618,7 +1618,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getExceptionBreakpointText(IJavaExceptionBreakpoint breakpoint) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String typeName = breakpoint.getTypeName();
 		if (typeName != null) {
 			buffer.append(getQualifiedName(typeName));
@@ -1657,7 +1657,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getLineBreakpointText(IJavaLineBreakpoint breakpoint) throws CoreException {
 		String typeName= breakpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(breakpoint);
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
@@ -1678,7 +1678,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected String getClassPrepareBreakpointText(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
 		String typeName= breakpoint.getTypeName();
-		StringBuffer label = new StringBuffer();
+		StringBuilder label = new StringBuilder();
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
@@ -1687,7 +1687,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return label.toString();
 	}
 
-	protected StringBuffer appendLineNumber(IJavaLineBreakpoint breakpoint, StringBuffer label) throws CoreException {
+	protected StringBuilder appendLineNumber(IJavaLineBreakpoint breakpoint, StringBuilder label) throws CoreException {
 		int lineNumber= breakpoint.getLineNumber();
 		if (lineNumber > 0) {
 			label.append(" ["); //$NON-NLS-1$
@@ -1700,7 +1700,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return label;
 	}
 
-	protected StringBuffer appendHitCount(IJavaBreakpoint breakpoint, StringBuffer label) throws CoreException {
+	protected StringBuilder appendHitCount(IJavaBreakpoint breakpoint, StringBuilder label) throws CoreException {
 		int hitCount= breakpoint.getHitCount();
 		if (hitCount > 0) {
 			label.append(" ["); //$NON-NLS-1$
@@ -1715,7 +1715,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getJavaPatternBreakpointText(@SuppressWarnings("deprecation") IJavaPatternBreakpoint breakpoint) throws CoreException {
 		IResource resource= breakpoint.getMarker().getResource();
 		IMember member= BreakpointUtils.getMember(breakpoint);
-		StringBuffer label= new StringBuffer(resource.getName());
+		StringBuilder label= new StringBuilder(resource.getName());
 		appendLineNumber(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
@@ -1731,7 +1731,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected String getJavaTargetPatternBreakpointText(IJavaTargetPatternBreakpoint breakpoint) throws CoreException {
 		IMember member= BreakpointUtils.getMember(breakpoint);
-		StringBuffer label= new StringBuffer(breakpoint.getSourceName());
+		StringBuilder label= new StringBuilder(breakpoint.getSourceName());
 		appendLineNumber(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
@@ -1748,7 +1748,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
 		String typeName= watchpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(watchpoint);
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
@@ -1780,7 +1780,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getMethodBreakpointText(IJavaMethodBreakpoint methodBreakpoint) throws CoreException {
 		String typeName= methodBreakpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(methodBreakpoint);
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
@@ -1821,7 +1821,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getStackFrameText(IStackFrame stackFrame) throws DebugException {
 		IJavaStackFrame frame= stackFrame.getAdapter(IJavaStackFrame.class);
 		if (frame != null) {
-			StringBuffer label= new StringBuffer();
+			StringBuilder label= new StringBuilder();
 
 			String dec= DebugUIMessages.JDIModelPresentation_unknown_declaring_type__4;
 			try {
@@ -1946,7 +1946,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		// get the list of the parameters and generates their simple name
 		List<String> parameters= getNameList(qualifiedName.substring(parameterStart + 1, qualifiedName.length() - 1));
-		StringBuffer name= new StringBuffer(getSimpleName(qualifiedName.substring(0, parameterStart)));
+		StringBuilder name= new StringBuilder(getSimpleName(qualifiedName.substring(0, parameterStart)));
 		name.append('<');
 		Iterator<String> iterator= parameters.iterator();
 		if (iterator.hasNext()) {
@@ -2019,28 +2019,28 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException;
 	}
 
-	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
 		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.JDIModelPresentation_Suspend_VM);
 		}
 	}
 
-	protected void appendThreadFilter(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+	protected void appendThreadFilter(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
 		if (breakpoint.getThreadFilters().length != 0) {
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.JDIModelPresentation_thread_filtered);
 		}
 	}
 
-	protected void appendConditional(IJavaLineBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+	protected void appendConditional(IJavaLineBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
 		if (breakpoint.isConditionEnabled() && breakpoint.getCondition() != null) {
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.JDIModelPresentation__conditional__2);
 		}
 	}
 
-	protected void appendInstanceFilter(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+	protected void appendInstanceFilter(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
 		IJavaObject[] instances = breakpoint.getInstanceFilters();
 		for (int i = 0; i < instances.length; i++) {
 			String instanceText= instances[i].getValueString();

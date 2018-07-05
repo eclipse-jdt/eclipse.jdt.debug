@@ -767,7 +767,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	}
 
 	protected void displayResult(IJavaValue result) {
-		StringBuffer resultString= new StringBuffer();
+		StringBuilder resultString= new StringBuilder();
 		try {
 			IJavaType type = result.getJavaType();
 			if (type != null) {
@@ -840,7 +840,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		IDocument document = getSourceViewer().getDocument();
 		String delimiter = document.getLegalLineDelimiters()[0];
 
-		final StringBuffer errorString = new StringBuffer();
+		final StringBuilder errorString = new StringBuilder();
 		for (int i = 0; i < errors.length; i++) {
 			errorString.append(errors[i] + delimiter);
 		}

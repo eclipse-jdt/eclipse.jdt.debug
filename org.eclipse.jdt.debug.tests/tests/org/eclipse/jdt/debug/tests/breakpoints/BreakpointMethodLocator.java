@@ -91,7 +91,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 		if (node.getExtraDimensions() != 0 || Modifier.isAbstract(node.getModifiers())) {
 			return null;
 		}
-		StringBuffer signature= new StringBuffer();
+		StringBuilder signature= new StringBuilder();
 		signature.append('(');
 		List<SingleVariableDeclaration> parameters = node.parameters();
 		for (Iterator<SingleVariableDeclaration> iter = parameters.iterator(); iter.hasNext();) {
@@ -113,7 +113,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 		return signature.toString();
 	}
 
-	private void appendTypeLetter(StringBuffer signature, PrimitiveType type) {
+	private void appendTypeLetter(StringBuilder signature, PrimitiveType type) {
 		PrimitiveType.Code code= type.getPrimitiveTypeCode();
 		if (code == PrimitiveType.BYTE) {
 			signature.append('B');

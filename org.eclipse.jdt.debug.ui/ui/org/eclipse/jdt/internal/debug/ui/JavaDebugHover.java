@@ -153,7 +153,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * Returns HTML text for the given variable
 	 */
 	private static String getVariableText(IVariable variable) {
-	    StringBuffer buffer= new StringBuffer();
+	    StringBuilder buffer= new StringBuilder();
 		JDIModelPresentation modelPresentation = getModelPresentation();
 		buffer.append("<p><pre>"); //$NON-NLS-1$
 		String variableText= modelPresentation.getVariableText((IJavaVariable) variable);
@@ -172,7 +172,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * values containing reserved characters are correctly displayed.
      */
     private static String replaceHTMLChars(String variableText) {
-        StringBuffer buffer= new StringBuffer(variableText.length());
+        StringBuilder buffer= new StringBuilder(variableText.length());
         char[] characters = variableText.toCharArray();
         for (int i = 0; i < characters.length; i++) {
             char character= characters[i];

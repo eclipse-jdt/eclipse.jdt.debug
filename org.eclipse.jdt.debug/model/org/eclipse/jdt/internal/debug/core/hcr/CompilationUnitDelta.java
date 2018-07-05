@@ -191,7 +191,7 @@ public class CompilationUnitDelta {
 		}
 		BufferedReader reader = null;
 		try {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			char[] part = new char[2048];
 			int read = 0;
 			reader = new BufferedReader(new InputStreamReader(is,

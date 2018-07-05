@@ -204,7 +204,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 * Save the user defined logical structures in the preference store.
 	 */
 	public static void saveUserDefinedJavaLogicalStructures() {
-		StringBuffer logicalStructuresString = new StringBuffer();
+		StringBuilder logicalStructuresString = new StringBuilder();
 		for (Iterator<JavaLogicalStructure> iter = fUserDefinedJavaLogicalStructures.iterator(); iter
 				.hasNext();) {
 			JavaLogicalStructure logicalStructure = iter

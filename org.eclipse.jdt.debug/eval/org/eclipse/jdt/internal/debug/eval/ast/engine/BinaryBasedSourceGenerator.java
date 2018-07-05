@@ -39,7 +39,7 @@ public class BinaryBasedSourceGenerator {
 
 	private boolean fIsInStaticMethod;
 
-	private StringBuffer fSource;
+	private StringBuilder fSource;
 
 	private int fRunMethodStartOffset;
 	private int fRunMethodLength;
@@ -114,8 +114,8 @@ public class BinaryBasedSourceGenerator {
 		return methodName;
 	}
 
-	private StringBuffer buildRunMethod(ReferenceType type) {
-		StringBuffer source = new StringBuffer();
+	private StringBuilder buildRunMethod(ReferenceType type) {
+		StringBuilder source = new StringBuilder();
 
 		if (isInStaticMethod()) {
 			source.append("static "); //$NON-NLS-1$
@@ -144,8 +144,8 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 
-	private StringBuffer buildTypeDeclaration(ReferenceType referenceType,
-			StringBuffer buffer, String nestedTypeName) {
+	private StringBuilder buildTypeDeclaration(ReferenceType referenceType,
+			StringBuilder buffer, String nestedTypeName) {
 
 		Field thisField = null;
 
@@ -158,7 +158,7 @@ public class BinaryBasedSourceGenerator {
 			}
 		}
 
-		StringBuffer source = buildTypeDeclaration(referenceType, buffer,
+		StringBuilder source = buildTypeDeclaration(referenceType, buffer,
 				nestedTypeName, thisField != null);
 
 		if (thisField == null) {
@@ -183,10 +183,10 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 
-	private StringBuffer buildTypeDeclaration(ReferenceType referenceType,
-			StringBuffer buffer, String nestedTypeName,
+	private StringBuilder buildTypeDeclaration(ReferenceType referenceType,
+			StringBuilder buffer, String nestedTypeName,
 			boolean hasEnclosingInstance) {
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 
 		String typeName = referenceType.name();
 
@@ -291,7 +291,7 @@ public class BinaryBasedSourceGenerator {
 					try {
 						interfaces = classType.interfaces();
 					} catch (ClassNotPreparedException e) {
-						return new StringBuffer();
+						return new StringBuilder();
 					}
 					if (interfaces.size() != 0) {
 						source.append("implements "); //$NON-NLS-1$
@@ -373,8 +373,8 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 
-	private StringBuffer buildFieldDeclaration(Field field) {
-		StringBuffer source = new StringBuffer();
+	private StringBuilder buildFieldDeclaration(Field field) {
+		StringBuilder source = new StringBuilder();
 
 		if (field.isFinal()) {
 			source.append("final "); //$NON-NLS-1$
@@ -398,8 +398,8 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 
-	private StringBuffer buildMethodDeclaration(Method method) {
-		StringBuffer source = new StringBuffer();
+	private StringBuilder buildMethodDeclaration(Method method) {
+		StringBuilder source = new StringBuilder();
 
 		if (method.isFinal()) {
 			source.append("final "); //$NON-NLS-1$
@@ -586,7 +586,7 @@ public class BinaryBasedSourceGenerator {
 		return fIsInStaticMethod;
 	}
 
-	public StringBuffer getSource() {
+	public StringBuilder getSource() {
 		return fSource;
 	}
 

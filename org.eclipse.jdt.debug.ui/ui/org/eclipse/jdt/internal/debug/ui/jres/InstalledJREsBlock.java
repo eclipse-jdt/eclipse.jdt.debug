@@ -1135,7 +1135,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 
 
-	private StringBuffer appendVMAttributes(IVMInstall vmInstall, StringBuffer buf) {
+	private StringBuilder appendVMAttributes(IVMInstall vmInstall, StringBuilder buf) {
 		if (vmInstall != null) {
 			String str = vmInstall.getName();
 			buf.append('[').append(str.length()).append(']').append(str);
@@ -1157,7 +1157,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 
 	private String getEncodedVMInstalls() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		IVMInstall vmInstall = getCheckedJRE();
 
 		int nElements = fVMs.size();

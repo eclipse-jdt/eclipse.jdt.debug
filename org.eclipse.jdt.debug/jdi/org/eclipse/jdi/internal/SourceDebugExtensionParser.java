@@ -553,7 +553,7 @@ public class SourceDebugExtensionParser {
 
 	private String getNonAsteriskString(Lexer lexer)
 			throws AbsentInformationException {
-		StringBuffer string = new StringBuffer();
+		StringBuilder string = new StringBuilder();
 		int lexemType = lexer.lexemType();
 		while (lexemType != Lexer.CR) {
 			string.append(lexer.lexem());

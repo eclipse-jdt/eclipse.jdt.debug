@@ -298,7 +298,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		if (vmArgs == null) {
 			setVMArgs(null);
 		} else {
-		    StringBuffer buf = new StringBuffer();
+		    StringBuilder buf = new StringBuilder();
 		    for (int i = 0; i < vmArgs.length; i++) {
 	            String string = vmArgs[i];
 	            buf.append(string);
@@ -486,7 +486,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @return preference store key
 	 */
 	private String getSystemPropertyKey(String property) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(PREF_VM_INSTALL_SYSTEM_PROPERTY);
 		buffer.append("."); //$NON-NLS-1$
 		buffer.append(getVMInstallType().getId());

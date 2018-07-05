@@ -42,7 +42,7 @@ public class ArgumentTests extends AbstractDebugTest {
 
 	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {
 
-		StringBuffer buffer;
+		StringBuilder buffer;
 		IDocument document;
 		boolean closed = false;
 
@@ -57,7 +57,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		 */
 		@Override
 		public void init(IConsole console) {
-			buffer = new StringBuffer();
+			buffer = new StringBuilder();
 			document = console.getDocument();
 		}
 

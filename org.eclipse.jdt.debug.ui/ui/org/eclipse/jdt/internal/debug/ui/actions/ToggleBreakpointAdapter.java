@@ -610,7 +610,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @since 3.4
      */
 	private static String pruneAnonymous(IType type) {
-    	StringBuffer buffer = new StringBuffer();
+    	StringBuilder buffer = new StringBuilder();
     	IJavaElement parent = type;
     	while(parent != null) {
     		if(parent.getElementType() == IJavaElement.TYPE){

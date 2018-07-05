@@ -416,7 +416,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			if (maxLength > 0){
 				int maxEntries = (maxLength / 3) + 1;
 				if (length > maxEntries) {
-					StringBuffer snippet = new StringBuffer();
+					StringBuilder snippet = new StringBuilder();
 					snippet.append("Object[] shorter = new Object["); //$NON-NLS-1$
 					snippet.append(maxEntries);
 					snippet.append("]; System.arraycopy(this, 0, shorter, 0, "); //$NON-NLS-1$
@@ -599,7 +599,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		@Override
 		public void evaluationComplete(IEvaluationResult result) {
 			if (result.hasErrors()) {
-				StringBuffer error= new StringBuffer(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1);
+				StringBuilder error= new StringBuilder(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1);
 				DebugException exception= result.getException();
 				if (exception != null) {
 					Throwable throwable= exception.getStatus().getException();
@@ -607,7 +607,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					if (throwable instanceof InvocationException) {
 						error.append(NLS.bind(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()}));
 					} else if (throwable instanceof UnsupportedOperationException) {
-						error = new StringBuffer();
+						error = new StringBuilder();
 						error.append(DebugUIMessages.JavaDetailFormattersManager_7);
 					} else {
 						error.append(exception.getStatus().getMessage());
@@ -630,22 +630,22 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 
 		public void valueToString(final IJavaValue objectValue) throws DebugException {
 			String nonEvalResult = null;
-			StringBuffer result= null;
+			StringBuilder result= null;
 			if (objectValue.getSignature() == null) {
 				// no need to spawn evaluate for a null fValue
 				nonEvalResult = DebugUIMessages.JavaDetailFormattersManager_null;
 			} else if (objectValue instanceof IJavaPrimitiveValue) {
 				// no need to spawn evaluate for a primitive value
-				result = new StringBuffer();
+				result = new StringBuilder();
 				appendJDIPrimitiveValueString(result, objectValue);
 			} else if (fThread == null || !fThread.isSuspended()) {
 				// no thread available
-				result = new StringBuffer();
+				result = new StringBuilder();
 				result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads);
 				appendJDIValueString(result, objectValue);
 			} else if (objectValue instanceof IJavaObject && STRING_SIGNATURE.equals(objectValue.getSignature())) {
 				// no need to spawn evaluate for a java.lang.String
-				result = new StringBuffer();
+				result = new StringBuilder();
 				appendJDIValueString(result, objectValue);
 			}
 			if (result != null) {
@@ -659,7 +659,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			IEvaluationRunnable eval = new IEvaluationRunnable() {
 				@Override
 				public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
-					StringBuffer buf= new StringBuffer();
+					StringBuilder buf= new StringBuilder();
 					if (objectValue instanceof IJavaArray) {
 						appendArrayDetail(buf, (IJavaArray) objectValue);
 					} else if (objectValue instanceof IJavaObject) {
@@ -679,7 +679,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		 * Arrays.asList().toString() to minimize toString() calls on remote target (i.e. one call to
 		 * List.toString() instead of one call per item in the array).
 		 */
-		protected void appendArrayDetail(StringBuffer result, IJavaArray arrayValue) throws DebugException {
+		protected void appendArrayDetail(StringBuilder result, IJavaArray arrayValue) throws DebugException {
 			result.append('[');
 			boolean partial = false;
 			IJavaValue[] arrayValues = null;
@@ -726,17 +726,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		}
 
-		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
+		protected void appendJDIPrimitiveValueString(StringBuilder result, IJavaValue value) throws DebugException {
 			result.append(value.getValueString());
 		}
 
 
-		protected void appendJDIValueString(StringBuffer result, IJavaValue value) throws DebugException {
+		protected void appendJDIValueString(StringBuilder result, IJavaValue value) throws DebugException {
 			result.append(value.getValueString());
 		}
 
 
-		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
+		protected void appendObjectDetail(StringBuilder result, IJavaObject objectValue) throws DebugException {
 			if(objectValue instanceof JDINullValue) {
 				appendJDIValueString(result, objectValue);
 				return;

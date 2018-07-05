@@ -156,7 +156,7 @@ public class BundleBuilder implements BundleAttributes {
 		int[] id= new int[] { 0 };
 		ResourceInfo[] ris= fBundleDescription.getResources(true);
 		if (ris.length > 0) {
-			StringBuffer cp= new StringBuffer();
+			StringBuilder cp= new StringBuilder();
 			for (int i= 0; i < ris.length; i++) {
 				ResourceInfo ri= ris[i];
 				String e= processClasspathEntry(java_dir, ri.fPath, id);

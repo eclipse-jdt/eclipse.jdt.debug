@@ -30,7 +30,7 @@ public class JavaStackFrameMementoProvider extends DebugElementMementoProvider i
 	@Override
 	protected String getElementName(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IJavaStackFrame) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			IJavaStackFrame frame = (IJavaStackFrame) element;
 			buf.append(frame.getDeclaringTypeName());
 			buf.append("#"); //$NON-NLS-1$

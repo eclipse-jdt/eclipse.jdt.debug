@@ -98,7 +98,7 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 		IProject project = get14Project().getProject();
 		setSelection(project);
 		String cp = manager.performStringSubstitution("${project_classpath}");
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// expecting default output location and A.jar
 		buffer.append(ResourcesPlugin.getWorkspace().getRoot().getFolder(get14Project().getOutputLocation()).getLocation().toOSString());
 		buffer.append(File.pathSeparatorChar);
@@ -125,7 +125,7 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		String projectName = get14Project().getElementName();
 		String cp = manager.performStringSubstitution("${project_classpath:" + projectName + "}");
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// expecting default output location and A.jar
 		buffer.append(ResourcesPlugin.getWorkspace().getRoot().getFolder(get14Project().getOutputLocation()).getLocation().toOSString());
 		buffer.append(File.pathSeparatorChar);

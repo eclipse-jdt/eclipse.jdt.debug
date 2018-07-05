@@ -137,7 +137,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 			}
 		}
 		if (fValue instanceof ObjectReference) {
-			StringBuffer name = new StringBuffer();
+			StringBuilder name = new StringBuilder();
 			if (fValue instanceof ClassObjectReference) {
 				name.append('(');
 				name.append(((ClassObjectReference) fValue).reflectedType());

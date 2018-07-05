@@ -2463,7 +2463,7 @@ public class VerbosePacketStream extends PrintStream {
 		byte utfBytes[] = new byte[utfSize];
 		in.readFully(utfBytes);
 		/* Guess at buffer size */
-		StringBuffer strBuffer = new StringBuffer(utfSize / 3 * 2);
+		StringBuilder strBuffer = new StringBuilder(utfSize / 3 * 2);
 		for (int i = 0; i < utfSize;) {
 			int a = utfBytes[i] & 0xFF;
 			if ((a >> 4) < 12) {
@@ -2792,7 +2792,7 @@ public class VerbosePacketStream extends PrintStream {
 	protected void println(String description, String value) {
 		printDescription(description);
 		print('\"');
-		StringBuffer val = new StringBuffer();
+		StringBuilder val = new StringBuilder();
 		int pos = 0, lastPos = 0;
 		while ((pos = value.indexOf('\n', lastPos)) != -1) {
 			pos++;

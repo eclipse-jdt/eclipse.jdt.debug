@@ -192,7 +192,7 @@ public class MirrorImpl implements Mirror {
 				.getReply(commandPacket);
 		long recieved = System.currentTimeMillis();
 		if (JDIDebugOptions.DEBUG_JDI_REQUEST_TIMES) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(JDIDebugOptions.FORMAT.format(new Date(sent)));
 			buf.append(" JDI Request: "); //$NON-NLS-1$
 			buf.append(commandPacket.toString());

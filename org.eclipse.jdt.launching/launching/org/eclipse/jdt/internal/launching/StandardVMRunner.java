@@ -303,7 +303,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	protected String convertClassPath(String[] cp) {
 		int pathCount= 0;
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		if (cp.length == 0) {
 			return "";    //$NON-NLS-1$
 		}
@@ -453,7 +453,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		if(envp != null) {
 			Arrays.sort(envp);
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			for (int i = 0; i < envp.length; i++) {
 				buff.append(envp[i]);
 				if(i < envp.length-1) {
@@ -505,7 +505,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			//greater than 32767 is a no-go
 			//see http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
 			if(size > 32767) {
-				StringBuffer newcp = new StringBuffer("CLASSPATH="); //$NON-NLS-1$
+				StringBuilder newcp = new StringBuilder("CLASSPATH="); //$NON-NLS-1$
 				for (int i = 0; i < cp.length; i++) {
 					newcp.append(cp[i]);
 					newcp.append(File.pathSeparatorChar);

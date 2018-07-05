@@ -31,8 +31,8 @@ public class VerboseWriter {
 
 	/** PrintWriter that is written to. */
 	private PrintWriter fOutput;
-	/** Buffer for output: one StringBuffer entry per line. */
-	private List<StringBuffer> fLineBuffer;
+	/** Buffer for output: one StringBuilder entry per line. */
+	private List<StringBuilder> fLineBuffer;
 	/** Position from where buffer is written to. */
 	private int fPosition;
 	/** True if the current line has not yet been written to. */
@@ -46,7 +46,7 @@ public class VerboseWriter {
 		fOutput = out;
 		fLineBuffer = new ArrayList<>();
 		fPosition = 0;
-		fLineBuffer.add(new StringBuffer());
+		fLineBuffer.add(new StringBuilder());
 	}
 
 	/**
@@ -529,14 +529,14 @@ public class VerboseWriter {
 				fOutput.println(new String(fLineBuffer.get(i)));
 
 			// The last line should be printed without an extra newline
-			StringBuffer lastLine = fLineBuffer.get(bufSize - 1);
+			StringBuilder lastLine = fLineBuffer.get(bufSize - 1);
 			if (lastLine.length() > 0)
 				fOutput.print(new String(lastLine));
 
 			fOutput.flush();
 			fLineBuffer.clear();
 			fPosition = 0;
-			fLineBuffer.add(new StringBuffer());
+			fLineBuffer.add(new StringBuilder());
 		}
 	}
 
@@ -575,7 +575,7 @@ public class VerboseWriter {
 	 */
 	public void markLn() {
 		if (++fPosition == fLineBuffer.size()) {
-			fLineBuffer.add(new StringBuffer());
+			fLineBuffer.add(new StringBuilder());
 		}
 
 		fNewLine = true;

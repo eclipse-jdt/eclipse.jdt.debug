@@ -599,7 +599,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			return ""; //$NON-NLS-1$
 		}
 		Set<String> set = new HashSet<>(list.length);
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < list.length; i++) {
 			if (i > 0 && i < list.length) {
 				buffer.append(',');

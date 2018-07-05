@@ -87,7 +87,7 @@ public class LibraryLabelProvider extends LabelProvider {
 			return ((LibraryStandin)element).getSystemLibraryPath().toOSString();
 		} else if (element instanceof SubElement) {
 			SubElement subElement= (SubElement) element;
-			StringBuffer text= new StringBuffer();
+			StringBuilder text= new StringBuilder();
 			if (subElement.getType() == SubElement.SOURCE_PATH) {
 				text.append(JREMessages.VMLibraryBlock_0);
 				IPath systemLibrarySourcePath= subElement.getParent().getSystemLibrarySourcePath();

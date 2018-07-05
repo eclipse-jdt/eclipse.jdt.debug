@@ -58,7 +58,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		String val = dnode.get(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, (String)null);
 		if(val != null && !"".equals(val)) { //$NON-NLS-1$
 			String[] filters = val.split(","); //$NON-NLS-1$
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			boolean found = false;
 			for (int i = 0; i < filters.length; i++) {
 				if(launchFilter.equals(val)) {

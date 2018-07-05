@@ -103,7 +103,7 @@ public class EvaluationSourceGenerator {
 				break;
 			}
 		}
-		StringBuffer wordBuffer = new StringBuffer();
+		StringBuilder wordBuffer = new StringBuilder();
 		// if semicolon missing at the end
 		if (lastSemilcolonIndex != chars.length-1)
 			semicolonIndex = lastSemilcolonIndex;

@@ -78,7 +78,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			createLineBreakpoint(10, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("The program did not suspend", thread);
-			String snippet = "StringBuffer buf = new StringBuffer();\n"
+			String snippet = "StringBuilder buf = new StringBuilder();\n"
 					+ "buf.append(\"{\");\n"
 					+ "Iterator i = this.entrySet().iterator();\n"
 					+ "boolean hasNext = i.hasNext();\n"
@@ -129,7 +129,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			createLineBreakpoint(10, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("The program did not suspend", thread);
-			String snippet = "StringBuffer buf = new StringBuffer();\n"
+			String snippet = "StringBuilder buf = new StringBuilder();\n"
 					+ "buf.append(this);\n"
 					+ "return buf.toString();";
 			formatter = new DetailFormatter("java.util.HashMap", snippet, true);

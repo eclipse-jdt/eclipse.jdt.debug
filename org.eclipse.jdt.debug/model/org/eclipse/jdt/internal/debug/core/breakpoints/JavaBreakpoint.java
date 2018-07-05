@@ -994,7 +994,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 
 	protected String getMarkerMessage(int hitCount, int suspendPolicy) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		if (hitCount > 0) {
 			buff.append(MessageFormat
 					.format(JDIDebugBreakpointMessages.JavaBreakpoint___Hit_Count___0___1,
@@ -1434,7 +1434,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @throws CoreException
 	 */
 	private void writeBreakpointListeners() throws CoreException {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Iterator<String> iterator = fBreakpointListenerIds.iterator();
 		while (iterator.hasNext()) {
 			buf.append(iterator.next());

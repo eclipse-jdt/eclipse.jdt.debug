@@ -132,7 +132,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		 * JNI signature examples: int[][] -> [[I long[] -> [J java.lang.String
 		 * -> Ljava/lang/String; java.lang.String[] -> [Ljava/lang/String;
 		 */
-		StringBuffer signature = new StringBuffer();
+		StringBuilder signature = new StringBuilder();
 
 		int firstBrace = qualifiedName.indexOf('[');
 		if (firstBrace < 0) {
@@ -220,7 +220,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		if (signature.indexOf('[') < 0) {
 			return signature;
 		}
-		StringBuffer name = new StringBuffer();
+		StringBuilder name = new StringBuilder();
 		String type = signature.substring(signature.lastIndexOf('[') + 1);
 		if (type.length() == 1 && isPrimitiveSignature(type)) {
 			name.append(getPrimitiveSignatureToName(type.charAt(0)));

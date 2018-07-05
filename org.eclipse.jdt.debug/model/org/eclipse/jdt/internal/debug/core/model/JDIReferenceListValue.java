@@ -215,7 +215,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	 *         pane
 	 */
 	public String getDetailString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Object[] elements = getReferences();
 		if (elements.length == 0) {
 			buf.append(JDIDebugModelMessages.JDIReferenceListValue_2);

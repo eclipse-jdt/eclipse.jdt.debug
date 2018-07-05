@@ -138,7 +138,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	private IType fType;
 	private int fLine;
 
-	private StringBuffer fSource;
+	private StringBuilder fSource;
 
 	private String fLastTypeName;
 
@@ -257,8 +257,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return fError;
 	}
 
-	private StringBuffer buildRunMethod(List<BodyDeclaration> bodyDeclarations) {
-		StringBuffer buffer = new StringBuffer();
+	private StringBuilder buildRunMethod(List<BodyDeclaration> bodyDeclarations) {
+		StringBuilder buffer = new StringBuilder();
 
 		if (fCreateInAStaticMethod) {
 			buffer.append("static "); //$NON-NLS-1$
@@ -302,7 +302,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * @param buffer
 	 * @since 3.8.0
 	 */
-	void adddTypeParameters(StringBuffer buffer) {
+	void adddTypeParameters(StringBuilder buffer) {
 		if (isSourceLevelGreaterOrEqual(1, 5)) {
 			Collection<String> activeTypeParameters = (fMatchingTypeParameters != null ? fMatchingTypeParameters : fTypeParameterStack.peek()).values();
 			if (!activeTypeParameters.isEmpty()) {
@@ -359,8 +359,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return false;
 	}
 
-	private StringBuffer buildTypeBody(StringBuffer buffer, List<BodyDeclaration> list) {
-		StringBuffer source = new StringBuffer();
+	private StringBuilder buildTypeBody(StringBuilder buffer, List<BodyDeclaration> list) {
+		StringBuilder source = new StringBuilder();
 
 		source.append('{').append('\n');
 
@@ -374,9 +374,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return source;
 	}
 
-	private StringBuffer buildEnumBody(StringBuffer buffer,
+	private StringBuilder buildEnumBody(StringBuilder buffer,
 			List<EnumConstantDeclaration> constantDeclarations, List<BodyDeclaration> bodyDeclarations) {
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 
 		source.append('{').append('\n');
 		if (constantDeclarations.isEmpty()) {
@@ -416,8 +416,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 *            the list of {@link BodyDeclaration}s
 	 * @return the new source buffer
 	 */
-	private StringBuffer buildBody(StringBuffer buffer, List<BodyDeclaration> list) {
-		StringBuffer source = new StringBuffer();
+	private StringBuilder buildBody(StringBuilder buffer, List<BodyDeclaration> list) {
+		StringBuilder source = new StringBuilder();
 		if (buffer != null) {
 			fSnippetStartPosition += source.length();
 			source.append(buffer.toString());
@@ -445,8 +445,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return source;
 	}
 
-	private StringBuffer buildFieldDeclaration(FieldDeclaration fieldDeclaration) {
-		StringBuffer source = new StringBuffer();
+	private StringBuilder buildFieldDeclaration(FieldDeclaration fieldDeclaration) {
+		StringBuilder source = new StringBuilder();
 
 		source.append(Flags.toString(fieldDeclaration.getModifiers()));
 		source.append(' ');
@@ -475,9 +475,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return source;
 	}
 
-	private StringBuffer buildMethodDeclaration(
+	private StringBuilder buildMethodDeclaration(
 			MethodDeclaration methodDeclaration) {
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 		int modifiers = methodDeclaration.getModifiers();
 		source.append(Flags.toString(modifiers));
 		source.append(' ');
@@ -547,7 +547,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return source;
 	}
 
-	private void appendExtraDimensions(StringBuffer source, int extraDimension) {
+	private void appendExtraDimensions(StringBuilder source, int extraDimension) {
 		if (extraDimension > 0) {
 			source.append(' ');
 			for (int i = 0; i < extraDimension; i++) {
@@ -556,9 +556,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		}
 	}
 
-	private StringBuffer buildEnumDeclaration(StringBuffer buffer,
+	private StringBuilder buildEnumDeclaration(StringBuilder buffer,
 			EnumDeclaration enumDeclaration) {
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 		source.append(Flags.toString(enumDeclaration.getModifiers()));
 		source.append(" enum "); //$NON-NLS-1$
 
@@ -583,10 +583,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return source;
 	}
 
-	private StringBuffer buildTypeDeclaration(StringBuffer buffer,
+	private StringBuilder buildTypeDeclaration(StringBuilder buffer,
 			TypeDeclaration typeDeclaration) {
 
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 		source.append(Flags.toString(typeDeclaration.getModifiers()));
 		if (typeDeclaration.isInterface()) {
 			source.append(" interface "); //$NON-NLS-1$
@@ -658,9 +658,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		return source;
 	}
 
-	private StringBuffer buildCompilationUnit(StringBuffer buffer,
+	private StringBuilder buildCompilationUnit(StringBuilder buffer,
 			CompilationUnit compilationUnit) {
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 
 		PackageDeclaration packageDeclaration = compilationUnit.getPackage();
 		if (packageDeclaration != null) {
@@ -808,7 +808,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 					+ qualifiedType.getName().getIdentifier();
 		} else if (type.isParameterizedType()) {
 			ParameterizedType parameterizedType = (ParameterizedType) type;
-			StringBuffer buff = new StringBuffer(
+			StringBuilder buff = new StringBuilder(
 					getTypeName(parameterizedType.getType()));
 			Iterator<Type> iter = parameterizedType.typeArguments().iterator();
 			if (iter.hasNext() && isSourceLevelGreaterOrEqual(1, 5)) {
@@ -823,7 +823,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			return buff.toString();
 		} else if (type.isWildcardType()) {
 			WildcardType wildcardType = (WildcardType) type;
-			StringBuffer buff = new StringBuffer("?"); //$NON-NLS-1$
+			StringBuilder buff = new StringBuilder("?"); //$NON-NLS-1$
 			Type bound = wildcardType.getBound();
 			if (bound != null) {
 				buff.append(wildcardType.isUpperBound() ? " extends " : " super "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -881,7 +881,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				List<BodyDeclaration> bodyDeclarations = anonymousClassDeclaration
 						.bodyDeclarations();
 
-				StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
+				StringBuilder source = buildTypeBody(fSource, bodyDeclarations);
 
 				ASTNode parent = node.getParent();
 				while (!(parent instanceof MethodDeclaration
@@ -890,7 +890,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 					parent = parent.getParent();
 				}
 
-				fSource = new StringBuffer();
+				fSource = new StringBuilder();
 
 				if (parent instanceof Initializer) {
 					buildAnonymousEvalMethod(true, bodyDeclarations,
@@ -954,7 +954,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * @since 3.7
 	 */
 	void buildAnonymousEvalMethod(boolean isstatic, List<BodyDeclaration> bodydecls,
-			String typename, StringBuffer body) {
+			String typename, StringBuilder body) {
 		if (isstatic) {
 			fSource.append("static "); //$NON-NLS-1$
 		}
@@ -1033,7 +1033,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 		if (rightTypeFound()) {
 
-			StringBuffer source = buildEnumDeclaration(fSource, node);
+			StringBuilder source = buildEnumDeclaration(fSource, node);
 
 			if (node.isLocalTypeDeclaration()) {
 				// enclose in a method if necessary
@@ -1044,7 +1044,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				}
 				MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
 
-				fSource = new StringBuffer();
+				fSource = new StringBuilder();
 
 				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
 					fSource.append("static "); //$NON-NLS-1$
@@ -1097,7 +1097,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 		if (rightTypeFound()) {
 
-			StringBuffer source = buildTypeDeclaration(fSource, node);
+			StringBuilder source = buildTypeDeclaration(fSource, node);
 
 			if (node.isLocalTypeDeclaration()) {
 				// enclose in a method if nessecary
@@ -1108,7 +1108,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				}
 				MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
 
-				fSource = new StringBuffer();
+				fSource = new StringBuilder();
 
 				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
 					fSource.append("static "); //$NON-NLS-1$
@@ -2127,7 +2127,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * @param typeParameters
 	 *            the list of {@link TypeParameter}s to add
 	 */
-	private void appendTypeParameters(StringBuffer source, List<TypeParameter> typeParameters) {
+	private void appendTypeParameters(StringBuilder source, List<TypeParameter> typeParameters) {
 		if (!typeParameters.isEmpty() && isSourceLevelGreaterOrEqual(1, 5)) {
 			source.append('<');
 			Iterator<TypeParameter> iter = typeParameters.iterator();

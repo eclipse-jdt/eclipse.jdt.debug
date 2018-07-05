@@ -91,7 +91,7 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 			IPackageFragmentRoot fragmentRoot = container.getPackageFragmentRoot();
 			IPath path = fragmentRoot.getPath();
 			if (path.segmentCount() > 0) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append(path.lastSegment());
 				if (path.segmentCount() > 1) {
 					buffer.append(" - "); //$NON-NLS-1$

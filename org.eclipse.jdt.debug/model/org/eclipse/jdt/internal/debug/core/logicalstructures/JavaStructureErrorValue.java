@@ -115,7 +115,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	public IVariable[] getVariables() throws DebugException {
 		IVariable[] variables = new IVariable[fMessages.length];
 		for (int i = 0; i < variables.length; i++) {
-			StringBuffer varName = new StringBuffer();
+			StringBuilder varName = new StringBuilder();
 			if (variables.length > 1) {
 				varName.append(
 						LogicalStructuresMessages.JavaStructureErrorValue_0)

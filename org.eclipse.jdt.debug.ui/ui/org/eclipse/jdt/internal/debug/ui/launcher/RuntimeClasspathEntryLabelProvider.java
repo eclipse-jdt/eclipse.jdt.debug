@@ -142,7 +142,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{path.toOSString()});
 				}
 				String[] segments = path.segments();
-				StringBuffer displayPath = new StringBuffer();
+				StringBuilder displayPath = new StringBuilder();
 				if (segments.length > 0) {
 					displayPath.append(segments[segments.length - 1]);
 					displayPath.append(" - "); //$NON-NLS-1$
@@ -161,7 +161,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 			case IRuntimeClasspathEntry.VARIABLE:
 				path = entry.getPath();
 				IPath srcPath = entry.getSourceAttachmentPath();
-				StringBuffer buf = new StringBuffer(path.toString());
+				StringBuilder buf = new StringBuilder(path.toString());
 				if (srcPath != null) {
 					buf.append(" ["); //$NON-NLS-1$
 					buf.append(srcPath.toString());

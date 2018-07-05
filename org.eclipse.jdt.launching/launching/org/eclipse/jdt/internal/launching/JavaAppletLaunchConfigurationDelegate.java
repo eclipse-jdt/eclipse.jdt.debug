@@ -108,7 +108,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		File tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$
 		try (FileOutputStream stream = new FileOutputStream(tempFile)) {
 			String encoding = getLaunchManager().getEncoding(configuration);
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append("<html>\n"); //$NON-NLS-1$
 			buf.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + encoding + "\"/>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buf.append("<body>\n"); //$NON-NLS-1$
@@ -185,7 +185,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			return text;
 		}
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		while (current > -1) {
 			buffer.append(text.substring(previous, current));
 			buffer.append(s);
@@ -346,7 +346,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 */
 	@Override
 	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		StringBuffer arguments = new StringBuffer(super.getVMArguments(configuration));
+		StringBuilder arguments = new StringBuilder(super.getVMArguments(configuration));
 		File workingDir = verifyWorkingDirectory(configuration);
 		String javaPolicyFile = getJavaPolicyFile(workingDir);
 		arguments.append(" "); //$NON-NLS-1$
