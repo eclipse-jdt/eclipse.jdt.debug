@@ -144,7 +144,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	 * @since 3.3
 	 */
 	public List<LaunchShortcutExtension> getApplicableLaunchShortcuts(String typeid) {
-		List<LaunchShortcutExtension> list = new ArrayList<LaunchShortcutExtension>();
+		List<LaunchShortcutExtension> list = new ArrayList<>();
 		LaunchShortcutExtension ext = null;
 		List<LaunchShortcutExtension> shortcuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		for(int i = 0; i < shortcuts.size(); i++) {

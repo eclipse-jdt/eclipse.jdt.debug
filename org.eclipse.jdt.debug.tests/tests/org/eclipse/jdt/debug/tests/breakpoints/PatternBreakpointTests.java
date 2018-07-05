@@ -41,7 +41,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	public void testPatternBreakpoints() throws Exception {
 		String sourceName = "Breakpoints.java";
 		String pattern = "Break";
-		List<IJavaPatternBreakpoint> bps = new ArrayList<IJavaPatternBreakpoint>();
+		List<IJavaPatternBreakpoint> bps = new ArrayList<>();
 		// anonymous class
 		bps.add(createPatternBreakpoint(43, sourceName, pattern));
 		// blocks
@@ -176,7 +176,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	public void testSkipPatternBreakpoint() throws Exception {
 		String sourceName = "Breakpoints.java";
 		String pattern = "Break";
-		List<IJavaPatternBreakpoint> bps = new ArrayList<IJavaPatternBreakpoint>();
+		List<IJavaPatternBreakpoint> bps = new ArrayList<>();
 		// anonymous class
 		bps.add(createPatternBreakpoint(43, sourceName, pattern));
 		// blocks

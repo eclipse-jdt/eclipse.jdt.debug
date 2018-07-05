@@ -40,8 +40,8 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 
 	class Listener implements IBreakpointListener {
 
-		List<IBreakpoint> added = new ArrayList<IBreakpoint>();
-		List<IBreakpoint> removed = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> added = new ArrayList<>();
+		List<IBreakpoint> removed = new ArrayList<>();
 
 		@Override
 		public void breakpointAdded(IBreakpoint breakpoint) {

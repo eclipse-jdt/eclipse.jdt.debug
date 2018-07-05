@@ -67,7 +67,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	private MyPerspectiveListener fPerspectiveListener;
 	private MyAnnotationListener fAnnotationListener;
 	private IPartListener2 fPartListener;
-	private Set<IAnnotationModel> fAnnotationModelsWithListeners = new HashSet<IAnnotationModel>();
+	private Set<IAnnotationModel> fAnnotationModelsWithListeners = new HashSet<>();
 
 	private static final String typeThreadStack = "org.eclipse.debug.tests.targets.ThreadStack";
 	private static final String typeClassOne = "org.eclipse.debug.tests.targets.ClassOne";

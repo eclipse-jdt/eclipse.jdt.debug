@@ -39,7 +39,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	 * @return the set of modes this tab supports
 	 */
 	public Set<String> getModes() {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add("alternate");
 		return modes;
 	}

@@ -71,7 +71,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/**
 	 * List of breakpoints with compilation errors
 	 */
-	public static List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<IJavaLineBreakpoint>();
+	public static List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<>();
 
 	/**
 	 * Lock used to notify when a notification is received.
@@ -81,7 +81,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/**
 	 * List of breakpoints with runtime errors
 	 */
-	public static List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<IJavaLineBreakpoint>();
+	public static List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<>();
 
 	public static void reset() {
 		VOTE = IJavaBreakpointListener.DONT_CARE;

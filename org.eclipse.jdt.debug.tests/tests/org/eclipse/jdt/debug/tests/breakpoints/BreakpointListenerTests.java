@@ -79,7 +79,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * @return List
 	 */
 	protected List<IJavaLineBreakpoint> createBreakpoints(String typeName) throws Exception {
-		List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
+		List<IJavaLineBreakpoint> bps = new ArrayList<>();
 		// anonymous class
 		bps.add(createUnregisteredLineBreakpoint(43, typeName));
 		// blocks

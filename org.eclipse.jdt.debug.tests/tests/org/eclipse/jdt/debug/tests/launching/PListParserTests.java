@@ -49,7 +49,7 @@ public class PListParserTests extends AbstractDebugTest {
 			Object[] jres = (Object[]) obj;
 			assertEquals("Should be 3 entries in the array", 3, jres.length);
 			// the first map
-			HashMap<String, Comparable<?>> map = new HashMap<String, Comparable<?>>();
+			HashMap<String, Comparable<?>> map = new HashMap<>();
 			map.put("JVMArch", "i386");
 			map.put("JVMBundleID", "com.apple.javajdk15");
 			map.put("JVMEnabled", Boolean.TRUE);
@@ -62,7 +62,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("testint", new Integer(42));
 			assertEquals("Incorrect values parsed", map, jres[0]);
 
-			map = new HashMap<String, Comparable<?>>();
+			map = new HashMap<>();
 			map.put("JVMArch", "x86_64");
 			map.put("JVMBundleID", "com.apple.javajdk16");
 			map.put("JVMEnabled", Boolean.TRUE);
@@ -73,7 +73,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("JVMVersion", "1.6.0_20");
 			assertEquals("Incorrect values parsed", map, jres[1]);
 
-			map = new HashMap<String, Comparable<?>>();
+			map = new HashMap<>();
 			map.put("JVMArch", "x86_64");
 			map.put("JVMBundleID", "com.apple.javajdk15");
 			map.put("JVMEnabled", Boolean.TRUE);

@@ -49,7 +49,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 		JDIDebugPlugin.getDefault().addJavaBreakpointListener(this);
 
 		String sourceName = "Breakpoints.java";
-		List<IJavaTargetPatternBreakpoint> bps = new ArrayList<IJavaTargetPatternBreakpoint>();
+		List<IJavaTargetPatternBreakpoint> bps = new ArrayList<>();
 		// anonymous class
 		bps.add(createTargetPatternBreakpoint(43, sourceName));
 		// blocks

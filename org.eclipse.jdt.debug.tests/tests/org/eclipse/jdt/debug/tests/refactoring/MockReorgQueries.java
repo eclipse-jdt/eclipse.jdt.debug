@@ -18,7 +18,7 @@ import org.eclipse.jdt.internal.corext.refactoring.reorg.IConfirmQuery;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgQueries;
 
 public class MockReorgQueries implements IReorgQueries {
-	private final List<Integer> fQueriesRun= new ArrayList<Integer>();
+	private final List<Integer> fQueriesRun= new ArrayList<>();
 
 	@Override
 	public IConfirmQuery createYesNoQuery(String queryTitle, boolean allowCancel, int queryID) {

@@ -43,7 +43,7 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testDeferredBreakpoints() throws Exception {
 		String typeName = "Breakpoints";
-		List<IBreakpoint> bps = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> bps = new ArrayList<>();
 		int[] lines = new int[]{
 				43,		// anonymous class
 				102,	// blocks

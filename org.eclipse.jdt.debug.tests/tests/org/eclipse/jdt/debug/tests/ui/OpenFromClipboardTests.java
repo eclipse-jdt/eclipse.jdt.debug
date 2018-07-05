@@ -132,7 +132,7 @@ public class OpenFromClipboardTests extends TestCase {
 	}
 
 	private List<?> getJavaElementMatches(final String textData) {
-		final List<?> matches = new ArrayList<Object>();
+		final List<?> matches = new ArrayList<>();
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {

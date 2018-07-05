@@ -103,7 +103,7 @@ public class JavaStackTraceConsoleTest extends AbstractDebugTest {
 	private String[] linkTextsAtPositions(int... offsets) throws BadLocationException {
 		IDocument document = fConsole.getDocument();
 
-		List<String> texts = new ArrayList<String>(offsets.length);
+		List<String> texts = new ArrayList<>(offsets.length);
 		List<Position> positions = linkPositions(offsets);
 		for (Position pos : positions) {
 			String matchText = document.get(pos.getOffset(), pos.getLength());
@@ -113,7 +113,7 @@ public class JavaStackTraceConsoleTest extends AbstractDebugTest {
 	}
 
 	private List<Position> linkPositions(int... offsets) {
-		List<Position> filteredPositions = new ArrayList<Position>(offsets.length);
+		List<Position> filteredPositions = new ArrayList<>(offsets.length);
 		for (Position position : allLinkPositions()) {
 			for (int offset : offsets) {
 				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {

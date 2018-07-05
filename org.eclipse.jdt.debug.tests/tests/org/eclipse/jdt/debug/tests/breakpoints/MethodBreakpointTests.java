@@ -46,7 +46,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testEntryAndExitBreakpoints() throws Exception {
 		String typeName = "DropTests";
-		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<>();
 		// method 4 - entry
 		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 		// method 1 - exit
@@ -133,7 +133,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testInnerClassNotHit() throws Exception {
 		String typeNamePattern = "A";
-		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<>();
 		// method b - entry
 		bps.add(createMethodBreakpoint(typeNamePattern, "b", "()V", true, false));
 
@@ -162,7 +162,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testInnerClassesHit() throws Exception {
 		String typeNamePattern = "A*";
-		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<>();
 		// method b - entry
 		bps.add(createMethodBreakpoint(typeNamePattern, "b", "()V", true, false));
 
@@ -408,7 +408,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testSkipMethodBreakpoint() throws Exception {
 		String typeName = "DropTests";
-		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<>();
 		// method 4 - entry
 		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 		// method 1 - exit

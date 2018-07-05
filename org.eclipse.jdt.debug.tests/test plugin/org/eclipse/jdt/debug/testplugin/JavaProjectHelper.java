@@ -466,7 +466,7 @@ public class JavaProjectHelper {
 	public static void removeFromClasspath(IJavaProject jproject, IPath path) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
 		int nEntries= oldEntries.length;
-		ArrayList<IClasspathEntry> list= new ArrayList<IClasspathEntry>(nEntries);
+		ArrayList<IClasspathEntry> list= new ArrayList<>(nEntries);
 		for (int i= 0 ; i < nEntries ; i++) {
 			IClasspathEntry curr= oldEntries[i];
 			if (!path.equals(curr.getPath())) {
@@ -485,7 +485,7 @@ public class JavaProjectHelper {
 	 */
 	public static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
-		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(oldEntries.length);
+		ArrayList<IClasspathEntry> entries = new ArrayList<>(oldEntries.length);
 		for (int i= 0; i < oldEntries.length; i++) {
 			if (oldEntries[i].equals(cpe)) {
 				return;
@@ -570,7 +570,7 @@ public class JavaProjectHelper {
 	 */
 	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List<File> files = new ArrayList<File>(1);
+		List<File> files = new ArrayList<>(1);
 		files.add(file);
 		try {
 			ImportOperation op= new ImportOperation(destPath, file.getParentFile(), structureProvider, new ImportOverwriteQuery(), files);
@@ -590,7 +590,7 @@ public class JavaProjectHelper {
 	private static void addJavaFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();
 		if(files != null) {
-			List<File> subDirs = new ArrayList<File>(2);
+			List<File> subDirs = new ArrayList<>(2);
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isFile()) {
 					collection.add(files[i]);

@@ -46,7 +46,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		String typeName = "Breakpoints";		 //$NON-NLS-1$
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		getLaunchManager().addLaunchListener(this);
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		set.add(ILaunchManager.DEBUG_MODE);
 		ensurePreferredDelegate(configuration, set);
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
