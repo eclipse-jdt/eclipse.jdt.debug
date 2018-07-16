@@ -17,6 +17,7 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 
@@ -55,7 +56,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		if (vm == null) {
 			requestFailed(
 					JDIDebugModelMessages.JDIModificationVariable_Unable_to_generate_value___VM_disconnected__1,
-					null);
+					new VMDisconnectedException());
 		}
 		String signature = getJavaType().getSignature();
 		Value vmValue = null;

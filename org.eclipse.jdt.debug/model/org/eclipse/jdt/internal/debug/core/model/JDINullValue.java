@@ -201,7 +201,7 @@ public class JDINullValue extends JDIObjectValue {
 		buffer.append(')');
 		requestFailed(MessageFormat.format(
 				JDIDebugModelMessages.JDINullValue_0,
-				buffer.toString()), null);
+				buffer.toString()), new NullPointerException());
 		return null;
 	}
 

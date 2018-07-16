@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
 import org.eclipse.osgi.util.NLS;
 
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 
 public class LocalVariableCreation extends CompoundInstruction {
@@ -90,7 +91,7 @@ public class LocalVariableCreation extends CompoundInstruction {
 				debugTarget
 						.requestFailed(
 								InstructionsEvaluationMessages.LocalVariableCreation_Execution_failed___VM_disconnected__1,
-								null);
+								new VMDisconnectedException());
 			}
 			type = JDIType.createType(debugTarget, PrimitiveTypeImpl.create(
 					(VirtualMachineImpl) vm, fTypeSignature));

@@ -125,7 +125,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 		} else {
 			target.requestFailed(
 					JDIDebugBreakpointMessages.JavaTargetPatternBreakpoint_Unable_to_add_breakpoint___VM_disconnected__1,
-					null);
+					new VMDisconnectedException());
 		}
 	}
 

@@ -332,7 +332,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 		}
 		target.requestFailed(
 				JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1,
-				null);
+				new VMDisconnectedException());
 		return null;
 	}
 

@@ -194,7 +194,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 		if (manager == null) {
 			target.requestFailed(
 					JDIDebugBreakpointMessages.JavaExceptionBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1,
-					null);
+					new VMDisconnectedException());
 			return null;
 		}
 
