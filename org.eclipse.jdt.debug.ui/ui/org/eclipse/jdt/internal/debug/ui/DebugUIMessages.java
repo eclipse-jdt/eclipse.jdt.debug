@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1;
 	public static String JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1;
 	public static String JavaDebugPreferencePage_ShowStepResult_1;
+	public static String JavaDebugPreferencePage_ShowStepTimeout_ms_1;
 	public static String JavaDebugPreferencePage_Communication_1;
 	public static String JavaDebugPreferencePage_Debugger__timeout__2;
 	public static String JavaDebugPreferencePage__Launch_timeout__ms___1;

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.debug; singleton:=true
-Bundle-Version: 3.11.200.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-ClassPath: jdi.jar,
  jdimodel.jar,
  tools.jar

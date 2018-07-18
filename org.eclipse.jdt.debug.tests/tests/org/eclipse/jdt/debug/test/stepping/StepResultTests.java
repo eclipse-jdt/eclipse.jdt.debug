@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Till Brychcy and others.
+ * Copyright (c) 2018 Till Brychcy and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.test.stepping;
 
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
@@ -20,7 +22,9 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -535,4 +539,31 @@ public class StepResultTests extends AbstractDebugTest {
 		}
 	}
 
+	public void testNoReturnValueAfterStepReturnWhichExceedsTimeout() throws Exception {
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		int origPrefValue = node.getInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT);
+		node.putInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, -1);
+
+		String typeName = "StepResult1";
+		ILineBreakpoint bp1 = createLineBreakpoint(28, "StepResult1");
+		bp1.setEnabled(true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp1, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("h", stackFrame.getMethodName());
+
+			thread = stepReturn(stackFrame);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			IVariable varInG = stackFrame.getVariables()[0];
+			assertEquals("no method return value", varInG.getName());
+			assertEquals("(Not observed to speed up the long running step operation)", varInG.getValue().toString());
+		} finally {
+			node.putInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, origPrefValue);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
 }

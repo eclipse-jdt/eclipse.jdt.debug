@@ -411,6 +411,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				} else if (methodResult.fResultType == ResultType.throwing) {
 					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ThrowingException, methodResult.fMethod.name());
 					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+				} else if (methodResult.fResultType == ResultType.step_timeout) {
+					String msg = JDIDebugModelMessages.JDIStackFrame_NotObservedBecauseOfTimeout;
+					variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), msg), false));
 				}
 			} else if(JDIThread.showStepResultIsEnabled()) {
 				variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), ""), false)); //$NON-NLS-1$
