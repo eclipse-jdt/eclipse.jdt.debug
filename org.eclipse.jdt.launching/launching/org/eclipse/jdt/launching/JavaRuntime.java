@@ -979,87 +979,42 @@ public final class JavaRuntime {
 	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project, boolean excludeTestCode) throws CoreException {
-		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
-		if (!(project instanceof JavaProject)) {
-			return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
-		}
-		JavaProject javaProject = (JavaProject) project;
-		IClasspathEntry[] entries = javaProject.getExpandedClasspath(excludeTestCode);
-
 		IClasspathEntry entry1 = JavaCore.newProjectEntry(project.getProject().getFullPath());
-		if (isModularProject(project)) {
-			classpathEntries.add(new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.MODULE_PATH));
-		} else {
-			classpathEntries.add(new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.CLASS_PATH));
-		}
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			switch (entry.getEntryKind()) {
-				case IClasspathEntry.CPE_CONTAINER:
-					IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-					if (container != null) {
-						switch (container.getKind()) {
-							case IClasspathContainer.K_APPLICATION:
-								// don't look at application entries
-								break;
-							case IClasspathContainer.K_DEFAULT_SYSTEM:
-								if (isModule(entry, project)) {
-									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.MODULE_PATH, project));
-								} else {
-									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.CLASS_PATH, project));
-								}
-								break;
-							case IClasspathContainer.K_SYSTEM:
-								if (isModule(entry, project)) {
-									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.MODULE_PATH, project));
-								} else {
-									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.CLASS_PATH, project));
-								}
-								break;
-						}
-					}
-					break;
-				case IClasspathEntry.CPE_PROJECT:
-					String name = entry.getPath().lastSegment();
-					IProject dep = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-					IJavaProject javaProject1 = JavaCore.create(dep);
-					if (isModule(entry, project)) {
-						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject1, IRuntimeClasspathEntry.MODULE_PATH));
+		List<Object> classpathEntries = new ArrayList<>(5);
+		List<IClasspathEntry> expanding = new ArrayList<>(5);
+		boolean exportedEntriesOnly = Platform.getPreferencesService().getBoolean(LaunchingPlugin.ID_PLUGIN, JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false, null);
+		DefaultProjectClasspathEntry.expandProject(entry1, classpathEntries, expanding, excludeTestCode, exportedEntriesOnly, project, true);
+		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries.size()];
+		for (int i = 0; i < runtimeEntries.length; i++) {
+			Object e = classpathEntries.get(i);
+			if (e instanceof IClasspathEntry) {
+				IClasspathEntry cpe = (IClasspathEntry) e;
+				if (cpe == entry1) {
+					if (isModularProject(project)) {
+						runtimeEntries[i] = new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.MODULE_PATH);
 					} else {
-						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject1, IRuntimeClasspathEntry.CLASS_PATH));
+						runtimeEntries[i] = new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.CLASS_PATH);
 					}
-					break;
-				case IClasspathEntry.CPE_VARIABLE:
-					if (JRELIB_VARIABLE.equals(entry.getPath().segment(0))) {
-						IRuntimeClasspathEntry jre = newVariableRuntimeClasspathEntry(entry.getPath());
-						jre.setClasspathProperty(IRuntimeClasspathEntry.MODULE_PATH);
-						classpathEntries.add(jre);
-					}
-					break;
-				case IClasspathEntry.CPE_LIBRARY:
-					IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
-					if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
-						IRuntimeClasspathEntry r;
-						if (JavaRuntime.isModule(entry, project)) {
-							r = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
-						} else {
-							r = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
-						}
-						r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
-						r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
-						classpathEntries.add(r);
-					}
-					break;
-				default:
-					break;
+				} else {
+					runtimeEntries[i] = new RuntimeClasspathEntry(cpe);
+					DefaultProjectClasspathEntry.adjustClasspathProperty(runtimeEntries[i], cpe);
+				}
+			} else {
+				runtimeEntries[i] = (IRuntimeClasspathEntry) e;
 			}
 		}
-
+		List<IRuntimeClasspathEntry> ordered = new ArrayList<>(runtimeEntries.length);
+		for (int i = 0; i < runtimeEntries.length; i++) {
+			if (runtimeEntries[i].getClasspathProperty() != IRuntimeClasspathEntry.STANDARD_CLASSES
+					&& runtimeEntries[i].getClasspathProperty() != IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
+				ordered.add(runtimeEntries[i]);
+			}
+		}
 		IRuntimeClasspathEntry jreEntry = JavaRuntime.computeModularJREEntry(project);
 		if (jreEntry != null) { // With some jre stub jars don't have jre entries
-			classpathEntries.add(jreEntry);
+			ordered.add(jreEntry);
 		}
-		return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
+		return ordered.toArray(new IRuntimeClasspathEntry[ordered.size()]);
 	}
 
 	/**
