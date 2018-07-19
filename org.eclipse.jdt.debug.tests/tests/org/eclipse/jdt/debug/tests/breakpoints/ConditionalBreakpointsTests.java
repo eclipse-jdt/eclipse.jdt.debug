@@ -13,11 +13,13 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
 
 /**
  * Tests conditional breakpoints.
@@ -193,9 +195,9 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testSuspendLongRunningCondition() throws Exception {
-		String typeName = "MethodLoop";
+		String typeName = "MethodCall";
 		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
-		createConditionalLineBreakpoint(29, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200); return true;", true);
+		createConditionalLineBreakpoint(27, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(1000); return true;", true);
 
 		IJavaThread thread= null;
 		try {
@@ -203,17 +205,22 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			IStackFrame top = thread.getTopStackFrame();
 			assertNotNull("Missing top frame", top);
 			thread.resume();
-			Thread.sleep(100);
+			// wait for evaluation to start
+			long start = System.currentTimeMillis();
+			while ((System.currentTimeMillis() - start) <= DEFAULT_TIMEOUT && !thread.isPerformingEvaluation()) {
+				Thread.sleep(10);
+			}
+			assertTrue("Expected evaluation for second breakpoint", thread.isPerformingEvaluation());
+			/*
+			 * Check that we can suspend during the breakpoint condition evaluation. The suspend will interrupt the evaluation, meaning the
+			 * conditional breakpoint won't actually be hit. Suspending will however result in stopping the thread at the breakpoint location.
+			 */
 			thread.suspend();
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT, ProcessConsole.class);
 			assertTrue("Thread should be suspended", thread.isSuspended());
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("Missing top frame", frame);
 			assertEquals("Wrong location", "calculateSum", frame.getName());
-			thread.resume();
-			Thread.sleep(300);
-			// TODO: see bug 519382 - [tests] testSuspendLongRunningCondition: thread sporadically stays suspended
-			// For whatever reason we sometimes see that thread is not resumed.
-			// assertFalse("Thread should be resumed", thread.isSuspended());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
