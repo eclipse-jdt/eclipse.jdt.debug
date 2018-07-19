@@ -178,44 +178,6 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(PListParserTests.class));
 		}
 
-	//Breakpoints tests
-		addTest(new TestSuite(TypeNameBreakpointTests.class));
-		addTest(new TestSuite(DeferredBreakpointTests.class));
-		addTest(new TestSuite(ConditionalBreakpointsTests.class));
-		addTest(new TestSuite(HitCountBreakpointsTests.class));
-		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
-		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
-		addTest(new TestSuite(PreLaunchBreakpointTest.class));
-		addTest(new TestSuite(ImportBreakpointsTest.class));
-		addTest(new TestSuite(BreakpointWorkingSetTests.class));
-		addTest(new TestSuite(MethodBreakpointTests.class));
-		addTest(new TestSuite(ExceptionBreakpointTests.class));
-		addTest(new TestSuite(WatchpointTests.class));
-		addTest(new TestSuite(PatternBreakpointTests.class));
-		addTest(new TestSuite(TargetPatternBreakpointTests.class));
-		addTest(new TestSuite(BreakpointListenerTests.class));
-		addTest(new TestSuite(JavaBreakpointListenerTests.class));
-		addTest(new TestSuite(MiscBreakpointsTests.class));
-		addTest(new TestSuite(ThreadNameChangeTests.class));
-		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
-		addTest(new TestSuite(RunToLineTests.class));
-		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
-		addTest(new TestSuite(TriggerPointBreakpointsTests.class));
-		addTest(new TestSuite(JavaThreadEventHandlerTests.class));
-
-		if (JavaProjectHelper.isJava8Compatible()) {
-			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
-		}
-		if (JavaProjectHelper.isJava5Compatible()) {
-			addTest(new TestSuite(MethodBreakpointTests15.class));
-			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
-			addTest(new TestSuite(StepIntoSelectionWithGenerics.class));
-			addTest(new TestSuite(ConditionalBreakpointsWithGenerics.class));
-			addTest(new TestSuite(GenericsEvalTests.class));
-			addTest(new TestSuite(DetailFormatterTests.class));
-			addTest(new TestSuite(AlternateStratumTests.class));
-		}
-
 	//Sourcelookup tests
 		addTest(new TestSuite(SourceLookupTests.class));
 		addTest(new TestSuite(FolderSourceContainerTests.class));
@@ -355,5 +317,43 @@ public class AutomatedSuite extends DebugSuite {
 		if (JavaProjectHelper.isJava9Compatible()) {
 			addTest(new TestSuite(LongModulePathTests.class));
 		}
+
+		// Breakpoints tests
+		addTest(new TestSuite(TypeNameBreakpointTests.class));
+		addTest(new TestSuite(DeferredBreakpointTests.class));
+		addTest(new TestSuite(HitCountBreakpointsTests.class));
+		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
+		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
+		addTest(new TestSuite(PreLaunchBreakpointTest.class));
+		addTest(new TestSuite(ImportBreakpointsTest.class));
+		addTest(new TestSuite(BreakpointWorkingSetTests.class));
+		addTest(new TestSuite(MethodBreakpointTests.class));
+		addTest(new TestSuite(ExceptionBreakpointTests.class));
+		addTest(new TestSuite(WatchpointTests.class));
+		addTest(new TestSuite(PatternBreakpointTests.class));
+		addTest(new TestSuite(TargetPatternBreakpointTests.class));
+		addTest(new TestSuite(BreakpointListenerTests.class));
+		addTest(new TestSuite(JavaBreakpointListenerTests.class));
+		addTest(new TestSuite(MiscBreakpointsTests.class));
+		addTest(new TestSuite(ThreadNameChangeTests.class));
+		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
+		addTest(new TestSuite(RunToLineTests.class));
+		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
+		addTest(new TestSuite(TriggerPointBreakpointsTests.class));
+		addTest(new TestSuite(JavaThreadEventHandlerTests.class));
+
+		if (JavaProjectHelper.isJava8Compatible()) {
+			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
+		}
+		if (JavaProjectHelper.isJava5Compatible()) {
+			addTest(new TestSuite(MethodBreakpointTests15.class));
+			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
+			addTest(new TestSuite(StepIntoSelectionWithGenerics.class));
+			addTest(new TestSuite(ConditionalBreakpointsWithGenerics.class));
+			addTest(new TestSuite(GenericsEvalTests.class));
+			addTest(new TestSuite(DetailFormatterTests.class));
+			addTest(new TestSuite(AlternateStratumTests.class));
+		}
+		addTest(new TestSuite(ConditionalBreakpointsTests.class));
 	}
 }
