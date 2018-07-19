@@ -202,7 +202,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		if (offset >= getLength()) {
-			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null);
+			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, new IndexOutOfBoundsException(Integer.toString(offset)));
 		}
 		return new JDIArrayEntryVariable(getJavaDebugTarget(),
 				getArrayReference(), offset, fLogicalParent);
@@ -217,10 +217,10 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	public IVariable[] getVariables(int offset, int length)
 			throws DebugException {
 		if (offset >= getLength()) {
-			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null);
+			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, new IndexOutOfBoundsException(Integer.toString(offset)));
 		}
 		if ((offset + length - 1) >= getLength()) {
-			requestFailed(JDIDebugModelMessages.JDIArrayValue_8, null);
+			requestFailed(JDIDebugModelMessages.JDIArrayValue_8, new IndexOutOfBoundsException(Integer.toString(offset + length - 1)));
 		}
 		IVariable[] variables = new IVariable[length];
 		int index = offset;

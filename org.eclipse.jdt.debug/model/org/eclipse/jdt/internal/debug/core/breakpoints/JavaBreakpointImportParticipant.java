@@ -135,7 +135,7 @@ public class JavaBreakpointImportParticipant implements
 		 * @return the fully qualified name of the enclosing type
 		 */
 		private String getTypeName(ASTNode node) {
-			return getTypeName(node, new StringBuffer());
+			return getTypeName(node, new StringBuilder());
 		}
 
 		/**
@@ -147,7 +147,7 @@ public class JavaBreakpointImportParticipant implements
 		 *            the buffer to write the name into
 		 * @return the fully qualified name of the parent
 		 */
-		private String getTypeName(ASTNode node, StringBuffer buffer) {
+		private String getTypeName(ASTNode node, StringBuilder buffer) {
 			switch (node.getNodeType()) {
 			case ASTNode.COMPILATION_UNIT: {
 				CompilationUnit unit = (CompilationUnit) node;
@@ -341,7 +341,7 @@ public class JavaBreakpointImportParticipant implements
 						}
 					}
 				} else {
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					buffer.append("<init>"); //$NON-NLS-1$
 					collectSyntheticParam(node, rparams);
 					buffer.append(Signature.createMethodSignature(
@@ -423,7 +423,7 @@ public class JavaBreakpointImportParticipant implements
 				return;
 			}
 			ASTNode parent = method.getParent();
-			StringBuffer name = new StringBuffer();
+			StringBuilder name = new StringBuilder();
 			while (parent != null) {
 				parent = parent.getParent();
 				if (parent instanceof AbstractTypeDeclaration) {

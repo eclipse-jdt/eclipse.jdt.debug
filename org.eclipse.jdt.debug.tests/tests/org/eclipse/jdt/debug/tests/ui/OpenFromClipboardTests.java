@@ -132,7 +132,7 @@ public class OpenFromClipboardTests extends TestCase {
 	}
 
 	private List<?> getJavaElementMatches(final String textData) {
-		final List<?> matches = new ArrayList<Object>();
+		final List<?> matches = new ArrayList<>();
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -145,7 +145,7 @@ public class OpenFromClipboardTests extends TestCase {
 	private void setupTypeTest(String typeName) throws CoreException {
 		IPackageFragment pack= fSourceFolder.createPackageFragment("p", false, null);
 		((IContainer)pack.getUnderlyingResource()).setDefaultCharset("UTF-8", null);
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("package p;\n");
 		buf.append("public class " + typeName + " {\n");
 		buf.append("	void getMatching$Pattern(){\n");
@@ -302,7 +302,7 @@ public class OpenFromClipboardTests extends TestCase {
 	// method tests
 	private void setupMethodTest() throws JavaModelException {
 		IPackageFragment pack= fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("package p;\n");
 		buf.append("public class OpenFromClipboardTests {\n");
 		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
@@ -385,7 +385,7 @@ public class OpenFromClipboardTests extends TestCase {
 
 	private void setupMethodWithDollarSignTest() throws JavaModelException {
 		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("package p;\n");
 		buf.append("public class OpenFromClipboard$Tests {\n");
 		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
@@ -434,7 +434,7 @@ public class OpenFromClipboardTests extends TestCase {
 	// member tests
 	private void setupMemberTest() throws JavaModelException {
 		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("package p;\n");
 		buf.append("public class OpenFromClipboardTests {\n");
 		buf.append("	private void invokeOpenFromClipboardCommand(String s) {\n");
@@ -500,7 +500,7 @@ public class OpenFromClipboardTests extends TestCase {
 
 	private void setupQualifiedNameWithDollarSignTest() throws JavaModelException {
 		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("package p;\n");
 		buf.append("public class OpenFromClipboard$Tests {\n");
 		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
@@ -547,7 +547,7 @@ public class OpenFromClipboardTests extends TestCase {
 	// stack element tests
 	private void setupStackElementTest() throws JavaModelException {
 		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("package p;\n");
 		buf.append("public class OpenFromClipboardTests {\n");
 		buf.append("	private void invokeOpenFromClipboardCommand(char ch) {\n");

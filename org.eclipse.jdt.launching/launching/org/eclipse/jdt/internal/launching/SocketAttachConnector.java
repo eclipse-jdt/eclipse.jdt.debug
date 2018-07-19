@@ -184,7 +184,7 @@ public class SocketAttachConnector implements IVMConnector {
 				name = configuration.getName();
 			}
 		}
-		StringBuffer buffer = new StringBuffer(name);
+		StringBuilder buffer = new StringBuilder(name);
 		if(!"".equals(name)) { //$NON-NLS-1$
 			buffer.append(' ');
 		}

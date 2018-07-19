@@ -279,7 +279,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		IJavaBreakpoint jb = getBreakpoint();
 		if (jb instanceof IJavaLineBreakpoint) {
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) jb;
-			StringBuffer lineNumber = new StringBuffer(4);
+			StringBuilder lineNumber = new StringBuilder(4);
 			try {
 				int lNumber = breakpoint.getLineNumber();
 				if (lNumber > 0) {

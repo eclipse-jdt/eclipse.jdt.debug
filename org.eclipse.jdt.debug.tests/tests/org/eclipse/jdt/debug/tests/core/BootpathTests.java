@@ -75,7 +75,7 @@ public class BootpathTests extends AbstractDebugTest {
 		pre.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 		newpath[0] = pre;
 		System.arraycopy(classpath, 0, newpath, 1, classpath.length);
-		List<String> mementos = new ArrayList<String>(newpath.length);
+		List<String> mementos = new ArrayList<>(newpath.length);
 		for (int i = 0; i < newpath.length; i++) {
 			IRuntimeClasspathEntry entry = newpath[i];
 			mementos.add(entry.getMemento());

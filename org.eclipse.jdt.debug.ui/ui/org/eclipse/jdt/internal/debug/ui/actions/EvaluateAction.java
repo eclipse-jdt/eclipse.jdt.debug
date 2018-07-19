@@ -521,7 +521,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 
 	private String format(String message) {
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		int index= 0, pos;
 		while ((pos= message.indexOf('\n', index)) != -1) {
 			result.append("\t\t").append(message.substring(index, index= pos + 1)); //$NON-NLS-1$

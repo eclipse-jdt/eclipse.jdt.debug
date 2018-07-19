@@ -342,7 +342,7 @@ public class VMDefinitionsContainer {
 		} else {
 			String[] vmArgs = vm.getVMArguments();
 			if (vmArgs != null && vmArgs.length > 0) {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				for (int i = 0; i < vmArgs.length; i++) {
 					buffer.append(vmArgs[i] + " "); //$NON-NLS-1$
 				}

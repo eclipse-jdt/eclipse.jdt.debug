@@ -251,7 +251,7 @@ public class ExpressionInputDialog extends TrayDialog {
                 IValue value = variable.getValue();
                 if (!(value instanceof JDINullValue)) {
                     String currentValue= value.getValueString();
-                    StringBuffer buffer= new StringBuffer(currentValue.length());
+                    StringBuilder buffer= new StringBuilder(currentValue.length());
                     buffer.append('"'); // Surround value in quotes
                     char[] chars = currentValue.toCharArray();
                     for (int i = 0; i < chars.length; i++) {

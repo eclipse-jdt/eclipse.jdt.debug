@@ -1250,7 +1250,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if (manager == null || !isAvailable()) {
 			requestFailed(
 					JDIDebugModelMessages.JDIDebugTarget_Unable_to_create_class_prepare_request___VM_disconnected__2,
-					null);
+					new VMDisconnectedException());
 		}
 		ClassPrepareRequest req = null;
 		try {
@@ -2022,7 +2022,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			if (vm == null) {
 				requestFailed(
 						JDIDebugModelMessages.JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4,
-						null);
+						new VMDisconnectedException());
 			}
 			List<ReferenceType> classes = vm.classesByName(name);
 			if (classes.size() == 0) {

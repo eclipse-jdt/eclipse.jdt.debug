@@ -30,7 +30,7 @@ public class JdwpString {
 		byte utfBytes[] = new byte[utfSize];
 		in.readFully(utfBytes);
 		/* Guess at buffer size */
-		StringBuffer strBuffer = new StringBuffer(utfSize / 3 * 2);
+		StringBuilder strBuffer = new StringBuilder(utfSize / 3 * 2);
 		for (int i = 0; i < utfSize;) {
 			int a = utfBytes[i] & 0xFF;
 			if ((a >> 4) < 12) {

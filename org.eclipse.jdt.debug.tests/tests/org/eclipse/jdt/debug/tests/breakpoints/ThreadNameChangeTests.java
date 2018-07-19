@@ -13,7 +13,9 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -155,15 +157,32 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 	}
 
 	private IThread findThread(IJavaThread thread, String name) throws DebugException {
-		IThread t = Arrays.stream(thread.getDebugTarget().getThreads()).filter(x -> {
+		return findThread(thread, name, 5_000);
+	}
+
+	private IThread findThread(IJavaThread thread, String name, long timeout) throws DebugException {
+		Predicate<IThread> predicate = x -> {
 			try {
 				return x.getName().equals(name);
 			}
 			catch (DebugException e1) {
 			}
 			return false;
-		}).findFirst().get();
-		return t;
+		};
+		IThread[] threads = {};
+
+		// Wait until timeout or JDIDebugTarget.ThreadStartHandler has added the thread.
+		long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start <= timeout) {
+			threads = thread.getDebugTarget().getThreads();
+			Optional<IThread> match = Arrays.stream(threads).filter(predicate).findFirst();
+			if (match.isPresent()) {
+				return match.get();
+			}
+		}
+
+		throw new AssertionError("Timeout of " + timeout + "ms reached, thread with name \"" + name + "\" not found in set of threads: "
+				+ Arrays.asList(threads));
 	}
 
 	/**

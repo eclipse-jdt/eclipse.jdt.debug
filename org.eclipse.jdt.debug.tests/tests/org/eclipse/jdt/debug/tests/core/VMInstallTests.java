@@ -253,7 +253,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * @return preference store key
 	 */
 	private String getSystemPropertyKey(IVMInstall vm, String property) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("PREF_VM_INSTALL_SYSTEM_PROPERTY");
 		buffer.append("."); //$NON-NLS-1$
 		buffer.append(vm.getVMInstallType().getId());

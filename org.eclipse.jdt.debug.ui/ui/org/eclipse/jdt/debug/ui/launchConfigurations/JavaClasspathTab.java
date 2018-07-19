@@ -96,6 +96,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	protected ILaunchConfiguration fLaunchConfiguration;
 
 	private Button fExcludeTestCodeButton;
+	private Button fUseClasspathOnlyJarButton;
 
 	/**
 	 * Constructor
@@ -151,6 +152,14 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		fExcludeTestCodeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
+		fUseClasspathOnlyJarButton = SWTFactory.createCheckButton(comp, LauncherMessages.VMArgumentsBlock_1, null, false, 1);
+		fUseClasspathOnlyJarButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				setDirty(true);
 				updateLaunchConfigurationDialog();
 			}
@@ -228,6 +237,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		fClasspathViewer.getTreeViewer().expandToLevel(2);
 		try {
 			fExcludeTestCodeButton.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false));
+			fUseClasspathOnlyJarButton.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_CLASSPATH_ONLY_JAR, false));
 		} catch (CoreException e) {
 		}
 	}
@@ -321,6 +331,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 			catch (CoreException e) {
 				JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e.getStatus());
 			}
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_CLASSPATH_ONLY_JAR, fUseClasspathOnlyJarButton.getSelection());
 		}
 	}
 

@@ -226,7 +226,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.jdt.debug.ui.scrapbookSourcepathProvider"); //$NON-NLS-1$
 			}
 
-			StringBuffer urlsString = new StringBuffer();
+			StringBuilder urlsString = new StringBuilder();
 			for (int i = 0; i < urls.length; i++) {
 				urlsString.append(' ');
 				urlsString.append(urls[i]);
@@ -350,7 +350,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		// NOT File.separatorChar
 		String urlDelimiter= "/"; //$NON-NLS-1$
 		String unencoded= file.toURL().toExternalForm();
-		StringBuffer encoded= new StringBuffer();
+		StringBuilder encoded= new StringBuilder();
 		StringTokenizer tokenizer= new StringTokenizer(unencoded, urlDelimiter);
 
 		encoded.append(tokenizer.nextToken()); //file:

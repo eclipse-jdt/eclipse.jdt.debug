@@ -30,7 +30,7 @@ public class EventSetTests extends AbstractDebugTest {
 
 	public void testDoubleBreakpoint() throws Exception {
 		String typeName = "Breakpoints";
-		List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
+		List<IJavaLineBreakpoint> bps = new ArrayList<>();
 		// add two breakpoints at the same location
 		bps.add(createLineBreakpoint(88, typeName));
 		bps.add(createLineBreakpoint(88, typeName));

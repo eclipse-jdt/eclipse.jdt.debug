@@ -38,7 +38,7 @@ public class CompositeId {
 
 	@Override
 	public String toString() {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		for (int i= 0; i < fParts.length; i++) {
 			buf.append(fParts[i].length());
 			buf.append(',');

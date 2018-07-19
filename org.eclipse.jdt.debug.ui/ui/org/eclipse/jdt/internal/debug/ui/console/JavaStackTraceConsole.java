@@ -210,7 +210,7 @@ public class JavaStackTraceConsole extends TextConsole {
      */
     private String format(String trace) {
         StringTokenizer tokenizer = new StringTokenizer(trace, " \t\n\r\f", true); //$NON-NLS-1$
-        StringBuffer formattedTrace = new StringBuffer();
+        StringBuilder formattedTrace = new StringBuilder();
 
         boolean insideAt = false;
         boolean newLine = true;

@@ -153,7 +153,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	private void createHeadingLabel(Composite parent, VirtualMachineImpl vm) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 2, GridData.HORIZONTAL_ALIGN_BEGINNING);
 		SWTFactory.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1);
-		StringBuffer buff = new StringBuffer(vm.name().trim());
+		StringBuilder buff = new StringBuilder(vm.name().trim());
 		buff = buff.append(" ").append(vm.version().trim()); //$NON-NLS-1$
 		Text text = SWTFactory.createText(comp, SWT.READ_ONLY, 1, buff.toString());
 		text.setBackground(parent.getBackground());

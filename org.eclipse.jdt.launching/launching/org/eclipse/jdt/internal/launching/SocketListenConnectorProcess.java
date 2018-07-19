@@ -405,7 +405,7 @@ public class SocketListenConnectorProcess implements IProcess {
 					name = configuration.getName();
 				}
 			}
-			StringBuffer buffer = new StringBuffer(name);
+			StringBuilder buffer = new StringBuilder(name);
 			if (fConnectionLimit != 1) {
 				// if we're accepting multiple incoming connections,
 				// append the time when each connection was accepted

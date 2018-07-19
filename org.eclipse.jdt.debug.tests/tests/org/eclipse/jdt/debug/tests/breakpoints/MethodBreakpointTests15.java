@@ -94,7 +94,7 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 	 */
 	public void testGenericArrayEntryBreakpoints() throws Exception {
 		String typeName = "a.b.c.GenericMethodEntryTest";
-		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<>();
 		// func(T[] arr, int m, int n) - entry
 		bps.add(createMethodBreakpoint(typeName, "func", "([Ljava/lang/Comparable;II)I", true, false));
 		// func(int m, int n)

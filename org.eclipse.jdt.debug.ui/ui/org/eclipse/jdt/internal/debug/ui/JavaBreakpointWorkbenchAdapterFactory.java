@@ -57,7 +57,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 					return null;
 				}
 				IJavaBreakpoint breakpoint = (IJavaBreakpoint) o;
-				StringBuffer label = new StringBuffer();
+				StringBuilder label = new StringBuilder();
 				try {
 					String type= breakpoint.getTypeName();
 					if (type != null) {

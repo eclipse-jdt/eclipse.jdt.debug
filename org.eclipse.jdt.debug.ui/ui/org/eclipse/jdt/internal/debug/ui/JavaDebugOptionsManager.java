@@ -461,7 +461,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		if (list == null) {
 			return ""; //$NON-NLS-1$
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < list.length; i++) {
 			if (i > 0) {
 				buffer.append(',');
@@ -628,7 +628,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	@Override
 	public void breakpointHasCompilationErrors(final IJavaLineBreakpoint breakpoint, final Message[] errors) {
-		StringBuffer message= new StringBuffer();
+		StringBuilder message= new StringBuilder();
 		Message error;
 		for (int i=0, numErrors= errors.length; i < numErrors; i++) {
 			error= errors[i];

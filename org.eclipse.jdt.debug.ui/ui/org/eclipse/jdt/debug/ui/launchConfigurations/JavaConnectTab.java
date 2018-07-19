@@ -364,7 +364,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			if (editor instanceof StringFieldEditor) {
 				String value = ((StringFieldEditor)editor).getStringValue();
 				if (!arg.isValid(value)) {
-					StringBuffer label = new StringBuffer(LegacyActionTools.removeMnemonics(arg.label()));
+					StringBuilder label = new StringBuilder(LegacyActionTools.removeMnemonics(arg.label()));
 					if (label.lastIndexOf(ConnectMessages.SocketConnectionLabelSeparator) == label.length() - 1) {
 						label = label.deleteCharAt(label.length() - 1);
 					}

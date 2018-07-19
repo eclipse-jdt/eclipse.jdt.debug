@@ -28,7 +28,7 @@ public class PerfDebugBaselineTest extends PerformanceTestCase {
     public void testBaseline() {
         tagAsSummary("Baseline Test", Dimension.ELAPSED_PROCESS);
         Performance perf = Performance.getDefault();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             buffer.append("at org.eclipse.jdt.internal.debug.core.model.JDILocalVariable.retrieveValue(JDILocalVariable.java:56\n");
         }

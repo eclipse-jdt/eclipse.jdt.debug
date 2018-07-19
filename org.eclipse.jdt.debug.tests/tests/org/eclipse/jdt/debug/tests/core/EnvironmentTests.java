@@ -50,7 +50,7 @@ public class EnvironmentTests extends AbstractDebugTest {
 		if (win32) {
 			ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "testWinOSCaseInsensitiveOverride");
-			Map<String, String> override = new HashMap<String, String>();
+			Map<String, String> override = new HashMap<>();
 			override.put("pAtH", "OVERRIDE");
 			workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, override);
 			String[] environment = getLaunchManager().getEnvironment(workingCopy);

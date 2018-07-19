@@ -736,7 +736,7 @@ public abstract class AbstractJDITest extends TestCase {
 	private void launchSunTarget() {
 		try {
 			// Launch target VM
-			StringBuffer binDirectory= new StringBuffer();
+			StringBuilder binDirectory= new StringBuilder();
 			if (fTargetAddress.endsWith("jre")) {
 				binDirectory.append(fTargetAddress.substring(0, fTargetAddress.length() - 4));
 			} else {

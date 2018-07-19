@@ -48,7 +48,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportFile() throws Exception {
 		try {
-			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
+			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<>();
 			String typeName = "DropTests";
 			breakpoints.add(createClassPrepareBreakpoint(typeName));
 			breakpoints.add(createLineBreakpoint(32, typeName));
@@ -88,7 +88,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportBuffer() throws Exception {
 		try {
-			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
+			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<>();
 			String typeName = "DropTests";
 			breakpoints.add(createClassPrepareBreakpoint(typeName));
 			breakpoints.add(createLineBreakpoint(32, typeName));
@@ -117,7 +117,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportOverwrite() throws Exception {
 		try {
-			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
+			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<>();
 			String typeName = "DropTests";
 			breakpoints.add(createClassPrepareBreakpoint(typeName));
 			breakpoints.add(createLineBreakpoint(32, typeName));

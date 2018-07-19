@@ -84,7 +84,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void  gen_main() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTestQualifier(IAA, M1, code);
 		createTestQualifier(IAB, M1, code);
@@ -150,7 +150,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_aa_testA() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestA(code, AA);
 
@@ -158,7 +158,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_ab_testA() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestA(code, AB);
 
@@ -166,7 +166,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_ac_testA() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestA(code, AC);
 
@@ -174,7 +174,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_bb_testA() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestA(code, BB);
 
@@ -182,7 +182,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_bc_testA() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestA(code, BC);
 
@@ -190,7 +190,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_cc_testA() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestA(code, CC);
 
@@ -198,7 +198,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_bb_testB() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestB(code, BB);
 
@@ -206,7 +206,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_bc_testB() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestB(code, BC);
 
@@ -214,7 +214,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_cc_testB() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestB(code, CC);
 
@@ -222,7 +222,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 	public static void gen_cc_testC() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTest_TestC(code, CC);
 
@@ -231,13 +231,13 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 	//-------------
 
-	public static void createTest_TestA(StringBuffer code, int qualifier) {
+	public static void createTest_TestA(StringBuilder code, int qualifier) {
 		createTest(instanceLevel[qualifier], M1, code);
 		createTest(instanceLevel[qualifier], M2, code);
 		createTest(0, S2, code);
 	}
 
-	public static void createTest_TestB(StringBuffer code, int qualifier) {
+	public static void createTest_TestB(StringBuilder code, int qualifier) {
 		createTest(instanceLevel[qualifier], M1, code);
 		createTest(instanceLevel[qualifier], M2, code);
 		createTest(1, S2, code);
@@ -248,7 +248,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		createTestQualifier(SUPER_A, M2, code);
 	}
 
-	public static void createTest_TestC(StringBuffer code, int qualifier) {
+	public static void createTest_TestC(StringBuilder code, int qualifier) {
 		createTest(instanceLevel[qualifier], M1, code);
 		createTest(instanceLevel[qualifier], M2, code);
 		createTest(2, S2, code);
@@ -266,7 +266,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 	//-------------
 
-	public static void createTest(int level, int method, StringBuffer code) {
+	public static void createTest(int level, int method, StringBuilder code) {
 		String strMethod= methods[method];
 		code.append("\tpublic void testEvalNestedTypeTest_" + strMethod + "() throws Throwable {\n");
 		tryBlockBegin(code);
@@ -280,7 +280,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	}
 
 
-	public static void createTestQualifier(int qualifier, int method, StringBuffer code) {
+	public static void createTestQualifier(int qualifier, int method, StringBuilder code) {
 		String strQualifier= qualifiers[qualifier];
 		String nameQualifier= strQualifier.replace('(', '_').replace(')', '_').replace(' ', '_');
 		String strMethod= methods[method];
@@ -299,9 +299,9 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	//------------
 
 
-	public static void createJavaFile(StringBuffer tests, int lineNumber, int numberFrames, int hitCount) throws Exception {
+	public static void createJavaFile(StringBuilder tests, int lineNumber, int numberFrames, int hitCount) throws Exception {
 
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		code.append("/*******************************************************************************\n");
 		code.append(" * Copyright (c) 2002, 2003 IBM Corporation and others.\n");

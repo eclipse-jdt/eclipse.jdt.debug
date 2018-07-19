@@ -35,7 +35,7 @@ public class TypeTests extends AbstractDebugTest {
 		IJavaType[] types = new IJavaType[3];
 		int index = 0;
 		String typeName = "Breakpoints";
-		List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
+		List<IJavaLineBreakpoint> bps = new ArrayList<>();
 		// main
 		bps.add(createLineBreakpoint(52, typeName));
 		// threading
@@ -82,7 +82,7 @@ public class TypeTests extends AbstractDebugTest {
 
     public void testClassLoader() throws Exception {
         String typeName = "Breakpoints";
-        List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
+        List<IJavaLineBreakpoint> bps = new ArrayList<>();
         // instance method
         bps.add(createLineBreakpoint(81, typeName));
         bps.add(createLineBreakpoint(88, typeName));

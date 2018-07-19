@@ -178,7 +178,7 @@ public class MacInstalledJREs {
 								File loc = new File((String)home);
 								//10.8.2+ can have more than one of the same VM, which will have the same name
 								//augment it with the version to make it easier to distinguish
-								StringBuffer namebuff = new StringBuffer(name.toString());
+								StringBuilder namebuff = new StringBuilder(name.toString());
 								namebuff.append(" [").append(ver).append("]");  //$NON-NLS-1$//$NON-NLS-2$
 								MacVMStandin vm = new MacVMStandin(mactype, loc, namebuff.toString(), ver, computeId(map, ver));
 								vm.setJavadocLocation(mactype.getDefaultJavadocLocation(loc));

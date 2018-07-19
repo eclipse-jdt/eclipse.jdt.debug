@@ -33,7 +33,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 	public static void genTestsOperators1() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		genTestTypeBinaryOpTypeBinaryPromotion(T_int, Op_plus, T_int, code);
 		genTestTypeBinaryOpTypeBinaryPromotion(T_String, Op_plus, T_String, code);
@@ -44,7 +44,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 	public static void genTestsOperators2() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		genTestLocalVarAssignment(T_int, code);
 		genTestLocalVarAssignment(T_String, code);
@@ -55,7 +55,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 	public static void genTestsArray() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		genTestArrayValue(T_int, code);
 		genTestArrayLength(T_int, code);
@@ -71,7 +71,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 	public static void genTestsNestedTypes1() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		NestedTypeTestGenerator.createTest('a', 2, code);
 		NestedTypeTestGenerator.createTest('d', 2, code);
@@ -103,7 +103,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 	public static void genTestsNestedTypes2() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		NestedTypeTestGenerator.createTest('f', 0, code);
 		NestedTypeTestGenerator.createTestQualifier(NestedTypeTestGenerator.T_T, 'b', code);
@@ -130,7 +130,7 @@ public class OtherTestsGenerator extends TestGenerator {
 
 
 	public static void genTestsTypeHierarchy1() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		TypeHierarchyTestsGenerator.createTestQualifier(TypeHierarchyTestsGenerator.IAA, TypeHierarchyTestsGenerator.M1, code);
 		TypeHierarchyTestsGenerator.createTestQualifier(TypeHierarchyTestsGenerator.AA, TypeHierarchyTestsGenerator.M2, code);
@@ -159,7 +159,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 	public static void genTestsTypeHierarchy2() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		TypeHierarchyTestsGenerator.createTest_TestC(code, TypeHierarchyTestsGenerator.CC);
 
@@ -170,7 +170,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	 * Method genTestNumberLiteral.
 	 */
 	private static void genTestNumberLiteral() throws Exception {
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		createTestNumberLiteral1("0", T_int, code);
 		createTestNumberLiteral1("00", T_int, code);
@@ -234,7 +234,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	/**
 	 * Method createTestNumberLiteral.
 	 */
-	private static void createTestNumberLiteral1(String literal, int type, StringBuffer code) {
+	private static void createTestNumberLiteral1(String literal, int type, StringBuilder code) {
 		String tName= fTypeName[type];
 
 		code.append("\tpublic void test" + literal.replace('-', 'N').replace('.', '_').replace('+', 'P') + "() throws Throwable {\n");
@@ -249,7 +249,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	/**
 	 * Method createTestNumberLiteral.
 	 */
-	private static void createTestNumberLiteral2(String literal, int type, StringBuffer code) {
+	private static void createTestNumberLiteral2(String literal, int type, StringBuilder code) {
 		String tName= fTypeName[type];
 
 		code.append("\tpublic void test" + literal.replace('-', 'N').replace('.', '_').replace('+', 'P') + "() throws Throwable {\n");
@@ -265,13 +265,13 @@ public class OtherTestsGenerator extends TestGenerator {
 	}
 
 
-	public static void createJavaFile(StringBuffer tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount) throws Exception {
+	public static void createJavaFile(StringBuilder tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount) throws Exception {
 		createJavaFile(tests, className, testClass, lineNumber, numberFrames, hitCount, true);
 	}
 
-	public static void createJavaFile(StringBuffer tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount, boolean importJDIObjectValue) throws Exception {
+	public static void createJavaFile(StringBuilder tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount, boolean importJDIObjectValue) throws Exception {
 
-		StringBuffer code= new StringBuffer();
+		StringBuilder code= new StringBuilder();
 
 		code.append("/*******************************************************************************\n");
 		code.append(" * Copyright (c) 2002, 2003 IBM Corporation and others.\n");

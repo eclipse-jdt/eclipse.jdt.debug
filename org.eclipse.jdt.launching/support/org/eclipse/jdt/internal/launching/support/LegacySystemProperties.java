@@ -19,7 +19,7 @@ package org.eclipse.jdt.internal.launching.support;
 public class LegacySystemProperties {
 
 	public static void main(String[] args) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<systemProperties>\n");    //$NON-NLS-1$
 		for (int i = 0; i < args.length; i++) {
 			String name = args[i];

@@ -83,7 +83,7 @@ public class VMDetailsDialog extends Dialog {
 		} else {
 			String[] args = fVM.getVMArguments();
 			if (args != null) {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				for (int i = 0; i < args.length; i++) {
 					buf.append(args[i]);
 					if (i < (args.length - 1)) {

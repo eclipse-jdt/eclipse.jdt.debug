@@ -258,13 +258,13 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	}
 
 	protected String buildRemainingEventsMessage() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		partsMessage("Parts did not open: ", fExpectingOpenEvents, buffer);
 		partsMessage("Parts did not close: ", fExpectingCloseEvents, buffer);
 		return buffer.toString();
 	}
 
-	private void partsMessage(String header, List<String> partIds, StringBuffer buffer) {
+	private void partsMessage(String header, List<String> partIds, StringBuilder buffer) {
 		String[] ids = partIds.toArray(new String[partIds.size()]);
 		if (ids.length > 0) {
 			buffer.append(header);

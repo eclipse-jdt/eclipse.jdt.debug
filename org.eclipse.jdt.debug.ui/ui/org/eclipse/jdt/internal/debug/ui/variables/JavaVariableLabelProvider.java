@@ -142,7 +142,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			if (value instanceof JDIObjectValue) {
 				long uniqueId = ((JDIObjectValue)value).getUniqueId();
 				if (uniqueId >= 0) {
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					buffer.append(uniqueId);
 					return buffer.toString();
 				}
@@ -161,7 +161,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 						if (count == -1) {
 							return DebugUIMessages.JavaVariableLabelProvider_0;
 						}
-						StringBuffer buffer = new StringBuffer();
+						StringBuilder buffer = new StringBuilder();
 						buffer.append(count);
 						return buffer.toString();
 					}

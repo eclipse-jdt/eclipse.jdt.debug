@@ -69,7 +69,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		String id = fManager.getUserPreferredDetailPane(new HashSet<String>());
 		assertEquals("Incorrect pane ID", null, id);
 
-		Set<String> detailPanes = new HashSet<String>();
+		Set<String> detailPanes = new HashSet<>();
 		detailPanes.add("NewPane1");
 		id = fManager.getUserPreferredDetailPane(detailPanes);
 		assertEquals("Incorrect pane ID", null, id);
@@ -101,7 +101,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		id = fManager.getUserPreferredDetailPane(null);
 		assertEquals("Incorrect pane ID", null, id);
 
-		Set<String> detailPanes = new HashSet<String>();
+		Set<String> detailPanes = new HashSet<>();
 		detailPanes.add("Example1");
 		fManager.setPreferredDetailPane(detailPanes, "Example1");
 		id = fManager.getUserPreferredDetailPane(detailPanes);

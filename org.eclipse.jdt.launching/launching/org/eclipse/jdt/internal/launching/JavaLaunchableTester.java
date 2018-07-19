@@ -404,7 +404,7 @@ public class JavaLaunchableTester extends PropertyTester {
 
 	private boolean findAnnotation(IScanner scanner, String annotationName) throws InvalidInputException {
 		String simpleName= Signature.getSimpleName(annotationName);
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int tok= scanner.getNextToken();
 		while (tok != ITerminalSymbols.TokenNameEOF) {
 			if (tok == ITerminalSymbols.TokenNameAT) {
@@ -421,7 +421,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		return false;
 	}
 
-	private int readName(IScanner scanner, StringBuffer buf) throws InvalidInputException {
+	private int readName(IScanner scanner, StringBuilder buf) throws InvalidInputException {
 		int tok= scanner.getNextToken();
 		while (tok == ITerminalSymbols.TokenNameIdentifier) {
 			buf.append(scanner.getCurrentTokenSource());

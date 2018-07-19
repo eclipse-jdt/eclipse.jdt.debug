@@ -250,9 +250,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			return "java.lang.Object"; //$NON-NLS-1$
 		}
-		StringBuffer name;
+		StringBuilder name;
 		if (typeBinding.isArray()) {
-			name = new StringBuffer(getTypeName(typeBinding.getElementType()));
+			name = new StringBuilder(getTypeName(typeBinding.getElementType()));
 			int dimensions = typeBinding.getDimensions();
 			for (int i = 0; i < dimensions; i++) {
 				name.append("[]"); //$NON-NLS-1$
@@ -260,7 +260,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return name.toString();
 		}
 		//try it the old way
-		name = new StringBuffer(Signature.getTypeErasure(typeBinding.getName()));
+		name = new StringBuilder(Signature.getTypeErasure(typeBinding.getName()));
 		IPackageBinding packageBinding = typeBinding.getPackage();
 		typeBinding = typeBinding.getDeclaringClass();
 		while (typeBinding != null) {
@@ -4397,7 +4397,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return tokenString;
 		}
 		ignore = true;
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(token, 0, start);
 		loop: for (int i = start; i < max; i++) {
 			char currentChar = token[i];

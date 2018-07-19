@@ -174,7 +174,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("["); //$NON-NLS-1$
 		buffer.append(getId());
 		buffer.append("] "); //$NON-NLS-1$

@@ -166,7 +166,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		if (lastLeft < 0) {
 			return typeName;
 		}
-		StringBuffer buffer = new StringBuffer(typeName);
+		StringBuilder buffer = new StringBuilder(typeName);
 		buffer.replace(lastLeft, lastLeft + 2, ""); //$NON-NLS-1$
 		return buffer.toString();
 	}

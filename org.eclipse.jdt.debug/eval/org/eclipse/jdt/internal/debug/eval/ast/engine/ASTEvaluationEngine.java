@@ -167,7 +167,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 */
 	private void traceCaller(String snippet, IThread thread) {
 		if (JDIDebugOptions.DEBUG_AST_EVAL_THREAD_TRACE) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(JDIDebugOptions.FORMAT.format(new Date()));
 			buf.append(" : Evaluation Request Trace - Expression: "); //$NON-NLS-1$
 			buf.append(snippet);
@@ -417,7 +417,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			String recTypeName = "java.lang.Object"; //$NON-NLS-1$
 			String typeName = arrayType.getName();
 			if (componentType instanceof IJavaReferenceType) {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append("java.lang.Object"); //$NON-NLS-1$
 				for (int i = 0; i < dimension; i++) {
 					buf.append("[]"); //$NON-NLS-1$
@@ -638,7 +638,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		@Override
 		public void run() {
 			if (JDIDebugOptions.DEBUG_AST_EVAL) {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append(JDIDebugOptions.FORMAT.format(new Date()));
 				buf.append(" : AST Evaluation"); //$NON-NLS-1$
 				buf.append("\n\tExpression: "); //$NON-NLS-1$
@@ -673,7 +673,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				}
 				evaluationFinished(result);
 				if (JDIDebugOptions.DEBUG_AST_EVAL) {
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					buf.append("\tErrors: "); //$NON-NLS-1$
 					for (int i = 0; i < errors.length; i++) {
 						if (i > 0) {
@@ -768,7 +768,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			result.setTerminated(er.fTerminated);
 			if (exception != null) {
 				if (JDIDebugOptions.DEBUG_AST_EVAL) {
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					buf.append("\tException: "); //$NON-NLS-1$
 					buf.append(exception.toString());
 					JDIDebugOptions.trace(buf.toString());
@@ -783,7 +783,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				if (value != null) {
 					result.setValue(value);
 					if (JDIDebugOptions.DEBUG_AST_EVAL) {
-						StringBuffer buf = new StringBuffer();
+						StringBuilder buf = new StringBuilder();
 						buf.append("\tResult: "); //$NON-NLS-1$
 						buf.append(value);
 						JDIDebugOptions.trace(buf.toString());
@@ -794,7 +794,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 
 			if (JDIDebugOptions.DEBUG_AST_EVAL) {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append("\tDuration: "); //$NON-NLS-1$
 				buf.append(end - start);
 				buf.append("ms"); //$NON-NLS-1$
@@ -822,7 +822,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 */
 	public static String replaceThisReferences(String snippet) {
 		// replace all occurrences of 'this' with 'array_this'
-		StringBuffer updatedSnippet = new StringBuffer();
+		StringBuilder updatedSnippet = new StringBuilder();
 		Matcher matcher = fgThisPattern.matcher(snippet);
 		int start = 0;
 		while (matcher.find()) {

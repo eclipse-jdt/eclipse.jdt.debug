@@ -2527,7 +2527,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (manager == null) {
 				requestFailed(
 						JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__1,
-						null);
+						new VMDisconnectedException());
 			}
 			try {
 				StepRequest request = manager.createStepRequest(fThread,
@@ -3347,7 +3347,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (manager == null) {
 				requestFailed(
 						JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__2,
-						null);
+						new VMDisconnectedException());
 			}
 			int num = getFramesToDrop();
 			if (num > 0) {

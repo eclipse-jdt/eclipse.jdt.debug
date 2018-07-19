@@ -179,7 +179,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		 */
 		private void log(String[] messages) {
 			if (isContributed()) {
-				StringBuffer log = new StringBuffer();
+				StringBuilder log = new StringBuilder();
 				for (String message : messages) {
 					log.append(message).append('\n');
 				}

@@ -181,7 +181,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     			}
     			if (result.hasErrors()) {
     			    DebugException exception = result.getException();
-    			    StringBuffer buffer = new StringBuffer();
+    			    StringBuilder buffer = new StringBuilder();
     			    if (exception == null) {
         			    String[] messages = result.getErrorMessages();
         			    for (int i = 0; i < messages.length; i++) {

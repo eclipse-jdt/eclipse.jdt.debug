@@ -104,7 +104,7 @@ public class EventDispatcher implements Runnable {
 		}
 		if (JDIDebugOptions.DEBUG_JDI_EVENTS) {
 			EventIterator eventIter = eventSet.eventIterator();
-			StringBuffer buf = new StringBuffer("JDI Event Set: {\n"); //$NON-NLS-1$
+			StringBuilder buf = new StringBuilder("JDI Event Set: {\n"); //$NON-NLS-1$
 			while (eventIter.hasNext()) {
 				buf.append(eventIter.next());
 				if (eventIter.hasNext()) {

@@ -187,7 +187,7 @@ public class JDINullValue extends JDIObjectValue {
 	 */
 	private IJavaValue npe(String selector, String signature)
 			throws DebugException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(selector);
 		String[] parameterTypes = Signature.getParameterTypes(signature);
 		buffer.append('(');
@@ -201,7 +201,7 @@ public class JDINullValue extends JDIObjectValue {
 		buffer.append(')');
 		requestFailed(MessageFormat.format(
 				JDIDebugModelMessages.JDINullValue_0,
-				buffer.toString()), null);
+				buffer.toString()), new NullPointerException());
 		return null;
 	}
 

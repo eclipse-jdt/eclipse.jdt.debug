@@ -207,7 +207,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements
 		if (vm == null) {
 			target.requestFailed(
 					JDIDebugBreakpointMessages.JavaPatternBreakpoint_Unable_to_add_breakpoint___VM_disconnected__1,
-					null);
+					new VMDisconnectedException());
 		}
 		List<ReferenceType> classes = null;
 		try {

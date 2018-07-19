@@ -3134,7 +3134,7 @@ public final class JavaRuntime {
 	 * @since 3.1
 	 */
 	public static IClasspathAttribute newLibraryPathsAttribute(String[] paths) {
-		StringBuffer value = new StringBuffer();
+		StringBuilder value = new StringBuilder();
 		for (int i = 0; i < paths.length; i++) {
 			value.append(paths[i]);
 			if (i < (paths.length - 1)) {

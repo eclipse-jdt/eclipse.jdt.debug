@@ -53,7 +53,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 		assertTrue("The type "+fgTypeName+" must be a file", type.getResource().getType() == IResource.FILE);
 		IEditorPart editor = openEditor((IFile)type.getResource());
 		assertNotNull("the editor for "+fgTypeName+" should have been created", editor);
-		ArrayList<IBreakpoint> bps = new ArrayList<IBreakpoint>(count);
+		ArrayList<IBreakpoint> bps = new ArrayList<>(count);
 		IBreakpoint bp = createClassPrepareBreakpoint(type);
 		if(bp != null) {
 			bps.add(bp);

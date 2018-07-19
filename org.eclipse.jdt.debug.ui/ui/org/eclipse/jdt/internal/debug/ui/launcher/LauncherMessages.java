@@ -48,6 +48,8 @@ public class LauncherMessages extends NLS {
 
 	public static String VMArgumentsBlock_0;
 
+	public static String VMArgumentsBlock_1;
+
 	public static String VMArgumentsBlock_VM_Arguments;
 	public static String VMArgumentsBlock_4;
 
@@ -179,6 +181,10 @@ public class LauncherMessages extends NLS {
 	public static String SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5;
 
 	public static String AppletSelectionDialog_Searching____1;
+
+	public static String ClasspathTooLongStatusHandler_0;
+
+	public static String ClasspathTooLongStatusHandler_1;
 
 	public static String ExecutionEnvironmentSelector_0;
 	public static String ExecutionEnvironmentSelector_1;

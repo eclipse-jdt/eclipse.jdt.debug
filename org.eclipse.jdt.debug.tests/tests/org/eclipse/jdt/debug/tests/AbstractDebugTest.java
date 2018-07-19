@@ -1064,7 +1064,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ILaunch launch = configuration.launch(mode, null, false, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
             buf.append("Test case: "); //$NON-NLS-1$
             buf.append(getName());
             buf.append("\n"); //$NON-NLS-1$

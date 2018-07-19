@@ -68,7 +68,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         @Override
 		public String getColumnText(Object element, int columnIndex) {
             JavaLogicalStructure logicalStructure= (JavaLogicalStructure) element;
-            StringBuffer buffer= new StringBuffer();
+            StringBuilder buffer= new StringBuilder();
             if (columnIndex == 0) {
                 String qualifiedName= logicalStructure.getQualifiedTypeName();
                 int index= qualifiedName.lastIndexOf('.') + 1;
@@ -401,7 +401,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 * @param structure the logical structure that was modified
 	 */
 	private void refreshCodeViewer(JavaLogicalStructure structure){
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 	    if (structure != null){
 	    	String snippet= structure.getValue();
 	    	if (snippet != null) {

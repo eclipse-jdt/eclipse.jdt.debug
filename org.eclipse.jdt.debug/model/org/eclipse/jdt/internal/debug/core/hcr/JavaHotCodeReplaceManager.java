@@ -76,6 +76,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 
 /**
@@ -553,7 +554,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			if (vm == null) {
 				target.requestFailed(
 						JDIDebugHCRMessages.JavaHotCodeReplaceManager_Hot_code_replace_failed___VM_disconnected__1,
-						null);
+						new VMDisconnectedException());
 			}
 			int result = org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
 			try {
@@ -600,7 +601,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				if (vm == null) {
 					target.requestFailed(
 							JDIDebugHCRMessages.JavaHotCodeReplaceManager_Hot_code_replace_failed___VM_disconnected__2,
-							null);
+							new VMDisconnectedException());
 				}
 				vm.redefineClasses(typesToBytes);
 			} catch (UnsupportedOperationException exception) {

@@ -147,7 +147,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	 */
 	private String quotePattern(String pattern) {
 		StringTokenizer t = new StringTokenizer(pattern, ".?*$()", true); //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		String token = null;
 		while (t.hasMoreTokens()) {
 			token = t.nextToken();

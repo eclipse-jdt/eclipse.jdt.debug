@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -303,7 +304,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	protected String convertClassPath(String[] cp) {
 		int pathCount= 0;
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		if (cp.length == 0) {
 			return "";    //$NON-NLS-1$
 		}
@@ -380,9 +381,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			arguments.add(convertClassPath(mp));
 		}
 		String[] cp = config.getClassPath();
-		int cpidx = -1;
 		if (cp.length > 0) {
-			cpidx = arguments.size();
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
 		}
@@ -395,25 +394,17 @@ public class StandardVMRunner extends AbstractVMRunner {
 			}
 
 		}
-
 		if (isModular(config, fVMInstance)) {
 			arguments.add("-m"); //$NON-NLS-1$
 			arguments.add(config.getModuleDescription() + "/" + config.getClassToLaunch()); //$NON-NLS-1$
 		} else {
 			arguments.add(config.getClassToLaunch());
 		}
-
+		int lastVMArgumentIndex = arguments.size() - 1;
 		String[] programArgs= config.getProgramArguments();
 		addArguments(programArgs, arguments);
 
 		String[] envp = prependJREPath(config.getEnvironment());
-
-		String[] newenvp = checkClasspath(arguments, cp, envp);
-		if(newenvp != null) {
-			envp = newenvp;
-			arguments.remove(cpidx);
-			arguments.remove(cpidx);
-		}
 
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
@@ -424,10 +415,15 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (monitor.isCanceled()) {
 			return;
 		}
+		File workingDir = getWorkingDir(config);
+		ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
+		if (classpathShortener.shortenCommandLineIfNecessary()) {
+			cmdLine = classpathShortener.getCmdLine();
+			envp = classpathShortener.getEnvp();
+		}
 
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
 		Process p= null;
-		File workingDir = getWorkingDir(config);
 		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 		if(newCmdLine != null) {
 			cmdLine = newCmdLine;
@@ -453,7 +449,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		if(envp != null) {
 			Arrays.sort(envp);
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			for (int i = 0; i < envp.length; i++) {
 				buff.append(envp[i]);
 				if(i < envp.length-1) {
@@ -461,6 +457,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 				}
 			}
 			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
+		}
+		if (!classpathShortener.getProcessTempFiles().isEmpty()) {
+			String tempFiles = classpathShortener.getProcessTempFiles().stream().map(file -> file.getAbsolutePath()).collect(Collectors.joining(File.pathSeparator));
+			process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 		}
 		subMonitor.worked(1);
 		subMonitor.done();
@@ -481,71 +481,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * Checks to see if the command / classpath needs to be shortened for Windows. Returns the modified
-	 * environment or <code>null</code> if no changes are needed.
-	 *
-	 * @param args the raw arguments from the runner
-	 * @param cp the raw classpath from the runner configuration
-	 * @param env the current environment
-	 * @return the modified environment or <code>null</code> if no changes were made
-	 * @sine 3.6.200
-	 */
-	String[] checkClasspath(List<String> args, String[] cp, String[] env) {
-		if(Platform.getOS().equals(Platform.OS_WIN32)) {
-			//count the complete command length
-			int size = 0;
-			for (String arg : args) {
-				if(arg != null) {
-					size += arg.length();
-				}
-			}
-			//greater than 32767 is a no-go
-			//see http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
-			if(size > 32767) {
-				StringBuffer newcp = new StringBuffer("CLASSPATH="); //$NON-NLS-1$
-				for (int i = 0; i < cp.length; i++) {
-					newcp.append(cp[i]);
-					newcp.append(File.pathSeparatorChar);
-				}
-				String[] newenvp = null;
-				int index = -1;
-				if(env == null) {
-					Map<String, String> nenv = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
-					Entry<String, String> entry = null;
-					newenvp = new String[nenv.size()];
-					int idx = 0;
-					for (Iterator<Entry<String, String>> i = nenv.entrySet().iterator(); i.hasNext();) {
-						entry = i.next();
-						String value = entry.getValue();
-						if(value == null) {
-							value = ""; //$NON-NLS-1$
-						}
-						String key = entry.getKey();
-						if(key.equalsIgnoreCase("CLASSPATH")) { //$NON-NLS-1$
-							index = idx;
-						}
-						newenvp[idx] = key+'='+value;
-						idx++;
-					}
-				}
-				else {
-					newenvp = env;
-					index = getCPIndex(newenvp);
-				}
-				if(index < 0) {
-					String[] newenv = new String[newenvp.length+1];
-					System.arraycopy(newenvp, 0, newenv, 0, newenvp.length);
-					newenv[newenvp.length] = newcp.toString();
-					return newenv;
-				}
-				newenvp[index] = newcp.toString();
-				return newenvp;
-			}
-		}
-		return null;
 	}
 
 	/**

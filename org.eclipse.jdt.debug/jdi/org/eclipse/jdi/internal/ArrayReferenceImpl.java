@@ -414,7 +414,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	@Override
 	public String toString() {
 		try {
-			StringBuffer buf = new StringBuffer(type().name());
+			StringBuilder buf = new StringBuilder(type().name());
 			// Insert length of string between (last) square braces.
 			buf.insert(buf.length() - 1, length());
 			// Append space and idString.

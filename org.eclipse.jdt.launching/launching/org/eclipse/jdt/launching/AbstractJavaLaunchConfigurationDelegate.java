@@ -594,7 +594,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			// if a library path is already specified, do not override
 			String[] javaLibraryPath = getJavaLibraryPath(configuration);
 			if (javaLibraryPath != null && javaLibraryPath.length > 0) {
-				StringBuffer path = new StringBuffer(args);
+				StringBuilder path = new StringBuilder(args);
 				path.append(" -Djava.library.path="); //$NON-NLS-1$
 				path.append("\""); //$NON-NLS-1$
 				for (int i = 0; i < javaLibraryPath.length; i++) {

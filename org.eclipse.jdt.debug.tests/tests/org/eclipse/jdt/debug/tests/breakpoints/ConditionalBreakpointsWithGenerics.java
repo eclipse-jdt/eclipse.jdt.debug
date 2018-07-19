@@ -247,7 +247,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		String type = "a.b.c.bug403028";
 		IJavaThread thread = null;
 		try {
-			String condition = "StringBuffer buf = new StringBuffer();"
+			String condition = "StringBuilder buf = new StringBuilder();"
 					+ "buf.append(\"{\");"
 					+ "Iterator i = this.entrySet().iterator();"
 					+ "boolean hasNext = i.hasNext();"

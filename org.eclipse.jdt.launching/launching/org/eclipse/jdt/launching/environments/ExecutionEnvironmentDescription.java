@@ -298,7 +298,7 @@ public final class ExecutionEnvironmentDescription {
 	 * @return VM arguments or <code>null</code> if none
 	 */
 	public String getVMArguments() {
-		StringBuffer arguments = new StringBuffer();
+		StringBuilder arguments = new StringBuilder();
 		Iterator<Entry<String, String>> entries = fProperties.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry<String, String> entry = entries.next();
@@ -427,11 +427,11 @@ public final class ExecutionEnvironmentDescription {
 	private String resolveHome(String value) {
 		int start = 0;
 		int index = value.indexOf(VAR_EE_HOME, start);
-		StringBuffer replaced = null;
+		StringBuilder replaced = null;
 		String eeHome = getProperty(EE_HOME);
 		while (index >= 0) {
 			if (replaced == null) {
-				replaced = new StringBuffer();
+				replaced = new StringBuilder();
 			}
 			replaced.append(value.substring(start, index));
 			replaced.append(eeHome);
@@ -513,7 +513,7 @@ public final class ExecutionEnvironmentDescription {
 					value = makePathAbsolute(value, root);
 
 					List<Character> wildcards = new ArrayList<>();
-					StringBuffer keyBuffer = new StringBuffer();
+					StringBuilder keyBuffer = new StringBuilder();
 				    char [] chars = key.toCharArray();
 				    // Convert lib location to a regex, replace wildcards with grouped equivalents, keep track of used wildcards, allow '\' and '/' to be used, escape special chars
 					for (int j = 0; j < chars.length; j++) {
@@ -531,7 +531,7 @@ public final class ExecutionEnvironmentDescription {
 					}
 
 					int currentWild = 0;
-					StringBuffer valueBuffer = new StringBuffer();
+					StringBuilder valueBuffer = new StringBuilder();
 					chars = value.toCharArray();
 					// Convert src location to a regex, replace wildcards with their group number, allow '\' and '/' to be used, escape special chars
 					for (int j = 0; j < chars.length; j++) {

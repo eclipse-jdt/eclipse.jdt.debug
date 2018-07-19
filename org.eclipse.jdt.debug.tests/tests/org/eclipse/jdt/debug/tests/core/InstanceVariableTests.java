@@ -80,7 +80,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 
 			String[] names = ((IJavaReferenceType)object.getJavaType()).getDeclaredFieldNames();
 			assertEquals("Should be 7 declared fields", 7, names.length);
-			List<String> fields = new ArrayList<String>();
+			List<String> fields = new ArrayList<>();
 			for (int i = 0; i < names.length; i++) {
 				String string = names[i];
 				fields.add(string);
@@ -114,7 +114,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 
 			String[] names = ((IJavaReferenceType)object.getJavaType()).getDeclaredFieldNames();
 			assertEquals("Should be 3 declared fields", 3, names.length);
-			List<String> fields = new ArrayList<String>();
+			List<String> fields = new ArrayList<>();
 			for (int i = 0; i < names.length; i++) {
 				String string = names[i];
 				fields.add(string);
