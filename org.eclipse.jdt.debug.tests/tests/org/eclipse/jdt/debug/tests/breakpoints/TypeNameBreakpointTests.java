@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -447,6 +451,7 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
+			removeLaunch();
 		}
 	}
 
@@ -465,6 +470,7 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
+			removeLaunch();
 		}
 	}
 
@@ -483,6 +489,14 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
+			removeLaunch();
 		}
+	}
+
+	private void removeLaunch() {
+		ILaunchManager launchManager = getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		assertEquals("expected exactly 1 launch but got: " + Arrays.toString(launches), 1, launches.length);
+		launchManager.removeLaunch(launches[0]);
 	}
 }

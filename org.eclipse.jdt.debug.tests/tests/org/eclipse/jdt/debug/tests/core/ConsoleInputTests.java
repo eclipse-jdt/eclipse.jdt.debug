@@ -92,6 +92,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
+			getLaunchManager().removeLaunch(launch);
 		}
 	}
 
@@ -133,6 +134,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
+			getLaunchManager().removeLaunch(launch);
 		}
 	}
 
@@ -314,6 +316,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
+			getLaunchManager().removeLaunch(launch);
 		}
 	}
 
