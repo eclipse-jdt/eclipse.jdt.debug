@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
@@ -218,6 +219,10 @@ public class StandardVMType extends AbstractVMInstallType {
 					LaunchingPlugin.setLibraryInfo(installPath, info);
 				} else {
 					info = generateLibraryInfo(javaHome, javaExecutable);
+					if (info == null) {
+						// Bug 536943: try again in case we have a timing problem with process execution and output retrieval
+						info = generateLibraryInfo(javaHome, javaExecutable);
+					}
 					if (info == null) {
 						info = getDefaultLibraryInfo(javaHome);
 						fgFailedInstallPath.put(installPath, info);
@@ -693,8 +698,10 @@ public class StandardVMType extends AbstractVMInstallType {
 					try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
+						LaunchingPlugin.log(e);
 					}
 				}
+				checkProcessResult(process);
 				info = parseLibraryInfo(process);
 			} catch (CoreException ioe) {
 				LaunchingPlugin.log(ioe);
@@ -849,4 +856,38 @@ public class StandardVMType extends AbstractVMInstallType {
 
 	}
 
+	/*
+	 * Logs an error if the process is not yet done, or if the process exited with an error code.
+	 */
+	private static void checkProcessResult(IProcess process) throws DebugException {
+		boolean isTerminated = process.isTerminated();
+		if (!isTerminated) {
+			String output = getOutput(process);
+			Object[] errorInfo = { process.getAttribute(IProcess.ATTR_CMDLINE), output };
+			String errorMessage = NLS.bind("Process not finished.\n Command line arguments: {0}\nOutput: {1}", errorInfo); //$NON-NLS-1$
+			IllegalStateException exception = new IllegalStateException(errorMessage);
+			LaunchingPlugin.log(exception);
+		} else {
+			int exitCode = process.getExitValue();
+			if (exitCode != 0) {
+				String output = getOutput(process);
+				Object[] errorInfo = { Integer.valueOf(exitCode), process.getAttribute(IProcess.ATTR_CMDLINE), output };
+				String errorMessage = NLS.bind("Process returned with error code \"{0}\".\nCommand line arguments: {1}\nOutput: {2}", errorInfo); //$NON-NLS-1$
+				IllegalStateException exception = new IllegalStateException(errorMessage);
+				LaunchingPlugin.log(exception);
+			}
+		}
+	}
+
+	private static String getOutput(IProcess process) {
+		IStreamsProxy streamsProxy = process.getStreamsProxy();
+		String output = "IProcess.getStreamsProxy() returned null"; //$NON-NLS-1$
+		if (streamsProxy != null) {
+			String[] lines = { "Standard output:", //$NON-NLS-1$
+					streamsProxy.getOutputStreamMonitor().getContents(), "Standard error:", //$NON-NLS-1$
+					streamsProxy.getErrorStreamMonitor().getContents() };
+			output = String.join(System.lineSeparator(), Arrays.asList(lines));
+		}
+		return output;
+	}
 }
