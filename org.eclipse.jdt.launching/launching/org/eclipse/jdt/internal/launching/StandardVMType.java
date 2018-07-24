@@ -690,6 +690,7 @@ public class StandardVMType extends AbstractVMInstallType {
 				}
 				p = DebugPlugin.exec(cmdLine, null, envp);
 				IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "Library Detection"); //$NON-NLS-1$
+				process.setAttribute(IProcess.ATTR_CMDLINE, String.join(" ", cmdLine)); //$NON-NLS-1$
 				for (int i= 0; i < 600; i++) {
 					// Wait no more than 30 seconds (600 * 50 milliseconds)
 					if (process.isTerminated()) {
@@ -703,7 +704,7 @@ public class StandardVMType extends AbstractVMInstallType {
 				}
 				checkProcessResult(process);
 				info = parseLibraryInfo(process);
-			} catch (CoreException ioe) {
+			} catch (Throwable ioe) {
 				LaunchingPlugin.log(ioe);
 			} finally {
 				if (p != null) {
