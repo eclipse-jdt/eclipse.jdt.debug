@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class JDIDebugPluginPreferenceInitializer extends
 		node.putInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, 100);
 		node.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true);
 		node.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true);
+		node.putInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT);
 		node.putBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true);
 	}
 }

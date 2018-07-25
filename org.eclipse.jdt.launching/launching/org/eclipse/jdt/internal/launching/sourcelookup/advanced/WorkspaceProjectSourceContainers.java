@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.sourcelookup.advanced.FileHashing.Hasher;
 import org.eclipse.jdt.launching.sourcelookup.advanced.IWorkspaceProjectDescriber;
 import org.eclipse.jdt.launching.sourcelookup.advanced.IWorkspaceProjectDescriber.IJavaProjectSourceDescription;
@@ -255,7 +256,7 @@ public class WorkspaceProjectSourceContainers {
 
 	/**
 	 * Creates and returns new source container for the workspace project classpath entry identified by the given project and entry locations. Returns
-	 * {@code null} if there is no such project classpath entry.
+	 * {@code null} if there is no such project classpath entry or if the classpath entry does not have associated sources.
 	 */
 	public ISourceContainer createClasspathEntryContainer(File projectLocation, File entryLocation) {
 		Hasher hasher = FileHashing.hasher(); // use long-lived hasher
@@ -273,7 +274,11 @@ public class WorkspaceProjectSourceContainers {
 			}
 		}
 
-		if (dependency == null) {
+		try {
+			if (dependency == null || (dependency.getKind() == IPackageFragmentRoot.K_BINARY && dependency.getSourceAttachmentPath() == null)) {
+				return null;
+			}
+		} catch (JavaModelException e) {
 			return null;
 		}
 

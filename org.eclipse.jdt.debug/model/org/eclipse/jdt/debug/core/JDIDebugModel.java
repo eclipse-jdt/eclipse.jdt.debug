@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,21 @@ public class JDIDebugModel {
 	 */
 	public static final String PREF_SHOW_STEP_RESULT = getPluginIdentifier()
 			+ ".PREF_SHOW_STEP_RESULT"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for specifying if the timeout (in ms) after which the return method result of a step operation is not observed any longer (0
+	 * means no timeout, a negative value means: simulate a timeout condition).
+	 *
+	 * @since 3.12
+	 */
+	public static final String PREF_SHOW_STEP_TIMEOUT = getPluginIdentifier() + ".PREF_SHOW_STEP_TIMEOUT"; //$NON-NLS-1$
+
+	/**
+	 * The default value for {@link #PREF_SHOW_STEP_TIMEOUT} timeout when no preference is set.
+	 *
+	 * @since 3.12
+	 */
+	public static final int DEF_SHOW_STEP_TIMEOUT = 7000;
 
 	/**
 	 * Not to be instantiated.
@@ -336,8 +351,9 @@ public class JDIDebugModel {
 			String typeName, int lineNumber, int charStart, int charEnd,
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaLineBreakpoint(resource, typeName, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
 	}
@@ -397,8 +413,9 @@ public class JDIDebugModel {
 			IResource resource, String sourceName, String pattern,
 			int lineNumber, int charStart, int charEnd, int hitCount,
 			boolean register, Map<String, Object> attributes) throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaPatternBreakpoint(resource, sourceName, pattern,
 				lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
@@ -481,8 +498,9 @@ public class JDIDebugModel {
 			String sourcePath, String classNamePattern, int lineNumber,
 			int charStart, int charEnd, int hitCount, boolean register,
 			Map<String, Object> attributes) throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaStratumLineBreakpoint(resource, stratum, sourceName,
 				sourcePath, classNamePattern, lineNumber, charStart, charEnd,
 				hitCount, register, attributes);
@@ -537,8 +555,9 @@ public class JDIDebugModel {
 			IResource resource, String sourceName, int lineNumber,
 			int charStart, int charEnd, int hitCount, boolean register,
 			Map<String, Object> attributes) throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaTargetPatternBreakpoint(resource, sourceName,
 				lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
@@ -584,8 +603,9 @@ public class JDIDebugModel {
 			IResource resource, String exceptionName, boolean caught,
 			boolean uncaught, boolean checked, boolean register, Map<String, Object> attributes)
 			throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaExceptionBreakpoint(resource, exceptionName, caught,
 				uncaught, checked, register, attributes);
 	}
@@ -646,8 +666,9 @@ public class JDIDebugModel {
 			String typeName, String fieldName, int lineNumber, int charStart,
 			int charEnd, int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaWatchpoint(resource, typeName, fieldName, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
 	}
@@ -716,8 +737,9 @@ public class JDIDebugModel {
 			boolean nativeOnly, int lineNumber, int charStart, int charEnd,
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaMethodBreakpoint(resource, typePattern, methodName,
 				methodSignature, entry, exit, nativeOnly, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
@@ -775,8 +797,9 @@ public class JDIDebugModel {
 			String methodSignature, int lineNumber, int charStart, int charEnd,
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaMethodEntryBreakpoint(resource, typeName, methodName,
 				methodSignature, lineNumber, charStart, charEnd, hitCount,
 				register, attributes);
@@ -807,16 +830,19 @@ public class JDIDebugModel {
 				.getBreakpointManager();
 		IBreakpoint[] breakpoints = manager.getBreakpoints(modelId);
 		for (int i = 0; i < breakpoints.length; i++) {
-			if (!(breakpoints[i] instanceof IJavaLineBreakpoint))
+			if (!(breakpoints[i] instanceof IJavaLineBreakpoint)) {
 				continue;
+			}
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
 			IMarker marker = breakpoint.getMarker();
 			if (marker != null && marker.exists()
 					&& marker.getType().equals(markerType)) {
 				String breakpointTypeName = breakpoint.getTypeName();
-				if (JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$')))
-					if (breakpoint.getLineNumber() == lineNumber)
+				if (JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$'))) {
+					if (breakpoint.getLineNumber() == lineNumber) {
 						return breakpoint;
+					}
+				}
 			}
 		}
 		return null;
@@ -850,8 +876,9 @@ public class JDIDebugModel {
 				.getBreakpointManager();
 		IBreakpoint[] breakpoints = manager.getBreakpoints(modelId);
 		for (int i = 0; i < breakpoints.length; i++) {
-			if (!(breakpoints[i] instanceof IJavaLineBreakpoint))
+			if (!(breakpoints[i] instanceof IJavaLineBreakpoint)) {
 				continue;
+			}
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
 			IMarker marker = breakpoint.getMarker();
 			if (marker != null && marker.exists()
@@ -859,8 +886,9 @@ public class JDIDebugModel {
 				String breakpointTypeName = breakpoint.getTypeName();
 				if ((JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$')))
 						&& breakpoint.getLineNumber() == lineNumber
-						&& resource.equals(marker.getResource()))
+						&& resource.equals(marker.getResource())) {
 					return breakpoint;
+				}
 			}
 		}
 		return null;
@@ -888,8 +916,9 @@ public class JDIDebugModel {
 	@Deprecated
 	public static Preferences getPreferences() {
 		JDIDebugPlugin deflt = JDIDebugPlugin.getDefault();
-		if (deflt != null)
+		if (deflt != null) {
 			return deflt.getPluginPreferences();
+		}
 		return null;
 	}
 
@@ -916,12 +945,13 @@ public class JDIDebugModel {
 	@Deprecated
 	public static void savePreferences() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
-		if(node != null)
+		if(node != null) {
 			try {
 				node.flush();
 			} catch (BackingStoreException bse) {
 				JDIDebugPlugin.log(bse);
 			}
+		}
 	}
 
 	/**
@@ -964,8 +994,9 @@ public class JDIDebugModel {
 	public static IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(
 			IResource resource, String typeName, int memberType, int charStart,
 			int charEnd, boolean register, Map<String, Object> attributes) throws CoreException {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new HashMap<>(10);
+		}
 		return new JavaClassPrepareBreakpoint(resource, typeName, memberType,
 				charStart, charEnd, register, attributes);
 	}

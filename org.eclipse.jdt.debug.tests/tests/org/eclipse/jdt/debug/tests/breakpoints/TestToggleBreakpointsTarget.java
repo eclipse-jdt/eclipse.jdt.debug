@@ -16,6 +16,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.tests.TestUtil;
 
 /**
  * Tests the Java debugger's 'toggle breakpoints target'.
@@ -44,6 +45,7 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) added;
 			assertEquals("Wrong line number", 23, breakpoint.getLineNumber());
 			assertEquals("Wrong type name", "a.b.c.SomeClass", breakpoint.getTypeName());
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 		} finally {
 			manager.removeBreakpointListener(listener);
 			removeAllBreakpoints();
@@ -68,6 +70,7 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 			IJavaWatchpoint breakpoint = (IJavaWatchpoint) added;
 			assertEquals("Wrong type name", "a.b.c.SomeClass", breakpoint.getTypeName());
 			assertEquals("Wrong field name", "someField", breakpoint.getFieldName());
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 		} finally {
 			manager.removeBreakpointListener(listener);
 			removeAllBreakpoints();
@@ -95,6 +98,7 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 			// this will actually fail to suspend since 'SomeClass' is not qualified, but we can't resolve the type
 			// without a build path, etc. (not a regression)
 			assertEquals("Wrong signature", "(Ljava/lang/String;LSomeClass;)V", breakpoint.getMethodSignature());
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 		} finally {
 			manager.removeBreakpointListener(listener);
 			removeAllBreakpoints();

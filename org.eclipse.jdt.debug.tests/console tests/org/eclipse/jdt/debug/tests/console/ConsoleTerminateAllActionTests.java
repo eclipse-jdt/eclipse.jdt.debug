@@ -14,8 +14,10 @@ import java.net.InetAddress;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.commands.actions.TerminateAllActionDelegate;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -53,6 +55,8 @@ public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 				assertNotNull(thread1);
 				thread2 = launchToBreakpoint("TerminateAll_02");
 				assertNotNull(thread2);
+				// wait for the Console View to be shown by the output in the launched snippet
+				TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT, ProcessConsole.class);
 				ConsoleView view = null;
 				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
 				for (int i = 0; i < workbenchWindows.length; i++) {
@@ -72,7 +76,9 @@ public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 				TerminateAllActionDelegate d = new TerminateAllActionDelegate();
 				d.init(view);
 				d.run(null);
-				Thread.sleep(1000);
+				Thread.sleep(1_000);
+				// wait for the terminate action to finish
+				TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT, ProcessConsole.class);
 				assertEquals(2, DebugPlugin.getDefault().getLaunchManager().getLaunches().length);
 				assertEquals(true, DebugPlugin.getDefault().getLaunchManager().getLaunches()[0].isTerminated());
 				assertEquals(true, DebugPlugin.getDefault().getLaunchManager().getLaunches()[1].isTerminated());

@@ -84,12 +84,14 @@ public class EventDispatcherTest extends AbstractDebugTest {
 				}
 			}
 		};
+		IJavaThread suspendedThread = null;
 		try {
 			DebugPlugin.getDefault().addDebugEventListener(debugListener);
 			createLineBreakpoint(24, "BulkThreadCreationTest");
-			launchToBreakpoint("BulkThreadCreationTest");
+			suspendedThread = launchToBreakpoint("BulkThreadCreationTest");
 		}
 		finally {
+			terminateAndRemove(suspendedThread);
 			removeAllBreakpoints();
 			DebugPlugin.getDefault().removeDebugEventListener(debugListener);
 		}

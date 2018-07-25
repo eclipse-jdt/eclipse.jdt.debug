@@ -2076,6 +2076,16 @@
                menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
                tooltip="%showSystemThreads.tooltip">
          </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowRunningThreadsAction"
+               helpContextId="show_running_threads_action_context"
+               icon="$nl$/icons/full/obj16/thread_obj.png"
+               id="org.eclipse.jdt.debug.ui.launchViewActions.ShowRunningThreads"
+               label="%showRunningThreads.label"
+               menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
+               style="toggle"
+               tooltip="%showRunningThreads.tooltip">
+         </action>
   <action
         helpContextId="show_monitors_action_context"
         label="%showMonitorThreadInfo.label"

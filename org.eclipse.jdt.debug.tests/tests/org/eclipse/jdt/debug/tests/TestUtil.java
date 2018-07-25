@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,6 +22,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
@@ -47,6 +51,14 @@ public class TestUtil {
 
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		List<ILaunch> launches = Arrays.asList(launchManager.getLaunches());
+		// in case some test left a launch, remove it before reporting a failure, so that further tests can work on a clean Debug View state
+		for (ILaunch launch : launches) {
+			launchManager.removeLaunch(launch);
+		}
+		Assert.assertEquals("expected no launches after test", Collections.EMPTY_LIST, launches);
 	}
 
 	public static void log(int severity, String owner, String message, Throwable... optionalError) {

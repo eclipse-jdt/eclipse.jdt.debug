@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -260,6 +261,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private MethodExitRequest fCurrentMethodExitRequest;
 
+	private Thread fCurrentMethodExitRequestDisabler;
+
 	/**
 	 * The current ExceptionRequest if a step-return or step-over is in progress.
 	 */
@@ -292,6 +295,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	private int fStepReturnTargetFrameCount;
 
 	private MethodResult fStepResultCandidate;
+
+	private AtomicBoolean fStepResultTimeoutTriggered = new AtomicBoolean();
 
 	/**
 	 * Result of the last step step-over or step-return operation or method exit breakpoint of exception break point
@@ -2033,7 +2038,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 								IStatus.ERROR,
 								JDIDebugPlugin.getUniqueIdentifier(),
 								SUSPEND_TIMEOUT,
-								MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, new Integer(timeout).toString()),
+								MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, Integer.valueOf(timeout).toString()),
 								null);
 						IStatusHandler handler = DebugPlugin.getDefault()
 								.getStatusHandler(status);
@@ -2542,6 +2547,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						removeJDIEventListener(this, fCurrentMethodExitRequest);
 						manager.deleteEventRequest(fCurrentMethodExitRequest);
 						fCurrentMethodExitRequest = null;
+						Thread t = fCurrentMethodExitRequestDisabler;
+						if (t != null) {
+							t.interrupt();
+							fCurrentMethodExitRequestDisabler = null;
+						}
 					}
 					if (fCurrentExceptionRequest != null) {
 						removeJDIEventListener(this, fCurrentExceptionRequest);
@@ -2554,6 +2564,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						fCurrentMethodEntryRequest = null;
 					}
 					fStepResultCandidate = null;
+					fStepResultTimeoutTriggered.set(false);
 					List<IJavaStackFrame> frames = computeStackFrames();
 					int frameCount = 0;
 					StackFrame currentFrame = null;
@@ -2593,7 +2604,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						methodExitRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 						methodExitRequest.enable();
 						fCurrentMethodExitRequest = methodExitRequest;
-						fStepResultMethod = currentFrame.location().method();
+						Method method = currentFrame.location().method();
+
+						fStepResultMethod = method;
 						fStepReturnTargetFrameCount = frameCount - 1; // depth of the frame that is returned to
 						addJDIEventListener(this, methodExitRequest);
 
@@ -2613,6 +2626,39 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 							fStepOverLocation = currentFrame.location();
 							fStepOverFrameCount = frameCount; // depth of the frame where the step-over is being done
 							addJDIEventListener(this, methodEntryRequest);
+						}
+
+						int timeout = getStepResultTimeout();
+						if (timeout != 0) {
+							Runnable r = () -> {
+								try {
+									if (timeout > 0) {
+										Thread.sleep(timeout);
+									}
+								} catch (InterruptedException e) {
+									return;
+								}
+								fStepResultTimeoutTriggered.set(true);
+								if (fCurrentMethodExitRequest == methodExitRequest) {
+									try {
+										methodExitRequest.disable();
+										if (fCurrentExceptionRequest == exceptionRequest) {
+											exceptionRequest.disable();
+										}
+									} catch (Exception e) {
+										// ignore
+									}
+								}
+							};
+							if (timeout > 0) {
+								Thread t = new Thread(r, "JDIThread: MethodExitDisabler"); //$NON-NLS-1$
+								t.setDaemon(true);
+								t.start();
+								fCurrentMethodExitRequestDisabler = t;
+							} else {
+								// negative timeout: simulate immediate timeout (for testing)
+								r.run();
+							}
 						}
 					}
 				}
@@ -2683,6 +2729,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						manager.deleteEventRequest(fCurrentMethodExitRequest);
 					}
 					fCurrentMethodExitRequest = null;
+					Thread t = fCurrentMethodExitRequestDisabler;
+					if (t != null) {
+						t.interrupt();
+						fCurrentMethodExitRequestDisabler = null;
+					}
 				}
 				if (fCurrentExceptionRequest != null) {
 					removeJDIEventListener(this, fCurrentExceptionRequest);
@@ -2804,11 +2855,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
 
-				if (fStepResultCandidate != null) {
+				if (fStepResultTimeoutTriggered.get()) {
+					Method m = fStepResultMethod;
+					if (m != null) {
+						setMethodResult(new MethodResult(m, -1, null, ResultType.step_timeout));
+					}
+					fStepResultMethod = null;
+					fStepReturnTargetFrameCount = -1;
+					fStepResultCandidate = null;
+					fStepResultTimeoutTriggered.set(false);
+				} else if (fStepResultCandidate != null) {
 					setMethodResult(fStepResultCandidate);
 					fStepResultMethod = null;
 					fStepReturnTargetFrameCount = -1;
 					fStepResultCandidate = null;
+					fStepResultTimeoutTriggered.set(false);
 				}
 
 				if (getStepKind() == StepRequest.STEP_OVER) {
@@ -3742,6 +3803,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
     }
 	public static boolean showStepResultIsEnabled() {
 		return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null);
+	}
+
+	public static int getStepResultTimeout() {
+		return Platform.getPreferencesService().getInt(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT, null);
 	}
 
 	protected boolean isSupported(Location currentLocation) {

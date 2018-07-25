@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Till Brychcy and others.
+ * Copyright (c) 2016, 2018 Till Brychcy and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,10 @@ public class MethodResult {
 		returning,
 
 		/** fValue is exception being thrown in a exception breakpoint */
-		throwing
+		throwing,
+
+		/** fValue is not set because the step operation took too long */
+		step_timeout
 	}
 
 	public MethodResult(Method method, int targetFrameCount, Value value, ResultType resultType) {
