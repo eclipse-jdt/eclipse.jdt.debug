@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,86 +35,113 @@ import org.eclipse.osgi.util.NLS;
  */
 public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
+	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+		try {
+			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, mode, launch, monitor);
+			IVMRunner runner = getVMRunner(configuration, mode);
+			String cmdLine = runner.showCommandLine(runConfig, launch, monitor);
+
+			// check for cancellation
+			if (monitor.isCanceled()) {
+				return ""; //$NON-NLS-1$
+			}
+			return cmdLine;
+		} finally {
+			monitor.done();
+		}
+	}
+
+	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+
 
 		monitor.beginTask(NLS.bind("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
-			return;
+			return null;
+		}
+		monitor.subTask(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1);
+
+		String mainTypeName = verifyMainTypeName(configuration);
+
+		File workingDir = verifyWorkingDirectory(configuration);
+		String workingDirName = null;
+		if (workingDir != null) {
+			workingDirName = workingDir.getAbsolutePath();
+		}
+
+		// Environment variables
+		String[] envp = getEnvironment(configuration);
+
+		// Program & VM arguments
+		String pgmArgs = getProgramArguments(configuration);
+		String vmArgs = concat(getVMArguments(configuration), getVMArguments(configuration, mode));
+		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
+
+		// VM-specific attributes
+		Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
+
+		// Bug 522333 :to be used for modulepath only for 4.7.*
+		String[][] paths = getClasspathAndModulepath(configuration);
+		// Create VM config
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
+		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
+		runConfig.setEnvironment(envp);
+		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
+		runConfig.setWorkingDirectory(workingDirName);
+		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+		// current module name, if so
+		try {
+			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
+			if (proj != null) {
+				IModuleDescription module = proj == null ? null : proj.getModuleDescription();
+				String modName = module == null ? null : module.getElementName();
+				if (modName != null) {
+					runConfig.setModuleDescription(modName);
+				}
+			}
+		} catch (CoreException e) {
+			// Not a java Project so no need to set module description
+		}
+
+		if (!JavaRuntime.isModularConfiguration(configuration)) {
+			// Bootpath
+			runConfig.setBootClassPath(getBootpath(configuration));
+		} else {
+			// module path
+			runConfig.setModulepath(paths[1]);
+			if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
+				runConfig.setOverrideDependencies(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "")); //$NON-NLS-1$
+			} else {
+				runConfig.setOverrideDependencies(getModuleCLIOptions(configuration));
+			}
+		}
+		// check for cancellation
+		if (monitor.isCanceled()) {
+			return null;
+		}
+		monitor.worked(1);
+
+		return runConfig;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
+	 * org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.subTask(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1);
 
-			String mainTypeName = verifyMainTypeName(configuration);
-			IVMRunner runner = getVMRunner(configuration, mode);
-
-			File workingDir = verifyWorkingDirectory(configuration);
-			String workingDirName = null;
-			if (workingDir != null) {
-				workingDirName = workingDir.getAbsolutePath();
-			}
-
-			// Environment variables
-			String[] envp= getEnvironment(configuration);
-
-			// Program & VM arguments
-			String pgmArgs = getProgramArguments(configuration);
-			String vmArgs = concat(getVMArguments(configuration), getVMArguments(configuration, mode));
-			ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
-
-			// VM-specific attributes
-			Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
-
-			// Bug 522333 :to be used for modulepath only for 4.7.*
-			String[][] paths = getClasspathAndModulepath(configuration);
-			// Create VM config
-			VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
-			runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
-			runConfig.setEnvironment(envp);
-			runConfig.setVMArguments(execArgs.getVMArgumentsArray());
-			runConfig.setWorkingDirectory(workingDirName);
-			runConfig.setVMSpecificAttributesMap(vmAttributesMap);
-			// current module name, if so
-			try {
-				IJavaProject proj = JavaRuntime.getJavaProject(configuration);
-				if (proj != null) {
-					IModuleDescription module = proj == null ? null : proj.getModuleDescription();
-					String modName = module == null ? null : module.getElementName();
-					if (modName != null) {
-						runConfig.setModuleDescription(modName);
-					}
-				}
-			}
-			catch (CoreException e) {
-				// Not a java Project so no need to set module description
-			}
-
-			if (!JavaRuntime.isModularConfiguration(configuration)) {
-				// Bootpath
-				runConfig.setBootClassPath(getBootpath(configuration));
-			} else {
-				// module path
-				runConfig.setModulepath(paths[1]);
-				if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
-					runConfig.setOverrideDependencies(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "")); //$NON-NLS-1$
-				} else {
-					runConfig.setOverrideDependencies(getModuleCLIOptions(configuration));
-				}
-			}
-
-			// check for cancellation
-			if (monitor.isCanceled()) {
-				return;
-			}
-
+			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, mode, launch, monitor);
 			// stop in main
 			prepareStopInMain(configuration);
 
@@ -125,8 +152,8 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			// set the default source locator if required
 			setDefaultSourceLocator(launch, configuration);
 			monitor.worked(1);
-
 			// Launch the configuration - 1 unit of work
+			IVMRunner runner = getVMRunner(configuration, mode);
 			runner.run(runConfig, launch, monitor);
 
 			// check for cancellation

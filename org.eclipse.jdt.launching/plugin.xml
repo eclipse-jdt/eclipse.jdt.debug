@@ -46,6 +46,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             allowPrototypes="true"
+            allowCommandLine="true"
             delegate="org.eclipse.jdt.launching.sourcelookup.advanced.AdvancedJavaLaunchDelegate"
             delegateDescription="%localJavaApplicationDelegate.description"
             delegateName="%eclipseJDTLauncher.name"
