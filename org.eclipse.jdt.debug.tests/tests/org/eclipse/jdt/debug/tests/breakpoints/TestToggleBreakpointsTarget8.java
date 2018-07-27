@@ -15,6 +15,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.tests.TestUtil;
 
 /**
  * Tests the Java debugger's 'toggle breakpoints target'.
@@ -42,6 +43,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
 			toggleBreakpoint(path, 20); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);
 			IJavaMethodBreakpoint breakpoint = (IJavaMethodBreakpoint) added;
@@ -67,6 +69,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
 			toggleBreakpoint(path, 25); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);
 			IJavaMethodBreakpoint breakpoint = (IJavaMethodBreakpoint) added;
@@ -93,6 +96,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
 			toggleBreakpoint(path, 19); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			assertTrue(listener.isEmpty());
 		} finally {
 			manager.removeBreakpointListener(listener);
@@ -113,6 +117,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
 			toggleBreakpoint(path, 21); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a line breakpoint", added instanceof IJavaLineBreakpoint);
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) added;
