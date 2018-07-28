@@ -41,7 +41,10 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, mode, launch, monitor);
+			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, mode, monitor);
+			if (runConfig == null) {
+				return ""; //$NON-NLS-1$
+			}
 			IVMRunner runner = getVMRunner(configuration, mode);
 			String cmdLine = runner.showCommandLine(runConfig, launch, monitor);
 
@@ -55,8 +58,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		}
 	}
 
-	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
+	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(NLS.bind("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
@@ -128,12 +130,6 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		return runConfig;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
@@ -141,7 +137,10 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		}
 		try {
 
-			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, mode, launch, monitor);
+			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, mode, monitor);
+			if (runConfig == null) {
+				return;
+			}
 			// stop in main
 			prepareStopInMain(configuration);
 

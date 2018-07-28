@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -404,7 +404,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			monitor = new NullProgressMonitor();
 		}
 
-		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2);
 		String program = constructProgramString(config);
 
@@ -467,26 +467,21 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return cmd;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jdt.launching.IVMRunner#run(org.eclipse.jdt.launching.VMRunnerConfiguration, org.eclipse.debug.core.ILaunch,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 
 		CommandDetails cmdDetails = getCommandLine(config, launch, monitor);
 		String[] cmdLine = cmdDetails.getCommandLine();
-
 
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
 		}
 
-		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
 		Process p= null;
