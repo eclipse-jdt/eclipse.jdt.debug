@@ -348,11 +348,12 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return vmargs;
 	}
 
-	private class CommandDetails {
+	protected class CommandDetails {
 		private String[] commandLine;
 		private String[] envp;
 		private File workingDir;
 		private ClasspathShortener classpathShortener;
+		private int port;
 
 		public String[] getEnvp() {
 			return envp;
@@ -386,12 +387,20 @@ public class StandardVMRunner extends AbstractVMRunner {
 			this.classpathShortener = classpathShortener;
 		}
 
+		public int getPort() {
+			return port;
+		}
+
+		public void setPort(int port) {
+			this.port = port;
+		}
+
 	}
 
 	@Override
 	public String showCommandLine(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		CommandDetails cmd = getCommandLine(configuration, launch, monitor);
-		if (monitor.isCanceled()) {
+		if (monitor.isCanceled() || cmd == null) {
 			return ""; //$NON-NLS-1$
 		}
 		String[] cmdLine = cmd.getCommandLine();
@@ -474,12 +483,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 
 		CommandDetails cmdDetails = getCommandLine(config, launch, monitor);
-		String[] cmdLine = cmdDetails.getCommandLine();
-
 		// check for cancellation
-		if (monitor.isCanceled()) {
+		if (monitor.isCanceled() || cmdDetails == null) {
 			return;
 		}
+		String[] cmdLine = cmdDetails.getCommandLine();
 
 		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
