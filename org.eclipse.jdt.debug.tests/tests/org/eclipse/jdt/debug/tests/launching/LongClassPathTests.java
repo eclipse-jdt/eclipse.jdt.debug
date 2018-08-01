@@ -31,7 +31,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -224,9 +223,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 			String jarName = "library" + i + ".jar";
 			IPath targetPath = javaProject.getPath().append("lib/" + jarName);
 			javaProject.getProject().getFile("lib/classpath.jar").copy(targetPath, IResource.FORCE, new NullProgressMonitor());
-			IClasspathAttribute moduleClasspathAttribute = JavaCore.newClasspathAttribute(IClasspathAttribute.MODULE, "true");
-			classpathEntries.add(JavaCore.newLibraryEntry(targetPath, null, null, null, new IClasspathAttribute[] {
-					moduleClasspathAttribute }, false));
+			classpathEntries.add(JavaCore.newLibraryEntry(targetPath, null, null));
 			if (i != 0) {
 				sb.append(File.pathSeparator);
 			}
