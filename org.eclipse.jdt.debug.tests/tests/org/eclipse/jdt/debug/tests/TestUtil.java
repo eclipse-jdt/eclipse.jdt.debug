@@ -129,6 +129,12 @@ public class TestUtil {
 			}
 		}
 		while (!Job.getJobManager().isIdle()) {
+			runEventLoop();
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// Uninterruptable
+			}
 			List<Job> jobs = getRunningOrWaitingJobs(null, excludedFamilies);
 			if (jobs.isEmpty()) {
 				// only uninteresting jobs running
@@ -144,12 +150,6 @@ public class TestUtil {
 			if (System.currentTimeMillis() - start >= maxTimeMs) {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
-			}
-			runEventLoop();
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// Uninterruptable
 			}
 		}
 		runningJobs.clear();
@@ -183,7 +183,12 @@ public class TestUtil {
 			}
 			sb.append(", ");
 		}
-		sb.setLength(sb.length() - 2);
+
+		Thread thread = Display.getDefault().getThread();
+		ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
+		if (threadInfos[0] != null) {
+			sb.append("\n").append("UI thread info: ").append(threadInfos[0]);
+		}
 		return sb.toString();
 	}
 
