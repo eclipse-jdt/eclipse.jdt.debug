@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -77,9 +78,22 @@ public class TestUtil {
 	 */
 	public static void runEventLoop() {
 		Display display = Display.getCurrent();
-		if (display != null && !display.isDisposed()) {
-			while (display.readAndDispatch()) {
-				// Keep pumping events until the queue is empty
+		if (display != null) {
+			if (!display.isDisposed()) {
+				while (display.readAndDispatch()) {
+					// Keep pumping events until the queue is empty
+				}
+			}
+		} else {
+			long start = System.currentTimeMillis();
+			AtomicBoolean stop = new AtomicBoolean();
+			Display.getDefault().asyncExec(() -> stop.set(true));
+			while (!stop.get() && System.currentTimeMillis() - start < AbstractDebugTest.DEFAULT_TIMEOUT) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					break;
+				}
 			}
 		}
 	}
