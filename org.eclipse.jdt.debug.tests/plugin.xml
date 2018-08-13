@@ -9,7 +9,7 @@
      https://www.eclipse.org/legal/epl-2.0/
 
      SPDX-License-Identifier: EPL-2.0
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -177,7 +177,7 @@
                class="org.eclipse.jdt.debug.tests.console.TestShowConsoleActionDelegate"
                menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testShowConsoleAction">
-         </action>         
+         </action>
       </actionSet>
       <actionSet
             label="%actionSet.label.0"
@@ -283,6 +283,10 @@
             class="org.eclipse.jdt.debug.testplugin.ContextView"
             id="org.eclipse.jdt.debug.tests.context.view.two"
             name="%view.name.0"/>
+      <view
+            class="org.eclipse.jdt.debug.testplugin.ContextView"
+            id="org.eclipse.jdt.debug.tests.context.view.three"
+            name="%view.name.1"/>
    </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">
@@ -400,7 +404,7 @@
            </enablement>
         </contextualLaunch>
      </shortcut>
-  </extension>   
+  </extension>
   <extension
         point="org.eclipse.debug.ui.detailPaneFactories">
      <detailFactories

@@ -31,6 +31,7 @@ public class DebugViewPerspectiveFactory implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		IFolderLayout rightFolder = layout.createFolder(IInternalDebugUIConstants.ID_TOOLS_FOLDER_VIEW, IPageLayout.LEFT, (float) 0.50, layout.getEditorArea());
 		rightFolder.addView(IDebugUIConstants.ID_DEBUG_VIEW);
+		rightFolder.addPlaceholder(ViewManagementTests.VIEW_THREE);
 
 		IFolderLayout consoleFolder = layout.createFolder(IInternalDebugUIConstants.ID_CONSOLE_FOLDER_VIEW, IPageLayout.BOTTOM, (float) 0.65, layout.getEditorArea());
 		consoleFolder.addView(IPageLayout.ID_PROJECT_EXPLORER);

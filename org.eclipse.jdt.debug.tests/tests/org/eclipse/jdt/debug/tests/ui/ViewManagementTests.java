@@ -42,6 +42,10 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 
 	// view ids
 	/**
+	 * The id of test view 'three'
+	 */
+	public static final String VIEW_THREE = "org.eclipse.jdt.debug.tests.context.view.three";
+	/**
 	 * The id of test view 'two'
 	 */
 	public static final String VIEW_TWO = "org.eclipse.jdt.debug.tests.context.view.two";
