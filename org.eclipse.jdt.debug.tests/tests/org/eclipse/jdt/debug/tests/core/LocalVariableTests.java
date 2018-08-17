@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayValue;
 import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
@@ -180,6 +181,9 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 				wait(DEFAULT_TIMEOUT);
 			}
 			assertNotNull("Details not computed", fDetail);
+			if (fDetail.toUpperCase().contains("ERROR")) {
+				throw new TestAgainException("Error while computing details for presentation" + fDetail);
+			}
 			assertEquals(expectedDetails, fDetail);
 
 		} finally {
