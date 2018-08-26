@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class NestedTypeFieldValue_566 extends Tests {
@@ -28,7 +27,7 @@ public class NestedTypeFieldValue_566 extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalNestedTypeTests", 566, 4);
+		initializeFrame("EvalNestedTypeTests", 569, 4);
 	}
 
 	protected void end() throws Exception {

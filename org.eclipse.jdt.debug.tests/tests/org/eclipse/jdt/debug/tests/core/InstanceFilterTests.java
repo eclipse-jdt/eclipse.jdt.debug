@@ -47,9 +47,9 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	public void testLineBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main
-		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(42, typeName);
 		// simpleMethod
-		IJavaLineBreakpoint simpleMethod = createLineBreakpoint(19, typeName);
+		IJavaLineBreakpoint simpleMethod = createLineBreakpoint(22, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -101,7 +101,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	public void testMethodEntryBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main
-		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(42, typeName);
 		// simpleMethod
 		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", true, false);
 
@@ -160,7 +160,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	public void testMethodExitBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main
-		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(42, typeName);
 		// simpleMethod
 		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", false, true);
 
@@ -219,7 +219,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	public void testExceptionBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main
-		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(42, typeName);
 		// exception breakpoint
 		IJavaExceptionBreakpoint npe = createExceptionBreakpoint("java.lang.NullPointerException", true, true);
 
@@ -273,7 +273,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	public void testAccessWatchpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main
-		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(42, typeName);
 		// exception breakpoint
 		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", true, false);
 
@@ -330,7 +330,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	public void testModificationWatchpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main
-		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(42, typeName);
 		// exception breakpoint
 		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", false, true);
 		// disable to avoid variable initializer

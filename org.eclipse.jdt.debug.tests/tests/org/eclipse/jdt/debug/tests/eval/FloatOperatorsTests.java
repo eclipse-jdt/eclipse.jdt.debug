@@ -24,7 +24,7 @@ public class FloatOperatorsTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalSimpleTests",15,1);
+		initializeFrame("EvalSimpleTests", 18, 1);
 	}
 
 	protected void end() throws Exception {

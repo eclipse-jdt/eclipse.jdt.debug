@@ -75,7 +75,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("suspended, but not by exception breakpoint", ex ,hit);
 			IJavaStackFrame frame= (IJavaStackFrame)thread.getTopStackFrame();
-			assertTrue("Should have been suspended at line number 35, not " + frame.getLineNumber(), frame.getLineNumber() == 35);
+			assertTrue("Should have been suspended at line number 38, not " + frame.getLineNumber(), frame.getLineNumber() == 38);
 			ex.delete();
 		} finally {
 			terminateAndRemove(thread);
@@ -177,7 +177,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			IJavaStackFrame frame= (IJavaStackFrame)thread.getTopStackFrame();
-			assertEquals("Should have been suspended at linenumber", 35, frame.getLineNumber());
+			assertEquals("Should have been suspended at linenumber", 38, frame.getLineNumber());
 
 			ex.delete();
 		} finally {

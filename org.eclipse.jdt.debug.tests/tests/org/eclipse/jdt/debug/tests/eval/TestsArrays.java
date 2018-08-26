@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class TestsArrays extends Tests {
@@ -28,7 +27,7 @@ public class TestsArrays extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalArrayTests", 37, 1, 1);
+		initializeFrame("EvalArrayTests", 40, 1, 1);
 	}
 
 	protected void end() throws Exception {

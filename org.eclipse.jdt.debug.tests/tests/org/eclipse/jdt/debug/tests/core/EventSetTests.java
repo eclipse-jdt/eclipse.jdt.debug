@@ -35,8 +35,8 @@ public class EventSetTests extends AbstractDebugTest {
 		String typeName = "Breakpoints";
 		List<IJavaLineBreakpoint> bps = new ArrayList<>();
 		// add two breakpoints at the same location
-		bps.add(createLineBreakpoint(88, typeName));
-		bps.add(createLineBreakpoint(88, typeName));
+		bps.add(createLineBreakpoint(91, typeName));
+		bps.add(createLineBreakpoint(91, typeName));
 
 
 		IJavaThread thread= null;

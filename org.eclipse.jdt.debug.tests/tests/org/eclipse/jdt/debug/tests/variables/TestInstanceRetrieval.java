@@ -44,8 +44,8 @@ public class TestInstanceRetrieval extends AbstractDebugTest {
 	 */
 	public void testGetInstances() throws Exception {
 		String typeName = "java6.AllInstancesTests";
-		createLineBreakpoint(61, typeName);
-		IJavaLineBreakpoint bp2 = createLineBreakpoint(63, typeName);
+		createLineBreakpoint(64, typeName);
+		IJavaLineBreakpoint bp2 = createLineBreakpoint(66, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);

@@ -25,7 +25,7 @@ public class StaticFieldValueTests2 extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalTypeTests",67,2);
+		initializeFrame("EvalTypeTests", 70, 2);
 	}
 
 	protected void end() throws Exception {

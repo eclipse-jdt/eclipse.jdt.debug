@@ -43,7 +43,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSimpleConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i == 3", true);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(19, typeName, "i == 3", true);
 
 		IJavaThread thread= null;
 		try {
@@ -71,7 +71,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testStaticMethodCallConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "ArgumentsTests.fact(i) == 24", true);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(19, typeName, "ArgumentsTests.fact(i) == 24", true);
 
 		IJavaThread thread= null;
 		try {
@@ -99,7 +99,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSimpleConditionalBreakpointSuspendOnChange() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i != 9", false);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(19, typeName, "i != 9", false);
 
 		IJavaThread thread= null;
 		try {
@@ -138,7 +138,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testConditionalStepReturn() throws Exception {
 		String typeName = "ConditionalStepReturn";
-		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(17, typeName);
+		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(20, typeName);
 		createConditionalLineBreakpoint(18, typeName, "!bool", true);
 
 		IJavaThread thread= null;
@@ -162,8 +162,8 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testEvalConditionOnStep() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-		IJavaLineBreakpoint bp2 = createConditionalLineBreakpoint(17, typeName, "i = 3; return true;", true);
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
+		IJavaLineBreakpoint bp2 = createConditionalLineBreakpoint(20, typeName, "i = 3; return true;", true);
 
 		IJavaThread thread= null;
 		try {
@@ -199,8 +199,8 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSuspendLongRunningCondition() throws Exception {
 		String typeName = "MethodCall";
-		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
-		createConditionalLineBreakpoint(27, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(1000); return true;", true);
+		IJavaLineBreakpoint first = createLineBreakpoint(22, typeName);
+		createConditionalLineBreakpoint(30, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(1000); return true;", true);
 
 		IJavaThread thread= null;
 		try {
@@ -537,7 +537,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testConditionBreakpointReturnBooleanObjectTrue() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "return new Boolean(true)", true);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(19, typeName, "return new Boolean(true)", true);
 
 		IJavaThread thread = null;
 		try {

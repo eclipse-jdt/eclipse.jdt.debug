@@ -260,7 +260,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	public void testStringConcatenation() throws Exception {
 	    ConsoleLineTracker.setDelegate(this);
 	    String typeName = "PrintConcatenation";
-	    createConditionalLineBreakpoint(20, typeName, "System.out.println(\"var = \" + foo); return false;", true);
+		createConditionalLineBreakpoint(23, typeName, "System.out.println(\"var = \" + foo); return false;", true);
 	    fTarget = null;
 	    try {
 	        fTarget = launchAndTerminate(typeName);
@@ -284,7 +284,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	public void testIntConcatenation() throws Exception {
 	    ConsoleLineTracker.setDelegate(this);
 	    String typeName = "PrintConcatenation";
-	    createConditionalLineBreakpoint(20, typeName, "System.out.println(\"var = \" + x); return false;", true);
+		createConditionalLineBreakpoint(23, typeName, "System.out.println(\"var = \" + x); return false;", true);
 	    fTarget = null;
 	    try {
 	        fTarget = launchAndTerminate(typeName);

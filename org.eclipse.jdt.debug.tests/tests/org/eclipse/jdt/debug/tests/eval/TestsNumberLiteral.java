@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 public class TestsNumberLiteral extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
@@ -26,7 +25,7 @@ public class TestsNumberLiteral extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalSimpleTests", 37, 1, 1);
+		initializeFrame("EvalSimpleTests", 40, 1, 1);
 	}
 
 	protected void end() throws Exception {

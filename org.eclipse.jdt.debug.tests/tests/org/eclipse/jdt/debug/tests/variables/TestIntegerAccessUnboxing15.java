@@ -69,7 +69,7 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 		IJavaThread thread= null;
 		IAstEvaluationEngine engine = null;
 		String typeName = "a.b.c.IntegerAccess";
-		createLineBreakpoint(get15Project().findType(typeName), 24);
+		createLineBreakpoint(get15Project().findType(typeName), 27);
 		try {
 			thread= launchToBreakpoint(get15Project(), typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);

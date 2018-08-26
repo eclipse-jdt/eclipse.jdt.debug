@@ -44,7 +44,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(21, typeName);
+		createLineBreakpoint(24, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -80,7 +80,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(23, typeName);
+		createLineBreakpoint(26, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -116,7 +116,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceMethodWithParameters() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(36, typeName);
+		createLineBreakpoint(39, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -152,7 +152,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoBinaryMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(34, typeName);
+		createLineBreakpoint(37, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -191,7 +191,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoBinaryConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(34, typeName);
+		createLineBreakpoint(37, typeName);
 
 		IJavaThread thread= null;
 		try {

@@ -107,7 +107,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());
+			assertEquals("Should be line 33", 33, frame.getLineNumber());
 
 			verifyAllThreadsSuspended(thread);
 
@@ -140,7 +140,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
-			assertEquals("Should be on line 27", 27, frame.getLineNumber());
+			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
 			verifyAllThreadsSuspended(thread);
 

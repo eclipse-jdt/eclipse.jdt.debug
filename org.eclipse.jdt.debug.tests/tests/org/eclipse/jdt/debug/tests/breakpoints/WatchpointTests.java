@@ -58,8 +58,8 @@ public class WatchpointTests extends AbstractDebugTest {
 
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
-			// line 27
-			assertEquals("Should be on line 27", 27, frame.getLineNumber());
+			// line 30
+			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
 			// should hit access 10 times
 			int count = 10;
@@ -73,7 +73,7 @@ public class WatchpointTests extends AbstractDebugTest {
 					throw new TestAgainException("Retest - the debug target is terminated or disconnected");
 				}
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 30", 30, frame.getLineNumber());
+				assertEquals("Should be line 33", 33, frame.getLineNumber());
 				count--;
 			}
 
@@ -105,8 +105,8 @@ public class WatchpointTests extends AbstractDebugTest {
 
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
-			// line 27
-			assertEquals("Should be on line 27", 27, frame.getLineNumber());
+			// line 30
+			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
 			resumeAndExit(thread);
 
@@ -153,7 +153,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", wp);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());
+			assertEquals("Should be line 33", 33, frame.getLineNumber());
 
 			// should hit access 9 more times
 			int count = 9;
@@ -167,7 +167,7 @@ public class WatchpointTests extends AbstractDebugTest {
 					throw new TestAgainException("Retest - the debug target is terminated or disconnected");
 				}
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 30", 30, frame.getLineNumber());
+				assertEquals("Should be line 33", 33, frame.getLineNumber());
 				count--;
 			}
 
@@ -201,7 +201,7 @@ public class WatchpointTests extends AbstractDebugTest {
 				throw new TestAgainException("Retest - the debug target is terminated or disconnected");
 			}
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());
+			assertEquals("Should be line 33", 33, frame.getLineNumber());
 
 			wp.setEnabled(false);
 
@@ -232,7 +232,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());
+			assertEquals("Should be line 33", 33, frame.getLineNumber());
 			IVariable var = findVariable(frame, "value");
 			assertNotNull("Could not find variable 'value'", var);
 
@@ -256,7 +256,7 @@ public class WatchpointTests extends AbstractDebugTest {
 					throw new TestAgainException("Retest - the debug target is terminated or disconnected");
 				}
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 30", 30, frame.getLineNumber());
+				assertEquals("Should be line 33", 33, frame.getLineNumber());
 				count--;
 			}
 
@@ -289,7 +289,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
-			assertEquals("Should be on line 27", 27, frame.getLineNumber());
+			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
 			getBreakpointManager().setEnabled(false);
 			resumeAndExit(thread);
@@ -323,7 +323,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
-			assertEquals("Should be on line 15", 15, frame.getLineNumber());
+			assertEquals("Should be on line 18", 18, frame.getLineNumber());
 
 			getBreakpointManager().setEnabled(false);
 			resumeAndExit(thread);

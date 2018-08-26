@@ -16,6 +16,7 @@ package org.eclipse.jdt.debug.tests.state;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IThread;
@@ -48,7 +49,7 @@ public class RefreshStateTests extends AbstractDebugTest {
 	 */
 	public void testThreadHasResumed() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
-		ILineBreakpoint bp = createLineBreakpoint(16, "org.eclipse.debug.tests.targets.Looper");
+		ILineBreakpoint bp = createLineBreakpoint(19, "org.eclipse.debug.tests.targets.Looper");
 
 		IJavaThread thread = null;
 		try {
@@ -88,7 +89,7 @@ public class RefreshStateTests extends AbstractDebugTest {
 	 */
 	public void testAllThreadsResumed() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, "org.eclipse.debug.tests.targets.Looper");
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, "org.eclipse.debug.tests.targets.Looper");
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
 
 		IJavaThread thread = null;
@@ -131,7 +132,7 @@ public class RefreshStateTests extends AbstractDebugTest {
 	 */
 	public void testThreadHasSuspended() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
-		ILineBreakpoint bp = createLineBreakpoint(16, "org.eclipse.debug.tests.targets.Looper");
+		ILineBreakpoint bp = createLineBreakpoint(19, "org.eclipse.debug.tests.targets.Looper");
 
 		IJavaThread thread = null;
 		try {
@@ -180,7 +181,7 @@ public class RefreshStateTests extends AbstractDebugTest {
 	 */
 	public void testAllThreadsSuspended() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
-		ILineBreakpoint bp = createLineBreakpoint(16, "org.eclipse.debug.tests.targets.Looper");
+		ILineBreakpoint bp = createLineBreakpoint(19, "org.eclipse.debug.tests.targets.Looper");
 
 		IJavaThread thread = null;
 		try {
@@ -232,7 +233,7 @@ public class RefreshStateTests extends AbstractDebugTest {
 	 */
 	public void testTargetHasSuspended() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
-		ILineBreakpoint bp = createLineBreakpoint(16, "org.eclipse.debug.tests.targets.Looper");
+		ILineBreakpoint bp = createLineBreakpoint(19, "org.eclipse.debug.tests.targets.Looper");
 
 		IJavaThread thread = null;
 		try {
@@ -280,7 +281,7 @@ public class RefreshStateTests extends AbstractDebugTest {
 	 */
 	public void testTargetHasResumed() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, "org.eclipse.debug.tests.targets.Looper");
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, "org.eclipse.debug.tests.targets.Looper");
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
 
 		IJavaThread thread = null;

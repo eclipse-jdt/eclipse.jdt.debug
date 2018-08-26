@@ -58,8 +58,8 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 	 */
 	public void testListenToThreadNameChange() throws Exception {
 		String typeName = "ThreadNameChange";
-		final int bpLine1 = 36;
-		final int bpLine2 = 40;
+		final int bpLine1 = 39;
+		final int bpLine2 = 43;
 
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
@@ -109,8 +109,8 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		System.setProperty(DISABLE_THREAD_NAME_CHANGE_LISTENER, String.valueOf(Boolean.TRUE));
 
 		String typeName = "ThreadNameChange";
-		final int bpLine1 = 36;
-		final int bpLine2 = 40;
+		final int bpLine1 = 39;
+		final int bpLine2 = 43;
 
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);

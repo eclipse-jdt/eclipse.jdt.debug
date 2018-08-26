@@ -44,7 +44,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	 */
 	public void testFindConflicting1() throws Exception {
 		String typeName = "LocalVariableTests2";
-		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(24, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -70,7 +70,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	 */
 	public void testFindConflicting2() throws Exception {
 		String typeName = "LocalVariableTests2";
-		ILineBreakpoint bp = createLineBreakpoint(25, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(28, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -89,7 +89,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	public void testSimpleVisibility() throws Exception {
 		String typeName = "LocalVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(18, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -127,7 +127,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "LocalVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(25, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -158,11 +158,11 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	}
 
 	protected void doArrayDetailTestNonDefPkg(String varName, String expectedDetails) throws Exception {
-		doArrayDetailTest(varName, expectedDetails, "org.eclipse.debug.tests.targets.ArrayDetailTests", 64);
+		doArrayDetailTest(varName, expectedDetails, "org.eclipse.debug.tests.targets.ArrayDetailTests", 67);
 	}
 
 	protected void doArrayDetailTestDefPkg(String varName, String expectedDetails) throws Exception {
-		doArrayDetailTest(varName, expectedDetails, "ArrayDetailTestsDef", 63);
+		doArrayDetailTest(varName, expectedDetails, "ArrayDetailTestsDef", 66);
 	}
 
 	protected void doArrayDetailTest(String varName, String expectedDetails, String mainName, int lineNumber) throws Exception {

@@ -46,43 +46,43 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		String pattern = "Break";
 		List<IJavaPatternBreakpoint> bps = new ArrayList<>();
 		// anonymous class
-		bps.add(createPatternBreakpoint(43, sourceName, pattern));
+		bps.add(createPatternBreakpoint(46, sourceName, pattern));
 		// blocks
-		bps.add(createPatternBreakpoint(102, sourceName, pattern));
+		bps.add(createPatternBreakpoint(105, sourceName, pattern));
 		// constructor
-		bps.add(createPatternBreakpoint(77, sourceName, pattern));
+		bps.add(createPatternBreakpoint(80, sourceName, pattern));
 		// else
-		bps.add(createPatternBreakpoint(88, sourceName, pattern));
+		bps.add(createPatternBreakpoint(91, sourceName, pattern));
 		//finally after catch
-		bps.add(createPatternBreakpoint(120, sourceName, pattern));
+		bps.add(createPatternBreakpoint(123, sourceName, pattern));
 		//finally after try
-		bps.add(createPatternBreakpoint(128, sourceName, pattern));
+		bps.add(createPatternBreakpoint(131, sourceName, pattern));
 		// for loop
-		bps.add(createPatternBreakpoint(93, sourceName, pattern));
+		bps.add(createPatternBreakpoint(96, sourceName, pattern));
 		// if
-		bps.add(createPatternBreakpoint(81, sourceName, pattern));
+		bps.add(createPatternBreakpoint(84, sourceName, pattern));
 		// initializer
-		bps.add(createPatternBreakpoint(17, sourceName, pattern));
+		bps.add(createPatternBreakpoint(20, sourceName, pattern));
 		// inner class
-		bps.add(createPatternBreakpoint(22, sourceName, pattern));
+		bps.add(createPatternBreakpoint(25, sourceName, pattern));
 		// return true
-		bps.add(createPatternBreakpoint(72, sourceName, pattern));
+		bps.add(createPatternBreakpoint(75, sourceName, pattern));
 		// instance method
-		bps.add(createPatternBreakpoint(107, sourceName, pattern));
+		bps.add(createPatternBreakpoint(110, sourceName, pattern));
 		// static method
-		bps.add(createPatternBreakpoint(53, sourceName, pattern));
+		bps.add(createPatternBreakpoint(56, sourceName, pattern));
 		// case statement
-		bps.add(createPatternBreakpoint(133, sourceName, pattern));
+		bps.add(createPatternBreakpoint(136, sourceName, pattern));
 		// default statement
-		bps.add(createPatternBreakpoint(140, sourceName, pattern));
+		bps.add(createPatternBreakpoint(143, sourceName, pattern));
 		// synchronized blocks
-		bps.add(createPatternBreakpoint(146, sourceName, pattern));
+		bps.add(createPatternBreakpoint(149, sourceName, pattern));
 		// try
-		bps.add(createPatternBreakpoint(125, sourceName, pattern));
+		bps.add(createPatternBreakpoint(128, sourceName, pattern));
 		//catch
-		bps.add(createPatternBreakpoint(118, sourceName, pattern));
+		bps.add(createPatternBreakpoint(121, sourceName, pattern));
 		// while
-		bps.add(createPatternBreakpoint(97, sourceName, pattern));
+		bps.add(createPatternBreakpoint(100, sourceName, pattern));
 
 
 		IJavaThread thread= null;
@@ -115,9 +115,9 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testToggleStratumBreakpoint() throws Exception {
-		IJavaStratumLineBreakpoint stratumLineBreakpoint = createStratumBreakpoint(3, "date.jsp", "JSP");
+		IJavaStratumLineBreakpoint stratumLineBreakpoint = createStratumBreakpoint(6, "date.jsp", "JSP");
 		String typeName = "Breakpoints";
-		createLineBreakpoint(52, typeName);
+		createLineBreakpoint(55, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -148,7 +148,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	public void testTogglePatternBreakpoint() throws Exception {
 		IJavaPatternBreakpoint patternBreakpoint = createPatternBreakpoint(3, "date.jsp", "date");
 		String typeName = "Breakpoints";
-		createLineBreakpoint(52, typeName);
+		createLineBreakpoint(55, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -181,43 +181,43 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		String pattern = "Break";
 		List<IJavaPatternBreakpoint> bps = new ArrayList<>();
 		// anonymous class
-		bps.add(createPatternBreakpoint(43, sourceName, pattern));
+		bps.add(createPatternBreakpoint(46, sourceName, pattern));
 		// blocks
-		bps.add(createPatternBreakpoint(102, sourceName, pattern));
+		bps.add(createPatternBreakpoint(105, sourceName, pattern));
 		// constructor
-		bps.add(createPatternBreakpoint(77, sourceName, pattern));
+		bps.add(createPatternBreakpoint(80, sourceName, pattern));
 		// else
-		bps.add(createPatternBreakpoint(88, sourceName, pattern));
+		bps.add(createPatternBreakpoint(91, sourceName, pattern));
 		//finally after catch
-		bps.add(createPatternBreakpoint(120, sourceName, pattern));
+		bps.add(createPatternBreakpoint(123, sourceName, pattern));
 		//finally after try
-		bps.add(createPatternBreakpoint(128, sourceName, pattern));
+		bps.add(createPatternBreakpoint(131, sourceName, pattern));
 		// for loop
-		bps.add(createPatternBreakpoint(93, sourceName, pattern));
+		bps.add(createPatternBreakpoint(96, sourceName, pattern));
 		// if
-		bps.add(createPatternBreakpoint(81, sourceName, pattern));
+		bps.add(createPatternBreakpoint(84, sourceName, pattern));
 		// initializer
-		bps.add(createPatternBreakpoint(17, sourceName, pattern));
+		bps.add(createPatternBreakpoint(20, sourceName, pattern));
 		// inner class
-		bps.add(createPatternBreakpoint(22, sourceName, pattern));
+		bps.add(createPatternBreakpoint(25, sourceName, pattern));
 		// return true
-		bps.add(createPatternBreakpoint(72, sourceName, pattern));
+		bps.add(createPatternBreakpoint(75, sourceName, pattern));
 		// instance method
-		bps.add(createPatternBreakpoint(107, sourceName, pattern));
+		bps.add(createPatternBreakpoint(110, sourceName, pattern));
 		// static method
-		bps.add(createPatternBreakpoint(53, sourceName, pattern));
+		bps.add(createPatternBreakpoint(56, sourceName, pattern));
 		// case statement
-		bps.add(createPatternBreakpoint(133, sourceName, pattern));
+		bps.add(createPatternBreakpoint(136, sourceName, pattern));
 		// default statement
-		bps.add(createPatternBreakpoint(140, sourceName, pattern));
+		bps.add(createPatternBreakpoint(143, sourceName, pattern));
 		// synchronized blocks
-		bps.add(createPatternBreakpoint(146, sourceName, pattern));
+		bps.add(createPatternBreakpoint(149, sourceName, pattern));
 		// try
-		bps.add(createPatternBreakpoint(125, sourceName, pattern));
+		bps.add(createPatternBreakpoint(128, sourceName, pattern));
 		//catch
-		bps.add(createPatternBreakpoint(118, sourceName, pattern));
+		bps.add(createPatternBreakpoint(121, sourceName, pattern));
 		// while
-		bps.add(createPatternBreakpoint(97, sourceName, pattern));
+		bps.add(createPatternBreakpoint(100, sourceName, pattern));
 
 
 		IJavaThread thread= null;

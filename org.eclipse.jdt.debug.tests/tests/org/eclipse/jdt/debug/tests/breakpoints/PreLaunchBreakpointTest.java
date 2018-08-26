@@ -52,7 +52,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.ALWAYS);
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(52, typeName);
+			createLineBreakpoint(55, typeName);
 			DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 			waiter.setTimeout(DEFAULT_TIMEOUT);
 			configuration.launch(ILaunchManager.RUN_MODE, null);

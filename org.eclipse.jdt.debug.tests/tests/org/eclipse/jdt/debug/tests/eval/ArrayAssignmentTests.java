@@ -24,7 +24,7 @@ public class ArrayAssignmentTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalArrayTests",37,1);
+		initializeFrame("EvalArrayTests", 40, 1);
 	}
 
 	protected void end() throws Exception {

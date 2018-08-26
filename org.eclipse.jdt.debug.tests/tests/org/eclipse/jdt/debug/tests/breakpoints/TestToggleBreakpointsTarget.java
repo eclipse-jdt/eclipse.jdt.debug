@@ -42,12 +42,12 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("testfiles/source/SomeClass.java");
-			toggleBreakpoint(path, 22); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 25); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a line breakpoint", added instanceof IJavaLineBreakpoint);
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) added;
-			assertEquals("Wrong line number", 23, breakpoint.getLineNumber());
+			assertEquals("Wrong line number", 26, breakpoint.getLineNumber());
 			assertEquals("Wrong type name", "a.b.c.SomeClass", breakpoint.getTypeName());
 		} finally {
 			manager.removeBreakpointListener(listener);
@@ -67,7 +67,7 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("testfiles/source/SomeClass.java");
-			toggleBreakpoint(path, 19); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 22); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a watchpoint", added instanceof IJavaWatchpoint);
@@ -92,7 +92,7 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("testfiles/source/SomeClass.java");
-			toggleBreakpoint(path, 21); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 24); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);

@@ -24,7 +24,7 @@ public class QualifiedFieldValueTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalTypeTests",73,1);
+		initializeFrame("EvalTypeTests", 76, 1);
 	}
 
 	protected void end() throws Exception {

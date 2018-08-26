@@ -47,7 +47,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.MethodBreakpoints";
-			createLineBreakpoint(31, type);
+			createLineBreakpoint(34, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "methodTypeParameter(1);";
@@ -69,7 +69,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.MethodBreakpoints";
-			createLineBreakpoint(31, type);
+			createLineBreakpoint(34, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new MethodBreakpoints<String>().typeParameter(\"test\")";
@@ -91,7 +91,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.MethodBreakpoints";
-			createLineBreakpoint(31, type);
+			createLineBreakpoint(34, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "MethodBreakpoints.staticTypeParameter(new ArrayList<Long>())";
@@ -107,7 +107,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.StepIntoSelectionWithGenerics";
-			createLineBreakpoint(21, type);
+			createLineBreakpoint(24, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new java.util.ArrayList<String>().isEmpty()";
@@ -123,7 +123,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.StepIntoSelectionWithGenerics";
-			createLineBreakpoint(17, type);
+			createLineBreakpoint(20, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new java.util.ArrayList<String>().isEmpty()";
@@ -139,7 +139,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.StepIntoSelectionWithGenerics";
-			createLineBreakpoint(32, type);
+			createLineBreakpoint(35, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new StepIntoSelectionWithGenerics<String>().hello()";
@@ -155,7 +155,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.StepIntoSelectionWithGenerics";
-			createLineBreakpoint(32, type);
+			createLineBreakpoint(35, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new StepIntoSelectionWithGenerics<String>().new InnerClazz<Integer>().hello()";
@@ -171,7 +171,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.StepIntoSelectionWithGenerics";
-			createLineBreakpoint(32, type);
+			createLineBreakpoint(35, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new StepIntoSelectionWithGenerics<String>().new InnerClazz<Integer>().new InnerClazz2<Double>().hello()";
@@ -187,7 +187,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.ConditionalsNearGenerics";
-			createLineBreakpoint(32, type);
+			createLineBreakpoint(35, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "char[] chars = name.toCharArray();";
@@ -203,7 +203,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.ConditionalsNearGenerics";
-			createLineBreakpoint(33, type);
+			createLineBreakpoint(36, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "tokenize(Arrays.asList(1,2,3), name)";
@@ -219,7 +219,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.ConditionalsNearGenerics";
-			createLineBreakpoint(44, type);
+			createLineBreakpoint(47, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "list.iterator()";
@@ -235,8 +235,8 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.ConditionalsNearGenerics";
-			ILineBreakpoint bp = createLineBreakpoint(56, type);
-			assertTrue("The breakpoint on line 56 must exist", bp.getMarker().exists());
+			ILineBreakpoint bp = createLineBreakpoint(59, type);
+			assertTrue("The breakpoint on line 59 must exist", bp.getMarker().exists());
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "this.input";
@@ -252,8 +252,8 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.ConditionalsNearGenerics";
-			ILineBreakpoint bp = createLineBreakpoint(64, type);
-			assertTrue("The breakpoint on line 64 must exist", bp.getMarker().exists());
+			ILineBreakpoint bp = createLineBreakpoint(67, type);
+			assertTrue("The breakpoint on line 67 must exist", bp.getMarker().exists());
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "this.input";
@@ -353,7 +353,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "a.b.c.bug329294WithGenerics";
-			createLineBreakpoint(11, typename);
+			createLineBreakpoint(14, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "fInner1.innerBool";

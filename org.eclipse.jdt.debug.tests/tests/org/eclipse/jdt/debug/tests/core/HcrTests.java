@@ -129,7 +129,7 @@ public class HcrTests extends AbstractDebugTest {
 
 	public void testSimpleHcr() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
-		createLineBreakpoint(39, typeName);
+		createLineBreakpoint(42, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -179,7 +179,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
 
 				// resume to breakpoint
-				createLineBreakpoint(39, typeName);
+				createLineBreakpoint(42, typeName);
 				thread = resume(thread);
 
 				// value of 'x' should now be "Two"
@@ -203,7 +203,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testGeneralHcrListener() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
-		createLineBreakpoint(39, typeName);
+		createLineBreakpoint(42, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -254,7 +254,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testSpecificHcrListener() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
-		createLineBreakpoint(39, typeName);
+		createLineBreakpoint(42, typeName);
 		HCRListener listener = new HCRListener();
 		HCRListener listener2 = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
@@ -309,7 +309,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalType() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
-		createLineBreakpoint(33, typeName);
+		createLineBreakpoint(36, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -320,7 +320,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 36", 36, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass2.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -343,7 +343,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 36", 36, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -362,7 +362,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalType2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
-		createLineBreakpoint(37, typeName);
+		createLineBreakpoint(40, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -373,7 +373,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 40", 40, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass2.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -396,7 +396,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 40", 40, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -415,7 +415,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalType3() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
-		createLineBreakpoint(19, typeName);
+		createLineBreakpoint(22, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -426,7 +426,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$1$Local",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 22", 22, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass2.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -449,7 +449,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$1$Local",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 22", 22, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -469,7 +469,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnonymousType() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
-		createLineBreakpoint(34, typeName);
+		createLineBreakpoint(37, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -480,7 +480,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$2",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 34", 34, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass3.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -504,7 +504,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$2",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 34", 34, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -522,7 +522,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnonymousType2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
-		createLineBreakpoint(44, typeName);
+		createLineBreakpoint(47, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -533,7 +533,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$3",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 44", 44, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 47", 47, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass3.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -556,7 +556,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$3",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 44", 44, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 47", 47, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -574,7 +574,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnonymousType3() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
-		createLineBreakpoint(24, typeName);
+		createLineBreakpoint(27, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -585,7 +585,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$1",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass3.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -608,7 +608,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$1",  frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -626,7 +626,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass4";
-		createLineBreakpoint(21, typeName);
+		createLineBreakpoint(24, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -637,7 +637,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
-				assertEquals("We shoud be stopped on line 21", 21, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass4.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -660,7 +660,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
-				assertEquals("We shoud be stopped on line 21", 21, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -678,7 +678,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRConstructor2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass4";
-		createLineBreakpoint(16, typeName);
+		createLineBreakpoint(19, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -689,7 +689,7 @@ public class HcrTests extends AbstractDebugTest {
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the constuctor method", "<init>",  frame.getMethodName());
-				assertEquals("We shoud be stopped on line 16", 16, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass4.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -713,7 +713,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the constructor method", "<init>",  frame.getMethodName());
 				//after HCR constructors re-enter
-				assertEquals("We shoud be stopped on line 15", 15, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 18", 18, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -732,7 +732,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(23, typeName);
+		createLineBreakpoint(26, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -745,7 +745,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 26", 26, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -769,7 +769,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 26", 26, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -787,7 +787,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(27, typeName);
+		createLineBreakpoint(30, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -800,7 +800,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run2() method", "run2",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 30", 30, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -824,7 +824,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run2() method", "run2",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 30", 30, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -842,7 +842,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType3() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(18, typeName);
+		createLineBreakpoint(21, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -855,7 +855,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the <init> method", "<init>",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 18", 18, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 21", 21, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -880,7 +880,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertEquals("We should be stopped in the <init> method", "<init>",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
 				//after HCR constructors re-enter
-				assertEquals("We shoud be stopped on line 17", 17, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 20", 20, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -899,7 +899,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType4() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(33, typeName);
+		createLineBreakpoint(36, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -912,7 +912,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 36", 36, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -936,7 +936,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 36", 36, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -955,7 +955,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType5() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(37, typeName);
+		createLineBreakpoint(40, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -968,7 +968,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the outerrun() method", "outerrun",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 40", 40, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -992,7 +992,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the outerrun method", "outerrun",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 40", 40, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -1010,7 +1010,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalInner() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass9";
-		createLineBreakpoint(19, typeName);
+		createLineBreakpoint(22, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -1023,7 +1023,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass9$1$Local type", "org.eclipse.debug.tests.targets.HcrClass9$1$Local", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 22", 22, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass9.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -1047,7 +1047,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass9$1$Local type", "org.eclipse.debug.tests.targets.HcrClass9$1$Local", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 22", 22, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -1065,7 +1065,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalAnonymous() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass8";
-		createLineBreakpoint(24, typeName);
+		createLineBreakpoint(27, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -1078,7 +1078,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass8$1$Local type", "org.eclipse.debug.tests.targets.HcrClass8$1$Local", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass8.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -1102,7 +1102,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass8$1$Local type", "org.eclipse.debug.tests.targets.HcrClass8$1$Local", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -1120,7 +1120,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerLocal() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass7";
-		createLineBreakpoint(19, typeName);
+		createLineBreakpoint(22, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -1133,7 +1133,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass7$1$Local$Inner type", "org.eclipse.debug.tests.targets.HcrClass7$1$Local$Inner", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 22", 22, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass7.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -1157,7 +1157,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass7$1$Local$Inner type", "org.eclipse.debug.tests.targets.HcrClass7$1$Local$Inner", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 22", 22, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -1175,7 +1175,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnnonymousLocal() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass6";
-		createLineBreakpoint(23, typeName);
+		createLineBreakpoint(26, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -1188,7 +1188,7 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass6$1 type", "org.eclipse.debug.tests.targets.HcrClass6$1", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 26", 26, frame.getLineNumber());
 				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass6.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
@@ -1212,7 +1212,7 @@ public class HcrTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
 				assertEquals("We should be stopped in the HcrClass6$1 type", "org.eclipse.debug.tests.targets.HcrClass6$1", frame.getDeclaringTypeName());
-				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+				assertEquals("We shoud be stopped on line 26", 26, frame.getLineNumber());
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
@@ -1240,7 +1240,7 @@ public class HcrTests extends AbstractDebugTest {
 		// Paths are same, except the project part
 		assertEquals(type1.getResource().getFullPath().removeFirstSegments(1), type2.getResource().getFullPath().removeFirstSegments(1));
 
-		final int lineNumber = 39;
+		final int lineNumber = 42;
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(type1, lineNumber);
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(type2, lineNumber);
 		assertNotEquals(bp1, bp2);

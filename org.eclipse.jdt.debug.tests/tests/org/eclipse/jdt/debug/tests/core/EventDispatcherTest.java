@@ -90,7 +90,7 @@ public class EventDispatcherTest extends AbstractDebugTest {
 		IJavaThread suspendedThread = null;
 		try {
 			DebugPlugin.getDefault().addDebugEventListener(debugListener);
-			createLineBreakpoint(24, "BulkThreadCreationTest");
+			createLineBreakpoint(27, "BulkThreadCreationTest");
 			suspendedThread = launchToBreakpoint("BulkThreadCreationTest");
 		}
 		finally {
@@ -111,7 +111,7 @@ public class EventDispatcherTest extends AbstractDebugTest {
 	 */
 	public void testConditionalExpressionEventDispatching() throws Exception {
 		String typeName = "BreakpointListenerTest";
-		createConditionalLineBreakpoint(15, typeName, "foo(); return false;", true);
+		createConditionalLineBreakpoint(18, typeName, "foo(); return false;", true);
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(20, typeName);
 		IJavaThread thread = null;
 		try {

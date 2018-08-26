@@ -44,19 +44,19 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 	}
 
 	public void testStaticTypeParameter() throws Exception {
-		IJavaMethodBreakpoint breakpoint  = createBreakpoint(25);
+		IJavaMethodBreakpoint breakpoint = createBreakpoint(28);
 		assertEquals("Wrong method", "staticTypeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}
 
 	public void testTypeParameter() throws Exception {
-		IJavaMethodBreakpoint breakpoint  = createBreakpoint(29);
+		IJavaMethodBreakpoint breakpoint = createBreakpoint(32);
 		assertEquals("Wrong method", "typeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}
 
 	public void testMethodTypeParameter() throws Exception {
-		IJavaMethodBreakpoint breakpoint  = createBreakpoint(34);
+		IJavaMethodBreakpoint breakpoint = createBreakpoint(37);
 		assertEquals("Wrong method", "methodTypeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}

@@ -36,7 +36,7 @@ public class ArrayTests extends AbstractDebugTest {
 
 	public void testGetSize() throws Exception {
 		String typeName = "ArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -56,7 +56,7 @@ public class ArrayTests extends AbstractDebugTest {
 
 	public void testGetVariable() throws Exception {
 		String typeName = "ArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -78,7 +78,7 @@ public class ArrayTests extends AbstractDebugTest {
 
 	public void testGetVariableRange() throws Exception {
 		String typeName = "ArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -103,7 +103,7 @@ public class ArrayTests extends AbstractDebugTest {
 
 	public void testSetValueRange() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(27, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -140,7 +140,7 @@ public class ArrayTests extends AbstractDebugTest {
 
 	public void testCreateArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -186,7 +186,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetZeroLengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -220,7 +220,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadLowerIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -259,7 +259,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadUpperIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -299,7 +299,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetExactUpperIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -339,7 +339,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadLowerSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -379,7 +379,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadUpperSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -419,7 +419,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetExactSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -459,7 +459,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadLowerLengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -499,7 +499,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetMinus1LengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -537,7 +537,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadLengthPlusIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -577,7 +577,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetBadLengthPlusSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -616,7 +616,7 @@ public class ArrayTests extends AbstractDebugTest {
 	 */
 	public void testSetLongerSrcArray() throws Exception {
 		String typeName = "ByteArrayTests";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(35, typeName);
 
 		IJavaThread thread = null;
 		try {

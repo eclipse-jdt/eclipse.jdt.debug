@@ -90,8 +90,8 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String expectedMethod2 = "lambda$1";
 		final int framesNumber1 = 6;
 		final int framesNumber2 = 9;
-		final int bpLine1 = 31;
-		final int bpLine2 = 38;
+		final int bpLine1 = 34;
+		final int bpLine2 = 41;
 
 		IJavaBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
 		IJavaBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
@@ -109,9 +109,9 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			hover.setEditor(part);
 
 			Map<String, Region> offsets = new LinkedHashMap<>();
-			offsets.put("arg", new Region(1041, "arg".length()));
-			offsets.put("var1", new Region(1012, "var1".length()));
-			offsets.put("var2", new Region(983, "var2".length()));
+			offsets.put("arg", new Region(1059, "arg".length()));
+			offsets.put("var1", new Region(1030, "var1".length()));
+			offsets.put("var2", new Region(1001, "var2".length()));
 
 			Set<Entry<String, Region>> entrySet = offsets.entrySet();
 			int startLine = bpLine1;
@@ -125,9 +125,9 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			part = openEditorAndValidateStack(expectedMethod2, framesNumber2, file, thread);
 
 			offsets = new LinkedHashMap<>();
-			offsets.put("arg", new Region(1198, "arg".length()));
-			offsets.put("var1", new Region(1168, "var1".length()));
-			offsets.put("var3", new Region(1138, "var3".length()));
+			offsets.put("arg", new Region(1216, "arg".length()));
+			offsets.put("var1", new Region(1186, "var1".length()));
+			offsets.put("var3", new Region(1156, "var3".length()));
 			// This will not work yet, I have no idea how to identify parent
 			// lambda element...
 			// offsets.put("var2", new Region(1108, "var2".length()));

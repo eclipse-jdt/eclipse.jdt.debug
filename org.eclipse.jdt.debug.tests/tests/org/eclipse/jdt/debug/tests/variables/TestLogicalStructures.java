@@ -46,7 +46,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 	 */
 	public void testListLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
-		createLineBreakpoint(33, typeName);
+		createLineBreakpoint(36, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -122,7 +122,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 	 */
 	public void testEntryLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
-		createLineBreakpoint(33, typeName);
+		createLineBreakpoint(36, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);

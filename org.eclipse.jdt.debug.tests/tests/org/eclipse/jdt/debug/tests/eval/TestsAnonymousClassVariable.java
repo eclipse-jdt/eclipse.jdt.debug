@@ -36,7 +36,7 @@ public class TestsAnonymousClassVariable extends Tests {
 
 	public void testEvalAnonymousClassVariable1() throws Throwable {
 		try {
-			init(17, 2);
+			init(20, 2);
 			IValue value = eval("innerClassField");
 			String typeName = value.getReferenceTypeName();
 			assertEquals("T_T_this_e : wrong type : ", "int", typeName);
@@ -50,7 +50,7 @@ public class TestsAnonymousClassVariable extends Tests {
 
 	public void testEvalAnonymousClassVariable2() throws Throwable {
 		try {
-			init(30, 1);
+			init(33, 1);
 			IValue value = eval("latch");
 			String typeName = value.getReferenceTypeName();
 			assertEquals("T_T_this_e : wrong type : ", "java.util.concurrent.CountDownLatch", typeName);

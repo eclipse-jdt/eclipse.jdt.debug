@@ -97,7 +97,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	 */
 	public void testUnregisteredLaunch() throws Exception {
 	   String typeName = "Breakpoints"; //$NON-NLS-1$
-	   createLineBreakpoint(52, typeName);
+		createLineBreakpoint(55, typeName);
 	   IJavaThread thread = null;
        try {
            thread = launchToBreakpoint(typeName, false);

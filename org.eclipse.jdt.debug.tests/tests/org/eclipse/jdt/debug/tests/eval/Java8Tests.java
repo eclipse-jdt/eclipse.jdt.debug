@@ -72,7 +72,7 @@ public class Java8Tests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "EvalTestIntf18";
-			IJavaLineBreakpoint bp = createLineBreakpoint(23, "", "EvalTestIntf18.java", "Intf18");
+			IJavaLineBreakpoint bp = createLineBreakpoint(26, "", "EvalTestIntf18.java", "Intf18");
 			assertNotNull("should have created breakpoint", bp);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
@@ -94,7 +94,7 @@ public class Java8Tests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "EvalIntfSuperDefault";
-			IJavaLineBreakpoint bp = createLineBreakpoint(26, "", "EvalIntfSuperDefault.java", "EvalIntfSuperDefault");
+			IJavaLineBreakpoint bp = createLineBreakpoint(29, "", "EvalIntfSuperDefault.java", "EvalIntfSuperDefault");
 			assertNotNull("should have created breakpoint", bp);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);

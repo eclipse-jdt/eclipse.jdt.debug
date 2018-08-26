@@ -45,7 +45,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 20); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 23); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);
@@ -71,7 +71,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 25); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 28); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);
@@ -98,7 +98,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 19); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 22); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			assertTrue(listener.isEmpty());
 		} finally {
@@ -119,12 +119,12 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 21); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 24); // 0 based offset in document line numbers
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a line breakpoint", added instanceof IJavaLineBreakpoint);
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) added;
-			assertEquals("Wrong line number", 22, breakpoint.getLineNumber());
+			assertEquals("Wrong line number", 25, breakpoint.getLineNumber());
 			assertEquals("Wrong type name", "Intf18", breakpoint.getTypeName());
 		} finally {
 			manager.removeBreakpointListener(listener);

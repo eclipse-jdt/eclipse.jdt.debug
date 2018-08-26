@@ -48,8 +48,8 @@ public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 
 	}
 	public void testTerminateAll_01() throws Exception{
-		createLineBreakpoint(15, "TerminateAll_01");
-		createLineBreakpoint(15, "TerminateAll_02");
+		createLineBreakpoint(18, "TerminateAll_01");
+		createLineBreakpoint(18, "TerminateAll_02");
 		IJavaThread thread1 = null;
 		IJavaThread thread2 = null; {
 

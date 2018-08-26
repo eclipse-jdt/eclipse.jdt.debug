@@ -61,8 +61,8 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 */
 	public void testStackFrameReuse() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallStack";
-		createLineBreakpoint(28, "org.eclipse.debug.tests.targets.ClassOne");
-		createLineBreakpoint(28, "org.eclipse.debug.tests.targets.ClassTwo");
+		createLineBreakpoint(31, "org.eclipse.debug.tests.targets.ClassOne");
+		createLineBreakpoint(31, "org.eclipse.debug.tests.targets.ClassTwo");
 
 		IJavaThread thread= null;
 		try {

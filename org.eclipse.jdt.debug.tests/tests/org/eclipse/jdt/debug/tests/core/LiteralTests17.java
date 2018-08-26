@@ -52,7 +52,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	IValue doEval(String snippet) throws Exception {
-		ILineBreakpoint bp = createLineBreakpoint(25, LITERAL_TYPE_NAME);
+		ILineBreakpoint bp = createLineBreakpoint(28, LITERAL_TYPE_NAME);
 		IJavaThread thread = null;
 		try {
 			thread = launchToLineBreakpoint(LITERAL_TYPE_NAME, bp);
@@ -78,7 +78,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	IValue doEval(String snippet, String snippet2) throws Exception {
-		ILineBreakpoint bp = createLineBreakpoint(25, LITERAL_TYPE_NAME);
+		ILineBreakpoint bp = createLineBreakpoint(28, LITERAL_TYPE_NAME);
 		IJavaThread thread = null;
 		try {
 			thread = launchToLineBreakpoint(LITERAL_TYPE_NAME, bp);

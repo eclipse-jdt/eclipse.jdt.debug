@@ -54,7 +54,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			javaThread= launchAndSuspend(typeName);
 
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
-			assertTrue("line number should be '26', but was " + stackLine, stackLine == 26);
+			assertTrue("line number should be '29', but was " + stackLine, stackLine == 29);
 
 		} finally {
             getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);

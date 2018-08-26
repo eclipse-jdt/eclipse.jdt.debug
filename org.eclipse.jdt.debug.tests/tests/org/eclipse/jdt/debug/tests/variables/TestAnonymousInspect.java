@@ -95,7 +95,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	public void testInspectInAnonField() throws Exception {
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(26, TYPE_NAME);
+			createLineBreakpoint(29, TYPE_NAME);
 			thread = launchToBreakpoint(TYPE_NAME);
 			assertNotNull("The application should have suspended - we cannot have a null thread", thread);
 			IValue value = doEval(thread);
@@ -119,7 +119,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	public void testInspectInAnonMethod() throws Exception {
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(34, TYPE_NAME);
+			createLineBreakpoint(37, TYPE_NAME);
 			thread = launchToBreakpoint(TYPE_NAME);
 			assertNotNull("The application should have suspended - we cannot have a null thread", thread);
 			IValue value = doEval(thread);
@@ -143,7 +143,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	public void testInspectInAnonInitializer() throws Exception {
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(17, TYPE_NAME);
+			createLineBreakpoint(20, TYPE_NAME);
 			thread = launchToBreakpoint(TYPE_NAME);
 			assertNotNull("The application should have suspended - we cannot have a null thread", thread);
 			IValue value = doEval(thread);

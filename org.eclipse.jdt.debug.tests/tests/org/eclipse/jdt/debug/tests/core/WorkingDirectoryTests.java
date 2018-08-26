@@ -35,7 +35,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 
 	public void testDefaultWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
-		createLineBreakpoint(16, typeName);
+		createLineBreakpoint(19, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -71,7 +71,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 
 	public void testWorkspaceRelativeWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
-		createLineBreakpoint(16, typeName);
+		createLineBreakpoint(19, typeName);
 		IPath wd = get14Project().getProject().getFolder("src").getFullPath().makeRelative();
 		setWorkingDirectory(wd);
 
@@ -94,7 +94,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 
 	public void testAbsoluteWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
-		createLineBreakpoint(16, typeName);
+		createLineBreakpoint(19, typeName);
 		IPath wd = get14Project().getProject().getFolder("src").getLocation();
 		setWorkingDirectory(wd);
 

@@ -89,7 +89,7 @@ public class RunToLineTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLine() throws Exception {
-	    runToLine(55, 55, true);
+		runToLine(58, 58, true);
 	}
 
 	/**
@@ -98,8 +98,8 @@ public class RunToLineTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLineSkipBreakpoint() throws Exception {
-	    createLineBreakpoint(53, "Breakpoints");
-	    runToLine(55, 55, true);
+		createLineBreakpoint(56, "Breakpoints");
+		runToLine(58, 58, true);
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class RunToLineTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLineHitBreakpoint() throws Exception {
-	    createLineBreakpoint(53, "Breakpoints");
-	    runToLine(55, 53, false);
+		createLineBreakpoint(56, "Breakpoints");
+		runToLine(58, 56, false);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class RunToLineTests extends AbstractDebugTest {
 	 */
 	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints) throws Exception {
 		String typeName = "Breakpoints";
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(52, typeName);
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(55, typeName);
 
 		boolean restore = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
 		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, skipBreakpoints);

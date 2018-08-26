@@ -26,7 +26,7 @@ public class TypeHierarchy_32_3 extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalTypeHierarchyTests", 32, 2, 3);
+		initializeFrame("EvalTypeHierarchyTests", 35, 2, 3);
 	}
 
 	protected void end() throws Exception {

@@ -49,7 +49,7 @@ public class JDWPTests extends AbstractDebugTest {
 	 */
 	public void testCapabilities() throws Exception {
 		String typeName = "Breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(55, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -81,7 +81,7 @@ public class JDWPTests extends AbstractDebugTest {
 	 */
 	public void testClassesBySingature() throws Exception {
 		String typeName = "Breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(55, typeName);
 
 		IJavaThread thread = null;
 		try {

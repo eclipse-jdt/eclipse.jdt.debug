@@ -40,8 +40,8 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testTriggerPointBreakpoint() throws Exception {
 		String typeName = "TriggerPoint_01";
-		IJavaLineBreakpoint bp1 = createLineBreakpoint(25, typeName);
-		IJavaLineBreakpoint bp2 = createLineBreakpoint(30, typeName);
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(28, typeName);
+		IJavaLineBreakpoint bp2 = createLineBreakpoint(33, typeName);
 		bp2.setTriggerPoint(true);
 
 		IJavaThread thread= null;

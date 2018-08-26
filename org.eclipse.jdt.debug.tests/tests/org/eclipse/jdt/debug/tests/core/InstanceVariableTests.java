@@ -36,7 +36,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetField() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(33, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -71,7 +71,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetDeclaredFieldNames() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(28, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -104,7 +104,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetDeclaredFieldNamesInSubclass() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(33, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -134,7 +134,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetAllFieldNamesInSubclass() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(33, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -157,7 +157,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(28, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -185,7 +185,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testValueHasChanged() throws Exception {
 		String typeName = "VariableChanges";
 
-		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(24, typeName);
 
 		IJavaThread thread= null;
 		try {

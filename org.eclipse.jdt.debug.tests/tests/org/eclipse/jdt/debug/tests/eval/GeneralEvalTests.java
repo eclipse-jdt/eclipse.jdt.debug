@@ -120,7 +120,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(13, typename);
+			createLineBreakpoint(16, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(true==true==true==true==true)";
@@ -141,7 +141,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(14, typename);
+			createLineBreakpoint(17, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(true==true==true==true==true)";
@@ -162,7 +162,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(15, typename);
+			createLineBreakpoint(18, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(true&&true&&true&&true&&true)";
@@ -183,7 +183,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(16, typename);
+			createLineBreakpoint(19, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(true&&true&&true&&true&&true)";
@@ -204,7 +204,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(17, typename);
+			createLineBreakpoint(20, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "true&&true||false";
@@ -225,7 +225,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(18, typename);
+			createLineBreakpoint(21, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(1<=2==true||false)";
@@ -246,7 +246,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(19, typename);
+			createLineBreakpoint(22, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(1<=2==true||false)";
@@ -267,7 +267,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(20, typename);
+			createLineBreakpoint(23, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(true != false && false)";
@@ -288,7 +288,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(21, typename);
+			createLineBreakpoint(24, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(true != false && false)";
