@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2015 IBM Corporation and others.
+ *  Copyright (c) 2010, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -166,6 +166,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testClassFileLine_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -175,6 +178,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testClassFileLine_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -184,6 +190,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboard$Tests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testClassFileLine_3 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -196,6 +205,9 @@ public class OpenFromClipboardTests extends TestCase {
 		setupTypeTest(typeName);
 
 		List<?> matches= getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testDBCS test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -208,6 +220,9 @@ public class OpenFromClipboardTests extends TestCase {
 		setupTypeTest(typeName);
 
 		List<?> matches= getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testUmlaut test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -217,6 +232,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testClassFile_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -226,6 +244,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testTypeLine_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -235,6 +256,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testTypeLine_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -245,6 +269,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -254,6 +281,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -263,6 +293,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_3 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -272,6 +305,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_4 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -281,6 +317,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_5 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -290,6 +329,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboard$Tests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_6 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -300,6 +342,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest("OpenFromClipboardTests");
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackTraceLine_7 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -325,6 +370,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -334,6 +382,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -343,6 +394,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_3 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -352,6 +406,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_4 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -361,6 +418,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_5 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -370,6 +430,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_6 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -379,6 +442,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_7 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -423,6 +489,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodWithDollarSignTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_10 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -432,6 +501,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMethodWithDollarSignTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMethod_11 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -453,6 +525,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMember_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -462,6 +537,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMember_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -471,6 +549,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testMember_3 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -493,6 +574,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testQualifiedName_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -502,6 +586,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testQualifiedName_3 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -530,6 +617,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupQualifiedNameWithDollarSignTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testQualifiedName_4 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -539,6 +629,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupQualifiedNameWithDollarSignTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testQualifiedName_5 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -548,6 +641,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupQualifiedNameWithDollarSignTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testQualifiedName_6 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -569,6 +665,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupStackElementTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackElement_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
@@ -578,6 +677,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupStackElementTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testStackElement_2 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 
