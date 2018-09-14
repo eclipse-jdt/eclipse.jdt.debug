@@ -360,7 +360,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						fVariables.add(new JDIThisVariable(
 								(JDIDebugTarget) getDebugTarget(), t));
 					}
-					if (LambdaUtils.isLambdaFrame(this)) {
+				}
+				if (LambdaUtils.isLambdaFrame(this)) {
 						List<IJavaStackFrame> frames = fThread.computeStackFrames();
 						int previousIndex = frames.indexOf(this) + 1;
 						if (previousIndex > 0 && previousIndex < frames.size()) {
@@ -368,7 +369,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 							fVariables.add(new JDILambdaVariable((JDIDebugTarget) getDebugTarget(), previousFrame, ((JDIStackFrame) previousFrame).getUnderlyingThisObject()));
 						}
 					}
-				}
 				addStepReturnValue(fVariables);
 				// add locals
 				Iterator<LocalVariable> variables = getUnderlyingVisibleVariables()
