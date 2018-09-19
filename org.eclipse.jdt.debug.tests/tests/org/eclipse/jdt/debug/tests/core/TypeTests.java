@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2012 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -37,11 +40,11 @@ public class TypeTests extends AbstractDebugTest {
 		String typeName = "Breakpoints";
 		List<IJavaLineBreakpoint> bps = new ArrayList<>();
 		// main
-		bps.add(createLineBreakpoint(52, typeName));
+		bps.add(createLineBreakpoint(55, typeName));
 		// threading
-		bps.add(createLineBreakpoint(66, typeName));
+		bps.add(createLineBreakpoint(69, typeName));
 		// InnerRunnable.run
-		bps.add(createLineBreakpoint(61, typeName));
+		bps.add(createLineBreakpoint(64, typeName));
 
 		IJavaThread thread= null;
 		try {
@@ -84,8 +87,8 @@ public class TypeTests extends AbstractDebugTest {
         String typeName = "Breakpoints";
         List<IJavaLineBreakpoint> bps = new ArrayList<>();
         // instance method
+		bps.add(createLineBreakpoint(84, typeName));
         bps.add(createLineBreakpoint(81, typeName));
-        bps.add(createLineBreakpoint(88, typeName));
         IJavaObject[] loaders = new IJavaObject[2];
         int index = 0;
 

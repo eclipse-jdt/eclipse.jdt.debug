@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -46,8 +49,8 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testForceIntReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		ILineBreakpoint bp2 = createLineBreakpoint(22, typeName);
-		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(25, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(34, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -62,7 +65,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() < 22) {
+				if (stackFrame.getLineNumber() < 25) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
@@ -85,8 +88,8 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testForceIntReturn() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
-		ILineBreakpoint bp2 = createLineBreakpoint(23, typeName);
-		ILineBreakpoint bp = createLineBreakpoint(37, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(26, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(40, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -103,7 +106,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() < 23) {
+				if (stackFrame.getLineNumber() < 26) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
@@ -126,8 +129,8 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testForceStringReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		ILineBreakpoint bp2 = createLineBreakpoint(24, typeName);
-		ILineBreakpoint bp = createLineBreakpoint(36, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(27, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(39, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -143,7 +146,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() < 24) {
+				if (stackFrame.getLineNumber() < 27) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
@@ -166,8 +169,8 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testForceStringReturn() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
-		ILineBreakpoint bp2 = createLineBreakpoint(25, typeName);
-		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(28, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(49, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -184,7 +187,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() < 25) {
+				if (stackFrame.getLineNumber() < 28) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
@@ -207,8 +210,8 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testForceObjectReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		ILineBreakpoint bp2 = createLineBreakpoint(26, typeName);
-		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(29, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -224,7 +227,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() < 26) {
+				if (stackFrame.getLineNumber() < 29) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
@@ -247,8 +250,8 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testForceObjectReturn() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
-		ILineBreakpoint bp2 = createLineBreakpoint(27, typeName);
-		ILineBreakpoint bp = createLineBreakpoint(56, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(59, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -265,7 +268,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() < 27) {
+				if (stackFrame.getLineNumber() < 30) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
@@ -288,7 +291,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testIncompatibleReturnTypeTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -319,7 +322,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 	 */
 	public void testIncompatibleReturnType() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
-		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(49, typeName);
 
 		IJavaThread thread = null;
 		try {

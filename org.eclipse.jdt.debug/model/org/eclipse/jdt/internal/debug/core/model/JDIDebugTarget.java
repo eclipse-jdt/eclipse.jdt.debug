@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2017 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -33,7 +36,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -2405,32 +2407,41 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			EventRequestManager manager = getEventRequestManager();
 			if (manager != null) {
 				try {
-					Location location = setNameMethodLocation();
-					Assert.isNotNull(location, "Unable to locate Thread.setName method in debuggee JVM"); //$NON-NLS-1$
-					request = manager.createBreakpointRequest(location);
-					request.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-					request.enable();
-					addJDIEventListener(this, request);
+					Location location = locationOfSetNameMethod();
+					if (location != null) {
+						request = manager.createBreakpointRequest(location);
+						request.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+						request.enable();
+						addJDIEventListener(this, request);
+					}
 				} catch (RuntimeException e) {
 					String errorMessage = "Failed to add thread name change listener to debug target " + JDIDebugTarget.this; //$NON-NLS-1$
 					IStatus errorStatus = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), errorMessage, e);
-					JDIDebugPlugin.log(errorStatus);
+					logRequestStatus(errorStatus);
 				}
 			}
 		}
 
-		private Location setNameMethodLocation() {
+		private Location locationOfSetNameMethod() {
 			List<ReferenceType> types = jdiClassesByName(TYPE_NAME);
+			boolean foundThreadType = false;
 			for (ReferenceType type : types) {
 				if (type instanceof ClassType) {
+					foundThreadType = true;
 					Method method = ((ClassType) type).concreteMethodByName(METHOD_NAME, METHOD_SIGNATURE);
 					if (method != null && !method.isNative()) {
 						Location location = method.location();
 						if (location != null && location.codeIndex() != -1) {
 							return location;
 						}
+						logRequestWarning("Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type " + type); //$NON-NLS-1$
+					} else {
+						logRequestWarning("Unable to find java.lang.Thread.setName() method in debuggee JVM, for type " + type); //$NON-NLS-1$
 					}
 				}
+			}
+			if (!foundThreadType) {
+				logRequestWarning("Unable to find type java.lang.Thread.setName() in debuggee JVM"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -2459,6 +2470,17 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		@Override
 		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			// nothing to do here, we do work in handleEvent
+		}
+
+		private void logRequestWarning(String warningMessage) {
+			IStatus warningStatus = new Status(IStatus.WARNING, JDIDebugPlugin.getUniqueIdentifier(), warningMessage);
+			logRequestStatus(warningStatus);
+		}
+
+		private void logRequestStatus(IStatus status) {
+			if (isAvailable()) {
+				JDIDebugPlugin.log(status);
+			}
 		}
 	}
 

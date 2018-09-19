@@ -8,6 +8,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="launching/org/eclipse/jdt/launching/IVMRunner.java" type="org.eclipse.jdt.launching.IVMRunner">
+        <filter comment="added default method" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jdt.launching.IVMRunner"/>
+                <message_argument value="showCommandLine(VMRunnerConfiguration, ILaunch, IProgressMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="launching/org/eclipse/jdt/launching/sourcelookup/LocalFileStorage.java" type="org.eclipse.jdt.launching.sourcelookup.LocalFileStorage">
         <filter comment="Known illegal extension" id="571473929">
             <message_arguments>

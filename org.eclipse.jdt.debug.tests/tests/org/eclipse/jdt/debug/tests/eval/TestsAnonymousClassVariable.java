@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -33,7 +36,7 @@ public class TestsAnonymousClassVariable extends Tests {
 
 	public void testEvalAnonymousClassVariable1() throws Throwable {
 		try {
-			init(17, 2);
+			init(20, 2);
 			IValue value = eval("innerClassField");
 			String typeName = value.getReferenceTypeName();
 			assertEquals("T_T_this_e : wrong type : ", "int", typeName);
@@ -47,7 +50,7 @@ public class TestsAnonymousClassVariable extends Tests {
 
 	public void testEvalAnonymousClassVariable2() throws Throwable {
 		try {
-			init(30, 1);
+			init(33, 1);
 			IValue value = eval("latch");
 			String typeName = value.getReferenceTypeName();
 			assertEquals("T_T_this_e : wrong type : ", "java.util.concurrent.CountDownLatch", typeName);

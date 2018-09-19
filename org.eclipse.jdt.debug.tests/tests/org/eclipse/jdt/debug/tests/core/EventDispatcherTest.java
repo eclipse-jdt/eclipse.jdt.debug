@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2017 salesforce.com.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     salesforce.com - initial API and implementation
@@ -87,7 +90,7 @@ public class EventDispatcherTest extends AbstractDebugTest {
 		IJavaThread suspendedThread = null;
 		try {
 			DebugPlugin.getDefault().addDebugEventListener(debugListener);
-			createLineBreakpoint(24, "BulkThreadCreationTest");
+			createLineBreakpoint(27, "BulkThreadCreationTest");
 			suspendedThread = launchToBreakpoint("BulkThreadCreationTest");
 		}
 		finally {
@@ -108,7 +111,7 @@ public class EventDispatcherTest extends AbstractDebugTest {
 	 */
 	public void testConditionalExpressionEventDispatching() throws Exception {
 		String typeName = "BreakpointListenerTest";
-		createConditionalLineBreakpoint(15, typeName, "foo(); return false;", true);
+		createConditionalLineBreakpoint(18, typeName, "foo(); return false;", true);
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(20, typeName);
 		IJavaThread thread = null;
 		try {

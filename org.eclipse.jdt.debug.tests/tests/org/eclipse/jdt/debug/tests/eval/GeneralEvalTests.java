@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) Mar 6, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -117,7 +120,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(13, typename);
+			createLineBreakpoint(16, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(true==true==true==true==true)";
@@ -138,7 +141,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(14, typename);
+			createLineBreakpoint(17, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(true==true==true==true==true)";
@@ -159,7 +162,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(15, typename);
+			createLineBreakpoint(18, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(true&&true&&true&&true&&true)";
@@ -180,7 +183,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(16, typename);
+			createLineBreakpoint(19, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(true&&true&&true&&true&&true)";
@@ -201,7 +204,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(17, typename);
+			createLineBreakpoint(20, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "true&&true||false";
@@ -222,7 +225,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(18, typename);
+			createLineBreakpoint(21, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(1<=2==true||false)";
@@ -243,7 +246,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(19, typename);
+			createLineBreakpoint(22, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(1<=2==true||false)";
@@ -264,7 +267,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(20, typename);
+			createLineBreakpoint(23, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "(true != false && false)";
@@ -285,7 +288,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String typename = "bug401270";
-			createLineBreakpoint(21, typename);
+			createLineBreakpoint(24, typename);
 			thread = launchToBreakpoint(typename);
 			assertNotNull("the program did not suspend", thread);
 			String snippet = "!(true != false && false)";

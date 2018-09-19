@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2013 Jesper Steen Moller and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Jesper Steen Moller - initial API and implementation, adapted from
@@ -48,9 +51,9 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	public void testDuplicateGenericTypes() throws Exception {
 		String typeName = "a.b.c.ConditionalsNearGenerics";
 		String innerTypeName = "a.b.c.ConditionalsNearGenerics.ItemIterator";
-		createConditionalLineBreakpoint(33, typeName, "false", true);
-		createConditionalLineBreakpoint(44, typeName, "false", true);
-		ILineBreakpoint bp = createConditionalLineBreakpoint(56, innerTypeName, "true", true);
+		createConditionalLineBreakpoint(36, typeName, "false", true);
+		createConditionalLineBreakpoint(47, typeName, "false", true);
+		ILineBreakpoint bp = createConditionalLineBreakpoint(59, innerTypeName, "true", true);
 
 		IJavaThread thread= null;
 		try {
@@ -72,7 +75,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";
 		IJavaThread thread = null;
 		try {
-			createConditionalLineBreakpoint(32, type, "true", true);
+			createConditionalLineBreakpoint(35, type, "true", true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -93,7 +96,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";
 		IJavaThread thread = null;
 		try {
-			createConditionalLineBreakpoint(21, type, "true", true);
+			createConditionalLineBreakpoint(24, type, "true", true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -114,7 +117,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";
 		IJavaThread thread = null;
 		try {
-			createConditionalLineBreakpoint(17, type, "true", true);
+			createConditionalLineBreakpoint(20, type, "true", true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -135,7 +138,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		String type = "a.b.c.MethodBreakpoints";
 		IJavaThread thread = null;
 		try {
-			createConditionalLineBreakpoint(26, type, "true", true);
+			createConditionalLineBreakpoint(29, type, "true", true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -156,7 +159,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		String type = "a.b.c.MethodBreakpoints";
 		IJavaThread thread = null;
 		try {
-			createConditionalLineBreakpoint(31, type, "true", true);
+			createConditionalLineBreakpoint(34, type, "true", true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -179,7 +182,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			String condition = "MethodBreakpoints<Integer> breakpoints = new MethodBreakpoints<Integer>();\n"
 						+ "breakpoints.typeParameter(10);\n"
 						+ "return true;";
-			createConditionalLineBreakpoint(31, type, condition, true);
+			createConditionalLineBreakpoint(34, type, condition, true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -202,7 +205,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		try {
 			String condition = "Iterator<Integer> i = tokenize(Arrays.asList(1, 2, 3), \"condition\");\n"+
 								"return i.hasNext();";
-			createConditionalLineBreakpoint(33, type, condition, true);
+			createConditionalLineBreakpoint(36, type, condition, true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}
@@ -227,7 +230,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 					+ "InnerClazz2<Double> ic2 = new InnerClazz2<Double>();\n"
 					+ "ic2.hello();\n"
 					+ "return true;";
-			createConditionalLineBreakpoint(32, type, condition, true);
+			createConditionalLineBreakpoint(35, type, condition, true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2014, 2015 Jesper S. Møller and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Jesper S. Møller - initial API and implementation
@@ -69,7 +72,7 @@ public class Java8Tests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "EvalTestIntf18";
-			IJavaLineBreakpoint bp = createLineBreakpoint(23, "", "EvalTestIntf18.java", "Intf18");
+			IJavaLineBreakpoint bp = createLineBreakpoint(26, "", "EvalTestIntf18.java", "Intf18");
 			assertNotNull("should have created breakpoint", bp);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
@@ -91,7 +94,7 @@ public class Java8Tests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "EvalIntfSuperDefault";
-			IJavaLineBreakpoint bp = createLineBreakpoint(26, "", "EvalIntfSuperDefault.java", "EvalIntfSuperDefault");
+			IJavaLineBreakpoint bp = createLineBreakpoint(29, "", "EvalIntfSuperDefault.java", "EvalIntfSuperDefault");
 			assertNotNull("should have created breakpoint", bp);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);

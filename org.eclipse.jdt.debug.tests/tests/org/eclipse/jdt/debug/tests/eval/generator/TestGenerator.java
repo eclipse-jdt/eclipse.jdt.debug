@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2002, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -1391,10 +1394,12 @@ public class TestGenerator {
 
 		code.append("/*******************************************************************************\n");
 		code.append(" * Copyright (c) 2002, 2003 IBM Corporation and others.\n");
-		code.append(" * All rights reserved. This program and the accompanying materials \n");
-		code.append(" * are made available under the terms of the Eclipse Public License v1.0\n");
+		code.append("This program and the accompanying materials \n");
+		code.append(" * are made available under the terms of the Eclipse Public License 2.0\n");
 		code.append(" * which accompanies this distribution, and is available at\n");
-		code.append(" * http://www.eclipse.org/legal/epl-v10.html\n");
+		code.append(" * https://www.eclipse.org/legal/epl-2.0/");
+		code.append(" * \n");
+		code.append(" * SPDX-License-Identifier: EPL-2.0\n");
 		code.append(" * \n");
 		code.append(" * Contributors:\n");
 		code.append(" *     IBM Corporation - initial API and implementation\n");

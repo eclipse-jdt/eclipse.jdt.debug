@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2014 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -95,7 +98,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl() throws Exception {
-		testLocation(14, 14, "FinalBreakpointLocations");
+		testLocation(17, 17, "FinalBreakpointLocations");
 	}
 
 	/**
@@ -106,7 +109,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecla() throws Exception {
-		testLocation(14, 14, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
+		testLocation(17, 17, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
 	}
 
 	/**
@@ -161,7 +164,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl5() throws Exception {
-		testLocation(27, 30, "FinalBreakpointLocations");
+		testLocation(30, 33, "FinalBreakpointLocations");
 	}
 
 	/**
@@ -172,7 +175,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl5a() throws Exception {
-		testLocation(27, 30, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
+		testLocation(30, 33, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
 	}
 
 	/**
@@ -181,7 +184,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineBeforeTypeDeclaration() throws Exception {
-		testLocation(9, 18, "BreakpointsLocation");
+		testLocation(12, 21, "BreakpointsLocation");
 	}
 
 	/**
@@ -197,7 +200,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineInInnerType() throws Exception {
-		testLocation(25, 25, "BreakpointsLocation.InnerClass");
+		testLocation(28, 28, "BreakpointsLocation.InnerClass");
 	}
 
 	/**
@@ -205,7 +208,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineInAnnonymousType() throws Exception {
-		testLocation(39, 39, "BreakpointsLocation");
+		testLocation(42, 42, "BreakpointsLocation");
 	}
 
 	/**
@@ -214,7 +217,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 */
 	public void testLineAfterAllCode() throws Exception {
 		// ********* this test need to be updated every time BreakpointsLocation.java is modified *************
-		testLocation(82, -1, "BreakpointsLocation");
+		testLocation(85, -1, "BreakpointsLocation");
 		// ******************************
 	}
 
@@ -223,7 +226,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineVariableDeclarationWithAssigment() throws Exception {
-		testLocation(43, 46, "BreakpointsLocation");
+		testLocation(46, 49, "BreakpointsLocation");
 	}
 
 	/**
@@ -231,7 +234,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalField() throws Exception {
-		testLocation(13, 13, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984");
+		testLocation(16, 16, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984");
 	}
 
 	/**
@@ -240,7 +243,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalFielda() throws Exception {
-		testLocation(13, 13, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", true);
+		testLocation(16, 16, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", true);
 	}
 
 	/**
@@ -248,7 +251,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
     public void testEmptyLabel() throws Exception {
-        testLocation(15, 16, "LabelTest");
+		testLocation(18, 19, "LabelTest");
     }
 
     /**
@@ -256,7 +259,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
     public void testNestedEmptyLabels() throws Exception {
-        testLocation(19, 21, "LabelTest");
+		testLocation(22, 24, "LabelTest");
     }
 
     /**
@@ -264,7 +267,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
     public void testLabelWithCode() throws Exception {
-        testLocation(21, 21, "LabelTest");
+		testLocation(24, 24, "LabelTest");
     }
 
     /**
@@ -272,7 +275,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineFieldDeclarationWithAssigment() throws Exception {
-		testLocation(51, 55, "BreakpointsLocation");
+		testLocation(54, 58, "BreakpointsLocation");
 	}
 
 	/**
@@ -280,7 +283,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineExpressionReplacedByConstant1() throws Exception {
-		testLocation(62, 62, "BreakpointsLocation");
+		testLocation(65, 65, "BreakpointsLocation");
 	}
 
 	/**
@@ -288,7 +291,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineExpressionReplacedByConstant2() throws Exception {
-		testLocation(64, 62, "BreakpointsLocation");
+		testLocation(67, 65, "BreakpointsLocation");
 	}
 
 	/**
@@ -296,7 +299,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineExpressionNotReplacedByConstant1() throws Exception {
-		testLocation(70, 70, "BreakpointsLocation");
+		testLocation(73, 73, "BreakpointsLocation");
 	}
 
 	/**
@@ -304,7 +307,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineExpressionNotReplacedByConstant2() throws Exception {
-		testLocation(72, 72, "BreakpointsLocation");
+		testLocation(75, 75, "BreakpointsLocation");
 	}
 
 	/**
@@ -312,7 +315,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineLitteral1() throws Exception {
-		testLocation(46, 46, "BreakpointsLocation");
+		testLocation(49, 49, "BreakpointsLocation");
 	}
 
 	/**
@@ -320,7 +323,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineLitteral2() throws Exception {
-		testLocation(55, 55, "BreakpointsLocation");
+		testLocation(58, 58, "BreakpointsLocation");
 	}
 
 	/**
@@ -333,7 +336,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1StaticInnerClass", false);
 		}
 		else {
-			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass", false);
+			testLocation(82, 82, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass", false);
 		}
 	}
 
@@ -372,7 +375,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationNotOnField() throws Exception {
-		testField(33, 18, null, null);
+		testField(36, 21, null, null);
 	}
 
 	/**
@@ -405,7 +408,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testMethodOnSignature() throws Exception {
-		testMethod(17, 20, "test1", "BreakpointsLocation", "()V");
+		testMethod(20, 23, "test1", "BreakpointsLocation", "()V");
 	}
 
 	/**
@@ -429,6 +432,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testMethodOnMethodSignatureNotAvailable() throws Exception {
-		testMethod(32, 1, "test2", "BreakpointsLocation", null);
+		testMethod(35, 4, "test2", "BreakpointsLocation", null);
 	}
 }

@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2007 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -104,7 +107,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());
+			assertEquals("Should be line 33", 33, frame.getLineNumber());
 
 			verifyAllThreadsSuspended(thread);
 
@@ -137,7 +140,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
-			assertEquals("Should be on line 27", 27, frame.getLineNumber());
+			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
 			verifyAllThreadsSuspended(thread);
 

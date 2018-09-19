@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2018 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -11,6 +14,7 @@
 package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -152,7 +157,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
 		List<Object> classpathEntries = new ArrayList<>(5);
 		List<IClasspathEntry> expanding = new ArrayList<>(5);
-		expandProject(entry, classpathEntries, expanding, excludeTestCode);
+		expandProject(entry, classpathEntries, expanding, excludeTestCode, isExportedEntriesOnly(), getJavaProject(), false);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			Object e = classpathEntries.get(i);
@@ -184,10 +189,16 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 *            a list of projects that have been or are currently being expanded (to detect cycles)
 	 * @param excludeTestCode
 	 *            if true, test dependencies will be excluded
+	 * @param exportedEntriesOnly
+	 *            if true, only add exported transitive dependencies
+	 * @param rootProject
+	 *            the root project for which the classpath is computed
+	 * @param isModularJVM
+	 *            if jvm is java 9 or later
 	 * @exception CoreException
 	 *                if unable to expand the classpath
 	 */
-	private void expandProject(IClasspathEntry projectEntry, List<Object> expandedPath, List<IClasspathEntry> expanding, boolean excludeTestCode) throws CoreException {
+	public static void expandProject(IClasspathEntry projectEntry, List<Object> expandedPath, List<IClasspathEntry> expanding, boolean excludeTestCode, boolean exportedEntriesOnly, IJavaProject rootProject, boolean isModularJVM) throws CoreException {
 		expanding.add(projectEntry);
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
@@ -222,7 +233,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 				// add exported entries, as configured
 				if (classpathEntry.isExported()) {
 					unexpandedPath.add(classpathEntry);
-				} else if (!isExportedEntriesOnly() || project.equals(getJavaProject())) {
+				} else if (!exportedEntriesOnly || project.equals(rootProject)) {
 					// add non exported entries from root project or if we are including all entries
 					unexpandedPath.add(classpathEntry);
 				}
@@ -239,7 +250,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 				switch (entry.getEntryKind()) {
 					case IClasspathEntry.CPE_PROJECT:
 						if (!expanding.contains(entry)) {
-							expandProject(entry, expandedPath, expanding, excludeTestCode);
+							expandProject(entry, expandedPath, expanding, excludeTestCode, exportedEntriesOnly, rootProject, isModularJVM);
 						}
 						break;
 					case IClasspathEntry.CPE_CONTAINER:
@@ -248,7 +259,16 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 						if (container != null) {
 							switch (container.getKind()) {
 								case IClasspathContainer.K_APPLICATION:
-									property = IRuntimeClasspathEntry.USER_CLASSES;
+									if (isModularJVM) {
+										if (Arrays.stream(entry.getExtraAttributes()).anyMatch(attribute -> IClasspathAttribute.MODULE.equals(attribute.getName())
+												&& Boolean.TRUE.toString().equals(attribute.getValue()))) {
+											property = IRuntimeClasspathEntry.MODULE_PATH;
+										} else {
+											property = IRuntimeClasspathEntry.CLASS_PATH;
+										}
+									} else {
+										property = IRuntimeClasspathEntry.USER_CLASSES;
+									}
 									break;
 								case IClasspathContainer.K_DEFAULT_SYSTEM:
 									property = IRuntimeClasspathEntry.STANDARD_CLASSES;
@@ -305,6 +325,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 						break;
 					case IClasspathEntry.CPE_VARIABLE:
 						IRuntimeClasspathEntry r = JavaRuntime.newVariableRuntimeClasspathEntry(entry.getPath());
+						if (isModularJVM) {
+							adjustClasspathProperty(r, entry);
+						}
 						r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 						r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 						if (!expandedPath.contains(r)) {
@@ -319,6 +342,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 								for (int i = 0; i < roots.length; i++) {
 									IPackageFragmentRoot root = roots[i];
 									r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath(), entry.getSourceAttachmentPath(), entry.getSourceAttachmentRootPath(), entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
+									if (isModularJVM) {
+										adjustClasspathProperty(r, entry);
+									}
 									r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 									r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 									if (!expandedPath.contains(r)) {
@@ -335,6 +361,18 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		}
 		return;
 	}
+
+	public static void adjustClasspathProperty(IRuntimeClasspathEntry r, IClasspathEntry entry) {
+		if (r.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+			if (Arrays.stream(entry.getExtraAttributes()).anyMatch(attribute -> IClasspathAttribute.MODULE.equals(attribute.getName())
+					&& Boolean.TRUE.toString().equals(attribute.getValue()))) {
+				r.setClasspathProperty(IRuntimeClasspathEntry.MODULE_PATH);
+			} else {
+				r.setClasspathProperty(IRuntimeClasspathEntry.CLASS_PATH);
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */

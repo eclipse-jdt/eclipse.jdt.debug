@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -92,7 +95,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	public void testInspectInAnonField() throws Exception {
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(26, TYPE_NAME);
+			createLineBreakpoint(29, TYPE_NAME);
 			thread = launchToBreakpoint(TYPE_NAME);
 			assertNotNull("The application should have suspended - we cannot have a null thread", thread);
 			IValue value = doEval(thread);
@@ -116,7 +119,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	public void testInspectInAnonMethod() throws Exception {
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(34, TYPE_NAME);
+			createLineBreakpoint(37, TYPE_NAME);
 			thread = launchToBreakpoint(TYPE_NAME);
 			assertNotNull("The application should have suspended - we cannot have a null thread", thread);
 			IValue value = doEval(thread);
@@ -140,7 +143,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	public void testInspectInAnonInitializer() throws Exception {
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(17, TYPE_NAME);
+			createLineBreakpoint(20, TYPE_NAME);
 			thread = launchToBreakpoint(TYPE_NAME);
 			assertNotNull("The application should have suspended - we cannot have a null thread", thread);
 			IValue value = doEval(thread);

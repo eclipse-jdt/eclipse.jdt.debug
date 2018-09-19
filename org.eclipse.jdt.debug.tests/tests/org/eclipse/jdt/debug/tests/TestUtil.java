@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2016 Google, Inc and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *   Stefan Xenos (Google) - Initial implementation
@@ -18,6 +21,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -77,9 +81,22 @@ public class TestUtil {
 	 */
 	public static void runEventLoop() {
 		Display display = Display.getCurrent();
-		if (display != null && !display.isDisposed()) {
-			while (display.readAndDispatch()) {
-				// Keep pumping events until the queue is empty
+		if (display != null) {
+			if (!display.isDisposed()) {
+				while (display.readAndDispatch()) {
+					// Keep pumping events until the queue is empty
+				}
+			}
+		} else {
+			long start = System.currentTimeMillis();
+			AtomicBoolean stop = new AtomicBoolean();
+			Display.getDefault().asyncExec(() -> stop.set(true));
+			while (!stop.get() && System.currentTimeMillis() - start < AbstractDebugTest.DEFAULT_TIMEOUT) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					break;
+				}
 			}
 		}
 	}
@@ -129,6 +146,12 @@ public class TestUtil {
 			}
 		}
 		while (!Job.getJobManager().isIdle()) {
+			runEventLoop();
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// Uninterruptable
+			}
 			List<Job> jobs = getRunningOrWaitingJobs(null, excludedFamilies);
 			if (jobs.isEmpty()) {
 				// only uninteresting jobs running
@@ -144,12 +167,6 @@ public class TestUtil {
 			if (System.currentTimeMillis() - start >= maxTimeMs) {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
-			}
-			runEventLoop();
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// Uninterruptable
 			}
 		}
 		runningJobs.clear();
@@ -183,7 +200,12 @@ public class TestUtil {
 			}
 			sb.append(", ");
 		}
-		sb.setLength(sb.length() - 2);
+
+		Thread thread = Display.getDefault().getThread();
+		ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
+		if (threadInfos[0] != null) {
+			sb.append("\n").append("UI thread info: ").append(threadInfos[0]);
+		}
 		return sb.toString();
 	}
 

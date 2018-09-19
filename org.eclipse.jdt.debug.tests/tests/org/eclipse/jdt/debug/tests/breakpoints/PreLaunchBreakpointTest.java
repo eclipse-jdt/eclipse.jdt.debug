@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2007 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -49,7 +52,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.ALWAYS);
 		IJavaThread thread = null;
 		try {
-			createLineBreakpoint(52, typeName);
+			createLineBreakpoint(55, typeName);
 			DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 			waiter.setTimeout(DEFAULT_TIMEOUT);
 			configuration.launch(ILaunchManager.RUN_MODE, null);

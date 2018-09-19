@@ -1,18 +1,20 @@
 /*******************************************************************************
  * Copyright (c) 2002, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class NestedTypeFieldValue_155 extends Tests {
@@ -25,7 +27,7 @@ public class NestedTypeFieldValue_155 extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalNestedTypeTests", 155, 3);
+		initializeFrame("EvalNestedTypeTests", 158, 3);
 	}
 
 	protected void end() throws Exception {

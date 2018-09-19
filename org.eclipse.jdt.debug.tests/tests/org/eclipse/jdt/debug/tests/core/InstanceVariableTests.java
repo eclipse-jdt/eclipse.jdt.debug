@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2012 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -33,7 +36,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetField() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(33, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -68,7 +71,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetDeclaredFieldNames() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(28, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -101,7 +104,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetDeclaredFieldNamesInSubclass() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(33, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -131,7 +134,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetAllFieldNamesInSubclass() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(30, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(33, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -154,7 +157,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "InstanceVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(28, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -182,7 +185,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testValueHasChanged() throws Exception {
 		String typeName = "VariableChanges";
 
-		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(24, typeName);
 
 		IJavaThread thread= null;
 		try {

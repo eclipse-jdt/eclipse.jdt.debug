@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2018 Cedric Chabanois and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Cedric Chabanois (cchabanois@gmail.com) - initial implementation
@@ -31,7 +34,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -224,9 +226,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 			String jarName = "library" + i + ".jar";
 			IPath targetPath = javaProject.getPath().append("lib/" + jarName);
 			javaProject.getProject().getFile("lib/classpath.jar").copy(targetPath, IResource.FORCE, new NullProgressMonitor());
-			IClasspathAttribute moduleClasspathAttribute = JavaCore.newClasspathAttribute(IClasspathAttribute.MODULE, "true");
-			classpathEntries.add(JavaCore.newLibraryEntry(targetPath, null, null, null, new IClasspathAttribute[] {
-					moduleClasspathAttribute }, false));
+			classpathEntries.add(JavaCore.newLibraryEntry(targetPath, null, null));
 			if (i != 0) {
 				sb.append(File.pathSeparator);
 			}

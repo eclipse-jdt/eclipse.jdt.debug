@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2014 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -15,6 +18,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.tests.TestUtil;
 
 /**
  * Tests the Java debugger's 'toggle breakpoints target'.
@@ -41,7 +45,8 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 20); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 23); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);
 			IJavaMethodBreakpoint breakpoint = (IJavaMethodBreakpoint) added;
@@ -66,7 +71,8 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 25); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 28); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a method breakpoint", added instanceof IJavaMethodBreakpoint);
 			IJavaMethodBreakpoint breakpoint = (IJavaMethodBreakpoint) added;
@@ -92,7 +98,8 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 19); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 22); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			assertTrue(listener.isEmpty());
 		} finally {
 			manager.removeBreakpointListener(listener);
@@ -112,11 +119,12 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		manager.addBreakpointListener(listener);
 		try {
 			Path path = new Path("java8/EvalTestIntf18.java");
-			toggleBreakpoint(path, 21); // 0 based offset in document line numbers
+			toggleBreakpoint(path, 24); // 0 based offset in document line numbers
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
 			IBreakpoint added = listener.getAdded();
 			assertTrue("Should be a line breakpoint", added instanceof IJavaLineBreakpoint);
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) added;
-			assertEquals("Wrong line number", 22, breakpoint.getLineNumber());
+			assertEquals("Wrong line number", 25, breakpoint.getLineNumber());
 			assertEquals("Wrong type name", "Intf18", breakpoint.getTypeName());
 		} finally {
 			manager.removeBreakpointListener(listener);

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2012 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -53,7 +56,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testStepIntoSelection1() throws Exception {
-		createLineBreakpoint(30, qtypename);
+		createLineBreakpoint(33, qtypename);
 
 		IJavaThread thread= null;
 		try {
@@ -77,7 +80,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("Should be in StepIntoSelectionWithGenerics."+mname, mname, frame.getMethodName());
-			assertEquals("Should be stopped on line", 26, frame.getLineNumber());
+			assertEquals("Should be stopped on line", 29, frame.getLineNumber());
 
 		} finally {
 			terminateAndRemove(thread);
@@ -91,7 +94,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testStepIntoSelection2() throws Exception {
-		createLineBreakpoint(31, qtypename);
+		createLineBreakpoint(34, qtypename);
 
 		IJavaThread thread= null;
 		try {
@@ -117,7 +120,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("Should be in InnerClazz."+mname, mname, frame.getMethodName());
-			assertEquals("Should be stopped on line", 21, frame.getLineNumber());
+			assertEquals("Should be stopped on line", 24, frame.getLineNumber());
 
 		} finally {
 			terminateAndRemove(thread);
@@ -131,7 +134,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testStepIntoSelection3() throws Exception {
-		createLineBreakpoint(32, qtypename);
+		createLineBreakpoint(35, qtypename);
 
 		IJavaThread thread= null;
 		try {
@@ -157,7 +160,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("Should be in InnerClazz2."+mname, mname, frame.getMethodName());
-			assertEquals("Should be stopped on line", 17, frame.getLineNumber());
+			assertEquals("Should be stopped on line", 20, frame.getLineNumber());
 
 		} finally {
 			terminateAndRemove(thread);

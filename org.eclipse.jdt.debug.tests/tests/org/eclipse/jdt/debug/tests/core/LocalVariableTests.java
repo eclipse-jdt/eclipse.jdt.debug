@@ -1,9 +1,12 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -21,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayValue;
 import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
@@ -40,7 +44,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	 */
 	public void testFindConflicting1() throws Exception {
 		String typeName = "LocalVariableTests2";
-		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(24, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -66,7 +70,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	 */
 	public void testFindConflicting2() throws Exception {
 		String typeName = "LocalVariableTests2";
-		ILineBreakpoint bp = createLineBreakpoint(25, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(28, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -85,7 +89,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	public void testSimpleVisibility() throws Exception {
 		String typeName = "LocalVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(18, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -123,7 +127,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "LocalVariablesTests";
 
-		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(25, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -154,11 +158,11 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	}
 
 	protected void doArrayDetailTestNonDefPkg(String varName, String expectedDetails) throws Exception {
-		doArrayDetailTest(varName, expectedDetails, "org.eclipse.debug.tests.targets.ArrayDetailTests", 64);
+		doArrayDetailTest(varName, expectedDetails, "org.eclipse.debug.tests.targets.ArrayDetailTests", 67);
 	}
 
 	protected void doArrayDetailTestDefPkg(String varName, String expectedDetails) throws Exception {
-		doArrayDetailTest(varName, expectedDetails, "ArrayDetailTestsDef", 63);
+		doArrayDetailTest(varName, expectedDetails, "ArrayDetailTestsDef", 66);
 	}
 
 	protected void doArrayDetailTest(String varName, String expectedDetails, String mainName, int lineNumber) throws Exception {
@@ -180,6 +184,9 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 				wait(DEFAULT_TIMEOUT);
 			}
 			assertNotNull("Details not computed", fDetail);
+			if (fDetail.toUpperCase().contains("ERROR")) {
+				throw new TestAgainException("Error while computing details for presentation" + fDetail);
+			}
 			assertEquals(expectedDetails, fDetail);
 
 		} finally {

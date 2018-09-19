@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2009, 2012 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -33,35 +36,35 @@ public class TypeResolutionTests extends AbstractDebugTest {
 	}
 
 	public void testTypeAB() throws Exception {
-		resolve(94, "EvalNestedTypeTests$A$AB");
+		resolve(97, "EvalNestedTypeTests$A$AB");
 	}
 
 	public void testTypeAC() throws Exception {
-		resolve(120, "EvalNestedTypeTests$A$AC");
+		resolve(123, "EvalNestedTypeTests$A$AC");
 	}
 
 	public void testAnonTypeA1() throws Exception {
-		resolve(145, "EvalNestedTypeTests$A$1");
+		resolve(148, "EvalNestedTypeTests$A$1");
 	}
 
 	public void testTypeAE() throws Exception {
-		resolve(179, "EvalNestedTypeTests$A$AE");
+		resolve(182, "EvalNestedTypeTests$A$AE");
 	}
 
 	public void testAnonTypeA2() throws Exception {
-		resolve(203, "EvalNestedTypeTests$A$2");
+		resolve(206, "EvalNestedTypeTests$A$2");
 	}
 
 	public void testTypeBB() throws Exception {
-		resolve(252, "EvalNestedTypeTests$B$BB");
+		resolve(255, "EvalNestedTypeTests$B$BB");
 	}
 
 	public void testTypeBC() throws Exception {
-		resolve(279, "EvalNestedTypeTests$B$BC");
+		resolve(282, "EvalNestedTypeTests$B$BC");
 	}
 
 	public void testAnonTypeB() throws Exception {
-		resolve(304, "EvalNestedTypeTests$B$1");
+		resolve(307, "EvalNestedTypeTests$B$1");
 	}
 
 	public void testTypeB() throws Exception {
@@ -69,55 +72,55 @@ public class TypeResolutionTests extends AbstractDebugTest {
 	}
 
 	public void testTypeCB() throws Exception {
-		resolve(354, "EvalNestedTypeTests$C$CB");
+		resolve(357, "EvalNestedTypeTests$C$CB");
 	}
 
 	public void testTypeCC() throws Exception {
-		resolve(381, "EvalNestedTypeTests$C$CC");
+		resolve(378, "EvalNestedTypeTests$C$CC");
 	}
 
 	public void testAnonTypeC1() throws Exception {
-		resolve(406, "EvalNestedTypeTests$C$1");
+		resolve(409, "EvalNestedTypeTests$C$1");
 	}
 
 	public void testAnonTypeDB() throws Exception {
-		resolve(455, "EvalNestedTypeTests$1$DB");
+		resolve(458, "EvalNestedTypeTests$1$DB");
 	}
 
 	public void testAnonTypeDC() throws Exception {
-		resolve(481, "EvalNestedTypeTests$1$DC");
+		resolve(484, "EvalNestedTypeTests$1$DC");
 	}
 
 	public void testAnonType11() throws Exception {
-		resolve(506, "EvalNestedTypeTests$1$1");
+		resolve(509, "EvalNestedTypeTests$1$1");
 	}
 
 	public void testTopLevelType() throws Exception {
-		resolve(523, "EvalNestedTypeTests");
+		resolve(526, "EvalNestedTypeTests");
 	}
 
 	public void testTypeEB() throws Exception {
-		resolve(566, "EvalNestedTypeTests$E$EB");
+		resolve(569, "EvalNestedTypeTests$E$EB");
 	}
 
 	public void testTypeEC() throws Exception {
-		resolve(592, "EvalNestedTypeTests$E$EC");
+		resolve(595, "EvalNestedTypeTests$E$EC");
 	}
 
 	public void testAnonTypeE1() throws Exception {
-		resolve(616, "EvalNestedTypeTests$E$1");
+		resolve(619, "EvalNestedTypeTests$E$1");
 	}
 
 	public void testAnonTypeFB() throws Exception {
-		resolve(664, "EvalNestedTypeTests$2$FB");
+		resolve(667, "EvalNestedTypeTests$2$FB");
 	}
 
 	public void testAnonTypeFC() throws Exception {
-		resolve(690, "EvalNestedTypeTests$2$FC");
+		resolve(693, "EvalNestedTypeTests$2$FC");
 	}
 
 	public void testAnonType21() throws Exception {
-		resolve(714, "EvalNestedTypeTests$2$1");
+		resolve(717, "EvalNestedTypeTests$2$1");
 	}
 
 	/**

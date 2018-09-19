@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2012 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -45,25 +48,25 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		String typeName = "Breakpoints";
 		List<IBreakpoint> bps = new ArrayList<>();
 		int[] lines = new int[]{
-				43,		// anonymous class
-				102,	// blocks
-				77,		// constructor
-				88,		// else
-				120,	// finally after catch
-				128,	// finally after try
-				93,		// for loop
-				81,		// if
-				17,		// initializer
-				22,		// inner class
-				72,		// return true
-				107,	// instance method
-				53,		// static method
-				133,	// case statement
-				140,	// default statement
-				146,	// synchronized blocks
-				125,	// try
-				118,	// catch
-				97		// while
+				46, // anonymous class
+				105, // blocks
+				80, // constructor
+				91, // else
+				123, // finally after catch
+				131, // finally after try
+				96, // for loop
+				84, // if
+				20, // initializer
+				25, // inner class
+				75, // return true
+				110, // instance method
+				56, // static method
+				136, // case statement
+				143, // default statement
+				149, // synchronized blocks
+				128, // try
+				121, // catch
+				100 // while
 		};
 		createBreakpoints(typeName, bps, lines);
 
@@ -130,7 +133,7 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testEnableDisableBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		ILineBreakpoint bp = createLineBreakpoint(16, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
 		bp.setEnabled(true);
 
 		IJavaThread thread = null;
@@ -150,8 +153,8 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testSkipLineBreakpoint() throws Exception {
 		String typeName = "Breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
-		createLineBreakpoint(54, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(55, typeName);
+		createLineBreakpoint(57, typeName);
 
 		IJavaThread thread = null;
 		try {

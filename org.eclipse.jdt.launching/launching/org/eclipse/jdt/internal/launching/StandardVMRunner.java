@@ -1,9 +1,12 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -26,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -348,21 +351,74 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return vmargs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMRunner#run(org.eclipse.jdt.launching.VMRunnerConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	protected class CommandDetails {
+		private String[] commandLine;
+		private String[] envp;
+		private File workingDir;
+		private ClasspathShortener classpathShortener;
+		private int port;
 
+		public String[] getEnvp() {
+			return envp;
+		}
+
+		public void setEnvp(String[] envp) {
+			this.envp = envp;
+		}
+
+		public String[] getCommandLine() {
+			return commandLine;
+		}
+
+		public void setCommandLine(String[] commandLine) {
+			this.commandLine = commandLine;
+		}
+
+		public File getWorkingDir() {
+			return workingDir;
+		}
+
+		public void setWorkingDir(File workingDir) {
+			this.workingDir = workingDir;
+		}
+
+		public ClasspathShortener getClasspathShortener() {
+			return classpathShortener;
+		}
+
+		public void setClasspathShortener(ClasspathShortener classpathShortener) {
+			this.classpathShortener = classpathShortener;
+		}
+
+		public int getPort() {
+			return port;
+		}
+
+		public void setPort(int port) {
+			this.port = port;
+		}
+
+	}
+
+	@Override
+	public String showCommandLine(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		CommandDetails cmd = getCommandLine(configuration, launch, monitor);
+		if (monitor.isCanceled() || cmd == null) {
+			return ""; //$NON-NLS-1$
+		}
+		String[] cmdLine = cmd.getCommandLine();
+		cmdLine = quoteWindowsArgs(cmdLine);
+		return getCmdLineAsString(cmdLine);
+	}
+
+	private CommandDetails getCommandLine(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 
-		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
+		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2);
-
-		String program= constructProgramString(config);
+		String program = constructProgramString(config);
 
 		List<String> arguments= new ArrayList<>();
 		arguments.add(program);
@@ -408,27 +464,43 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
-
-		subMonitor.worked(1);
-
-		// check for cancellation
-		if (monitor.isCanceled()) {
-			return;
-		}
 		File workingDir = getWorkingDir(config);
 		ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
 		if (classpathShortener.shortenCommandLineIfNecessary()) {
 			cmdLine = classpathShortener.getCmdLine();
 			envp = classpathShortener.getEnvp();
 		}
+		CommandDetails cmd = new CommandDetails();
+		cmd.setCommandLine(cmdLine);
+		cmd.setEnvp(envp);
+		cmd.setWorkingDir(workingDir);
+		cmd.setClasspathShortener(classpathShortener);
+		subMonitor.worked(1);
+		return cmd;
+	}
 
+	@Override
+	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
+		CommandDetails cmdDetails = getCommandLine(config, launch, monitor);
+		// check for cancellation
+		if (monitor.isCanceled() || cmdDetails == null) {
+			return;
+		}
+		String[] cmdLine = cmdDetails.getCommandLine();
+
+		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
+		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
 		Process p= null;
 		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 		if(newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}
-		p= exec(cmdLine, workingDir, envp);
+		p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp());
 		if (p == null) {
 			return;
 		}
@@ -444,10 +516,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 		String ltime = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
 		process.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, ltime != null ? ltime : timestamp);
-		if(workingDir != null) {
-			process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, workingDir.getAbsolutePath());
+		if (cmdDetails.getWorkingDir() != null) {
+			process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, cmdDetails.getWorkingDir().getAbsolutePath());
 		}
-		if(envp != null) {
+		if (cmdDetails.getEnvp() != null) {
+			String[] envp = cmdDetails.getEnvp();
 			Arrays.sort(envp);
 			StringBuilder buff = new StringBuilder();
 			for (int i = 0; i < envp.length; i++) {
@@ -458,8 +531,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 			}
 			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
 		}
-		if (!classpathShortener.getProcessTempFiles().isEmpty()) {
-			String tempFiles = classpathShortener.getProcessTempFiles().stream().map(file -> file.getAbsolutePath()).collect(Collectors.joining(File.pathSeparator));
+		if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()) {
+			String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(file -> file.getAbsolutePath()).collect(Collectors.joining(File.pathSeparator));
 			process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 		}
 		subMonitor.worked(1);

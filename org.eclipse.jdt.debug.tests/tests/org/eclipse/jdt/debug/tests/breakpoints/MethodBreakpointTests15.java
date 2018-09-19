@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2014 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -41,19 +44,19 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 	}
 
 	public void testStaticTypeParameter() throws Exception {
-		IJavaMethodBreakpoint breakpoint  = createBreakpoint(25);
+		IJavaMethodBreakpoint breakpoint = createBreakpoint(28);
 		assertEquals("Wrong method", "staticTypeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}
 
 	public void testTypeParameter() throws Exception {
-		IJavaMethodBreakpoint breakpoint  = createBreakpoint(29);
+		IJavaMethodBreakpoint breakpoint = createBreakpoint(32);
 		assertEquals("Wrong method", "typeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}
 
 	public void testMethodTypeParameter() throws Exception {
-		IJavaMethodBreakpoint breakpoint  = createBreakpoint(34);
+		IJavaMethodBreakpoint breakpoint = createBreakpoint(37);
 		assertEquals("Wrong method", "methodTypeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}

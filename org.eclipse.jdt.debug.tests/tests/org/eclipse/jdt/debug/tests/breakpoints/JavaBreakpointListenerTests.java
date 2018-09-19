@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2000, 2015 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -234,7 +237,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testLineBreakpoint() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		fBreakpoint = breakpoint;
 		resetCallbacks();
 
@@ -417,7 +420,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testUnanimousInstallVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(SUSPEND, breakpoint);
 		InstallVoter v2 = new InstallVoter(SUSPEND, breakpoint);
 		InstallVoter v3 = new InstallVoter(SUSPEND, breakpoint);
@@ -443,7 +446,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testDontCareInstallVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(DONT_CARE, breakpoint);
 		InstallVoter v2 = new InstallVoter(DONT_CARE, breakpoint);
 		InstallVoter v3 = new InstallVoter(DONT_CARE, breakpoint);
@@ -469,7 +472,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testInstallDontCareVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(SUSPEND, breakpoint);
 		InstallVoter v2 = new InstallVoter(DONT_CARE, breakpoint);
 		InstallVoter v3 = new InstallVoter(DONT_CARE, breakpoint);
@@ -495,7 +498,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testInstallDontVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(SUSPEND, breakpoint);
 		InstallVoter v2 = new InstallVoter(DONT_SUSPEND, breakpoint);
 		InstallVoter v3 = new InstallVoter(DONT_SUSPEND, breakpoint);
@@ -521,8 +524,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testDontInstallVote() throws Exception {
-		IJavaLineBreakpoint breakpoint1 = createLineBreakpoint(54, "Breakpoints");
-		IJavaLineBreakpoint breakpoint2 = createLineBreakpoint(55, "Breakpoints");
+		IJavaLineBreakpoint breakpoint1 = createLineBreakpoint(57, "Breakpoints");
+		IJavaLineBreakpoint breakpoint2 = createLineBreakpoint(58, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(DONT_CARE, breakpoint1);
 		InstallVoter v2 = new InstallVoter(DONT_SUSPEND, breakpoint1);
 		InstallVoter v3 = new InstallVoter(DONT_SUSPEND, breakpoint1);
@@ -548,7 +551,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testUnanimousSuspendVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		SuspendVoter v1 = new SuspendVoter(SUSPEND, breakpoint);
 		SuspendVoter v2 = new SuspendVoter(SUSPEND, breakpoint);
 		SuspendVoter v3 = new SuspendVoter(SUSPEND, breakpoint);
@@ -574,7 +577,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testDontCareSuspendVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		SuspendVoter v1 = new SuspendVoter(DONT_CARE, breakpoint);
 		SuspendVoter v2 = new SuspendVoter(DONT_CARE, breakpoint);
 		SuspendVoter v3 = new SuspendVoter(DONT_CARE, breakpoint);
@@ -600,7 +603,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testSuspendDontCareVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		SuspendVoter v1 = new SuspendVoter(SUSPEND, breakpoint);
 		SuspendVoter v2 = new SuspendVoter(DONT_CARE, breakpoint);
 		SuspendVoter v3 = new SuspendVoter(DONT_CARE, breakpoint);
@@ -626,7 +629,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testSuspendDontVote() throws Exception {
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
 		SuspendVoter v1 = new SuspendVoter(SUSPEND, breakpoint);
 		SuspendVoter v2 = new SuspendVoter(DONT_SUSPEND, breakpoint);
 		SuspendVoter v3 = new SuspendVoter(DONT_SUSPEND, breakpoint);
@@ -775,7 +778,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	public void testEvalListenerExtension() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
@@ -816,8 +819,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	public void testStepEndResumeVote() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint first = createLineBreakpoint(16, typeName);
-		IJavaLineBreakpoint second = createLineBreakpoint(17, typeName);
+		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
+		IJavaLineBreakpoint second = createLineBreakpoint(20, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.resumeListener");
 
 		IJavaThread thread= null;
@@ -842,9 +845,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	public void testStepOverHitsNestedEvaluationHandlerResume() throws Exception {
 		String typeName = "MethodLoop";
 		// breakpoint on line 24 is where the step is initiated from
-		IJavaLineBreakpoint first = createLineBreakpoint(24, typeName);
+		IJavaLineBreakpoint first = createLineBreakpoint(27, typeName);
 		// second breakpoint is where the evaluation is performed with a resume vote
-		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
+		IJavaLineBreakpoint second = createLineBreakpoint(32, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
@@ -895,9 +898,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	public void testStepOverHitsNestedEvaluationHandlerSuspend() throws Exception {
 		String typeName = "MethodLoop";
 		// breakpoint on line 24 is where the step is initiated from
-		IJavaLineBreakpoint first = createLineBreakpoint(24, typeName);
+		IJavaLineBreakpoint first = createLineBreakpoint(27, typeName);
 		// second breakpoint is where the evaluation is performed with a resume vote
-		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
+		IJavaLineBreakpoint second = createLineBreakpoint(32, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
@@ -948,8 +951,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	public void testSuspendEvaluation() throws Exception {
 		String typeName = "MethodLoop";
-		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
-		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
+		IJavaLineBreakpoint first = createLineBreakpoint(22, typeName);
+		IJavaLineBreakpoint second = createLineBreakpoint(32, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
@@ -983,7 +986,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	public void testGlobalListener() throws Exception {
 		GlobalBreakpointListener.clear();
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -1012,8 +1015,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		String typeName = "HitCountLooper";
 		Collector collector = new Collector();
 		JDIDebugModel.addJavaBreakpointListener(collector);
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "return false;", true);
-		IJavaLineBreakpoint second = createConditionalLineBreakpoint(17, typeName, "i == 3", true);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(19, typeName, "return false;", true);
+		IJavaLineBreakpoint second = createConditionalLineBreakpoint(20, typeName, "i == 3", true);
 
 		IJavaThread thread= null;
 		try {
@@ -1038,8 +1041,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		String typeName = "HitCountLooper";
 		Collector collector = new Collector();
 		JDIDebugModel.addJavaBreakpointListener(collector);
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-		IJavaLineBreakpoint second = createConditionalLineBreakpoint(17, typeName, "i == 1", true);
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
+		IJavaLineBreakpoint second = createConditionalLineBreakpoint(20, typeName, "i == 1", true);
 
 		IJavaThread thread= null;
 		try {
@@ -1074,7 +1077,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	public void testListenersOnCompilationError() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(17, typeName, "x == 1", true);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(20, typeName, "x == 1", true);
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 
@@ -1174,7 +1177,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	public void testAddDuplicateListeners() throws Exception {
 		try {
 			String typeName = "HitCountLooper";
-			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+			IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
 
 			String[] listeners = bp.getBreakpointListeners();
 			assertEquals(0, listeners.length);
@@ -1207,7 +1210,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	public void testGetListenersAfterDelete() throws Exception {
 		try {
 			String typeName = "HitCountLooper";
-			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+			IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
 
 			String[] listeners = bp.getBreakpointListeners();
 			assertEquals(0, listeners.length);

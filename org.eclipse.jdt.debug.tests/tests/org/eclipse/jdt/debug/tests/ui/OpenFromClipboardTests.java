@@ -1,9 +1,12 @@
 /*******************************************************************************
  *  Copyright (c) 2010, 2015 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
  *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -24,6 +27,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -477,6 +481,9 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
+		if (matches.size() != 1) {
+			throw new TestAgainException("testQualifiedName_1 test again");
+		}
 		assertEquals(1, matches.size());
 	}
 

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2011 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -41,7 +44,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(21, typeName);
+		createLineBreakpoint(24, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -77,7 +80,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(23, typeName);
+		createLineBreakpoint(26, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -113,7 +116,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceMethodWithParameters() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(36, typeName);
+		createLineBreakpoint(39, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -149,7 +152,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoBinaryMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(34, typeName);
+		createLineBreakpoint(37, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -188,7 +191,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoBinaryConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(34, typeName);
+		createLineBreakpoint(37, typeName);
 
 		IJavaThread thread= null;
 		try {

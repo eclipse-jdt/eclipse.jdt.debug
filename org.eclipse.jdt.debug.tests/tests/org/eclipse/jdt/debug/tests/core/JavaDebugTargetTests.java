@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -37,7 +40,7 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 
 	public void testGetVMName() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(52, typeName);
+		createLineBreakpoint(55, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -55,7 +58,7 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 
 	public void testGetVersion() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(52, typeName);
+		createLineBreakpoint(55, typeName);
 
 		IJavaThread thread= null;
 		try {
@@ -73,7 +76,7 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 
 	public void testIsAvailable() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(52, typeName);
+		createLineBreakpoint(55, typeName);
 
 		IJavaThread thread = null;
 		try {
@@ -135,7 +138,7 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 		// Paths are same, except the project part
 		assertEquals(type1.getResource().getFullPath().removeFirstSegments(1), type2.getResource().getFullPath().removeFirstSegments(1));
 
-		final int lineNumber = 21;
+		final int lineNumber = 24;
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(type1, lineNumber);
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(type2, lineNumber);
 		assertNotEquals(bp1, bp2);
