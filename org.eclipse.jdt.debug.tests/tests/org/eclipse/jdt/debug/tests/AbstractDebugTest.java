@@ -2113,6 +2113,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (CoreException e) {
 			}
 		}
+		TestUtil.waitForJobs(getName(), 100, 10000);
+		TestUtil.runEventLoop();
 		getLaunchManager().removeLaunch(launch);
         // ensure event queue is flushed
         DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.MODEL_SPECIFIC, this);
