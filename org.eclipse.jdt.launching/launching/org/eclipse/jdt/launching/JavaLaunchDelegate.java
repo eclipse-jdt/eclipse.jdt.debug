@@ -112,6 +112,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			// Not a java Project so no need to set module description
 		}
 
+		// Launch Configuration should be launched by Java 9 or above for modulepath setting
 		if (!JavaRuntime.isModularConfiguration(configuration)) {
 			// Bootpath
 			runConfig.setBootClassPath(getBootpath(configuration));
