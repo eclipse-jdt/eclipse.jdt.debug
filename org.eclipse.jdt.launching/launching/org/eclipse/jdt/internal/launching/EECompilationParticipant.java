@@ -205,6 +205,8 @@ public class EECompilationParticipant extends CompilationParticipant {
 		String version = vMInstall.getJavaVersion();
 		if (version == null) {
 			return null;
+		} else if (version.startsWith(JavaCore.VERSION_11)) {
+			return JavaCore.VERSION_11;
 		} else if (version.startsWith(JavaCore.VERSION_10)) {
 			return JavaCore.VERSION_10;
 		} else if (version.startsWith(JavaCore.VERSION_9)) {

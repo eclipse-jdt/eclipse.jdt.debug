@@ -326,6 +326,11 @@
             description="%environment.description.14"
             id="JavaSE-10"
             compliance="10">
+      </environment>
+      <environment
+            description="%environment.description.15"
+            id="JavaSE-11"
+            compliance="11">
       </environment>            
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"
