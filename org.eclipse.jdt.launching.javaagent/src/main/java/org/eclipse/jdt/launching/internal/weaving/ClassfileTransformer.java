@@ -23,12 +23,18 @@ public class ClassfileTransformer {
 	// must match JDIHelpers.STRATA_ID
 	private static final String STRATA_ID = "jdt"; //$NON-NLS-1$
 
+	/** max supported java class format major version, must match {@link #ASM_API} below **/
+	public static final int MAX_CLASS_MAJOR = Opcodes.V10;
+
+	/** supported ASM API version, must match {@link #MAX_CLASS_MAJOR} above */
+	private static final int ASM_API = Opcodes.ASM6;
+
 	public byte[] transform(byte[] classfileBuffer, final String location) {
 
 		final ClassReader r = new ClassReader(classfileBuffer, 0, classfileBuffer.length);
 		final ClassWriter w = new ClassWriter(0);
 
-		r.accept(new ClassVisitor(Opcodes.ASM5, w) {
+		r.accept(new ClassVisitor(ASM_API, w) {
 			@Override
 			public void visitSource(String source, String debug) {
 				String javaSource = source;
