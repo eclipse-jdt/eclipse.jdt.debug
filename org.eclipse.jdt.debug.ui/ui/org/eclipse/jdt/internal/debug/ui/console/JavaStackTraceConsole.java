@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.FastPartitioner;
@@ -89,7 +90,7 @@ public class JavaStackTraceConsole extends TextConsole {
      * Constructor
      */
     public JavaStackTraceConsole() {
-        super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true);
+		super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_JAVA_STACKTRACE_CONSOLE), true);
         Font font = JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT);
         setFont(font);
         partitioner.connect(getDocument());
