@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -96,6 +96,10 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Never received 'stopped' notification", fStopped);
 			// there are 10 lines and one "empty line" (i.e. the last "new line")
+			String firstLine = fLinesRead.get(0);
+			if (firstLine.contains("advanced source lookup disabled")) {
+				fLinesRead.remove(0);
+			}
 			assertEquals("Wrong number of lines output", 11, fLinesRead.size());
 			for (int i = 0; i < 10; i++) {
 				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));
@@ -124,6 +128,10 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			dumpOnError(10);
 			assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Did not receive 'stopped' notification", fStopped);
+			String firstLine = fLinesRead.get(0);
+			if (firstLine.contains("advanced source lookup disabled")) {
+				fLinesRead.remove(0);
+			}
 			assertEquals("Wrong number of lines", 10, fLinesRead.size());
 			for (int i = 0; i < 10; i++) {
 				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));
@@ -272,6 +280,10 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        dumpOnError(2);
 	        assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Never received 'stopped' notification", fStopped);
+			String firstLine = fLinesRead.get(0);
+			if (firstLine.contains("advanced source lookup disabled")) {
+				fLinesRead.remove(0);
+			}
 			assertEquals("Wrong number of lines output", 2, fLinesRead.size());
 			assertEquals("Wrong output", "var = foo", fLinesRead.get(0));
 	    } finally {
@@ -296,6 +308,10 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        dumpOnError(2);
 	        assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Never received 'stopped' notification", fStopped);
+			String firstLine = fLinesRead.get(0);
+			if (firstLine.contains("advanced source lookup disabled")) {
+				fLinesRead.remove(0);
+			}
 			assertEquals("Wrong number of lines output", 2, fLinesRead.size());
 			assertEquals("Wrong output", "var = 35", fLinesRead.get(0));
 	    } finally {
