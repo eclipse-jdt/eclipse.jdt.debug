@@ -1561,7 +1561,13 @@ public final class JavaRuntime {
 		int property = -1;
 		switch (container.getKind()) {
 			case IClasspathContainer.K_APPLICATION:
-				property = IRuntimeClasspathEntry.USER_CLASSES;
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.MODULE_PATH) {
+					property = IRuntimeClasspathEntry.MODULE_PATH;
+				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.CLASS_PATH) {
+					property = IRuntimeClasspathEntry.CLASS_PATH;
+				} else {
+					property = IRuntimeClasspathEntry.USER_CLASSES;
+				}
 				break;
 			case IClasspathContainer.K_DEFAULT_SYSTEM:
 				property = IRuntimeClasspathEntry.STANDARD_CLASSES;
