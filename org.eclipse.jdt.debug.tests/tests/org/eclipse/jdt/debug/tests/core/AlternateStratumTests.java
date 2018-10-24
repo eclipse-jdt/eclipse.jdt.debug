@@ -14,6 +14,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -61,7 +62,8 @@ public class AlternateStratumTests extends AbstractDebugTest {
 			for (String strataName : strata) {
 				DebugPlugin.log(new Status(IStatus.INFO, "Strata Name: ", strataName)); //$NON-NLS-1$
 			}
-			assertEquals("Wrong number of available strata", 2, strata.length);
+			DebugPlugin.log(new Status(IStatus.INFO, "Strata count: ", String.valueOf(strata.length))); //$NON-NLS-1$
+			assertEquals("Stratas available are: " + Arrays.toString(strata) + ", Wrong number of available strata", 2, strata.length);
 			assertEquals("Wrong strata", "Xtend", strata[0]);
 			assertEquals("Wrong strata", "Java", strata[1]);
 		}
