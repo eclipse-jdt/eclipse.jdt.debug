@@ -3406,15 +3406,17 @@ public final class JavaRuntime {
 				if (classpathEntry != null && classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 					IResource res = root.findMember(classpathEntry.getPath());
 					IJavaProject jp = (IJavaProject) JavaCore.create(res);
-					IClasspathEntry[] rawClasspath = jp.getRawClasspath();
-					for (IClasspathEntry iClasspathEntry : rawClasspath) {
-						if (iClasspathEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-							if (JavaRuntime.JRE_CONTAINER.equals(iClasspathEntry.getPath().segment(0))) {
-								String cliOptions = getModuleCLIOptions(jp, iClasspathEntry);
-								if (cliOptionString.length() > 0 && cliOptions.length() > 0) {
-									cliOptionString.append(" "); //$NON-NLS-1$
+					if (jp.isOpen()) {
+						IClasspathEntry[] rawClasspath = jp.getRawClasspath();
+						for (IClasspathEntry iClasspathEntry : rawClasspath) {
+							if (iClasspathEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+								if (JavaRuntime.JRE_CONTAINER.equals(iClasspathEntry.getPath().segment(0))) {
+									String cliOptions = getModuleCLIOptions(jp, iClasspathEntry);
+									if (cliOptionString.length() > 0 && cliOptions.length() > 0) {
+										cliOptionString.append(" "); //$NON-NLS-1$
+									}
+									cliOptionString.append(cliOptions);
 								}
-								cliOptionString.append(cliOptions);
 							}
 						}
 					}
