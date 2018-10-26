@@ -14,14 +14,10 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
-import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -59,11 +55,7 @@ public class AlternateStratumTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			IJavaReferenceType type = ((IJavaStackFrame) thread.getTopStackFrame()).getReferenceType();
 			String[] strata = type.getAvailableStrata();
-			for (String strataName : strata) {
-				DebugPlugin.log(new Status(IStatus.INFO, "Strata Name: ", strataName)); //$NON-NLS-1$
-			}
-			DebugPlugin.log(new Status(IStatus.INFO, "Strata count: ", String.valueOf(strata.length))); //$NON-NLS-1$
-			assertEquals("Stratas available are: " + Arrays.toString(strata) + ", Wrong number of available strata", 2, strata.length);
+			assertEquals("Wrong number of available strata", 2, strata.length);
 			assertEquals("Wrong strata", "Xtend", strata[0]);
 			assertEquals("Wrong strata", "Java", strata[1]);
 		}
