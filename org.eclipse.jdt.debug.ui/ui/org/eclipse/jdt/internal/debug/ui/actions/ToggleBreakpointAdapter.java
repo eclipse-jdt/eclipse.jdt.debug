@@ -67,6 +67,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
@@ -90,7 +91,6 @@ import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -1217,7 +1217,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 */
 	static CompilationUnit parseCompilationUnit(ITypeRoot root) {
     	if(root != null) {
-    		return SharedASTProvider.getAST(root, SharedASTProvider.WAIT_YES, null);
+			return SharedASTProviderCore.getAST(root, SharedASTProviderCore.WAIT_YES, null);
         }
         return null;
     }

@@ -39,6 +39,7 @@ import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ThisExpression;
+import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -51,7 +52,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -349,7 +349,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 									return null;
 								}
             		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
-            		    		ASTNode root= SharedASTProvider.getAST(typeRoot, SharedASTProvider.WAIT_NO, null);
+								ASTNode root = SharedASTProviderCore.getAST(typeRoot, SharedASTProviderCore.WAIT_NO, null);
             		    		if (root == null) {
 	            		    		ASTParser parser = ASTParser.newParser(AST.JLS4);
 	            		    		parser.setSource(typeRoot);
