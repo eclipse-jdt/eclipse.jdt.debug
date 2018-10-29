@@ -70,4 +70,9 @@ public class CompatibleEnvironment {
 	public boolean isStrictlyCompatbile() {
 		return fIsStrictlyCompatible;
 	}
+
+	@Override
+	public String toString() {
+		return this.fEnvironment.toString();
+	}
 }

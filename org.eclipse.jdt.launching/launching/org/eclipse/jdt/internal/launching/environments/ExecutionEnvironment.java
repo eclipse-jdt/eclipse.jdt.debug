@@ -558,4 +558,9 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	private String getCompliance() {
 		return fElement.getAttribute("compliance"); //$NON-NLS-1$
 	}
+
+	@Override
+	public String toString() {
+		return this.fElement.getAttribute("id"); //$NON-NLS-1$
+	}
 }
