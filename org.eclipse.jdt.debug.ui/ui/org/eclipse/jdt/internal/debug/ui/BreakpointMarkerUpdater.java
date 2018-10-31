@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
@@ -31,7 +32,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
-import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -107,7 +107,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		if(cunit == null) {
 			return false;
 		}
-		CompilationUnit unit = SharedASTProvider.getAST(cunit, SharedASTProvider.WAIT_YES, null);
+		CompilationUnit unit = SharedASTProviderCore.getAST(cunit, SharedASTProviderCore.WAIT_YES, null);
 		if(unit == null) {
 			//remove it - in case it would be left in a bad location
 			return false;

@@ -15,6 +15,7 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -332,13 +333,18 @@ public class JavaJRETab extends JavaLaunchTab {
 				if(vmver != null) {
 					int val = JavaCore.compareJavaVersions(compliance, vmver);
 					if(val > 0) {
-						String setting = null;
-						if (environmentId == null) {
-							setting = LauncherMessages.JavaJRETab_2;
-						} else {
-							setting = LauncherMessages.JavaJRETab_1;
+						List<String> allVersions = JavaCore.getAllVersions();
+						String latest = allVersions.get(allVersions.size() - 1);
+						if (JavaCore.compareJavaVersions(vmver, latest) <= 0) {
+							String setting = null;
+							if (environmentId == null) {
+								setting = LauncherMessages.JavaJRETab_2;
+							} else {
+								setting = LauncherMessages.JavaJRETab_1;
+							}
+							return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IStatus.ERROR, NLS.bind(LauncherMessages.JavaJRETab_0, new String[] {
+									setting, source, compliance }), null);
 						}
-						return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IStatus.ERROR, NLS.bind(LauncherMessages.JavaJRETab_0, new String[] {setting, source, compliance}), null);
 					}
 				}
 			}
