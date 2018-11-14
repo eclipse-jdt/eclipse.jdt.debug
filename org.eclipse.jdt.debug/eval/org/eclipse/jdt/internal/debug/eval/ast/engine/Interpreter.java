@@ -69,7 +69,9 @@ public class Interpreter {
 				instruction.execute();
 				instruction.setInterpreter(null);
 			}
-		} catch (VMDisconnectedException e) {
+		} catch (CoreException e) {
+			throw e;
+		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugModel.getPluginIdentifier(), e.getMessage(), e));
 		} finally {
