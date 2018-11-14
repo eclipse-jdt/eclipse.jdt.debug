@@ -53,6 +53,7 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Location;
+import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -301,6 +302,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 			// available
 			return null;
 		}
+		locations = filterLocations(locations);
+		if (locations.isEmpty()) {
+			return null;
+		}
 		EventRequest[] requests = new EventRequest[locations.size()];
 		int i = 0;
 		for(Location location : locations) {
@@ -311,8 +316,30 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	}
 
 	/**
-	 * Creates, installs, and returns a line breakpoint request at the given
-	 * location for this breakpoint.
+	 * Filter out locations which shouldn't be used for breakpoint creation (like lambda methods)
+	 *
+	 * @return non null list with filtered locations
+	 */
+	protected List<Location> filterLocations(List<Location> locations) {
+		if (locations.size() <= 1) {
+			return locations;
+		}
+		List<Location> result = new ArrayList<>();
+		for (Location location : locations) {
+			Method method = location.method();
+			if (!method.isSynthetic()) {
+				result.add(location);
+			}
+		}
+		// this is just a best guess: all locations are synthetic, so we peek the first one
+		if (result.isEmpty()) {
+			result.add(locations.get(0));
+		}
+		return result;
+	}
+
+	/**
+	 * Creates, installs, and returns a line breakpoint request at the given location for this breakpoint.
 	 */
 	protected BreakpointRequest createLineBreakpointRequest(Location location,
 			JDIDebugTarget target) throws CoreException {
