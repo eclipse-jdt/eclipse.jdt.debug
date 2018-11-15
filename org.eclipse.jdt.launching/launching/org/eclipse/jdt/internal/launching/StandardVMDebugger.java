@@ -274,6 +274,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 			envp = classpathShortener.getEnvp();
 		}
 
+		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
+		if (newCmdLine != null) {
+			cmdLine = newCmdLine;
+		}
 		subMonitor.worked(1);
 
 		CommandDetails cmd = new CommandDetails();
@@ -322,10 +326,6 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 				connector.startListening(map);
 
-				String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
-				if(newCmdLine != null) {
-					cmdLine = newCmdLine;
-				}
 				p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp());
 				if (p == null) {
 					return;

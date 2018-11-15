@@ -470,6 +470,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 			cmdLine = classpathShortener.getCmdLine();
 			envp = classpathShortener.getEnvp();
 		}
+		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
+		if (newCmdLine != null) {
+			cmdLine = newCmdLine;
+		}
 		CommandDetails cmd = new CommandDetails();
 		cmd.setCommandLine(cmdLine);
 		cmd.setEnvp(envp);
@@ -496,10 +500,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
 		Process p= null;
-		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
-		if(newCmdLine != null) {
-			cmdLine = newCmdLine;
-		}
 		p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp());
 		if (p == null) {
 			return;
