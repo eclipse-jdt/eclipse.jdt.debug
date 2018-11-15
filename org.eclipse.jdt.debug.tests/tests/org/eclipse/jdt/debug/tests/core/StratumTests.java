@@ -48,9 +48,9 @@ public class StratumTests extends AbstractDebugTest {
 			String[] strata = type.getAvailableStrata();
 			Arrays.sort(strata);
 			String version = ((IJavaDebugTarget)thread.getDebugTarget()).getVersion();
-			// TODO ideally need to check "if 11 or newer"
-			if (version.startsWith("11")) {
-				// as of 2018-11-02 java 11 was not supported by the sourcelookup agent
+			// TODO ideally need to check "if NN or newer"
+			if (version.startsWith("12")) {
+				// as of 2018-11-15 java 12 was not supported by the sourcelookup agent
 				assertEquals("Wrong number of available strata", 1, strata.length);
 				assertEquals("Wrong strata", "Java", strata[0]);
 			} else {
