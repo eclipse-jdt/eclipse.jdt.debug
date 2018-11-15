@@ -20,8 +20,10 @@ package org.eclipse.jdt.internal.launching;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -849,15 +851,15 @@ public class StandardVMType extends AbstractVMInstallType {
 		if (Files.notExists(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE))) {
 			return version;
 		}
-		try (Stream<String> lines = Files.lines(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE)).filter(s -> s.contains(JAVA_VERSION))) {
+		try (Stream<String> lines = Files.lines(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE), Charset.defaultCharset()).filter(s -> s.contains(JAVA_VERSION))) {
 			Optional<String> hasVersion = lines.findFirst();
 			if (hasVersion.isPresent()) {
 				String line = hasVersion.get();
 				version = line.substring(14, line.length() - 1); // length of JAVA_VERSION + 2 in JAVA_VERSION="9"
 			}
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		catch (UncheckedIOException | IOException e) {
+			LaunchingPlugin.log(e);
 		}
 
 		return version;
