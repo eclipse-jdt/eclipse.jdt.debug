@@ -15,7 +15,6 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -333,9 +332,7 @@ public class JavaJRETab extends JavaLaunchTab {
 				if(vmver != null) {
 					int val = JavaCore.compareJavaVersions(compliance, vmver);
 					if(val > 0) {
-						List<String> allVersions = JavaCore.getAllVersions();
-						String latest = allVersions.get(allVersions.size() - 1);
-						if (JavaCore.compareJavaVersions(vmver, latest) <= 0) {
+						if (JavaCore.isSupportedJavaVersion(vmver)) {
 							String setting = null;
 							if (environmentId == null) {
 								setting = LauncherMessages.JavaJRETab_2;
