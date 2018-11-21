@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.jdt.debug.tests.core;
 
 import java.util.Arrays;
 
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -49,7 +50,7 @@ public class StratumTests extends AbstractDebugTest {
 			Arrays.sort(strata);
 			String version = ((IJavaDebugTarget)thread.getDebugTarget()).getVersion();
 			// TODO ideally need to check "if NN or newer"
-			if (version.startsWith("12")) {
+			if (!JavaCore.isSupportedJavaVersion(version)) {
 				// as of 2018-11-15 java 12 was not supported by the sourcelookup agent
 				assertEquals("Wrong number of available strata", 1, strata.length);
 				assertEquals("Wrong strata", "Java", strata[0]);
