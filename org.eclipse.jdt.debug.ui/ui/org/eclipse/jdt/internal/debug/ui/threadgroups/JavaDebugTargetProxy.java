@@ -21,7 +21,10 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
@@ -29,6 +32,7 @@ import org.eclipse.debug.internal.ui.viewers.update.DebugTargetEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy;
 import org.eclipse.debug.internal.ui.viewers.update.StackFrameEventHandler;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.ui.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaElementContentProvider;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.viewers.Viewer;
@@ -141,4 +145,18 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	    return 0;
 	}
 
+	@Override
+	protected int getStackFrameIndex(IStackFrame stackFrame) {
+		int stackFrameIndex = 0;
+		if (((IJavaDebugTarget) fDebugTarget).supportsMonitorInformation()) {
+			IThread thread = stackFrame.getThread();
+			IDebugElement[] ownedMonitors = JavaDebugUtils.getOwnedMonitors(thread);
+			stackFrameIndex += ownedMonitors.length;
+			IDebugElement contendedMonitor = JavaDebugUtils.getContendedMonitor(thread);
+			if (contendedMonitor != null) {
+				stackFrameIndex++;
+			}
+		}
+		return stackFrameIndex;
+	}
 }
