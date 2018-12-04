@@ -1204,4 +1204,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Supports modular class for launching.
+	 *
+	 * @since 3.12
+	 */
+	protected boolean supportsModule() {
+		return true;
+	}
+
 }

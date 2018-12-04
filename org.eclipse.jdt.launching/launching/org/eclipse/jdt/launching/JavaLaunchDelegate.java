@@ -98,25 +98,27 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(workingDirName);
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
-		// current module name, if so
-		try {
-			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
-			if (proj != null) {
-				IModuleDescription module = proj == null ? null : proj.getModuleDescription();
-				String modName = module == null ? null : module.getElementName();
-				if (modName != null) {
-					runConfig.setModuleDescription(modName);
+		if (supportsModule()) {
+			// current module name, if so
+			try {
+				IJavaProject proj = JavaRuntime.getJavaProject(configuration);
+				if (proj != null) {
+					IModuleDescription module = proj == null ? null : proj.getModuleDescription();
+					String modName = module == null ? null : module.getElementName();
+					if (modName != null) {
+						runConfig.setModuleDescription(modName);
+					}
 				}
+			} catch (CoreException e) {
+				// Not a java Project so no need to set module description
 			}
-		} catch (CoreException e) {
-			// Not a java Project so no need to set module description
 		}
 
 		// Launch Configuration should be launched by Java 9 or above for modulepath setting
 		if (!JavaRuntime.isModularConfiguration(configuration)) {
 			// Bootpath
 			runConfig.setBootClassPath(getBootpath(configuration));
-		} else {
+		} else if (supportsModule()) {
 			// module path
 			runConfig.setModulepath(paths[1]);
 			if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {

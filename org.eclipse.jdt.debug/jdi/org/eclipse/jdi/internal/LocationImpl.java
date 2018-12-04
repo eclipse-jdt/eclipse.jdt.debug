@@ -94,29 +94,33 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 */
 	@Override
 	public int compareTo(Locatable locatable) {
-		if (locatable == null || !locatable.getClass().equals(this.getClass()))
+		if (locatable == null || !locatable.getClass().equals(this.getClass())) {
 			throw new ClassCastException(
 					JDIMessages.LocationImpl_Can__t_compare_location_to_given_object_1);
+		}
 
 		// See if methods are the same, if not return comparison between
 		// methods.
 		LocationImpl location2 = (LocationImpl) locatable;
-		if (!method().equals(location2.method()))
+		if (!method().equals(location2.method())) {
 			return method().compareTo(location2.method());
+		}
 
 		// Return comparison between code-indexes.
 		// Code indexes must be treated as unsigned. This matters if you have to
 		// compare them.
-		if (codeIndex() < 0 || location2.codeIndex() < 0)
+		if (codeIndex() < 0 || location2.codeIndex() < 0) {
 			throw new InternalError(
 					JDIMessages.LocationImpl_Code_indexes_are_assumed_to_be_always_positive_2);
+		}
 
-		if (codeIndex() < location2.codeIndex())
+		if (codeIndex() < location2.codeIndex()) {
 			return -1;
-		else if (codeIndex() > location2.codeIndex())
+		} else if (codeIndex() > location2.codeIndex()) {
 			return 1;
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	/**
@@ -152,7 +156,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 		try {
 			return NLS.bind(JDIMessages.LocationImpl_sourcename___0___line___1__3,
 							new String[] { sourceName(),
-									Integer.toString(lineNumber()) });
+							Integer.toString(lineNumber()), method().toString() });
 		} catch (Exception e) {
 			return fDescription;
 		}

@@ -127,7 +127,7 @@ public final class JDIHelpers implements IJDIHelpers {
 			IStackFrame[] frames = ((IStackFrame) element).getThread().getStackFrames();
 			for (int i = 0; i < frames.length - 1; i++) {
 				if (frames[i] == element) {
-					return Arrays.copyOfRange(frames, i + 1, frames.length - 1);
+					return Arrays.copyOfRange(frames, i + 1, frames.length);
 				}
 			}
 		}
