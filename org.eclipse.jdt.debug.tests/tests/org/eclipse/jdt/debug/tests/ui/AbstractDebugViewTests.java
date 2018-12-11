@@ -12,17 +12,10 @@ package org.eclipse.jdt.debug.tests.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -256,35 +249,6 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 			}
 			return selected;
 		});
-	}
-
-	protected void assertNoErrorMarkersExist() throws Exception {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject[] projects = root.getProjects();
-		for (IProject project : projects) {
-			assertNoErrorMarkersExist(project);
-		}
-	}
-
-	protected void assertNoErrorMarkersExist(IProject project) throws Exception {
-		if (project.isAccessible()) {
-			IMarker[] projectMarkers = project.findMarkers(null, false, IResource.DEPTH_INFINITE);
-			List<IMarker> errorMarkers = Arrays.stream(projectMarkers).filter(marker -> isErrorMarker(marker)).collect(Collectors.toList());
-			String projectErrors = toString(errorMarkers);
-			assertEquals("found errors on project " + project + ":" + System.lineSeparator() + projectErrors, Collections.EMPTY_LIST, errorMarkers);
-		}
-	}
-
-	private static boolean isErrorMarker(IMarker marker) {
-		return marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR;
-	}
-
-	private static String toString(Collection<IMarker> markers) {
-		StringBuilder markersInfo = new StringBuilder();
-		for (IMarker marker : markers) {
-			markersInfo.append(marker);
-		}
-		return markersInfo.toString();
 	}
 
 	protected ISelection getDebugViewSelection() throws Exception {

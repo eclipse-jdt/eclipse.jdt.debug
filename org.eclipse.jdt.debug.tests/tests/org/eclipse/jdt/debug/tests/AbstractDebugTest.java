@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,9 +32,11 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -464,6 +469,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug541110"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
@@ -745,7 +751,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Returns the 'OneSeven' project.
+	 * Returns the 'OneEight' project.
 	 *
 	 * @return the test project
 	 */
@@ -2821,4 +2827,32 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return false;
 	}
 
+	protected void assertNoErrorMarkersExist() throws Exception {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject[] projects = root.getProjects();
+		for (IProject project : projects) {
+			assertNoErrorMarkersExist(project);
+		}
+	}
+
+	protected void assertNoErrorMarkersExist(IProject project) throws Exception {
+		if (project.isAccessible()) {
+			IMarker[] projectMarkers = project.findMarkers(null, false, IResource.DEPTH_INFINITE);
+			List<IMarker> errorMarkers = Arrays.stream(projectMarkers).filter(marker -> isErrorMarker(marker)).collect(Collectors.toList());
+			String projectErrors = toString(errorMarkers);
+			assertEquals("found errors on project " + project + ":" + System.lineSeparator() + projectErrors, Collections.EMPTY_LIST, errorMarkers);
+		}
+	}
+
+	private static boolean isErrorMarker(IMarker marker) {
+		return marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR;
+	}
+
+	private static String toString(Collection<IMarker> markers) {
+		StringBuilder markersInfo = new StringBuilder();
+		for (IMarker marker : markers) {
+			markersInfo.append(marker);
+		}
+		return markersInfo.toString();
+	}
 }
