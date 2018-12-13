@@ -471,6 +471,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug541110"));
 				cfgs.add(createLaunchConfiguration(jp, "ClosureVariableTest_Bug542989"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointInLocalClass"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointInAnonymousLocalClass"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointInLambda"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointUsingInnerClass"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointUsingLocalClass"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }

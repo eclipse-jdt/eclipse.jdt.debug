@@ -15,8 +15,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -57,9 +60,13 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIThisVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
+import org.eclipse.jdt.internal.debug.core.model.LambdaUtils;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
@@ -284,7 +291,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		EvaluationSourceGenerator mapper = null;
 		CompilationUnit unit = null;
 		try {
-			IJavaVariable[] localsVar = context.getLocals();
+			List<IJavaVariable> localsVar = new ArrayList<>();
+			localsVar.addAll(Arrays.asList(context.getLocals()));
 			IJavaObject thisClass = context.getThis();
 			IVariable[] innerClassFields; // For anonymous classes, getting variables from outer class
 			if (null != thisClass) {
@@ -292,22 +300,41 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			} else {
 				innerClassFields = new IVariable[0];
 			}
-			int numLocalsVar = localsVar.length;
+			List<IVariable> lambdaFrameVariables = LambdaUtils.getLambdaFrameVariables(frame);
+			int numLocalsVar = localsVar.size();
 			Set<String> names = new HashSet<>();
 			// ******
 			// to hide problems with local variable declare as instance of Local
 			// Types
 			// and to remove locals with duplicate names
 			// IJavaVariable[] locals = new IJavaVariable[numLocalsVar];
-			IJavaVariable[] locals = new IJavaVariable[numLocalsVar + innerClassFields.length];
-			String[] localVariablesWithNull = new String[numLocalsVar + innerClassFields.length];
+			IJavaVariable[] locals = new IJavaVariable[numLocalsVar + innerClassFields.length + lambdaFrameVariables.size()];
+			String[] localVariablesWithNull = new String[numLocalsVar + innerClassFields.length + lambdaFrameVariables.size()];
 			int numLocals = 0;
 			for (int i = 0; i < numLocalsVar; i++) {
-				if (!isLocalType(localsVar[i].getSignature())
-						&& !names.contains(localsVar[i].getName())) {
-					locals[numLocals] = localsVar[i];
-					names.add(localsVar[i].getName());
-					localVariablesWithNull[numLocals++] = localsVar[i].getName();
+				IJavaVariable variable = localsVar.get(i);
+				if (!isLocalType(variable.getSignature()) && !names.contains(variable.getName())) {
+					locals[numLocals] = variable;
+					names.add(variable.getName());
+					localVariablesWithNull[numLocals++] = variable.getName();
+				}
+			}
+			/*
+			 * If we are in a lambda frame, the variable context is not complete; names of outer-scope variables are mangled by the compiler. So we
+			 * check variables one stack frame above the lambda frames, in order to also include outer-scope variables. This is necessary to use local
+			 * variables defined in a method, within a breakpoint condition inside a lambda also defined in that method.
+			 */
+			for (IVariable variable : lambdaFrameVariables) {
+				if (variable instanceof IJavaVariable && !isLambdaOrImplicitVariable(variable)) {
+					IJavaVariable javaVariable = (IJavaVariable) variable;
+					String variableName = variable.getName();
+					if (variableName != null && !variableName.contains("$")) { //$NON-NLS-1$
+						if (!isLocalType(javaVariable.getSignature()) && !names.contains(variableName)) {
+							locals[numLocals] = javaVariable;
+							names.add(variable.getName());
+							localVariablesWithNull[numLocals++] = variable.getName();
+						}
+					}
 				}
 			}
 			// Adding outer class variables to inner class scope
@@ -838,5 +865,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			updatedSnippet.append(snippet.substring(start, snippet.length()));
 		}
 		return updatedSnippet.toString();
+	}
+
+	private static boolean isLambdaOrImplicitVariable(IVariable variable) {
+		boolean isLambdaOrImplicitVariable = variable instanceof JDILambdaVariable || variable instanceof JDIReturnValueVariable
+				|| variable instanceof JDIThisVariable;
+		return isLambdaOrImplicitVariable;
 	}
 }
