@@ -52,7 +52,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.internal.core.OutputStreamMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
@@ -696,9 +698,11 @@ public class StandardVMType extends AbstractVMInstallType {
 				p = DebugPlugin.exec(cmdLine, null, envp);
 				IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "Library Detection"); //$NON-NLS-1$
 				process.setAttribute(IProcess.ATTR_CMDLINE, String.join(" ", cmdLine)); //$NON-NLS-1$
+				IStreamMonitor outputStreamMonitor = process.getStreamsProxy().getOutputStreamMonitor();
 				for (int i= 0; i < 600; i++) {
-					// Wait no more than 30 seconds (600 * 50 milliseconds)
-					if (process.isTerminated()) {
+					// Wait no more than 30 seconds (600 * 50 milliseconds),
+					// also ensure we are done reading the process stream, if we have a OutputStreamMonitor
+					if (process.isTerminated() && isReadingDone(outputStreamMonitor)) {
 						break;
 					}
 					try {
@@ -722,6 +726,14 @@ public class StandardVMType extends AbstractVMInstallType {
 		    LaunchingPlugin.log(NLS.bind("Failed to retrieve default libraries for {0}", new String[]{javaHome.getAbsolutePath()})); //$NON-NLS-1$
 		}
 		return info;
+	}
+
+	@SuppressWarnings("restriction")
+	private boolean isReadingDone(IStreamMonitor monitor) {
+		if (monitor instanceof OutputStreamMonitor) {
+			return ((OutputStreamMonitor) monitor).isReadingDone();
+		}
+		return true;
 	}
 
 	/**
