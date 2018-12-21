@@ -193,7 +193,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String CLONE_SUFFIX = "Clone";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
- "DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
+			"DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
 			"org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.CallLoop", "A",
 			"HitCountLooper", "CompileError", "MultiThreadedLoop", "HitCountException", "MultiThreadedException", "MultiThreadedList", "MethodLoop", "StepFilterOne",
 			"StepFilterFour", "EvalArrayTests", "EvalSimpleTests", "EvalTypeTests", "EvalNestedTypeTests", "EvalTypeHierarchyTests",
@@ -470,6 +470,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug541110"));
+				cfgs.add(createLaunchConfiguration(jp, "ClosureVariableTest_Bug542989"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
