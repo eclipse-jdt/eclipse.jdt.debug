@@ -60,13 +60,21 @@ public class AdvancedSourceLookup {
 		final Map<File, IPackageFragmentRoot> classpath = new LinkedHashMap<>();
 		for (IPackageFragmentRoot fragment : project.getPackageFragmentRoots()) {
 			if (fragment.getKind() == IPackageFragmentRoot.K_BINARY) {
-				File classpathLocation;
+				File classpathLocation = null;
 				if (fragment.isExternal()) {
 					classpathLocation = fragment.getPath().toFile();
 				} else {
-					classpathLocation = fragment.getResource().getLocation().toFile();
+					IResource resource = fragment.getResource();
+					if (resource != null) {
+						IPath location = resource.getLocation();
+						if (location != null) {
+							classpathLocation = location.toFile();
+						}
+					}
 				}
-				classpath.put(classpathLocation, fragment);
+				if (classpathLocation != null) {
+					classpath.put(classpathLocation, fragment);
+				}
 			}
 		}
 		return classpath;
