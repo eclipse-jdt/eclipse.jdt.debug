@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -39,6 +38,7 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
+import com.sun.jdi.VoidValue;
 
 /**
  * Represents the value of a java variable
@@ -95,7 +95,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 
 	/**
 	 * Creates the appropriate kind of value - i.e. a primitive value, object,
-	 * class object, array, or <code>null</code>.
+	 * class object, array, <code>null</code> or void.
 	 */
 	public static JDIValue createValue(JDIDebugTarget target, Value value) {
 		if (value == null) {
@@ -112,6 +112,9 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 		}
 		if (value instanceof PrimitiveValue) {
 			return new JDIPrimitiveValue(target, value);
+		}
+		if (value instanceof VoidValue) {
+			return new JDIVoidValue(target);
 		}
 		return new JDIValue(target, value);
 	}

@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
+import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsInJava8Tests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsWithGenerics;
 import org.eclipse.jdt.debug.tests.breakpoints.DeferredBreakpointTests;
@@ -131,6 +132,7 @@ import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
+import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests18;
 import org.eclipse.jdt.debug.tests.variables.DetailFormatterTests;
 import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
@@ -347,6 +349,8 @@ public class AutomatedSuite extends DebugSuite {
 
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
+			addTest(new TestSuite(ModelPresentationTests18.class));
+			addTest(new TestSuite(ConditionalBreakpointsInJava8Tests.class));
 		}
 		if (JavaProjectHelper.isJava5Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));

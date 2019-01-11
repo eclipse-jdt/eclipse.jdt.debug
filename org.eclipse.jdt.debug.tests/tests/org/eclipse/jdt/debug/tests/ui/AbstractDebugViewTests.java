@@ -55,13 +55,15 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 	}
 
 	private LaunchView debugView;
-	private boolean showMonitorsOriginal;
+	private Boolean showMonitorsOriginal;
+	private Boolean showSystemThreadsOriginal;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		showMonitorsOriginal = jdiUIPreferences.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
+		showSystemThreadsOriginal = jdiUIPreferences.getBoolean(IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS);
 		jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, true);
 		resetPerspective(DebugViewPerspectiveFactory.ID);
 		debugView = sync(() -> (LaunchView) getActivePage().showView(IDebugUIConstants.ID_DEBUG_VIEW));
@@ -72,6 +74,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 	protected void tearDown() throws Exception {
 		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, showMonitorsOriginal);
+		jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS, showSystemThreadsOriginal);
 		sync(() -> getActivePage().closeAllEditors(false));
 		processUiEvents(100);
 		super.tearDown();
@@ -118,6 +121,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 			try {
 				thread = launchToBreakpoint(typeName, breakpointMethodName, expectedBreakpointHitsCount);
 
+				assertDebugViewIsOpen();
 				assertStackFrameIsSelected(breakpointMethodName);
 			} catch (AssertionError assertionError) {
 				failedAssertions.add(assertionError);
@@ -272,8 +276,13 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 		sync(() -> getActivePage().activate(debugView));
 	}
 
+	protected void assertDebugViewIsOpen() throws Exception {
+		debugView = sync(() -> (LaunchView) getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW));
+		assertNotNull("expected Debug View to be open", debugView);
+	}
+
 	protected void assertDebugViewIsActive() throws Exception {
-		assertEquals("expected Debug View to activate after resuming thread", debugView, sync(() -> getActivePage().getActivePart()));
+		assertEquals("expected Debug View to be activate", debugView, sync(() -> getActivePage().getActivePart()));
 	}
 
 	protected static class BreakpointWaiter extends DebugElementKindEventDetailWaiter {

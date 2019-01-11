@@ -1419,6 +1419,10 @@
                      name="PrimitiveVariableActionFilter"
                      value="isPrimitive">
                </objectState>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isObjectValue">
+               </objectState>
                <not>
                   <objectState
                         name="JavaVariableFilter"

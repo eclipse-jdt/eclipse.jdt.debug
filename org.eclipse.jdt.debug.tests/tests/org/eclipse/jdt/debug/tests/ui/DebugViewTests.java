@@ -17,9 +17,13 @@ import java.util.Arrays;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.TestAgainException;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.test.OrderedTestSuite;
 import org.eclipse.ui.IViewPart;
@@ -191,6 +195,36 @@ public class DebugViewTests extends AbstractDebugViewTests {
 			sync(() -> getActivePage().hideView(anotherView));
 			activateDebugView();
 		}
+	}
+
+	/**
+	 * Test for Bug 540243 - Wrong selection when first opening view due to breakpoint
+	 *
+	 * When hitting a breakpoint, if the Debug View is open at all, and we show Java thread owned monitors, its possible to see a wrong selection in
+	 * the Debug View. To ensure this doesn't occur, this test does the following:
+	 *
+	 * <ol>
+	 * <li>ensures the Debug View is showing owned monitors for threads</li>
+	 * <li>close the Debug View</li>
+	 * <li>create a Java snippet which starts a thread</li>
+	 * <li>set a break point in the code executed by the thread</li>
+	 * <li>debug the snippet until the break point is reached</li>
+	 * <li>validate that the selection in the Debug View contains is exactly the method with a break point</li>
+	 * </ol>
+	 */
+	public void testWrongSelectionBug540243() throws Exception {
+		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		Boolean isShowingMonitorThreadInfo = jdiUIPreferences.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
+		assertNotNull("Preference to show thread owned monitors must be set but is not", isShowingMonitorThreadInfo);
+		assertTrue("Preference to show thread owned monitors must be enabled but is not", isShowingMonitorThreadInfo);
+
+		sync(() -> getActivePage().hideView(getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW)));
+
+		int iterations = 1;
+		String typeName = "Bug540243";
+		String breakpointMethodName = "breakpointMethod";
+		int expectedBreakpointHitsCount = 1;
+		doTestWrongSelection(iterations, typeName, breakpointMethodName, expectedBreakpointHitsCount);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -46,6 +48,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -622,7 +625,24 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * Open the 'select type' dialog, and set the user choice into the formatter.
 	 */
 	private void selectType() {
-		Shell shell= getShell();
+		Shell shell = getShell();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		if (projects.length == 0) {
+			MessageDialog.openInformation(shell, DebugUIMessages.DetailFormatterDialog_Select_type_9, DebugUIMessages.DetailFormatterDialog_Select_type_10);
+			return;
+		}
+		boolean allClosed = true;
+		for (IProject iProject : projects) {
+			if (iProject.isOpen()) {
+				allClosed = false;
+				break;
+			}
+		}
+
+		if (allClosed) {
+			MessageDialog.openInformation(shell, DebugUIMessages.DetailFormatterDialog_Select_type_9, DebugUIMessages.DetailFormatterDialog_Select_type_10);
+			return;
+		}
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),

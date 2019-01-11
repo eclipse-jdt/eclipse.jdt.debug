@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.LambdaUtils;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.osgi.util.NLS;
@@ -63,6 +64,11 @@ public class PushLocalVariable extends SimpleInstruction {
 				push(f);
 				return;
 			}
+		}
+		IVariable variable = LambdaUtils.findLambdaFrameVariable(context, getName());
+		if (variable != null) {
+			push(variable);
+			return;
 		}
 		throw new CoreException(
 				new Status(

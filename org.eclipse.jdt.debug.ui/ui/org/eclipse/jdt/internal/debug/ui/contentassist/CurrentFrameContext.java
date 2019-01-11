@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
-import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThisVariable;
 
 
@@ -65,7 +65,8 @@ public class CurrentFrameContext extends TypeContext {
         if (frame != null) {
             IVariable[] variables = frame.getVariables();
             int index = 0;
-			while (index < variables.length && (variables[index] instanceof JDIThisVariable || variables[index] instanceof JDIReturnValueVariable)) {
+			while (index < variables.length
+					&& (variables[index] instanceof JDIThisVariable || JDIPlaceholderVariable.class.isAssignableFrom(variables[index].getClass()))) {
 				index++;
 			}
             String[][] locals = new String[2][variables.length - index];

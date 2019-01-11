@@ -193,7 +193,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String CLONE_SUFFIX = "Clone";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
- "DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
+			"DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
 			"org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.CallLoop", "A",
 			"HitCountLooper", "CompileError", "MultiThreadedLoop", "HitCountException", "MultiThreadedException", "MultiThreadedList", "MethodLoop", "StepFilterOne",
 			"StepFilterFour", "EvalArrayTests", "EvalSimpleTests", "EvalTypeTests", "EvalNestedTypeTests", "EvalTypeHierarchyTests",
@@ -207,7 +207,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
-			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303" };
+			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243" };
 
 	/**
 	 * the default timeout
@@ -470,6 +470,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug541110"));
+				cfgs.add(createLaunchConfiguration(jp, "ClosureVariableTest_Bug542989"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointInLocalClass"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointInAnonymousLocalClass"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointInLambda"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointUsingInnerClass"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug404097BreakpointUsingLocalClass"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }

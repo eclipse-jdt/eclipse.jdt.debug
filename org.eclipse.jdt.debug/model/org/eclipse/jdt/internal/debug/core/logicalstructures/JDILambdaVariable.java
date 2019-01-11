@@ -10,61 +10,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 542989 - inherit from {@link JDIPlaceholderVariable} to prevent NPEs
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIVariable;
-
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.Type;
-import com.sun.jdi.Value;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 /**
- * Represents the return value after a "step-return".
+ * Represents the closure context inside a lambda expression.
  */
-public class JDILambdaVariable extends JDIVariable {
+public class JDILambdaVariable extends JDIPlaceholderVariable {
 
-	private ObjectReference fObject;
-
-	public JDILambdaVariable(JDIDebugTarget target, IJavaStackFrame frame, ObjectReference object) {
-		super(target);
-		this.fObject = object;
+	public JDILambdaVariable(IJavaValue value) {
+		super("Lambda", value); //$NON-NLS-1$
 	}
 
 	@Override
-	protected Value retrieveValue() {
-		return fObject;
-	}
-
-	/**
-	 * @see IVariable#getName()
-	 */
-	@Override
-	public String getName() {
-		return "Lambda"; //$NON-NLS-1$
-	}
-
-	@Override
-	public String getSignature() throws DebugException {
-		return null;
-	}
-
-	@Override
-	public String getGenericSignature() throws DebugException {
-		return null;
-	}
-
-	@Override
-	public String getReferenceTypeName() throws DebugException {
-		return null;
-	}
-
-	@Override
-	protected Type getUnderlyingType() throws DebugException {
-		return null;
+	public boolean isSynthetic() {
+		return true;
 	}
 }

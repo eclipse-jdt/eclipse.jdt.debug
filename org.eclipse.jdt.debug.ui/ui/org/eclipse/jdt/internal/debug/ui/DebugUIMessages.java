@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -264,6 +264,8 @@ public class DebugUIMessages extends NLS {
 	public static String DetailFormatterDialog_Select_type_6;
 	public static String DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7;
 	public static String DetailFormatterDialog_Select_type_8;
+	public static String DetailFormatterDialog_Select_type_9;
+	public static String DetailFormatterDialog_Select_type_10;
 	public static String DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9;
 	public static String DetailFormatterDialog_Edit_Detail_Formatter_1;
 	public static String DetailFormatterDialog_Add_Detail_Formatter_2;
