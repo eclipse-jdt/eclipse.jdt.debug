@@ -3316,6 +3316,10 @@ public final class JavaRuntime {
             			equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options, bundleDefaults) &&
             			equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options, bundleDefaults) &&
             			equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options, bundleDefaults);
+				if (JavaCore.compareJavaVersions(compliance, JavaCore.VERSION_10) > 0) {
+					isDefault = isDefault && equals(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, options, bundleDefaults)
+							&& equals(JavaCore.COMPILER_PB_REPORT_PREVIEW_FEATURES, options, bundleDefaults);
+				}
             	// only update the compliance settings if they are default settings, otherwise the
             	// settings have already been modified by a tool or user
             	if (isDefault) {

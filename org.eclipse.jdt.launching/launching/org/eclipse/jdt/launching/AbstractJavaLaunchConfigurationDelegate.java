@@ -1214,4 +1214,22 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		return true;
 	}
 
+	/**
+	 * Supports Preview Features for launching.
+	 *
+	 * @since 3.13
+	 */
+	protected boolean supportsPreviewFeatures(ILaunchConfiguration configuration) {
+		try {
+			IJavaProject javaProject = getJavaProject(configuration);
+			String id = javaProject.getOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, true);
+			if (JavaCore.DISABLED.equals(id)) {
+				return true;
+			}
+		} catch (CoreException e) {
+			// Not a java project
+		}
+		return false;
+	}
+
 }
