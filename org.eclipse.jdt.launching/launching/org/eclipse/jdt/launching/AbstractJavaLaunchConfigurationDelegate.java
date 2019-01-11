@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -410,19 +410,19 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		return bootpathInfo;
 	}
+
 	/**
-	 * Returns the entries that should appear on the user portion of the
-	 * classpath as specified by the given launch configuration, as an array of
-	 * resolved strings. The returned array is empty if no classpath is
-	 * specified.
+	 * Returns the entries that should appear on the user portion of the classpath as specified by the given launch configuration, as an array of
+	 * resolved strings. The returned array is empty if no classpath is specified.
 	 *
 	 * @param configuration
 	 *            launch configuration
-	 * @return the classpath specified by the given launch configuration,
-	 *         possibly an empty array
+	 * @return the classpath specified by the given launch configuration, possibly an empty array
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
+	 * @deprecated use getClasspathAndModulepath
 	 */
+	@Deprecated
 	public String[] getClasspath(ILaunchConfiguration configuration)
 			throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime
