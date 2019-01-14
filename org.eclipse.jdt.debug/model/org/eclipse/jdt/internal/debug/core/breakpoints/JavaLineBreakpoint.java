@@ -324,6 +324,14 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 		if (locations.size() <= 1) {
 			return locations;
 		}
+
+		// JVM has multiple breakpoint locations for this line.
+		// Bug 543385: in case we have no condition, we can allow to stop at every location.
+		// Bug 541110: In case we have condition, it will most likely fail due the wrong context
+		// if evaluated in a lambda where the condition arguments couldn't be resolved.
+		if (!hasCondition()) {
+			return locations;
+		}
 		List<Location> result = new ArrayList<>();
 		for (Location location : locations) {
 			Method method = location.method();
