@@ -21,16 +21,20 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.console.JavaExceptionHyperLink;
 import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink;
+import org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
@@ -180,6 +184,77 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        ConsoleLineTracker.setDelegate(null);
 	        terminateAndRemove(fTarget);
 	    }
+	}
+
+	public void testJavaExceptionHyperLink() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		fTarget = null;
+		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		boolean suspendOnException = jdiUIPreferences.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+		try {
+			fTarget = launchAndTerminate("ThrowsNPE");
+
+			synchronized (fLock) {
+				if (!fStopped) {
+					fLock.wait(30000);
+				}
+			}
+			assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Never received 'stopped' notification", fStopped);
+			assertTrue("Console should be an IOCosnole", fConsole instanceof IOConsole);
+			IOConsole console = (IOConsole) fConsole;
+			IHyperlink[] hyperlinks = console.getHyperlinks();
+
+			// should be 1 exception hyperlink
+			int total = 0;
+			for (int i = 0; i < hyperlinks.length; i++) {
+				IHyperlink hyperlink = hyperlinks[i];
+				if (hyperlink instanceof JavaExceptionHyperLink) {
+					total++;
+					// should be followed by a stack trace hyperlink
+					assertTrue("Stack trace hyperlink missing", hyperlinks[i + 1] instanceof JavaStackTraceHyperlink);
+				}
+			}
+			assertEquals("Wrong number of exception hyperlinks", 1, total);
+			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+			IJavaExceptionBreakpoint foundBreakpoint = null;
+			for (int i = 0; i < breakpoints.length; i++) {
+				IBreakpoint breakpoint = breakpoints[i];
+				if (breakpoint instanceof IJavaExceptionBreakpoint) {
+					IJavaExceptionBreakpoint exceptionBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
+					if ("java.lang.NullPointerException".equals(exceptionBreakpoint.getTypeName())) {
+						foundBreakpoint = exceptionBreakpoint;
+						break;
+					}
+				}
+			}
+			assertTrue("NPE breakpoint should not exist yet", foundBreakpoint == null);
+			IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);
+			ex.setEnabled(false);
+			JavaExceptionHyperLink exLink = (JavaExceptionHyperLink) hyperlinks[0];
+			exLink.linkActivated();
+			breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+			foundBreakpoint = null;
+			for (int i = 0; i < breakpoints.length; i++) {
+				IBreakpoint breakpoint = breakpoints[i];
+				if (breakpoint instanceof IJavaExceptionBreakpoint) {
+					IJavaExceptionBreakpoint exceptionBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
+					if ("java.lang.NullPointerException".equals(exceptionBreakpoint.getTypeName())) {
+						foundBreakpoint = exceptionBreakpoint;
+						break;
+					}
+				}
+			}
+			assertTrue("NPE breakpoint not found", foundBreakpoint != null);
+			assertTrue("NPE breakpoint not enabled", foundBreakpoint.isEnabled());
+			assertTrue("NPE breakpoint cancel enablement value not false", foundBreakpoint.getMarker().getAttribute(JavaBreakpointPage.ATTR_ENABLED_SETTING_ON_CANCEL, "").equals("false"));
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, suspendOnException);
+			terminateAndRemove(fTarget);
+		}
+
 	}
 
 	/**

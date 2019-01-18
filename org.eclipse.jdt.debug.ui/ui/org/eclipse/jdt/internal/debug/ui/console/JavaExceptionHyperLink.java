@@ -68,6 +68,9 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 				if (breakpoint instanceof IJavaExceptionBreakpoint) {
 					IJavaExceptionBreakpoint exceptionBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
 					if (fExceptionName.equals(exceptionBreakpoint.getTypeName())) {
+						// reset enabled setting to true but save original value to reset if user cancels dialog
+						exceptionBreakpoint.getMarker().setAttribute(JavaBreakpointPage.ATTR_ENABLED_SETTING_ON_CANCEL, Boolean.toString(exceptionBreakpoint.isEnabled()));
+						exceptionBreakpoint.setEnabled(true);
 						showProperties(exceptionBreakpoint);
 						return;
 					}

@@ -81,6 +81,11 @@ public class JavaBreakpointPage extends PropertyPage {
 	public static final String ATTR_DELETE_ON_CANCEL = JDIDebugUIPlugin.getUniqueIdentifier() + ".ATTR_DELETE_ON_CANCEL";  //$NON-NLS-1$
 
 	/**
+	 * Attribute used to indicate resetting the enable attribute if cancel is pressed.
+	 */
+	public static final String ATTR_ENABLED_SETTING_ON_CANCEL = JDIDebugUIPlugin.getUniqueIdentifier() + ".ATTR_ENABLED_SETTING_ON_CANCEL"; //$NON-NLS-1$
+
+	/**
 	 * Constant for the empty string
 	 */
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -102,6 +107,7 @@ public class JavaBreakpointPage extends PropertyPage {
 					breakpoint.getMarker().setAttribute(ATTR_DELETE_ON_CANCEL, (String)null);
 					breakpoint.setRegistered(true);
 				}
+				breakpoint.getMarker().setAttribute(ATTR_ENABLED_SETTING_ON_CANCEL, (String) null);
 				doStore();
 			}
 		};
@@ -415,6 +421,12 @@ public class JavaBreakpointPage extends PropertyPage {
 	@Override
 	public boolean performCancel() {
 		try {
+			String enableSetting = getBreakpoint().getMarker().getAttribute(ATTR_ENABLED_SETTING_ON_CANCEL, null);
+			if (enableSetting != null) {
+				// if this is an old breakpoint we must reset enablement setting
+				boolean enabled = Boolean.parseBoolean(enableSetting);
+				getBreakpoint().setEnabled(enabled);
+			}
 			if (getBreakpoint().getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null) {
 			    // if this breakpoint is being created, delete on cancel
 				getBreakpoint().delete();
