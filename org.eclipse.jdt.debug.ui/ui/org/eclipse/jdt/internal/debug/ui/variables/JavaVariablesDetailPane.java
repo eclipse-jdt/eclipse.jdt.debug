@@ -118,7 +118,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 
 			@Override
 			public void documentChanged(DocumentEvent event) {
-				setDirty(true);
+				updateExpressionHistories();
 			}
 		};
 		viewer.getDocument().addDocumentListener(fDocumentListener);
