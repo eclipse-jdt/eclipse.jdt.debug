@@ -18,21 +18,19 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
-import org.eclipse.debug.ui.IDetailPane3;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -41,14 +39,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IPropertyListener;
 
 /**
  * Java Variable detail pane.
  *
  * @since 3.10
  */
-public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetailPane3 {
+public class JavaVariablesDetailPane extends DefaultDetailPane {
 
 	/**
 	 * Identifier for this Java Variable detail pane editor
@@ -57,10 +54,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 	public static final String NAME = PropertyPageMessages.JavaVariableDetailsPane_name;
 	public static final String DESCRIPTION = PropertyPageMessages.JavaVariableDetailsPane_description;
 
-	private boolean fDirty = false;
-	// property listeners
-	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
-	private IDocumentListener fDocumentListener;
+	private FocusListener focusListener;
 	private Combo fExpressionHistory;
 	private IDialogSettings fExpressionHistoryDialogSettings;
 	private Map<IJavaVariable, Stack<String>> fLocalExpressionHistory;
@@ -75,23 +69,14 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 	public JavaVariablesDetailPane() {
 		fExpressionHistoryDialogSettings = DialogSettings.getOrCreateSection(JDIDebugUIPlugin.getDefault().getDialogSettings(), DS_SECTION_EXPRESSION_HISTORY);
 	}
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		if (fVariable != null && isDirty()) {
-			setDirty(false);
-			if (hasExpressionHistory()) {
-				updateExpressionHistories();
-			}
-		}
-	}
-
-	@Override
-	public void doSaveAs() {
-		doSave(null);
-	}
 
 	@Override
 	public Control createControl(Composite parent) {
+		if (!isInView()) {
+			Control c = super.createControl(parent);
+			c.setBackground(ExpressionInformationControlCreator.getSystemBackgroundColor());
+			return c;
+		}
 		if (fExpressionHistoryDialogSettings != null) {
 			fLocalExpressionHistory = new HashMap<>();
 			fExpressionHistory = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
@@ -111,17 +96,20 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 		}
 		Control newControl = super.createControl(parent);
 		SourceViewer viewer = getSourceViewer();
-		fDocumentListener = new IDocumentListener() {
+		focusListener = new FocusListener() {
+
 			@Override
-			public void documentAboutToBeChanged(DocumentEvent event) {
+			public void focusLost(FocusEvent e) {
+				updateExpressionHistories();
+				initializeExpressionHistoryDropDown();
 			}
 
 			@Override
-			public void documentChanged(DocumentEvent event) {
-				updateExpressionHistories();
+			public void focusGained(FocusEvent e) {
+
 			}
 		};
-		viewer.getDocument().addDocumentListener(fDocumentListener);
+		viewer.getTextWidget().addFocusListener(focusListener);
 		return newControl;
 	}
 
@@ -291,45 +279,6 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 		return result.toString().trim();
 	}
 
-	/**
-	 * Tells whether this editor shows a Expression history drop-down list.
-	 *
-	 * @return <code>true</code> if this editor shows a Expression history drop-down list, <code>false</code> otherwise
-	 */
-	private boolean hasExpressionHistory() {
-		return fExpressionHistory != null;
-	}
-
-	@Override
-	public boolean isDirty() {
-		return fDirty;
-	}
-
-	private void setDirty(boolean dirty) {
-		fDirty = dirty;
-	}
-	@Override
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-
-	@Override
-	public boolean isSaveOnCloseNeeded() {
-		return true;
-	}
-
-	@Override
-	public void addPropertyListener(IPropertyListener listener) {
-		fListeners.add(listener);
-
-	}
-
-	@Override
-	public void removePropertyListener(IPropertyListener listener) {
-		fListeners.remove(listener);
-
-	}
-
 	@Override
 	public String getDescription() {
 		return DESCRIPTION;
@@ -347,7 +296,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 
 	@Override
 	public void display(IStructuredSelection selection) {
-		if (selection != null && selection.getFirstElement() instanceof IJavaVariable) {
+		if (fExpressionHistory != null && selection != null && selection.getFirstElement() instanceof IJavaVariable) {
 			IJavaVariable variable = (IJavaVariable) (selection.getFirstElement());
 			if (fVariable == null || !fVariable.equals(variable)) {
 				fVariable = variable;
@@ -364,18 +313,23 @@ public class JavaVariablesDetailPane extends DefaultDetailPane implements IDetai
 	@Override
 	protected void clearSourceViewer(){
 		fVariable = null;
-		fExpressionHistory.setEnabled(false);
+		if (fExpressionHistory != null) {
+			fExpressionHistory.setEnabled(false);
+		}
 		super.clearSourceViewer();
 	}
 
 	@Override
 	public void dispose() {
-		fExpressionHistory.dispose();
-		fLocalExpressionHistory.clear();
-		if (fDocumentListener != null && getSourceViewer() != null && getSourceViewer().getDocument() != null) {
-			getSourceViewer().getDocument().removeDocumentListener(fDocumentListener);
+		if (fExpressionHistory != null) {
+			fExpressionHistory.dispose();
 		}
-		fListeners.clear();
+		if (fLocalExpressionHistory != null) {
+			fLocalExpressionHistory.clear();
+		}
+		if (focusListener != null && getSourceViewer() != null && getSourceViewer().getTextWidget() != null) {
+			getSourceViewer().getTextWidget().removeFocusListener(focusListener);
+		}
 		super.dispose();
 	}
 }
