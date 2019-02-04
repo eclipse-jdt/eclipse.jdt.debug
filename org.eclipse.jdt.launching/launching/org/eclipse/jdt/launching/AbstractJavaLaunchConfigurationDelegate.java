@@ -19,6 +19,7 @@ import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedS
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -1172,17 +1173,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		if (moduleToLocations.isEmpty()) {
 			return moduleCLIOptions;
 		}
-		StringBuilder sb = new StringBuilder(moduleCLIOptions);
+
+		ArrayList<String> list = new ArrayList<>();
+
+		Collections.addAll(list, DebugPlugin.parseArguments(moduleCLIOptions));
 
 		for (Entry<String, String> entry : moduleToLocations.entrySet()) {
-			if (sb.length() > 0) {
-				sb.append(' ');
-			}
-			sb.append("--patch-module"); //$NON-NLS-1$
-			sb.append(' ');
-			sb.append(entry.getKey());
-			sb.append('=');
-			sb.append(entry.getValue());
+			list.add("--patch-module"); //$NON-NLS-1$
+			list.add(entry.getKey() + '=' + entry.getValue());
 		}
 
 		boolean excludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
@@ -1191,18 +1189,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			IJavaProject project = getJavaProject(configuration);
 			if (project != null) {
 				for (String moduleName : project.determineModulesOfProjectsWithNonEmptyClasspath()) {
-					if (sb.length() > 0) {
-						sb.append(' ');
-					}
-					sb.append("--add-reads"); //$NON-NLS-1$
-					sb.append(' ');
-					sb.append(moduleName);
-					sb.append('=');
-					sb.append("ALL-UNNAMED"); //$NON-NLS-1$
+					list.add("--add-reads"); //$NON-NLS-1$
+					list.add(moduleName + '=' + "ALL-UNNAMED"); //$NON-NLS-1$
 				}
 			}
 		}
-		return sb.toString();
+		return DebugPlugin.renderArguments(list.toArray(new String[list.size()]), null);
 	}
 
 	/**
