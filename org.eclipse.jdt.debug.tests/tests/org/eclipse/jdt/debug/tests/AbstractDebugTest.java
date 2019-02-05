@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -2834,8 +2833,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	protected void assertNoErrorMarkersExist() throws Exception {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject[] projects = root.getProjects();
+		IJavaProject javaProject = getProjectContext();
+		assertNotNull("Java test project cannot be null", javaProject);
+		IProject project = javaProject.getProject();
+		assertNotNull("test project cannot be null", project);
+		IProject[] projects = { project };
+		assertNoErrorMarkersExist(projects);
+	}
+
+	protected void assertNoErrorMarkersExist(IProject[] projects) throws Exception {
 		for (IProject project : projects) {
 			assertNoErrorMarkersExist(project);
 		}

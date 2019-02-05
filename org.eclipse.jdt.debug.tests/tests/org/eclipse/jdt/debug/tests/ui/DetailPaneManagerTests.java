@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -16,24 +16,21 @@ package org.eclipse.jdt.debug.tests.ui;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-
+import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
+import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneManager;
+import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.testplugin.detailpane.SimpleDetailPane;
 import org.eclipse.jdt.debug.testplugin.detailpane.TableDetailPane;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.test.OrderedTestSuite;
-
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
-import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
-import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneManager;
-
-import org.eclipse.debug.ui.IDetailPane;
-
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugElement;
+import org.eclipse.jdt.internal.debug.ui.variables.JavaVariablesDetailPane;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.test.OrderedTestSuite;
+
+import junit.framework.Test;
 
 /**
  * Tests the detail pane functionality by testing <code>DetailPaneManager</code>.
@@ -142,7 +139,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 
 		selection = new StructuredSelection(new IJavaVariable[]{new JDIPlaceholderVariable("test var",null)});
 		id = fManager.getPreferredPaneFromSelection(selection);
-		assertEquals("Incorrect pane ID", DefaultDetailPane.ID, id);
+		assertEquals("Incorrect pane ID", JavaVariablesDetailPane.JAVA_VARIABLE_DETAIL_PANE_VARIABLES, id);
 
 		// The factory sets the Table detail pane as the default if the first string is "test pane is default".
 		selection = new StructuredSelection(new String[]{"test pane is default","example selection"});
@@ -182,7 +179,8 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 
 		selection = new StructuredSelection(new Object[]{new JDIPlaceholderVariable("test var",null)});
 		result = fManager.getAvailablePaneIDs(selection);
-		assertTrue("Set was incorrect",result.size()==2 && result.contains(DefaultDetailPane.ID) && result.contains(SimpleDetailPane.ID));
+		assertTrue("Set was incorrect", result.size() == 3 && result.contains(DefaultDetailPane.ID) && result.contains(SimpleDetailPane.ID)
+				&& result.contains(JavaVariablesDetailPane.JAVA_VARIABLE_DETAIL_PANE_VARIABLES));
 
 		// Simple detail pane only available if selection has length of 1, containing a java variable
 		selection = new StructuredSelection(new Object[]{"String1",new JDIPlaceholderVariable("test var",null),"String3"});

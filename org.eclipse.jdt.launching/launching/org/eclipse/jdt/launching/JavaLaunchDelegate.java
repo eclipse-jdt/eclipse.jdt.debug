@@ -93,10 +93,12 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		// VM-specific attributes
 		Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-		// Bug 522333 :to be used for modulepath only for 4.7.*
 		String[][] paths = getClasspathAndModulepath(configuration);
+		if (paths == null || paths.length == 0) {
+			return null;
+		}
 		// Create VM config
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, paths[0]);
 		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 		runConfig.setEnvironment(envp);
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
@@ -125,7 +127,9 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			runConfig.setBootClassPath(getBootpath(configuration));
 		} else if (supportsModule()) {
 			// module path
-			runConfig.setModulepath(paths[1]);
+			if (paths.length > 1) {
+				runConfig.setModulepath(paths[1]);
+			}
 			if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
 				runConfig.setOverrideDependencies(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "")); //$NON-NLS-1$
 			} else {

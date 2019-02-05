@@ -32,6 +32,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ImportBreakpointsTest;
 import org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.JavaThreadEventHandlerTests;
+import org.eclipse.jdt.debug.tests.breakpoints.LambdaBreakpointsInJava8Tests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests15;
 import org.eclipse.jdt.debug.tests.breakpoints.MiscBreakpointsTests;
@@ -351,6 +352,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
 			addTest(new TestSuite(ModelPresentationTests18.class));
 			addTest(new TestSuite(ConditionalBreakpointsInJava8Tests.class));
+			addTest(new TestSuite(LambdaBreakpointsInJava8Tests.class));
 		}
 		if (JavaProjectHelper.isJava5Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));

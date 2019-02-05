@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedS
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -410,19 +411,19 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		return bootpathInfo;
 	}
+
 	/**
-	 * Returns the entries that should appear on the user portion of the
-	 * classpath as specified by the given launch configuration, as an array of
-	 * resolved strings. The returned array is empty if no classpath is
-	 * specified.
+	 * Returns the entries that should appear on the user portion of the classpath as specified by the given launch configuration, as an array of
+	 * resolved strings. The returned array is empty if no classpath is specified.
 	 *
 	 * @param configuration
 	 *            launch configuration
-	 * @return the classpath specified by the given launch configuration,
-	 *         possibly an empty array
+	 * @return the classpath specified by the given launch configuration, possibly an empty array
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
+	 * @deprecated use getClasspathAndModulepath
 	 */
+	@Deprecated
 	public String[] getClasspath(ILaunchConfiguration configuration)
 			throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime
@@ -1172,17 +1173,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		if (moduleToLocations.isEmpty()) {
 			return moduleCLIOptions;
 		}
-		StringBuilder sb = new StringBuilder(moduleCLIOptions);
+
+		ArrayList<String> list = new ArrayList<>();
+
+		Collections.addAll(list, DebugPlugin.parseArguments(moduleCLIOptions));
 
 		for (Entry<String, String> entry : moduleToLocations.entrySet()) {
-			if (sb.length() > 0) {
-				sb.append(' ');
-			}
-			sb.append("--patch-module"); //$NON-NLS-1$
-			sb.append(' ');
-			sb.append(entry.getKey());
-			sb.append('=');
-			sb.append(entry.getValue());
+			list.add("--patch-module"); //$NON-NLS-1$
+			list.add(entry.getKey() + '=' + entry.getValue());
 		}
 
 		boolean excludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
@@ -1191,18 +1189,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			IJavaProject project = getJavaProject(configuration);
 			if (project != null) {
 				for (String moduleName : project.determineModulesOfProjectsWithNonEmptyClasspath()) {
-					if (sb.length() > 0) {
-						sb.append(' ');
-					}
-					sb.append("--add-reads"); //$NON-NLS-1$
-					sb.append(' ');
-					sb.append(moduleName);
-					sb.append('=');
-					sb.append("ALL-UNNAMED"); //$NON-NLS-1$
+					list.add("--add-reads"); //$NON-NLS-1$
+					list.add(moduleName + '=' + "ALL-UNNAMED"); //$NON-NLS-1$
 				}
 			}
 		}
-		return sb.toString();
+		return DebugPlugin.renderArguments(list.toArray(new String[list.size()]), null);
 	}
 
 	/**

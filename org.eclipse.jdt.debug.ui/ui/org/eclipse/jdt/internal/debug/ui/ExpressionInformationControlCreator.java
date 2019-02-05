@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -494,7 +494,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		return foreground;
 	}
 
-	private static Color getSystemBackgroundColor() {
+	public static Color getSystemBackgroundColor() {
 		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
 		Color background = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
 

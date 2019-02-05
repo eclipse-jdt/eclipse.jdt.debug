@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,6 +76,13 @@ public class PropertyPageMessages extends NLS {
 	public static String ThreadFilterEditor_1;
 	public static String ThreadFilterEditor_2;
 	public static String InstanceFilterEditor_0;
+
+	public static String JavaVariableDetailsPane_choosePreviousExpression;
+	public static String JavaVariableDetailsPane_description;
+	public static String JavaVariableDetailsPane_historySeparator;
+	public static String JavaVariableDetailsPane_name;
+	public static String JavaVariableDetailsPane_settings;
+
 
 	static {
 		// load message values from bundle file
