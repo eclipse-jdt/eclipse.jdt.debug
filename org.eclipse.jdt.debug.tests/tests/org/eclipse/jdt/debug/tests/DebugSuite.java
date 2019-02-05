@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 544133: signal end of test runner in any case
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
@@ -31,7 +32,6 @@ public abstract class DebugSuite extends TestSuite {
 	 */
 	protected boolean fTesting = true;
 
-
 	/**
 	 * Construct the test suite.
 	 */
@@ -52,18 +52,21 @@ public abstract class DebugSuite extends TestSuite {
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
-					for (Enumeration<Test> e= tests(); e.hasMoreElements(); ) {
-				  		if (result.shouldStop() ) {
-							break;
+					try {
+						for (Enumeration<Test> e= tests(); e.hasMoreElements(); ) {
+							if (result.shouldStop()) {
+								break;
+							}
+							Test test= e.nextElement();
+							runTest(test, result);
 						}
-						Test test= e.nextElement();
-						runTest(test, result);
+					} finally {
+						fTesting = false;
+						display.wake();
 					}
-					fTesting = false;
-					display.wake();
 				}
 			};
-			thread = new Thread(r);
+			thread = new Thread(r, "Test Runner");
 			thread.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,6 +82,4 @@ public abstract class DebugSuite extends TestSuite {
 			}
 		}
 	}
-
 }
-
