@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -129,10 +129,11 @@ public class StandardVMType extends AbstractVMInstallType {
 
 	/**
 	 * The list of locations in which to look for the java executable in candidate
-	 * VM install locations, relative to the VM install location.
+	 * VM install locations, relative to the VM install location. From Java 9 onwards, there may not be a jre directory.
 	 */
 	private static final String[] fgCandidateJavaFiles = {"javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-	private static final String[] fgCandidateJavaLocations = {"bin" + File.separatorChar, JRE + File.separatorChar + "bin" + File.separatorChar}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] fgCandidateJavaLocations = { "" + File.separatorChar, "bin" + File.separatorChar, //$NON-NLS-1$ //$NON-NLS-2$
+			JRE + File.separatorChar + "bin" + File.separatorChar };//$NON-NLS-1$
 
 	private static ILibraryLocationResolver[] fgLibraryLocationResolvers = null;
 
