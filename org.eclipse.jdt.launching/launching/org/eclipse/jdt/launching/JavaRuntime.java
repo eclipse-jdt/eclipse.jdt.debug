@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -3478,8 +3479,7 @@ public final class JavaRuntime {
 		if (isUnnamed) {
 			Set<String> selected = new HashSet<>(Arrays.asList(modules));
 			List<IPackageFragmentRoot> allSystemRoots = Arrays.asList(prj.findUnfilteredPackageFragmentRoots(systemLibrary));
-			Set<String> defaultModules = new HashSet<>(JavaProject.defaultRootModules(allSystemRoots));
-
+			Set<String> defaultModules = getDefaultModules(allSystemRoots);
 			Set<String> limit = new HashSet<>(defaultModules);
 			if (limit.retainAll(selected)) { // limit = selected ∩ default -- only add the option, if limit ⊂ default
 				if (limit.isEmpty()) {
@@ -3497,6 +3497,31 @@ public final class JavaRuntime {
 			Arrays.sort(modules);
 			buf.append(LIMIT_MODULES).append(String.join(COMMA, modules)).append(BLANK);
 		}
+	}
+
+	private static Set<String> getDefaultModules(List<IPackageFragmentRoot> allSystemRoots) throws JavaModelException {
+		HashMap<String, String[]> moduleDescriptions = new HashMap<>();
+		for (IPackageFragmentRoot packageFragmentRoot : allSystemRoots) {
+			IModuleDescription module = packageFragmentRoot.getModuleDescription();
+			if (module != null) {
+				moduleDescriptions.put(module.getElementName(), module.getRequiredModuleNames());
+			}
+		}
+		HashSet<String> result = new HashSet<>();
+		HashSet<String> todo = new HashSet<>(JavaProject.defaultRootModules(allSystemRoots));
+		while (!todo.isEmpty()) {
+			HashSet<String> more = new HashSet<>();
+			for (String s : todo) {
+				if (result.add(s)) {
+					String[] requiredModules = moduleDescriptions.get(s);
+					if (requiredModules != null) {
+						Collections.addAll(more, requiredModules);
+					}
+				}
+			}
+			todo = more;
+		}
+		return result;
 	}
 
 	private static String joinedSortedList(Collection<String> list) {
