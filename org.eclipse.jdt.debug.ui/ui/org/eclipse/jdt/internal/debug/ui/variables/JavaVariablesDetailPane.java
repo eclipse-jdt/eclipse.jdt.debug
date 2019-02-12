@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -66,6 +68,8 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	private static final Pattern NEWLINE_PATTERN = Pattern.compile("\r\n|\r|\n"); //$NON-NLS-1$ ;
 
 	private IJavaVariable fVariable;
+	private IValue fValue;
+
 	public JavaVariablesDetailPane() {
 		fExpressionHistoryDialogSettings = DialogSettings.getOrCreateSection(JDIDebugUIPlugin.getDefault().getDialogSettings(), DS_SECTION_EXPRESSION_HISTORY);
 	}
@@ -101,12 +105,16 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 			@Override
 			public void focusLost(FocusEvent e) {
 				updateExpressionHistories();
-				initializeExpressionHistoryDropDown();
+				fValue = null;
 			}
 
 			@Override
 			public void focusGained(FocusEvent e) {
-
+				try {
+					fValue = fVariable.getValue();
+				} catch (DebugException ex) {
+					fValue = null;
+				}
 			}
 		};
 		viewer.getTextWidget().addFocusListener(focusListener);
@@ -171,10 +179,13 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	 */
 	private void updateExpressionHistories() {
 		String newItem = getSourceViewer().getDocument().get();
-		if (newItem.length() == 0) {
+		if (newItem.length() == 0 || fValue == null) {
 			return;
 		}
 
+		if (newItem.equals(fValue.toString())) {
+			return;
+		}
 		// Update local history
 		Stack<String> localHistory = fLocalExpressionHistory.get(fVariable);
 		if (localHistory == null) {
