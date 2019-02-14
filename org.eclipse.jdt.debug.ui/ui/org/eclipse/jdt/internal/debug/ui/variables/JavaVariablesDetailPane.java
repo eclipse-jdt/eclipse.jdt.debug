@@ -110,10 +110,12 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 
 			@Override
 			public void focusGained(FocusEvent e) {
+				fValue = null;
 				try {
-					fValue = fVariable.getValue();
+					if (fVariable != null) {
+						fValue = fVariable.getValue();
+					}
 				} catch (DebugException ex) {
-					fValue = null;
 				}
 			}
 		};
