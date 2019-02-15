@@ -14,6 +14,7 @@
 package org.eclipse.jdt.launching;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -61,6 +62,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		}
 	}
 
+	@SuppressWarnings({ "deprecation", "rawtypes" })
 	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(NLS.bind("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
@@ -89,12 +91,40 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		// VM-specific attributes
 		Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-		String[][] paths = getClasspathAndModulepath(configuration);
-		if (paths == null || paths.length == 0) {
-			return null;
+		String[][] paths = null;
+		String classpath[] = null;
+		Method method = null;
+		Class[] types = { ILaunchConfiguration.class };
+
+		try {
+			method = this.getClass().getMethod("getClasspathAndModulepath", types); //$NON-NLS-1$
+		} catch (NoSuchMethodException | SecurityException e) {
+		  // Your exception handling goes here
 		}
+		if (method != null) {
+			// getClasspathAndModulepath found.
+			paths = getClasspathAndModulepath(configuration);
+			if (paths != null && paths.length > 0 ) {
+				classpath = paths[0];
+			}
+		} else {
+			// getClasspathAndModulepath not found.
+			try {
+				method = this.getClass().getMethod("getClasspath", types); //$NON-NLS-1$
+			} catch (NoSuchMethodException | SecurityException e) {
+			}
+
+			if (method != null) {
+				// getClasspath found
+				classpath = getClasspath(configuration);
+			}
+		}
+		if (classpath == null) {
+				return null;
+		}
+
 		// Create VM config
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, paths[0]);
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
 		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 		runConfig.setEnvironment(envp);
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
@@ -122,7 +152,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			runConfig.setBootClassPath(getBootpath(configuration));
 		} else if (supportsModule()) {
 			// module path
-			if (paths.length > 1) {
+			if (paths != null && paths.length > 1) {
 				runConfig.setModulepath(paths[1]);
 			}
 			if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
