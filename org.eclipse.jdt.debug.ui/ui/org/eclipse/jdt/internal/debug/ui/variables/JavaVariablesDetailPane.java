@@ -28,6 +28,9 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -100,6 +103,13 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 		}
 		Control newControl = super.createControl(parent);
 		SourceViewer viewer = getSourceViewer();
+		// Light bulb for content assist hint
+		ControlDecoration decoration = new ControlDecoration(viewer.getControl(), SWT.TOP | SWT.LEFT);
+		decoration.setShowOnlyOnFocus(true);
+		FieldDecoration dec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
+		decoration.setImage(dec.getImage());
+		decoration.setDescriptionText(dec.getDescription());
+
 		focusListener = new FocusListener() {
 
 			@Override
