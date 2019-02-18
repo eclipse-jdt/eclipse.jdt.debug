@@ -259,10 +259,8 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Request to stops this thread with the given exception.<br>
-	 * The result will be the same as calling
-	 * java.lang.Thread#stop(java.lang.Throwable).<br>
-	 * If the thread is suspended when the method is called, the thread must be
-	 * resumed to complete the action.<br>
+	 * The result will be the same as calling java.lang.Thread#stop(java.lang.Throwable).<br>
+	 * If the thread is suspended when the method is called, the thread must be resumed to complete the action.<br>
 	 *
 	 * <em>exception</em> must represent an exception.
 	 *
@@ -271,7 +269,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @exception DebugException
 	 *                if the request fails
 	 * @since 3.0
-	 * @see java.lang.Thread#stop(java.lang.Throwable)
+	 * @see java.lang.Thread#stop()
 	 */
 	public void stop(IJavaObject exception) throws DebugException;
 
