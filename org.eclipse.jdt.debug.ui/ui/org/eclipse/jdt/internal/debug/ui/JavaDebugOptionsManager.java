@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,6 +55,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint.SuspendOnRecurrenceStrategy;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
@@ -67,10 +68,12 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnCompilationErrorListener;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -81,6 +84,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -567,7 +571,71 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	@Override
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+		if (thread instanceof JDIThread && breakpoint instanceof IJavaExceptionBreakpoint) {
+			if (shouldSkipSubsequentOccurrence((JDIThread) thread, (IJavaExceptionBreakpoint) breakpoint)) {
+				return DONT_SUSPEND;
+			}
+		}
 		return DONT_CARE;
+	}
+
+	/**
+	 * Figure out whether suspending on an exceptionBreakpoint should be skipped due to the user's choice regarding
+	 * {@link IJavaExceptionBreakpoint#setSuspendOnRecurrenceStrategy(int)}.
+	 * <p>
+	 * If the current hit is indeed recurrence of an already-seen exception instance, and if the user has not yet made a choice for this breakpoint,
+	 * then a question dialog will be opened to request the user's choice.
+	 * </p>
+	 *
+	 * @param thread
+	 *            the thread where an exception occurred
+	 * @param exceptionBreakpoint
+	 *            the exceptionBreakpoint that just fired
+	 * @return {@code true} if the current breakpoint hit should be skipped.
+	 */
+	public boolean shouldSkipSubsequentOccurrence(JDIThread thread, IJavaExceptionBreakpoint exceptionBreakpoint) {
+		if (exceptionBreakpoint == fSuspendOnExceptionBreakpoint) {
+			// this breakpoint doesn't have the recurrence property, wait until we are called from SuspendOnUncaughtExceptionListener itself
+			return false;
+		}
+		SuspendOnRecurrenceStrategy skip = thread.shouldSkipExceptionRecurrence(exceptionBreakpoint);
+		if (skip == null) {
+			return false; // not a recurrence
+		}
+		if (skip == SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED) {
+			skip = askUserExceptionRecurrence(exceptionBreakpoint);
+			try {
+				exceptionBreakpoint.setSuspendOnRecurrenceStrategy(skip);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+		switch (skip) {
+			case SKIP_RECURRENCES:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	private static SuspendOnRecurrenceStrategy askUserExceptionRecurrence(IJavaExceptionBreakpoint breakpoint) {
+		Shell shell = JDIDebugUIPlugin.getShell();
+		MessageDialog question = new MessageDialog(shell, DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogTitle, null, //
+				MessageFormat.format(DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogMessage, breakpoint.getExceptionTypeName()), //
+				MessageDialog.QUESTION, 0, //
+				DebugUIMessages.JavaDebugOptionsManager_skip_buttonLabel, //
+				DebugUIMessages.JavaDebugOptionsManager_suspend_buttonLabel, //
+				DebugUIMessages.JavaDebugOptionsManager_cancel_buttonLabel);
+		int answer[] = { -1 };
+		shell.getDisplay().syncExec(() -> answer[0] = question.open());
+		switch (answer[0]) {
+			case 0:
+				return SuspendOnRecurrenceStrategy.SKIP_RECURRENCES;
+			case 1:
+				return SuspendOnRecurrenceStrategy.SUSPEND_ALWAYS;
+			default:
+				return SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED;
+		}
 	}
 
 	/**

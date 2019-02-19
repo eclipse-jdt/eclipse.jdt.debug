@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -77,6 +77,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor;
@@ -368,6 +369,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				// check args == null in case the exception is a compilation error
 				if (breakpoint instanceof IJavaExceptionBreakpoint && args == null) {
 					key.append("_exception"); //$NON-NLS-1$
+					if (isUncaughtExceptionsBreakpoint(breakpoint)) {
+						key.append("_uncaught"); //$NON-NLS-1$
+					}
 					String exName = ((IJavaExceptionBreakpoint)breakpoint).getExceptionTypeName();
 					if (exName == null) {
 						exName = typeName;
@@ -430,6 +434,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			JDIDebugUIPlugin.log(e);
 		}
 		return DebugUIMessages.JDIModelPresentation_unknown_name__1;
+	}
+
+	private boolean isUncaughtExceptionsBreakpoint(IJavaBreakpoint breakpoint) {
+		try {
+			for (String id : breakpoint.getBreakpointListeners()) {
+				if (SuspendOnUncaughtExceptionListener.ID_UNCAUGHT_EXCEPTION_LISTENER.equals(id)) {
+					return true;
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		return false;
 	}
 
 	/**

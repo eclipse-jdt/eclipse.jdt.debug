@@ -179,6 +179,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_suspended_linebreakpoint;
 	public static String thread_suspended_methodentry;
 	public static String thread_suspended_exception;
+	public static String thread_suspended_exception_uncaught;
 	public static String thread_suspended_methodexit;
 	public static String thread_suspended_fieldmodification;
 	public static String thread_suspended_runtoline;
@@ -311,7 +312,15 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugOptionsManager_Method_breakpoint___2;
 	public static String JavaDebugOptionsManager_Watchpoint___3;
 	public static String JavaDebugOptionsManager_0;
+
+	public static String JavaDebugOptionsManager_exceptionRecurrence_dialogTitle;
+	public static String JavaDebugOptionsManager_exceptionRecurrence_dialogMessage;
+	public static String JavaDebugOptionsManager_cancel_buttonLabel;
+	public static String JavaDebugOptionsManager_skip_buttonLabel;
+	public static String JavaDebugOptionsManager_suspend_buttonLabel;
+
 	public static String JavaDebugOptionsManager_Line_breakpoint___4;
+
 	public static String JavaBreakpointWorkbenchAdapterFactory_1;
 
 	public static String HotCodeReplaceErrorDialog_0;

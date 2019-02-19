@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,6 +47,8 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint.SuspendOnRecurrenceStrategy;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -58,6 +60,7 @@ import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ConditionalBreakpointHandler;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
@@ -305,6 +308,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Result of the last step step-over or step-return operation or method exit breakpoint of exception break point
 	 */
 	private MethodResult fMethodResult;
+
+	/**
+	 * If previous suspend was on an exception breakpoint, this variable holds that Java exception instance, else {@code null}.
+	 */
+	private IJavaObject fPreviousException;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -1503,6 +1511,33 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 		return suspend;
+	}
+
+	/**
+	 * To be called whenever a Java exception breakpoint is called. This thread will remember the Java exception instance associated with this event
+	 * and will answer if suspending should be skipped as per the breakpoint's {@link IJavaExceptionBreakpoint.SuspendOnRecurrenceStrategy suspend on
+	 * recurrence} strategy.
+	 *
+	 * @param breakpoint
+	 *            the breakpoint about to trigger
+	 * @return either {@code null} to signal that this breakpoint hit is not a recurrence, or one of
+	 *         {@link SuspendOnRecurrenceStrategy#RECURRENCE_UNCONFIGURED}, {@link SuspendOnRecurrenceStrategy#SKIP_RECURRENCES}, or
+	 *         {@link SuspendOnRecurrenceStrategy#SUSPEND_ALWAYS}.
+	 */
+	public SuspendOnRecurrenceStrategy shouldSkipExceptionRecurrence(IJavaExceptionBreakpoint breakpoint) {
+		if (breakpoint instanceof JavaExceptionBreakpoint) {
+			JavaExceptionBreakpoint exceptionBreakpoint = (JavaExceptionBreakpoint) breakpoint;
+			try {
+				IJavaObject lastException = exceptionBreakpoint.getLastException();
+				if (fPreviousException != null && fPreviousException.equals(lastException)) {
+					return exceptionBreakpoint.getSuspendOnRecurrenceStrategy();
+				}
+				fPreviousException = lastException;
+			} catch (CoreException e) {
+				// ignore
+			}
+		}
+		return null; // skipping not applicable, since this is no recurrence
 	}
 
 	/**

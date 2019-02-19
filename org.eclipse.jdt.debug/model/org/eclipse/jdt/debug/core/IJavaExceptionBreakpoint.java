@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -196,4 +196,53 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 */
 	@Deprecated
 	public boolean isInclusiveFiltered() throws CoreException;
+
+	/**
+	 * Constants for telling the debugger for each exception breakpoint how to handle multiple occurrences of the same exception instance, which can
+	 * happen via re-throwing or multiple finally clauses in the call stack.
+	 *
+	 * @since 3.14
+	 * @see IJavaExceptionBreakpoint#getSuspendOnRecurrenceStrategy()
+	 * @see IJavaExceptionBreakpoint#setSuspendOnRecurrenceStrategy(SuspendOnRecurrenceStrategy)
+	 */
+	enum SuspendOnRecurrenceStrategy {
+		/**
+		 * Signals that this setting has not yet been configured for a given breakpoint
+		 */
+		RECURRENCE_UNCONFIGURED,
+		/**
+		 * Signals that the exception breakpoint should always cause suspending.
+		 */
+		SUSPEND_ALWAYS,
+		/**
+		 * Signals that the breakpoint should not cause suspending more than once. This does not influence the way how the debugger reacts to uncaught
+		 * exceptions.
+		 */
+		SKIP_RECURRENCES
+	}
+
+	/**
+	 * Define this breakpoint's {@link SuspendOnRecurrenceStrategy strategy} for suspending on recurrences of the same exception instance.
+	 *
+	 * @param strategy
+	 *            the new strategy
+	 *
+	 * @throws CoreException
+	 *             if accessing the breakpoint's marker failed
+	 * @since 3.14
+	 * @see #getSuspendOnRecurrenceStrategy()
+	 */
+	void setSuspendOnRecurrenceStrategy(SuspendOnRecurrenceStrategy strategy) throws CoreException;
+
+	/**
+	 * Answer this breakpoint's {@link SuspendOnRecurrenceStrategy strategy} for suspending on recurrences of the same exception instance.
+	 *
+	 * @return the strategy
+	 *
+	 * @throws CoreException
+	 *             if accessing the breakpoint's marker failed
+	 * @since 3.14
+	 * @see #setSuspendOnRecurrenceStrategy(SuspendOnRecurrenceStrategy)
+	 */
+	SuspendOnRecurrenceStrategy getSuspendOnRecurrenceStrategy() throws CoreException;
 }

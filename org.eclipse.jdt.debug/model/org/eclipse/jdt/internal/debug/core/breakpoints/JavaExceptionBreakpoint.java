@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -103,6 +103,14 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * @since 3.2
 	 */
 	protected static final String SUSPEND_ON_SUBCLASSES = "org.eclipse.jdt.debug.core.suspend_on_subclasses"; //$NON-NLS-1$
+
+	/**
+	 * Allows the user to specify that each exception instance matching this breakpoint should suspend only once, i.e., re-throws and finally clauses
+	 * will not again suspend on an exception instance that had already caused a suspend.
+	 *
+	 * @since 3.14
+	 */
+	protected static final String SUSPEND_ON_RECURRENCE = "org.eclipse.jdt.debug.core.suspend_on_recurrence"; //$NON-NLS-1$
 
 	/**
 	 * Name of the exception that was actually hit (could be a sub-type of the
@@ -320,6 +328,21 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			setEnabled(false);
 		}
 		recreate();
+	}
+
+	@Override
+	public SuspendOnRecurrenceStrategy getSuspendOnRecurrenceStrategy() throws CoreException {
+		int valueIndex = ensureMarker().getAttribute(SUSPEND_ON_RECURRENCE, SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED.ordinal());
+		return SuspendOnRecurrenceStrategy.values()[valueIndex];
+	}
+
+	@Override
+	public void setSuspendOnRecurrenceStrategy(SuspendOnRecurrenceStrategy strategy) throws CoreException {
+		if (strategy == getSuspendOnRecurrenceStrategy()) {
+			return;
+		}
+		setAttribute(SUSPEND_ON_RECURRENCE, strategy.ordinal());
+		// don't re-create, the change only affects the debugger, not the target
 	}
 
 	/**
