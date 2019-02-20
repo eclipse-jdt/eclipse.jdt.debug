@@ -195,7 +195,11 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 			return;
 		}
 
-		if (newItem.equals(fValue.toString())) {
+		String oldValue = fValue.toString();
+		if (oldValue.charAt(0) == '"' && oldValue.charAt(oldValue.length() - 1) == '"') {
+			oldValue = oldValue.substring(1, oldValue.length() - 1);
+		}
+		if (newItem.equals(oldValue)) {
 			return;
 		}
 		// Update local history
