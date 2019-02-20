@@ -62,29 +62,7 @@ public class JavaSourceLookupUtil {
 					} else {
 						IPackageFragmentRoot root = getPackageFragmentRoot(entry);
 						if (root == null) {
-							String path = entry.getSourceAttachmentLocation();
-							ISourceContainer container = null;
-							if (path == null) {
-								// use the archive itself
-								path = entry.getLocation();
-							}
-							if (path != null) {
-								// check if file or folder
-								File file = new File(path);
-								if (file.isDirectory()) {
-									IResource resource = entry.getResource();
-									if (resource instanceof IContainer) {
-										container = new FolderSourceContainer((IContainer) resource, false);
-									} else {
-										container = new DirectorySourceContainer(file, false);
-									}
-								} else {
-									container = new ExternalArchiveSourceContainer(path, true);
-								}
-								if (!containers.contains(container)) {
-									containers.add(container);
-								}
-							}
+							addSourceAttachment(entry, containers);
 						} else {
 							ISourceContainer container = new PackageFragmentRootSourceContainer(root);
 							if (!containers.contains(container)) {
@@ -114,6 +92,39 @@ public class JavaSourceLookupUtil {
 			}
 		}
 		return containers.toArray(new ISourceContainer[containers.size()]);
+	}
+
+	/**
+	 * Tries to find and attach source containers for given runtime classpath entry
+	 *
+	 * @param entry
+	 *            non null
+	 * @param containers
+	 */
+	private static void addSourceAttachment(IRuntimeClasspathEntry entry, List<ISourceContainer> containers) {
+		String path = entry.getSourceAttachmentLocation();
+		ISourceContainer container = null;
+		if (path == null) {
+			// use the archive itself
+			path = entry.getLocation();
+		}
+		if (path != null) {
+			// check if file or folder
+			File file = new File(path);
+			if (file.isDirectory()) {
+				IResource resource = entry.getResource();
+				if (resource instanceof IContainer) {
+					container = new FolderSourceContainer((IContainer) resource, false);
+				} else {
+					container = new DirectorySourceContainer(file, false);
+				}
+			} else {
+				container = new ExternalArchiveSourceContainer(path, true);
+			}
+			if (!containers.contains(container)) {
+				containers.add(container);
+			}
+		}
 	}
 
 	/**
@@ -212,6 +223,7 @@ public class JavaSourceLookupUtil {
 	private static void getPackageFragmentRootContainers(IRuntimeClasspathEntry entry, List<ISourceContainer> containers) {
 		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 		IPath entryPath = entry.getPath();
+		boolean found = false;
 		try {
 			IJavaProject[] jps = model.getJavaProjects();
 			for (int i = 0; i < jps.length; i++) {
@@ -225,6 +237,7 @@ public class JavaSourceLookupUtil {
 							PackageFragmentRootSourceContainer container = new PackageFragmentRootSourceContainer(root);
 							if (!containers.contains(container)) {
 								containers.add(container);
+								found = true;
 							}
 						}
 					}
@@ -233,6 +246,10 @@ public class JavaSourceLookupUtil {
 		}
 		catch (JavaModelException e) {
 			LaunchingPlugin.log(e);
+		}
+
+		if (!found) {
+			addSourceAttachment(entry, containers);
 		}
 	}
 }
