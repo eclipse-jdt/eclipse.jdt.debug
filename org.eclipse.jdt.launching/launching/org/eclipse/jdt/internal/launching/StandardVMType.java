@@ -132,7 +132,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * VM install locations, relative to the VM install location. From Java 9 onwards, there may not be a jre directory.
 	 */
 	private static final String[] fgCandidateJavaFiles = {"javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-	private static final String[] fgCandidateJavaLocations = { "bin" + File.separatorChar, JRE + File.separatorChar + "bin" + File.separatorChar };//$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] fgCandidateJavaLocations = { File.separator, "bin" + File.separatorChar, //$NON-NLS-1$
+			JRE + File.separatorChar + "bin" + File.separatorChar };//$NON-NLS-1$
+
 	private static ILibraryLocationResolver[] fgLibraryLocationResolvers = null;
 
 	/**
@@ -145,8 +147,19 @@ public class StandardVMType extends AbstractVMInstallType {
 	public static File findJavaExecutable(File vmInstallLocation) {
 		// Try each candidate in order.  The first one found wins.  Thus, the order
 		// of fgCandidateJavaLocations and fgCandidateJavaFiles is significant.
+
+		boolean isBin = false;
+		String filePath = vmInstallLocation.getPath();
+		int index = filePath.lastIndexOf(File.separatorChar);
+		if (index > 0 && filePath.substring(index + 1).equals("bin")) { //$NON-NLS-1$
+			isBin = true;
+		}
 		for (int i = 0; i < fgCandidateJavaFiles.length; i++) {
 			for (int j = 0; j < fgCandidateJavaLocations.length; j++) {
+				if (!isBin && j == 0) {
+					// search in "." only under bin for java executables for Java 9 and above
+					continue;
+				}
 				File javaFile = new File(vmInstallLocation, fgCandidateJavaLocations[j] + fgCandidateJavaFiles[i]);
 				if (javaFile.isFile()) {
 					return javaFile;
@@ -643,7 +656,9 @@ public class StandardVMType extends AbstractVMInstallType {
 		if (javaExecutable == null) {
 			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1, null); //
 		} else {
-			if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
+			File javaHomeNew = javaHome;
+
+			if (canDetectDefaultSystemLibraries(javaHomeNew, javaExecutable)) {
 				status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null);
 			} else {
 				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1, null);
