@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.debug.core.DebugException;
@@ -36,10 +37,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -62,9 +63,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	private FocusListener focusListener;
 	private Combo fExpressionHistory;
 	private IDialogSettings fExpressionHistoryDialogSettings;
-	private Map<IJavaVariable, Stack<String>> fLocalExpressionHistory;
-	private int fSeparatorIndex;
-	private static final int MAX_HISTORY_SIZE = 10;
+	private static final int MAX_HISTORY_SIZE = 20;
 	private static final String DS_SECTION_EXPRESSION_HISTORY = "expressionHistory"; //$NON-NLS-1$
 	private static final String DS_KEY_HISTORY_ENTRY_COUNT = "expressionHistoryEntryCount"; //$NON-NLS-1$
 	private static final String DS_KEY_HISTORY_ENTRY_PREFIX = "expressionHistoryEntry_"; //$NON-NLS-1$
@@ -72,6 +71,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 
 	private IJavaVariable fVariable;
 	private IValue fValue;
+	private boolean textModified = false;
 
 	public JavaVariablesDetailPane() {
 		fExpressionHistoryDialogSettings = DialogSettings.getOrCreateSection(JDIDebugUIPlugin.getDefault().getDialogSettings(), DS_SECTION_EXPRESSION_HISTORY);
@@ -85,14 +85,14 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 			return c;
 		}
 		if (fExpressionHistoryDialogSettings != null) {
-			fLocalExpressionHistory = new HashMap<>();
 			fExpressionHistory = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			fExpressionHistory.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int historyIndex = fExpressionHistory.getSelectionIndex() - 1;
-					if (historyIndex >= 0 && historyIndex != fSeparatorIndex && getSourceViewer() != null) {
+					if (historyIndex >= 0 && getSourceViewer() != null) {
 						getSourceViewer().getDocument().set(getExpressionHistory()[historyIndex]);
+						textModified = true;
 					}
 				}
 			});
@@ -111,13 +111,11 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 		decoration.setDescriptionText(dec.getDescription());
 
 		focusListener = new FocusListener() {
-
 			@Override
 			public void focusLost(FocusEvent e) {
 				updateExpressionHistories();
 				fValue = null;
 			}
-
 			@Override
 			public void focusGained(FocusEvent e) {
 				fValue = null;
@@ -130,6 +128,12 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 			}
 		};
 		viewer.getTextWidget().addFocusListener(focusListener);
+		viewer.getTextWidget().addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				textModified = true;
+			}
+		});
 		return newControl;
 	}
 
@@ -163,27 +167,8 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	 * @return an array of strings containing the history of Expressions
 	 */
 	private String[] getExpressionHistory() {
-		fSeparatorIndex = -1;
-
 		// Get global history
-		String[] globalItems = readExpressionHistory(fExpressionHistoryDialogSettings);
-
-		// Get local history
-		Stack<String> localHistory = fLocalExpressionHistory.get(fVariable);
-		if (localHistory == null) {
-			return globalItems;
-		}
-
-		// Create combined history
-		int localHistorySize = Math.min(localHistory.size(), MAX_HISTORY_SIZE);
-		String[] historyItems = new String[localHistorySize + globalItems.length + 1];
-		for (int i = 0; i < localHistorySize; i++) {
-			historyItems[i] = localHistory.get(localHistory.size() - i - 1);
-		}
-		fSeparatorIndex = localHistorySize;
-		historyItems[localHistorySize] = getSeparatorLabel();
-		System.arraycopy(globalItems, 0, historyItems, localHistorySize + 1, globalItems.length);
-		return historyItems;
+		return readExpressionHistory(fExpressionHistoryDialogSettings);
 	}
 
 	/**
@@ -199,19 +184,10 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 		if (oldValue.charAt(0) == '"' && oldValue.charAt(oldValue.length() - 1) == '"') {
 			oldValue = oldValue.substring(1, oldValue.length() - 1);
 		}
-		if (newItem.equals(oldValue)) {
+		if (!textModified || newItem.equals(oldValue)) {
 			return;
 		}
-		// Update local history
-		Stack<String> localHistory = fLocalExpressionHistory.get(fVariable);
-		if (localHistory == null) {
-			localHistory = new Stack<>();
-			fLocalExpressionHistory.put(fVariable, localHistory);
-		}
-
-		localHistory.remove(newItem);
-		localHistory.push(newItem);
-
+		textModified = false;
 		// Update global history
 		String[] globalItems = readExpressionHistory(fExpressionHistoryDialogSettings);
 		if (globalItems.length > 0 && newItem.equals(globalItems[0])) {
@@ -260,51 +236,19 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	 *            the dialog settings
 	 */
 	private static void storeExpressionHistory(String[] expressions, IDialogSettings dialogSettings) {
-		int length = Math.min(expressions.length, MAX_HISTORY_SIZE);
+		List<String> uniqueExpressions = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(expressions)));
+		final int length = Math.min(uniqueExpressions.size(), MAX_HISTORY_SIZE);
 		int count = 0;
-		outer: for (int i = 0; i < length; i++) {
-			for (int j = 0; j < i; j++) {
-				if (expressions[i].equals(expressions[j])) {
-					break outer;
-				}
+		for (String expression : uniqueExpressions) {
+			dialogSettings.put(DS_KEY_HISTORY_ENTRY_PREFIX + count, expression);
+			count++;
+			if (count >= length) {
+				break;
 			}
-			dialogSettings.put(DS_KEY_HISTORY_ENTRY_PREFIX + count, expressions[i]);
-			count = count + 1;
 		}
 		dialogSettings.put(DS_KEY_HISTORY_ENTRY_COUNT, count);
 	}
 
-	/**
-	 * Returns the label for the history separator.
-	 *
-	 * @return the label for the history separator
-	 */
-	private String getSeparatorLabel() {
-		int borderWidth = fExpressionHistory.computeTrim(0, 0, 0, 0).width;
-		Rectangle rect = fExpressionHistory.getBounds();
-		int width = rect.width - borderWidth;
-
-		GC gc = new GC(fExpressionHistory);
-		gc.setFont(fExpressionHistory.getFont());
-
-		int fSeparatorWidth = gc.getAdvanceWidth('-');
-		String separatorLabel = PropertyPageMessages.JavaVariableDetailsPane_historySeparator;
-		int fMessageLength = gc.textExtent(separatorLabel).x;
-
-		gc.dispose();
-
-		StringBuilder dashes = new StringBuilder();
-		int chars = (((width - fMessageLength) / fSeparatorWidth) / 2) - 2;
-		for (int i = 0; i < chars; i++) {
-			dashes.append('-');
-		}
-
-		StringBuilder result = new StringBuilder();
-		result.append(dashes);
-		result.append(" " + separatorLabel + " "); //$NON-NLS-1$//$NON-NLS-2$
-		result.append(dashes);
-		return result.toString().trim();
-	}
 
 	@Override
 	public String getDescription() {
@@ -350,9 +294,6 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	public void dispose() {
 		if (fExpressionHistory != null) {
 			fExpressionHistory.dispose();
-		}
-		if (fLocalExpressionHistory != null) {
-			fLocalExpressionHistory.clear();
 		}
 		if (focusListener != null && getSourceViewer() != null && getSourceViewer().getTextWidget() != null) {
 			getSourceViewer().getTextWidget().removeFocusListener(focusListener);
