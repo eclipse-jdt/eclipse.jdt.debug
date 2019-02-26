@@ -53,7 +53,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         String typeName = "LargeSourceFile";
         IResource resource = getBreakpointResource(typeName);
 
-        IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
+        IJavaLineBreakpoint bp = createLineBreakpoint(17, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 
@@ -62,7 +62,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
             int[] lineNumbers = new int[150];
             for (int i = 0; i < lineNumbers.length; i++) {
-                lineNumbers[i] = 15 + i;
+                lineNumbers[i] = 18 + i;
             }
 
             for (int i = 0; i < 10; i++) {
@@ -101,7 +101,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         String typeName = "LargeSourceFile";
         IResource resource = getBreakpointResource(typeName);
 
-        IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
+        IJavaLineBreakpoint bp = createLineBreakpoint(17, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 
@@ -111,7 +111,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
             int[] lineNumbers = new int[50];
             for (int i = 0; i < lineNumbers.length; i++) {
-                lineNumbers[i] = 15 + i;
+                lineNumbers[i] = 18 + i;
             }
 
             for (int i = 0; i < 10; i++) {
@@ -158,7 +158,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         String typeName = "LargeSourceFile";
         IProject project = get14Project().getProject();
 
-        IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
+        IJavaLineBreakpoint bp = createLineBreakpoint(17, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 
@@ -208,7 +208,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         String typeName = "LotsOfFields";
         IResource resource = getBreakpointResource(typeName);
 
-        IJavaLineBreakpoint bp = createLineBreakpoint(516, typeName);
+        IJavaLineBreakpoint bp = createLineBreakpoint(519, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 

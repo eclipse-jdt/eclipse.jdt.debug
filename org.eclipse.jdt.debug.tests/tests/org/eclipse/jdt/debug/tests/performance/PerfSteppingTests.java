@@ -96,7 +96,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	 */
 	public void testBareStepOver() throws Exception {
 		String typeName = "PerfLoop";
-		createLineBreakpoint(20, typeName);
+		createLineBreakpoint(23, typeName);
 
 		IJavaThread thread= null;
 		try {

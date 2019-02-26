@@ -76,7 +76,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         // just in case
         removeAllBreakpoints();
 
-        fBP = createLineBreakpoint(22, fTypeName);
+        fBP = createLineBreakpoint(25, fTypeName);
 
         BreakpointListener listener = new BreakpointListener();
         DebugPlugin.getDefault().addDebugEventListener(listener);
@@ -101,7 +101,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         try {
             if (!fConditionalBreakpointSet) {
                 fBP.delete();
-                fBP = createConditionalLineBreakpoint(22, fTypeName, "i%100==0", true);
+                fBP = createConditionalLineBreakpoint(25, fTypeName, "i%100==0", true);
                 fConditionalBreakpointSet = true;
             } else if (!fWarmUpComplete) {
                 fHitCount++;

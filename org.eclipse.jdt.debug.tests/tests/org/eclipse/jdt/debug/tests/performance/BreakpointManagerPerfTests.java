@@ -65,8 +65,8 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 		if(bp != null) {
 			bps.add(bp);
 		}
-		int end = 9+count;
-		for(int i = 11; i < end; i++) {
+		int end = 12 + count;
+		for (int i = 14; i < end; i++) {
 			bp = createLineBreakpoint(i, fgTypeName);
 			if(bp != null) {
 				bps.add(bp);

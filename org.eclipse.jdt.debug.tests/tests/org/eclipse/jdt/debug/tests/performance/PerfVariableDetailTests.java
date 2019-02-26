@@ -58,7 +58,7 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
     	tagAsSummary("Computing variable toString() details iteratively", Dimension.ELAPSED_PROCESS);
         removeAllBreakpoints();
         String typeName = "VariableDetails";
-        createLineBreakpoint(24, typeName);
+        createLineBreakpoint(27, typeName);
         IJavaThread thread = null;
         try {
         	ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
