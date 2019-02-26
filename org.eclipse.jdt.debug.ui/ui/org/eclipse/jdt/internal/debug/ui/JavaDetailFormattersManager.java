@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,6 +33,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -379,11 +380,16 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			return fCacheMap.get(key);
 		}
 		String snippet = null;
+
 		if (type instanceof IJavaClassType) {
 			snippet = getDetailFormatter((IJavaClassType) type);
-		} else if (type instanceof IJavaArrayType) {
-			snippet = getArraySnippet((IJavaArray) javaObject);
 		}
+		if (type instanceof IJavaArrayType) {
+			if (JavaCore.compareJavaVersions(debugTarget.getVersion(), JavaCore.VERSION_9) < 0) {
+				snippet = getArraySnippet((IJavaArray) javaObject);
+			}
+		}
+
 		if (snippet != null) {
 			IJavaProject project = getJavaProject(javaObject, thread);
 			if (project != null) {

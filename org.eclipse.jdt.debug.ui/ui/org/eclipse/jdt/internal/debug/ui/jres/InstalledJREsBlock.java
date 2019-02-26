@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -991,7 +991,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 						IVMInstallType type = vmTypes[j];
 						IStatus status = type.validateInstallLocation(file);
 						if (status.isOK()) {
-							found.add(file);
+							String filePath = file.getPath();
+							int index = filePath.lastIndexOf(File.separatorChar);
+							File newFile = file;
+							// remove bin folder from install location as java executables are found only under bin for Java 9 and above
+							if (index > 0 && filePath.substring(index + 1).equals("bin")) { //$NON-NLS-1$
+								newFile = new File(filePath.substring(0, index));
+							}
+							found.add(newFile);
 							types.add(type);
 							validLocation = true;
 							break;

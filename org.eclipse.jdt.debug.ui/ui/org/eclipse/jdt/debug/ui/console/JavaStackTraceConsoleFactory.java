@@ -68,10 +68,13 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 	public void openConsole(String initialText) {
 		if (fConsole == null) {
 			fConsole = new JavaStackTraceConsole();
-			fConsole.initializeDocument();
+			if (initialText != null) {
+				fConsole.getDocument().set(initialText);
+			} else {
+				fConsole.initializeDocument();
+			}
 			fConsoleManager.addConsoles(new IConsole[] { fConsole });
-		}
-		if (initialText != null) {
+		} else if (initialText != null) {
 			fConsole.getDocument().set(initialText);
 		}
 		fConsoleManager.showConsoleView(fConsole);

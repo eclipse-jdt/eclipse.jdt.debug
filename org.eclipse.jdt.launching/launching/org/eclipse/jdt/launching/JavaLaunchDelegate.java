@@ -93,12 +93,9 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		// VM-specific attributes
 		Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-		String[][] paths = getClasspathAndModulepath(configuration);
-		if (paths == null || paths.length == 0) {
-			return null;
-		}
 		// Create VM config
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, paths[0]);
+		// Bug 529435 :to move to getClasspathAndModulepath after java 8 is sunset
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
 		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 		runConfig.setEnvironment(envp);
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
@@ -127,7 +124,8 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			runConfig.setBootClassPath(getBootpath(configuration));
 		} else if (supportsModule()) {
 			// module path
-			if (paths.length > 1) {
+			String[][] paths = getClasspathAndModulepath(configuration);
+			if (paths != null && paths.length > 1) {
 				runConfig.setModulepath(paths[1]);
 			}
 			if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
