@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 546900: Fix IO handling in JavaStacktraceConsole
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
@@ -37,6 +38,7 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
@@ -86,9 +88,9 @@ public class JavaStackTraceConsole extends TextConsole {
         }
     };
 
-    /**
-     * Constructor
-     */
+	/**
+	 * Constructor
+	 */
     public JavaStackTraceConsole() {
 		super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_JAVA_STACKTRACE_CONSOLE), true);
         Font font = JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT);
@@ -103,14 +105,20 @@ public class JavaStackTraceConsole extends TextConsole {
         File file = new File(FILE_NAME);
         if (file.exists()) {
 			try (InputStream fin = new BufferedInputStream(new FileInputStream(file))) {
-                int len = (int) file.length();
-                byte[] b = new byte[len];
-                int read = 0;
-                while (read < len) {
-                    read += fin.read(b);
+                int fileLength = (int) file.length();
+                byte[] fileContent = new byte[fileLength];
+                int bufIndex = 0;
+				int read = 0;
+				while (bufIndex < fileContent.length) {
+					read = fin.read(fileContent, bufIndex, fileContent.length - bufIndex);
+					if (read < 0) {
+						break;
+					}
+					bufIndex += read;
                 }
-                getDocument().set(new String(b));
+				getDocument().set(new String(fileContent, 0, bufIndex));
             } catch (IOException e) {
+				getDocument().set(NLS.bind(ConsoleMessages.JavaStackTraceConsole_2, e.getMessage()));
             }
         } else {
 			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0);
@@ -139,19 +147,20 @@ public class JavaStackTraceConsole extends TextConsole {
      * Saves the backing document for this console
      */
 	public void saveDocument() {
-		try (FileOutputStream fout = new FileOutputStream(FILE_NAME)) {
-            IDocument document = getDocument();
-            if (document != null) {
-                if (document.getLength() > 0) {
-                    String contents = document.get();
-                    fout.write(contents.getBytes());
-                } else {
-                    File file = new File(FILE_NAME);
-                    file.delete();
-                }
-            }
-        }
-        catch (IOException e) {}
+		IDocument document = getDocument();
+		if (document != null) {
+			if (document.getLength() > 0) {
+				String contents = document.get();
+				try (FileOutputStream fout = new FileOutputStream(FILE_NAME)) {
+					fout.write(contents.getBytes());
+				} catch (IOException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			} else {
+				File file = new File(FILE_NAME);
+				file.delete();
+			}
+		}
     }
 
     /**

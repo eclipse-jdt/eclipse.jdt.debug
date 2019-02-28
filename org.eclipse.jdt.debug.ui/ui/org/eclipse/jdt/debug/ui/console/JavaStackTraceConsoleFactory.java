@@ -43,10 +43,10 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 					if (consoles[i] == fConsole) {
 						fConsole.saveDocument();
 						fConsole = null;
+						break;
 					}
 				}
 			}
-
 		});
 	}
 
