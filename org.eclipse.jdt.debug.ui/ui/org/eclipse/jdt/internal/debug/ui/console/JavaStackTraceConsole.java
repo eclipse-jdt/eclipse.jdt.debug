@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Paul Pazderski - Bug 546900: Fix IO handling in JavaStacktraceConsole
+ *     Paul Pazderski - Bug 343023: Clear the initial stack trace console message on first edit
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
@@ -33,7 +34,9 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -87,6 +90,19 @@ public class JavaStackTraceConsole extends TextConsole {
             }
         }
     };
+	/** Memorize if stack trace console is showing the initial "How to use" text at the moment. */
+	boolean showsUsageHint = false;
+	/** Document listener to recognize if initial "How to use" text is changed programmatically. Removes itself after first document change. */
+	private final IDocumentListener documentsFirstChangeListener = new IDocumentListener() {
+		@Override
+		public void documentAboutToBeChanged(DocumentEvent event) {
+		}
+		@Override
+		public void documentChanged(DocumentEvent event) {
+			event.getDocument().removeDocumentListener(documentsFirstChangeListener);
+			showsUsageHint = false;
+		}
+	};
 
 	/**
 	 * Constructor
@@ -122,6 +138,8 @@ public class JavaStackTraceConsole extends TextConsole {
             }
         } else {
 			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0);
+			getDocument().addDocumentListener(documentsFirstChangeListener);
+			showsUsageHint = true;
 		}
     }
 
