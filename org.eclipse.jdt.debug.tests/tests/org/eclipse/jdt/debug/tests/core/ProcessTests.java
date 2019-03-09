@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -72,7 +72,14 @@ public class ProcessTests extends AbstractDebugTest {
 				value = process.exitValue();
 				terminated = true;
 			} catch (IllegalThreadStateException e) {
-				process.getInputStream().read(new byte[1000], 0, 1000);
+				int n = process.getInputStream().available();
+				if (n > 0) { // avoid reading if nothing available to prevent Bug 545326
+					process.getInputStream().skip(n);
+				}
+				n = process.getErrorStream().available();
+				if (n > 0) {
+					process.getErrorStream().skip(n);
+				}
 				Thread.sleep(500);
 			}
 		}
