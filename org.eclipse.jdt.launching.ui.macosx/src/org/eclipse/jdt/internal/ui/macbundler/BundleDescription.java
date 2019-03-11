@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,19 +13,27 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.macbundler;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.util.*;
 import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.debug.core.*;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 class BundleDescription implements BundleAttributes {
@@ -59,21 +67,24 @@ class BundleDescription implements BundleAttributes {
 	}
 	
 	void addResource(ResourceInfo ri, boolean onClasspath) {
-		if (onClasspath)
+		if (onClasspath) {
 			fClassPath.add(ri);
-		else
+		} else {
 			fResources.add(ri);
+		}
 	}
 	
 	boolean removeResource(ResourceInfo ri, boolean onClasspath) {
-		if (onClasspath)
+		if (onClasspath) {
 			return fClassPath.remove(ri);
+		}
 		return fResources.remove(ri);	
 	}
 
 	ResourceInfo[] getResources(boolean onClasspath) {
-		if (onClasspath)
+		if (onClasspath) {
 			return fClassPath.toArray(new ResourceInfo[fClassPath.size()]);
+		}
 		return fResources.toArray(new ResourceInfo[fResources.size()]);
 	}
 	
@@ -95,8 +106,9 @@ class BundleDescription implements BundleAttributes {
 	
 	public boolean get(String key, boolean dflt) {
 		Boolean v= (Boolean) fProperties.get(key);
-		if (v == null)
+		if (v == null) {
 			return dflt;
+		}
 		return v.booleanValue();
 	}
 	
@@ -114,6 +126,7 @@ class BundleDescription implements BundleAttributes {
 		throw new CoreException(new Status(IStatus.ERROR, MacOSXUILaunchingPlugin.getUniqueIdentifier(), "Internal Error: missing Java launcher")); //$NON-NLS-1$
 	}
 	
+	@SuppressWarnings("deprecation")
 	void inititialize(ILaunchConfiguration lc) {
 		AbstractJavaLaunchConfigurationDelegate lcd;
 		try {
@@ -151,8 +164,9 @@ class BundleDescription implements BundleAttributes {
 		
 		try {
 			String[] classpath= lcd.getClasspath(lc);
-			for (int i= 0; i < classpath.length; i++)
+			for (int i= 0; i < classpath.length; i++) {
 				addResource(new ResourceInfo(classpath[i]), true);
+			}
 		} catch (CoreException e) {
 			//
 		}
@@ -173,8 +187,9 @@ class BundleDescription implements BundleAttributes {
 					String key= token.substring(2, pos).trim();
 					String value= token.substring(pos+1).trim();
 					int l= value.length();
-					if (l >= 2 && value.charAt(0) == '"' && value.charAt(l-1) == '"')
+					if (l >= 2 && value.charAt(0) == '"' && value.charAt(l-1) == '"') {
 						value= value.substring(1, l-1);
+					}
 					if ("java.library.path".equals(key)) { //$NON-NLS-1$
 						addDllDir(wd, value);
 					} else {
@@ -201,7 +216,9 @@ class BundleDescription implements BundleAttributes {
 		
 		String launcher= null;
 		if (isSWT)
+		 {
 			launcher= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
+		}
 		
 		if (launcher == null) {
 			setValue(JVMVERSION, "1.4*"); //$NON-NLS-1$
@@ -216,10 +233,12 @@ class BundleDescription implements BundleAttributes {
 		} catch (CoreException e) {
 			// ignore
 		}
-		if (p != null)
+		if (p != null) {
 			fProperties.put(IDENTIFIER, p.getElementName());
-		else
+		}
+		else {
 			fProperties.put(IDENTIFIER, ""); //$NON-NLS-1$
+		}
 				
 		fireChange();
 	}
@@ -243,8 +262,9 @@ class BundleDescription implements BundleAttributes {
 			for (int j= 0; j < dlls.length; j++) {
 				try {
 					String name= dlls[j].getCanonicalPath();
-					if (name.endsWith(".jnilib")) //$NON-NLS-1$
+					if (name.endsWith(".jnilib")) { //$NON-NLS-1$
 						addResource(new ResourceInfo(name), false);
+					}
 				} catch (IOException e) {
 					// NeedWork Auto-generated catch block
 					e.printStackTrace();
@@ -255,13 +275,15 @@ class BundleDescription implements BundleAttributes {
 	
 	static boolean verify(ILaunchConfiguration lc) {
 		String name= lc.getName();
-		if (name.indexOf("jpage") >= 0) //$NON-NLS-1$
+		if (name.indexOf("jpage") >= 0) { //$NON-NLS-1$
 			return false;
+		}
 		AbstractJavaLaunchConfigurationDelegate lcd;
 		try {
 			lcd= getDelegate(lc);
-			if (lcd.getMainTypeName(lc) == null)
+			if (lcd.getMainTypeName(lc) == null) {
 				return false;
+			}
 			return true;
 		} catch (CoreException e) {
 			return false;
