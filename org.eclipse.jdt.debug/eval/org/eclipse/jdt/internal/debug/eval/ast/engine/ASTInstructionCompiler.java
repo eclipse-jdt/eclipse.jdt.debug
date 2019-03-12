@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - Bug 427089
@@ -3910,6 +3914,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * @see ASTVisitor#visit(SwitchStatement)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean visit(SwitchStatement node) {
 		if (!isActive()) {
@@ -3935,12 +3940,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					storeInstruction(); // jump
 					statementsDefault = new ArrayList<>();
 				} else {
-					if (switchCase.getExpression() instanceof StringLiteral) {
-						push(new SendMessage(
-								"equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+					if (node.getAST().apiLevel() >= AST.JLS12) {
+						for (Object expression : switchCase.expressions()) {
+							if (expression instanceof StringLiteral) {
+								push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+							} else {
+								push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+							}
+						}
 					} else {
-						push(new EqualEqualOperator(Instruction.T_int,
-								Instruction.T_int, true, fCounter));
+						if (switchCase.getExpression() instanceof StringLiteral) {
+							push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+						} else {
+							push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+						}
 					}
 					push(new Dup());
 					storeInstruction(); // dupe
