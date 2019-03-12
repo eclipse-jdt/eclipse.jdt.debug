@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.launching" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="See bug 545253" id="926941240">
+            <message_arguments>
+                <message_argument value="3.13.100"/>
+                <message_argument value="3.12.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="launching/org/eclipse/jdt/launching/sourcelookup/LocalFileStorage.java" type="org.eclipse.jdt.launching.sourcelookup.LocalFileStorage">
         <filter comment="Known illegal extension" id="571473929">
             <message_arguments>
