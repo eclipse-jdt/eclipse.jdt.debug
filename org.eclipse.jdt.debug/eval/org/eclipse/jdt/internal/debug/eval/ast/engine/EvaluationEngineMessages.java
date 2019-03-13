@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  * IBM - Initial API and implementation
@@ -61,6 +65,7 @@ public class EvaluationEngineMessages extends NLS {
 
 	public static String ASTInstructionCompiler_Lambda_expressions_cannot_be_used_in_an_evaluation_expression;
 	public static String ASTInstructionCompiler_Reference_expressions_cannot_be_used_in_an_evaluation_expression;
+	public static String ASTInstructionCompiler_Switch_expressions_cannot_be_used_in_an_evaluation_expression;
 
 	static {
 		// load message values from bundle file
