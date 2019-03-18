@@ -343,7 +343,7 @@ public class VMRunnerConfiguration {
 	 * Gets the fPreviewEnabled.
 	 *
 	 * @return the fPreviewEnabled
-	 * @since 3.13
+	 * @since 3.14
 	 */
 	public boolean isPreviewEnabled() {
 		return fPreviewEnabled;
@@ -354,7 +354,7 @@ public class VMRunnerConfiguration {
 	 *
 	 * @param fPreviewEnabled
 	 *            the fPreviewEnabled to set
-	 * @since 3.13
+	 * @since 3.14
 	 */
 	public void setPreviewEnabled(boolean fPreviewEnabled) {
 		this.fPreviewEnabled = fPreviewEnabled;

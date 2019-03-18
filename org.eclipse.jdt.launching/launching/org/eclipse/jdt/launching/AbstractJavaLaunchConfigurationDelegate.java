@@ -1209,7 +1209,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Supports Preview Features for launching.
 	 *
-	 * @since 3.13
+	 * @since 3.14
 	 */
 	protected boolean supportsPreviewFeatures(ILaunchConfiguration configuration) {
 		try {
