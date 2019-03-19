@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -198,7 +198,6 @@ public final class JavaRuntime {
 	 * (value <code>executionEnvironments</code>)</li>
 	 * <li>Identifier of a contributed execution environment</li>
 	 * </ol>
-	 * </p>
 	 * @since 2.0
 	 */
 	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER"; //$NON-NLS-1$
@@ -1868,15 +1867,15 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Saves the VM configuration information to the preferences. This includes
-	 * the following information:
+	 * Saves the VM configuration information to the preferences. This includes the following information:
 	 * <ul>
 	 * <li>The list of all defined IVMInstall instances.</li>
 	 * <li>The default VM</li>
-	 * <ul>
-	 * This state will be read again upon first access to VM
-	 * configuration information.
-	 * @throws CoreException if trying to save the current state of VMs encounters a problem
+	 * </ul>
+	 * This state will be read again upon first access to VM configuration information.
+	 * 
+	 * @throws CoreException
+	 *             if trying to save the current state of VMs encounters a problem
 	 */
 	public static void saveVMConfiguration() throws CoreException {
 		if (fgVMTypes == null) {

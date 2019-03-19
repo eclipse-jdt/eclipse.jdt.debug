@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -191,32 +191,30 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	public abstract IJavaValue voidValue();
 
 	/**
-	 * Returns whether any of the threads associated with this debug target are
-	 * running code in the VM that is out of synch with the code in the
+	 * Returns whether any of the threads associated with this debug target are running code in the VM that is out of synch with the code in the
 	 * workspace.
 	 *
 	 * @return whether this debug target is out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 */
 	public abstract boolean isOutOfSynch() throws DebugException;
 
 	/**
-	 * Returns whether any of the threads associated with this debug target may
-	 * be running code in the VM that is out of synch with the code in the
+	 * Returns whether any of the threads associated with this debug target may be running code in the VM that is out of synch with the code in the
 	 * workspace.
 	 *
 	 * @return whether this debug target may be out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 */
 	public abstract boolean mayBeOutOfSynch() throws DebugException;
 

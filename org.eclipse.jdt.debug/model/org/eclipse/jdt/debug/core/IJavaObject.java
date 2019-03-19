@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -116,30 +116,27 @@ public interface IJavaObject extends IJavaValue {
 			throws DebugException;
 
 	/**
-	 * Returns a variable representing the field in this object with the given
-	 * name, or <code>null</code> if there is no field with the given name, or
+	 * Returns a variable representing the field in this object with the given name, or <code>null</code> if there is no field with the given name, or
 	 * the name is ambiguous.
 	 *
 	 * @param name
 	 *            field name
 	 * @param superField
-	 *            whether or not to get the field in the superclass of this
-	 *            objects.
+	 *            whether or not to get the field in the superclass of this objects.
 	 * @return the variable representing the field, or <code>null</code>
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 */
 	public IJavaFieldVariable getField(String name, boolean superField)
 			throws DebugException;
 
 	/**
-	 * Returns a variable representing the field in this object with the given
-	 * name declared in the type with the given signature, or <code>null</code>
-	 * if there is no field with the given name, or the name is ambiguous.
+	 * Returns a variable representing the field in this object with the given name declared in the type with the given signature, or
+	 * <code>null</code> if there is no field with the given name, or the name is ambiguous.
 	 *
 	 * @param name
 	 *            field name
@@ -149,9 +146,9 @@ public interface IJavaObject extends IJavaValue {
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 */
 	public IJavaFieldVariable getField(String name, String typeSignature)
 			throws DebugException;

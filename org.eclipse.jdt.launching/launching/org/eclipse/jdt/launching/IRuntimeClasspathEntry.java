@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -139,28 +139,28 @@ public interface IRuntimeClasspathEntry {
 	/**
 	 * Returns a memento for this classpath entry.
 	 * <p>
-	 * Since 3.0, the memento for a contributed classpath entry (i.e. of
-	 * type <code>OTHER</code>), must be in the form of an XML document,
-	 * with the following element structure:
+	 * Since 3.0, the memento for a contributed classpath entry (i.e. of type <code>OTHER</code>), must be in the form of an XML document, with the
+	 * following element structure:
+	 * 
 	 * <pre>
+	 * <code>
 	 * <runtimeClasspathEntry id="exampleId">
 	 *    <memento
 	 *       key1="value1"
 	 * 		 ...>
 	 *    </memento>
 	 * </runtimeClasspathEntry>
+	 * </code>
 	 * </pre>
-	 * The <code>id</code> attribute is the unique identifier of the extension
-	 * that contributed this runtime classpath entry type, via the extension
-	 * point <code>org.eclipse.jdt.launching.runtimeClasspathEntries</code>.
-	 * The <code>memento</code> element will be used to initialize a
-	 * restored runtime classpath entry, via the method
-	 * <code>IRuntimeClasspathEntry2.initializeFrom(Element memento)</code>. The
-	 * attributes of the <code>memento</code> element are client defined.
-	 * </p>
+	 * 
+	 * The <code>id</code> attribute is the unique identifier of the extension that contributed this runtime classpath entry type, via the extension
+	 * point <code>org.eclipse.jdt.launching.runtimeClasspathEntries</code>. The <code>memento</code> element will be used to initialize a restored
+	 * runtime classpath entry, via the method <code>IRuntimeClasspathEntry2.initializeFrom(Element memento)</code>. The attributes of the
+	 * <code>memento</code> element are client defined.
 	 *
 	 * @return a memento for this classpath entry
-	 * @exception CoreException if an exception occurs generating a memento
+	 * @exception CoreException
+	 *                if an exception occurs generating a memento
 	 */
 	public String getMemento() throws CoreException;
 

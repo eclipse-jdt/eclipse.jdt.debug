@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -75,32 +75,30 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	boolean isSystemThread() throws DebugException;
 
 	/**
-	 * Returns whether any of the stack frames associated with this thread are
-	 * running code in the VM that is out of synch with the code in the
+	 * Returns whether any of the stack frames associated with this thread are running code in the VM that is out of synch with the code in the
 	 * workspace.
 	 *
 	 * @return whether this thread is out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 * @since 2.0
 	 */
 	boolean isOutOfSynch() throws DebugException;
 
 	/**
-	 * Returns whether this thread may be running code in the VM that is out of
-	 * synch with the code in the workspace.
+	 * Returns whether this thread may be running code in the VM that is out of synch with the code in the workspace.
 	 *
 	 * @return whether this thread may be out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 * @since 2.0
 	 */
 	boolean mayBeOutOfSynch() throws DebugException;

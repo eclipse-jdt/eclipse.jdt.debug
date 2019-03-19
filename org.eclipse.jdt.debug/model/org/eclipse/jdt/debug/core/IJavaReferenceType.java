@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -111,18 +111,15 @@ public interface IJavaReferenceType extends IJavaType {
 	public IJavaObject getClassLoaderObject() throws DebugException;
 
 	/**
-	 * Returns the generic signature as defined in the JVM specification for
-	 * this type. Returns <code>null</code> if this type is not a generic type.
+	 * Returns the generic signature as defined in the JVM specification for this type. Returns <code>null</code> if this type is not a generic type.
 	 *
-	 * @return signature, or <code>null</code> if generic signature not
-	 *         available
+	 * @return signature, or <code>null</code> if generic signature not available
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
-	 *                <ul>
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 * @since 3.1
 	 */
 	public String getGenericSignature() throws DebugException;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,10 +66,9 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
-	 *                </ul
+	 *                <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *                failure.</li>
+	 *                </ul>
 	 */
 	public int getLength() throws DebugException;
 

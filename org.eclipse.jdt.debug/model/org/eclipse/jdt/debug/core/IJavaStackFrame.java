@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -100,7 +100,6 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * @return whether this stack frame is a static initializer
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
-	 *                <ul>
 	 *                <ul>
 	 *                <li>Failure communicating with the VM. The
 	 *                DebugException's status code contains the underlying
