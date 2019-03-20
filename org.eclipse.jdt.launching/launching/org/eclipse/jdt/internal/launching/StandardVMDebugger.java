@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -229,6 +229,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (cp.length > 0) {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
+		}
+
+		// https://openjdk.java.net/jeps/12
+		if (config.isPreviewEnabled()) {
+			arguments.add("--enable-preview"); //$NON-NLS-1$
 		}
 
 		String dependencies = config.getOverrideDependencies();

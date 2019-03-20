@@ -98,6 +98,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(workingDirName);
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+		runConfig.setPreviewEnabled(supportsPreviewFeatures(configuration));
 		if (supportsModule()) {
 			// current module name, if so
 			try {

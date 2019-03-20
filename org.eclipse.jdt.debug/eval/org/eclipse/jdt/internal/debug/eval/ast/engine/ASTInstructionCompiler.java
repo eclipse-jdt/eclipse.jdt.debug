@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -537,8 +537,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ArrayAccess node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		ITypeBinding typeBinding = node.getIndex().resolveTypeBinding();
 		if (typeBinding != null && unBoxing(typeBinding)) {
 			// un-box the index, if required
@@ -552,8 +553,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ArrayCreation node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -562,8 +564,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ArrayInitializer node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -572,8 +575,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ArrayType node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -590,8 +594,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(Assignment node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -600,8 +605,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(Block node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -610,8 +616,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(BooleanLiteral node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -620,8 +627,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(BreakStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -630,8 +638,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(CastExpression node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -648,8 +657,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(CharacterLiteral node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -658,8 +668,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ClassInstanceCreation node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -678,8 +689,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ConditionalExpression node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		// Get the instructions
 		int ifFalseAddress = fInstructions.getEnd();
@@ -719,8 +731,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ContinueStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -729,8 +742,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(DoStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		/*
 		 * The structure of generated instructions is :
@@ -785,8 +799,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(EmptyStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -799,8 +814,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(EnhancedForStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		/*
 		 * The structure of generated instructions is :
@@ -866,8 +882,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ExpressionStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		addPopInstructionIfNeeded(node.getExpression());
 	}
@@ -877,8 +894,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(FieldAccess node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -895,8 +913,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ForStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		/*
 		 * The structure of generated instructions is :
@@ -977,8 +996,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(IfStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		boolean hasElseStatement = node.getElseStatement() != null;
 
@@ -1051,8 +1071,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(InstanceofExpression node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1069,8 +1090,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(LabeledStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		String label = node.getLabel().getIdentifier();
 
@@ -1104,8 +1126,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(MethodInvocation node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1114,8 +1137,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(NullLiteral node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1124,8 +1148,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(NumberLiteral node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1142,8 +1167,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ParameterizedType node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1160,8 +1186,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(PostfixExpression node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1170,8 +1197,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(PrefixExpression node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1180,8 +1208,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(PrimitiveType node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1197,8 +1226,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(QualifiedType node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1207,8 +1237,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ReturnStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1217,8 +1248,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(SimpleName node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1227,8 +1259,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(SimpleType node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1237,8 +1270,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(SingleVariableDeclaration node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1247,8 +1281,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(StringLiteral node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1265,8 +1300,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(SuperFieldAccess node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1275,8 +1311,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(SuperMethodInvocation node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1309,8 +1346,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ThisExpression node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1319,8 +1357,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(ThrowStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1353,8 +1392,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(TypeLiteral node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1371,8 +1411,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(VariableDeclarationFragment node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 		storeInstruction();
 	}
 
@@ -1389,8 +1430,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(WhileStatement node) {
-		if (!isActive() || hasErrors())
+		if (!isActive() || hasErrors()) {
 			return;
+		}
 
 		/*
 		 * The structure of generated instructions is :
@@ -3893,6 +3935,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return false;
 	}
 
+	@Override
+	public boolean visit(SwitchExpression node) {
+		if (!isActive()) {
+			return true;
+		}
+		setHasError(true);
+		addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Switch_expressions_cannot_be_used_in_an_evaluation_expression);
+		return false;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(SwitchCase)
 	 */
@@ -3910,6 +3962,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * @see ASTVisitor#visit(SwitchStatement)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean visit(SwitchStatement node) {
 		if (!isActive()) {
@@ -3935,17 +3988,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					storeInstruction(); // jump
 					statementsDefault = new ArrayList<>();
 				} else {
-					if (switchCase.getExpression() instanceof StringLiteral) {
-						push(new SendMessage(
-								"equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+					if (node.getAST().apiLevel() >= AST.JLS12) {
+						for (Object expression : switchCase.expressions()) {
+							if (expression instanceof StringLiteral) {
+								push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+							} else {
+								push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+							}
+							push(new Dup());
+							storeInstruction(); // dupe
+							((Expression) expression).accept(this);
+							storeInstruction(); // equal-equal
+						}
 					} else {
-						push(new EqualEqualOperator(Instruction.T_int,
-								Instruction.T_int, true, fCounter));
+						if (switchCase.getExpression() instanceof StringLiteral) {
+							push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+						} else {
+							push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+						}
+						push(new Dup());
+						storeInstruction(); // dupe
+						switchCase.getExpression().accept(this);
+						storeInstruction(); // equal-equal
 					}
-					push(new Dup());
-					storeInstruction(); // dupe
-					switchCase.getExpression().accept(this);
-					storeInstruction(); // equal-equal
 					ConditionalJump condJump = new ConditionalJump(true);
 					push(condJump);
 					storeInstruction(); // conditional jump

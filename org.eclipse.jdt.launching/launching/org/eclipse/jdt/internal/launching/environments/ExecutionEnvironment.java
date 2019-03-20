@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -461,16 +461,21 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				return null;
 			}
 		} else {
-			if (getCompliance() == null) {
+			String compliance = getCompliance();
+			if (compliance == null) {
 				return null;
 			}
-			profile.setProperty(JavaCore.COMPILER_COMPLIANCE, getCompliance());
-			profile.setProperty(JavaCore.COMPILER_SOURCE, getCompliance());
-			profile.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, getCompliance());
-			profile.setProperty("org.eclipse.jdt.core.compiler.problem.assertIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
-			profile.setProperty("org.eclipse.jdt.core.compiler.problem.enumIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
-			profile.setProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, calculateVMExecutionEnvs(new Version(getCompliance())));
+			profile.setProperty(JavaCore.COMPILER_COMPLIANCE, compliance);
+			profile.setProperty(JavaCore.COMPILER_SOURCE, compliance);
+			profile.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compliance);
+			profile.setProperty(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			profile.setProperty(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+			profile.setProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, calculateVMExecutionEnvs(new Version(compliance)));
 			profile.setProperty(JavaCore.COMPILER_RELEASE, JavaCore.ENABLED);
+			if (JavaCore.compareJavaVersions(compliance, JavaCore.VERSION_10) > 0) {
+				profile.setProperty(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.DISABLED);
+				profile.setProperty(JavaCore.COMPILER_PB_REPORT_PREVIEW_FEATURES, JavaCore.WARNING);
+			}
 
 		}
 		return profile;
@@ -557,5 +562,10 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 
 	private String getCompliance() {
 		return fElement.getAttribute("compliance"); //$NON-NLS-1$
+	}
+
+	@Override
+	public String toString() {
+		return this.fElement.getAttribute("id"); //$NON-NLS-1$
 	}
 }

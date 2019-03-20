@@ -38,6 +38,7 @@ public class VMRunnerConfiguration {
 	private String fModuleDescription;
 	private String fWorkingDirectory;
 	private String fOverrideDependencies;
+	private Boolean fPreviewEnabled = false;
 	private Map<String, Object> fVMSpecificAttributesMap;
 	private boolean fResume = true;
 
@@ -331,6 +332,27 @@ public class VMRunnerConfiguration {
 	 */
 	public void setOverrideDependencies(String fOverrideDependencies) {
 		this.fOverrideDependencies = fOverrideDependencies;
+	}
+
+	/**
+	 * Gets the fPreviewEnabled.
+	 *
+	 * @return the fPreviewEnabled
+	 * @since 3.14
+	 */
+	public boolean isPreviewEnabled() {
+		return fPreviewEnabled;
+	}
+
+	/**
+	 * Sets the fPreviewEnabled.
+	 *
+	 * @param fPreviewEnabled
+	 *            the fPreviewEnabled to set
+	 * @since 3.14
+	 */
+	public void setPreviewEnabled(boolean fPreviewEnabled) {
+		this.fPreviewEnabled = fPreviewEnabled;
 	}
 
 }
