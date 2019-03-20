@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.launching" version="2">
-    <resource path="">
-        <filter comment="No API Changes" id="665845798">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="No increment in Beta branch" id="924844039">
             <message_arguments>
-                <message_argument value="org.eclipse.jdt.launching"/>
+                <message_argument value="3.13.0"/>
+                <message_argument value="3.13.0"/>
             </message_arguments>
         </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF">
         <filter comment="No API Changes" id="926941240">
             <message_arguments>
                 <message_argument value="3.13.0"/>
