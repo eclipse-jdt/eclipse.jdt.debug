@@ -2455,7 +2455,6 @@ public final class JavaRuntime {
 	 * <li>When there is no Java project associated with a configuration, the workspace
 	 * default JRE is used to create a container path.</li>
 	 * </ol>
-	 * </p>
 	 * @param configuration the backing {@link ILaunchConfiguration}
 	 * @return classpath container path identifying a JRE or <code>null</code>
 	 * @exception org.eclipse.core.runtime.CoreException if an exception occurs retrieving

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,10 +31,8 @@ import java.util.Map.Entry;
  * </p>
  * When <code>convertToRealVM</code> is called, a corresponding 'real' VM is created
  * if one did not previously exist, or the corresponding 'real' VM is updated.
- * </p>
  * <p>
  * Clients may instantiate this class.
- * </p>
  *
  * @since 2.1
  * @noextend This class is not intended to be sub-classed by clients.

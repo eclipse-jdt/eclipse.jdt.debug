@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,11 +48,9 @@ import org.eclipse.osgi.util.NLS;
  * <li><code>class</code> Wizard page implementation. Must be a subclass of
  *  <code>org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage</code>.</li>
  * </ul>
- * </p>
  * <p>
  * Clients contributing a custom VM install page via the <code>vmInstallPages</code>
  * extension point must subclass this class.
- * </p>
  * @since 3.3
  */
 public abstract class AbstractVMInstallPage extends WizardPage {

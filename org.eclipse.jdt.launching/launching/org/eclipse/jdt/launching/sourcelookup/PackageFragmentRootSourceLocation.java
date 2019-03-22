@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,22 +42,18 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Locates source elements in a package fragment root. Returns
- * instances of <code>ICompilationUnit</code> and
- * </code>IClassFile</code>.
+ * Locates source elements in a package fragment root. Returns instances of <code>ICompilationUnit</code> and <code>IClassFile</code>.
  * <p>
  * This class may be instantiated.
  * </p>
+ * 
  * @see IJavaSourceLocation
  * @since 2.1
- * @deprecated In 3.0, the debug platform provides source lookup facilities that
- *  should be used in place of the Java source lookup support provided in 2.0.
- *  The new facilities provide a source lookup director that coordinates source
- *  lookup among a set of participants, searching a set of source containers.
- *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
- *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
- *  has been replaced by
- *  <code>org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer</code>.
+ * @deprecated In 3.0, the debug platform provides source lookup facilities that should be used in place of the Java source lookup support provided in
+ *             2.0. The new facilities provide a source lookup director that coordinates source lookup among a set of participants, searching a set of
+ *             source containers. See the following packages: <code>org.eclipse.debug.core.sourcelookup</code> and
+ *             <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class has been replaced by
+ *             <code>org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated

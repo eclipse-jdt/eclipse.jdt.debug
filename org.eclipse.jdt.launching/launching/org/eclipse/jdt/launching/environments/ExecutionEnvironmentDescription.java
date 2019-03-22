@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,10 +45,9 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Helper class to parse and retrieve properties from execution environment description
- * files. An execution environment description file can be used to define attributes relevant
- * the launching of a specific JRE configuration. The format of the file is defined by
- * code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
+ * Helper class to parse and retrieve properties from execution environment description files. An execution environment description file can be used
+ * to define attributes relevant the launching of a specific JRE configuration. The format of the file is defined by
+ * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
  *
  * @since 3.5
  */

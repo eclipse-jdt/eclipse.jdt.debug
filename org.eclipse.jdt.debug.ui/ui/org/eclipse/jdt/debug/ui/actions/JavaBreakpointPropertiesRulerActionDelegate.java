@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,10 +38,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *       &lt;/action&gt;
  *   &lt;/viewerContribution&gt;
  * </pre>
- * </p>
  * <p>
  * Clients may refer to this class as an action delegate in plug-in XML.
- * </p>
  * @since 3.2
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
