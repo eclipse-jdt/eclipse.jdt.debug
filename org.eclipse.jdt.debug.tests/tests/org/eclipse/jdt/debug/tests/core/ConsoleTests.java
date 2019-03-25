@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -23,10 +24,13 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -37,7 +41,7 @@ import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
 
 /**
- * Tests console line tracker.
+ * Tests console lifecycle and output handling.
  */
 public class ConsoleTests extends AbstractDebugTest {
 
@@ -230,5 +234,72 @@ public class ConsoleTests extends AbstractDebugTest {
 		assertEquals("Test program failed with error.", 0, process.getExitValue());
 		final IDocument consoleDocument = textConsole.getDocument();
 		return consoleDocument.get();
+	}
+	/**
+	 * Test console receiving UTF-8 output from process where two-byte UTF-8 characters start at even offsets.
+	 *
+	 * @throws Exception
+	 *             if the test gets in trouble
+	 */
+	public void testBug545769_UTF8OutEven() throws Exception {
+		// 4200 umlaute results in 8400 byte of output which should be more than most common buffer sizes.
+		utf8OutputTest(0, 4200, 5);
+	}
+
+	/**
+	 * Test console receiving UTF-8 output from process where two-byte UTF-8 characters start at odd offsets.
+	 *
+	 * @throws Exception
+	 *             if the test gets in trouble
+	 */
+	public void testBug545769_UTF8OutOdd() throws Exception {
+		// 4200 umlaute results in 8400 byte of output which should be more than most common buffer sizes.
+		utf8OutputTest(1, 4200, 5);
+	}
+
+	/**
+	 * Shared test code for possible UTF-8 process output corruption.
+	 *
+	 * @param numAscii
+	 *            number of one byte UTF-8 characters the process prints first
+	 * @param numUmlaut
+	 *            number of two byte UTF-8 character the process prints second
+	 * @param repetitions
+	 *            number of output repetitions. This test requires the process can write its output faster than the console can read it.
+	 * @throws Exception
+	 *             if the test gets in trouble
+	 */
+	private void utf8OutputTest(int numAscii, int numUmlaut, int repetitions) throws Exception {
+		final String typeName = "ConsoleOutputUmlaut";
+
+		final IPreferenceStore debugPrefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, false);
+		debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_WRAP, true);
+		debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_WIDTH, 100);
+
+		final ILaunchConfiguration launchConfig = getLaunchConfiguration(typeName);
+		final ILaunchConfigurationWorkingCopy launchCopy = launchConfig.getWorkingCopy();
+		String arg = String.join(" ", Integer.toString(numAscii), Integer.toString(numUmlaut), Integer.toString(repetitions));
+		launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arg);
+		launchCopy.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, StandardCharsets.UTF_8.name());
+
+		IJavaDebugTarget target = null;
+		try {
+			target = launchAndTerminate(launchCopy.doSave(), DEFAULT_TIMEOUT);
+			final IProcess process = target.getProcess();
+			assertNotNull("Missing VM process", process);
+			final IConsole console = DebugUITools.getConsole(process);
+			assertNotNull("Missing console", console);
+			assertTrue("Console is not a TextConsole", console instanceof TextConsole);
+			final TextConsole textConsole = (TextConsole) console;
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT); // wait for output appending
+			assertEquals("Test program failed with error.", 0, process.getExitValue());
+			final IDocument consoleDocument = textConsole.getDocument();
+			assertEquals("Wrong number of characters in console.", (numAscii + numUmlaut + 2) * repetitions, consoleDocument.getLength());
+		} finally {
+			terminateAndRemove(target);
+			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, true);
+			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_WRAP, false);
+		}
 	}
 }
