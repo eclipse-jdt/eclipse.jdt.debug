@@ -141,18 +141,18 @@ public interface IRuntimeClasspathEntry {
 	 * <p>
 	 * Since 3.0, the memento for a contributed classpath entry (i.e. of type <code>OTHER</code>), must be in the form of an XML document, with the
 	 * following element structure:
-	 * 
+	 *
 	 * <pre>
 	 * <code>
-	 * <runtimeClasspathEntry id="exampleId">
-	 *    <memento
+	 * &lt;runtimeClasspathEntry id="exampleId"&gt;
+	 *    &lt;memento
 	 *       key1="value1"
-	 * 		 ...>
-	 *    </memento>
-	 * </runtimeClasspathEntry>
+	 * 		 ...&gt;
+	 *    &lt;/memento&gt;
+	 * &lt;/runtimeClasspathEntry&gt;
 	 * </code>
 	 * </pre>
-	 * 
+	 *
 	 * The <code>id</code> attribute is the unique identifier of the extension that contributed this runtime classpath entry type, via the extension
 	 * point <code>org.eclipse.jdt.launching.runtimeClasspathEntries</code>. The <code>memento</code> element will be used to initialize a restored
 	 * runtime classpath entry, via the method <code>IRuntimeClasspathEntry2.initializeFrom(Element memento)</code>. The attributes of the
