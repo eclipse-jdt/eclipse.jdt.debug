@@ -143,14 +143,12 @@ public interface IRuntimeClasspathEntry {
 	 * following element structure:
 	 *
 	 * <pre>
-	 * <code>
 	 * &lt;runtimeClasspathEntry id="exampleId"&gt;
 	 *    &lt;memento
 	 *       key1="value1"
 	 * 		 ...&gt;
 	 *    &lt;/memento&gt;
 	 * &lt;/runtimeClasspathEntry&gt;
-	 * </code>
 	 * </pre>
 	 *
 	 * The <code>id</code> attribute is the unique identifier of the extension that contributed this runtime classpath entry type, via the extension
