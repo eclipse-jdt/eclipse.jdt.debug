@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -86,7 +86,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		IFile jar = jarProject.getFile("lib/sample.jar");
 		assertTrue("lib/sample.jar is missing in project: " + jarProject.getName(), jar.exists());
 
-		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, true);
+		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, true);
 
 		IProject jarRefProject = fgJarProject.getProject();
 		IFile cp = jarRefProject.getFile(".classpath");

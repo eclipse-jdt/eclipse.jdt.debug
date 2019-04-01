@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -40,6 +40,7 @@ import org.eclipse.jdt.launching.sourcelookup.PackageFragmentRootSourceLocation;
 public class SourceLocationTests extends AbstractDebugTest {
 
 	public static final String JRE_CONTAINER_1_4_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4";
+	public static final String JRE_CONTAINER_1_7_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7";
 
 	public SourceLocationTests(String name) {
 		super(name);
@@ -164,7 +165,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_4_CPE_NAME))) {
+				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_7_CPE_NAME))) {
 					lib = cpes[i];
 					break;
 				}
@@ -205,7 +206,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_4_CPE_NAME))) {
+				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_7_CPE_NAME))) {
 					lib = cpes[i];
 					break;
 				}

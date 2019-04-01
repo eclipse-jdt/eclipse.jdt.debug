@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -57,8 +57,8 @@ public class JavaProjectHelper {
 
 	public static final String SRC_DIR = "src";
 	public static final String BIN_DIR = "bin";
-	public static final String J2SE_1_4_EE_NAME = "J2SE-1.4";
-	public static final String J2SE_1_5_EE_NAME = "J2SE-1.5";
+	// public static final String J2SE_1_4_EE_NAME = "J2SE-1.4";
+	// public static final String J2SE_1_5_EE_NAME = "J2SE-1.5";
 	public static final String JAVA_SE_1_6_EE_NAME = "JavaSE-1.6";
 	public static final String JAVA_SE_1_7_EE_NAME = "JavaSE-1.7";
 	public static final String JAVA_SE_1_8_EE_NAME = "JavaSE-1.8";
@@ -436,13 +436,10 @@ public class JavaProjectHelper {
 	 * @param ee
 	 */
 	public static void updateCompliance(IJavaProject project, String ee) {
-		if(J2SE_1_4_EE_NAME.equals(ee)) {
-			setCompliance(project, JavaCore.VERSION_1_4);
-		}
-		else if(J2SE_1_5_EE_NAME.equals(ee)) {
-			setCompliance(project, JavaCore.VERSION_1_5);
-		}
-		else if(JAVA_SE_1_7_EE_NAME.equals(ee)) {
+		/*
+		 * if(J2SE_1_4_EE_NAME.equals(ee)) { setCompliance(project, JavaCore.VERSION_1_4); } else if(J2SE_1_5_EE_NAME.equals(ee)) {
+		 * setCompliance(project, JavaCore.VERSION_1_5); } else
+		 */if (JAVA_SE_1_7_EE_NAME.equals(ee)) {
 			setCompliance(project, JavaCore.VERSION_1_7);
 		}
 		else if(JAVA_SE_1_8_EE_NAME.equals(ee)) {

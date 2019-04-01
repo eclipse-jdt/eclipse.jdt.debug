@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,7 +44,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertTrue("Should be at least one environment", executionEnvironments.length > 0);
 		for (int i = 0; i < executionEnvironments.length; i++) {
 			IExecutionEnvironment environment = executionEnvironments[i];
-			if (environment.getId().equals(JavaProjectHelper.J2SE_1_4_EE_NAME)) {
+			if (environment.getId().equals(JavaProjectHelper.JAVA_SE_1_7_EE_NAME)) {
 				return;
 			}
 		}
@@ -55,7 +55,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 
-		IExecutionEnvironment environment = manager.getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
+		IExecutionEnvironment environment = manager.getEnvironment(JavaProjectHelper.JAVA_SE_1_7_EE_NAME);
 		assertNotNull("Missing environment J2SE-1.4", environment);
 		IVMInstall[] installs = environment.getCompatibleVMs();
 		assertTrue("Should be at least one vm install for the environment", installs.length > 0);
@@ -233,7 +233,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		String result = manager.performStringSubstitution("${ee_home:J2SE-1.4}");
 		assertNotNull(result);
-		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
+		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.JAVA_SE_1_7_EE_NAME);
 		IVMInstall install = JavaRuntime.getVMInstall(JavaRuntime.newJREContainerPath(ee));
 		assertEquals(install.getInstallLocation().getAbsolutePath(), result);
 	}
