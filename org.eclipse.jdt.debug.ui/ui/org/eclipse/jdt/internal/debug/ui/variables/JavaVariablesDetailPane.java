@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator;
+import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
 import org.eclipse.jface.dialogs.DialogSettings;
@@ -108,7 +109,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 		decoration.setShowOnlyOnFocus(true);
 		FieldDecoration dec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 		decoration.setImage(dec.getImage());
-		decoration.setDescriptionText(dec.getDescription());
+		decoration.setDescriptionText(JDIContentAssistPreference.getContentAssistDescription());
 
 		focusListener = new FocusListener() {
 			@Override

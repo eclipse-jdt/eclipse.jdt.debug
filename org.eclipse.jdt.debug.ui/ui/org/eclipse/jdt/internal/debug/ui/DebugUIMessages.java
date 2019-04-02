@@ -387,4 +387,6 @@ public class DebugUIMessages extends NLS {
 	public static String JavaStepFilterPreferencePage__Use_step_filters;
 
 	public static String JavaVariableLabelProvider_0;
+
+	public static String JavaVariableContentAssistDescription_Keystroke;
 }

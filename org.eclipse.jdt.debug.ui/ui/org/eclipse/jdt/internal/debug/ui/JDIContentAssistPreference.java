@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,12 +22,15 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProc
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
@@ -50,15 +53,17 @@ public class JDIContentAssistPreference {
 
 	private static JavaDebugContentAssistProcessor getDisplayProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
-		if (p instanceof JavaDebugContentAssistProcessor)
+		if (p instanceof JavaDebugContentAssistProcessor) {
 			return  (JavaDebugContentAssistProcessor) p;
+		}
 		return null;
 	}
 
 	private static JavaSnippetCompletionProcessor getJavaSnippetProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
-		if (p instanceof JavaSnippetCompletionProcessor)
+		if (p instanceof JavaSnippetCompletionProcessor) {
 			return  (JavaSnippetCompletionProcessor) p;
+		}
 		return null;
 	}
 
@@ -227,5 +232,18 @@ public class JDIContentAssistPreference {
 
 	private static IPreferenceStore getPreferenceStore() {
 		return PreferenceConstants.getPreferenceStore();
+	}
+
+	private static KeyStroke safeKeyStroke(String keyStrokePattern) {
+		try {
+			return KeyStroke.getInstance(keyStrokePattern);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	public static String getContentAssistDescription() {
+		KeyStroke triggeringKeyStroke = safeKeyStroke("Ctrl+Space"); //$NON-NLS-1$
+		return NLS.bind(DebugUIMessages.JavaVariableContentAssistDescription_Keystroke, triggeringKeyStroke);
 	}
 }

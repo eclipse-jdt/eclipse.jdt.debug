@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor;
@@ -408,7 +409,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		decoration.setShowOnlyOnFocus(true);
 		FieldDecoration dec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 		decoration.setImage(dec.getImage());
-		decoration.setDescriptionText(dec.getDescription());
+		decoration.setDescriptionText(JDIContentAssistPreference.getContentAssistDescription());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		// set height/width hints based on font
 		GC gc = new GC(fViewer.getTextWidget());
