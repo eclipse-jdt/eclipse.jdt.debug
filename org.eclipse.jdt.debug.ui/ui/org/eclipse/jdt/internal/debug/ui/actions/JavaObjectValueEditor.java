@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -115,11 +115,15 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
-					IValue newValue = evaluate(expression);
-					if (newValue != null) {
-						variable.setValue(newValue);
-					} else {
+					if (expression == null || expression.length() == 0) {
 						variable.setValue(expression);
+					} else {
+						IValue newValue = evaluate(expression);
+						if (newValue != null) {
+							variable.setValue(newValue);
+						} else {
+							variable.setValue(expression);
+						}
 					}
 				} catch (DebugException de) {
 					handleException(de);
