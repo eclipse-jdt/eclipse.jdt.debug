@@ -22,8 +22,6 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProc
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.JavaTextTools;
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -33,6 +31,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.keys.IBindingService;
 
 
 public class JDIContentAssistPreference {
@@ -234,16 +235,9 @@ public class JDIContentAssistPreference {
 		return PreferenceConstants.getPreferenceStore();
 	}
 
-	private static KeyStroke safeKeyStroke(String keyStrokePattern) {
-		try {
-			return KeyStroke.getInstance(keyStrokePattern);
-		} catch (ParseException e) {
-			return null;
-		}
-	}
-
 	public static String getContentAssistDescription() {
-		KeyStroke triggeringKeyStroke = safeKeyStroke("Ctrl+Space"); //$NON-NLS-1$
-		return NLS.bind(DebugUIMessages.JavaVariableContentAssistDescription_Keystroke, triggeringKeyStroke);
+		IBindingService bindingService = PlatformUI
+				.getWorkbench().getService(IBindingService.class);
+		return NLS.bind(DebugUIMessages.JavaVariableContentAssistDescription_Keystroke, bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST));
 	}
 }
