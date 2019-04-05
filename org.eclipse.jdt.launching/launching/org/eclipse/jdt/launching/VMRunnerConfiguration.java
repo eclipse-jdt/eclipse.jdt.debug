@@ -41,6 +41,7 @@ public class VMRunnerConfiguration {
 	private Boolean fPreviewEnabled = false;
 	private Map<String, Object> fVMSpecificAttributesMap;
 	private boolean fResume = true;
+	private boolean fMergeOutput = false;
 
 	private static final String[] fgEmpty= new String[0];
 
@@ -355,4 +356,24 @@ public class VMRunnerConfiguration {
 		this.fPreviewEnabled = fPreviewEnabled;
 	}
 
+	/**
+	 * Gets the fMergeOutput.
+	 *
+	 * @return the fMergeOutput
+	 * @since 3.15
+	 */
+	public boolean isMergeOutput() {
+		return fMergeOutput;
+	}
+
+	/**
+	 * Sets the fMergeOutput. If <code>true</code> the VM will be run with redirectErrorStream(true) to merge error and standard output.
+	 *
+	 * @param fMergeOutput
+	 *            the fMergeOutput to set
+	 * @since 3.15
+	 */
+	public void setMergeOutput(boolean fMergeOutput) {
+		this.fMergeOutput = fMergeOutput;
+	}
 }

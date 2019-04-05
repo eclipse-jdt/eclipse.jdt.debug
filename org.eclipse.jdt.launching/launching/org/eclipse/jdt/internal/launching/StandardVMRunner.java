@@ -504,8 +504,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
-		Process p= null;
-		p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp());
+		Process p = null;
+		p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp(), config.isMergeOutput());
 		if (p == null) {
 			return;
 		}

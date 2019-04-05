@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -131,6 +132,8 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 				runConfig.setOverrideDependencies(getModuleCLIOptions(configuration));
 			}
 		}
+		runConfig.setMergeOutput(configuration.getAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, false));
+
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return null;

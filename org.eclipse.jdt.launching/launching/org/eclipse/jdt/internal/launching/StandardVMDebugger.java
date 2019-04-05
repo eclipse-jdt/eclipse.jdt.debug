@@ -331,7 +331,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 				connector.startListening(map);
 
-				p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp());
+				p = exec(cmdLine, cmdDetails.getWorkingDir(), cmdDetails.getEnvp(), config.isMergeOutput());
 				if (p == null) {
 					return;
 				}

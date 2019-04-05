@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,16 +13,28 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.internal.console.IOConsolePartitioner;
 
 /**
  * Tests console line tracker.
@@ -112,4 +124,111 @@ public class ConsoleTests extends AbstractDebugTest {
 	    console.dispose();
 	}
 
+	/**
+	 * Test synchronization of standard and error output stream of started process.
+	 * <p>
+	 * This variant tests output on multiple lines and is launched in DEBUG mode.
+	 * </p>
+	 *
+	 * @throws Exception
+	 *             if test failed
+	 */
+	public void testConsoleOutputSynchronization() throws Exception {
+		String typeName = "OutSync";
+		IJavaDebugTarget target = null;
+		try {
+			ILaunchConfiguration launchConfig = getLaunchConfiguration(typeName);
+			ILaunchConfigurationWorkingCopy launchCopy = launchConfig.getWorkingCopy();
+			launchCopy.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, true);
+			target = launchAndTerminate(launchCopy, DEFAULT_TIMEOUT);
+			String content = getConsoleContent(target.getProcess());
+			// normalize new lines to unix style
+			content = content.replace("\r\n", "\n").replace('\r', '\n');
+			String expectedOutput = String.join("", Collections.nCopies(content.length() / 4, "o\ne\n"));
+			assertEquals("Received wrong output. Probably not synchronized.", expectedOutput, content);
+		} finally {
+			if (target != null) {
+				terminateAndRemove(target);
+			}
+		}
+	}
+
+	/**
+	 * Test synchronization of standard and error output stream of started process.
+	 * <p>
+	 * This variant tests output on single line and is launched in RUN mode.
+	 * </p>
+	 *
+	 * @throws Exception
+	 *             if test failed
+	 */
+	public void testConsoleOutputSynchronization2() throws Exception {
+		String typeName = "OutSync2";
+		ILaunch launch = null;
+		try {
+			ILaunchConfiguration launchConfig = getLaunchConfiguration(typeName);
+			ILaunchConfigurationWorkingCopy launchCopy = launchConfig.getWorkingCopy();
+			launchCopy.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, true);
+			launch = launchCopy.launch(ILaunchManager.RUN_MODE, null);
+			TestUtil.waitForJobs(getName(), 0, DEFAULT_TIMEOUT);
+			String content = getConsoleContent(launch.getProcesses()[0]);
+			String expectedOutput = String.join("", Collections.nCopies(content.length() / 2, "oe"));
+			assertEquals("Received wrong output. Probably not synchronized.", expectedOutput, content);
+		} finally {
+			if (launch != null) {
+				getLaunchManager().removeLaunch(launch);
+			}
+		}
+	}
+
+	/**
+	 * Test if process error output has another color in console than standard output.
+	 *
+	 * @throws Exception
+	 *             if test failed
+	 */
+	public void testConsoleErrorColoring() throws Exception {
+		String typeName = "OutSync";
+		IJavaDebugTarget target = null;
+		try {
+			target = launchAndTerminate(typeName);
+			final IProcess process = target.getProcess();
+			assertNotNull("Missing VM process.", process);
+			final IConsole console = DebugUITools.getConsole(process);
+			assertTrue("Console is not a TextConsole.", console instanceof TextConsole);
+			final TextConsole textConsole = (TextConsole) console;
+			final IDocumentPartitioner partitioner = textConsole.getDocument().getDocumentPartitioner();
+			assertTrue("Partitioner is not a IOConsolePartitioner.", partitioner instanceof IOConsolePartitioner);
+			final IOConsolePartitioner ioPartitioner = (IOConsolePartitioner) partitioner;
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT); // wait for output appending
+
+			final long numStyleTypes = Arrays.stream(ioPartitioner.getStyleRanges(0, textConsole.getDocument().getLength())).map((s) -> s.foreground).distinct().count();
+			assertTrue("Console partitioner did not distinct standard and error output.", numStyleTypes > 1);
+		} finally {
+			if (target != null) {
+				terminateAndRemove(target);
+			}
+		}
+	}
+
+	/**
+	 * Try to get the console content associated with given process.
+	 *
+	 * @param process
+	 *            the process on whose output we are interested
+	 * @return the raw content in console probably written by given process. Note: result may be affected by user input and console trimming.
+	 * @throws Exception
+	 *             if content retrieval failed
+	 */
+	private String getConsoleContent(IProcess process) throws Exception {
+		assertNotNull("Missing VM process.", process);
+		final IConsole console = DebugUITools.getConsole(process);
+		assertNotNull("Missing console", console);
+		assertTrue("Console is not a TextConsole.", console instanceof TextConsole);
+		final TextConsole textConsole = (TextConsole) console;
+		TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT); // wait for output appending
+		assertEquals("Test program failed with error.", 0, process.getExitValue());
+		final IDocument consoleDocument = textConsole.getDocument();
+		return consoleDocument.get();
+	}
 }
