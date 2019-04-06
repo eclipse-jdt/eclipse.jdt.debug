@@ -86,6 +86,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 			return c;
 		}
 		if (fExpressionHistoryDialogSettings != null) {
+
 			fExpressionHistory = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			fExpressionHistory.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -97,11 +98,13 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 					}
 				}
 			});
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.widthHint = 10;
+			GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+			data.horizontalSpan = 5;
+
 			fExpressionHistory.setLayoutData(data);
 			fExpressionHistory.setEnabled(false);
 		}
+
 		Control newControl = super.createControl(parent);
 		SourceViewer viewer = getSourceViewer();
 		// Light bulb for content assist hint
