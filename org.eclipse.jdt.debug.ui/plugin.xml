@@ -62,6 +62,12 @@
                actionID="RulerDoubleClick"
                id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerAction">
          </action>
+          <action
+                class="org.eclipse.debug.ui.actions.RulerRunToLineActionDelegate"
+                id="org.eclipse.jdt.debug.ui.actions.RunToLineRulerActionDelegate"
+                label="%RunToLineRuler.label"
+                actionID="M1+M3+RulerClick">
+         </action>
       </editorContribution>
       <editorContribution
             targetID="org.eclipse.jdt.ui.ClassFileEditor"
@@ -71,6 +77,12 @@
                class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerAction">
+         </action>
+         <action
+                class="org.eclipse.debug.ui.actions.RulerRunToLineActionDelegate"
+                id="org.eclipse.jdt.debug.ui.actions.RunToLineRulerActionDelegate"
+                label="%RunToLineRuler.label"
+                actionID="M1+M3+RulerClick">
          </action>
       </editorContribution>
       <editorContribution
@@ -952,6 +964,14 @@
                id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
+                class="org.eclipse.debug.ui.actions.RulerRunToLineActionDelegate"
+                id="org.eclipse.jdt.debug.ui.actions.RunToLineRulerActionDelegate"
+                icon="icons/full/elcl16/runtoline_co.png"
+                helpContextId="run_to_line_action_context"
+                label="%RunToLineRuler.label"
+                menubarPath="debug">
+         </action>
+         <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
                class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
@@ -977,6 +997,14 @@
                class="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
                menubarPath="group.properties"
                id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+         </action>
+         <action
+                class="org.eclipse.debug.ui.actions.RulerRunToLineActionDelegate"
+                id="org.eclipse.jdt.debug.ui.actions.RunToLineRulerActionDelegate"
+                icon="icons/full/elcl16/runtoline_co.png"
+                helpContextId="run_to_line_action_context"
+                label="%RunToLineRuler.label"
+                menubarPath="debug">
          </action>
          <action
                label="%EnableBreakpoint.label"
