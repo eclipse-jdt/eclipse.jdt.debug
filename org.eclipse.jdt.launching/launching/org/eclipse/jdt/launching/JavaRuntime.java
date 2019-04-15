@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2233,6 +2233,15 @@ public final class JavaRuntime {
 				// Create a stand-in for the detected VM and add it to the result collector
 				String vmID = String.valueOf(unique);
 				VMStandin detectedVMStandin = new VMStandin(vmType, vmID);
+
+				// Java 9 and above needs the vmInstall location till jre
+				File pluginDir = new File(detectedLocation, "plugins"); //$NON-NLS-1$
+				File featuresDir = new File(detectedLocation, "features"); //$NON-NLS-1$
+				if (pluginDir.exists() && featuresDir.exists()) {
+					if (isJREVersionAbove8(vmType, detectedLocation)) {
+						detectedLocation = new File(detectedLocation, "jre"); //$NON-NLS-1$
+					}
+				}
 				detectedVMStandin.setInstallLocation(detectedLocation);
 				detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
 				if (vmType instanceof AbstractVMInstallType) {
@@ -2248,6 +2257,23 @@ public final class JavaRuntime {
 			}
 		}
 		return null;
+	}
+
+	private static boolean isJREVersionAbove8(IVMInstallType vmType, File installLocation) {
+		LibraryLocation[] locations = vmType.getDefaultLibraryLocations(installLocation);
+		boolean exist = true;
+		for (int i = 0; i < locations.length; i++) {
+			exist = exist && new File(locations[i].getSystemLibraryPath().toOSString()).exists();
+		}
+		if (exist) {
+			return false;
+		}
+		exist = true;
+		LibraryLocation[] newLocations = vmType.getDefaultLibraryLocations(new File(installLocation, "jre")); //$NON-NLS-1$
+		for (int i = 0; i < newLocations.length; i++) {
+			exist = exist && new File(newLocations[i].getSystemLibraryPath().toOSString()).exists();
+		}
+		return exist;
 	}
 
 	/**
