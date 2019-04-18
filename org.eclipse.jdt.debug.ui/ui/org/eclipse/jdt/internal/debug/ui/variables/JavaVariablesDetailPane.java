@@ -85,9 +85,11 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 			c.setBackground(ExpressionInformationControlCreator.getSystemBackgroundColor());
 			return c;
 		}
+		Composite container = parent;
 		if (fExpressionHistoryDialogSettings != null) {
+			container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 
-			fExpressionHistory = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
+			fExpressionHistory = SWTFactory.createCombo(container, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			fExpressionHistory.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -99,13 +101,12 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 				}
 			});
 			GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
-			data.horizontalSpan = 5;
 
 			fExpressionHistory.setLayoutData(data);
 			fExpressionHistory.setEnabled(false);
 		}
 
-		Control newControl = super.createControl(parent);
+		Control newControl = super.createControl(container);
 		SourceViewer viewer = getSourceViewer();
 		// Light bulb for content assist hint
 		ControlDecoration decoration = new ControlDecoration(viewer.getControl(), SWT.TOP | SWT.LEFT);
