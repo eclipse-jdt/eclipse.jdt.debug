@@ -31,7 +31,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIModificationVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -49,6 +49,8 @@ import junit.framework.Test;
  * Tests for debug view.
  */
 public class DebugHoverTests extends AbstractDebugUiTests {
+
+	private static final String VAL_PREFIX = new String(org.eclipse.jdt.internal.compiler.lookup.TypeConstants.SYNTHETIC_OUTER_LOCAL_PREFIX);
 
 	public static Test suite() {
 		return new OrderedTestSuite(DebugHoverTests.class);
@@ -109,9 +111,9 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			hover.setEditor(part);
 
 			Map<String, Region> offsets = new LinkedHashMap<>();
-			offsets.put("arg", new Region(1059, "arg".length()));
-			offsets.put("var1", new Region(1030, "var1".length()));
-			offsets.put("var2", new Region(1001, "var2".length()));
+			offsets.put(VAL_PREFIX + "arg", new Region(1059, "arg".length()));
+			offsets.put(VAL_PREFIX + "var1", new Region(1030, "var1".length()));
+			offsets.put(/* local */ "var2", new Region(1001, "var2".length()));
 
 			Set<Entry<String, Region>> entrySet = offsets.entrySet();
 			int startLine = bpLine1;
@@ -125,12 +127,10 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			part = openEditorAndValidateStack(expectedMethod2, framesNumber2, file, thread);
 
 			offsets = new LinkedHashMap<>();
-			offsets.put("arg", new Region(1216, "arg".length()));
-			offsets.put("var1", new Region(1186, "var1".length()));
-			offsets.put("var3", new Region(1156, "var3".length()));
-			// This will not work yet, I have no idea how to identify parent
-			// lambda element...
-			// offsets.put("var2", new Region(1108, "var2".length()));
+			offsets.put(VAL_PREFIX + "arg", new Region(1216, "arg".length()));
+			offsets.put(VAL_PREFIX + "var1", new Region(1186, "var1".length()));
+			offsets.put(VAL_PREFIX + "var2", new Region(1156, "var2".length()));
+			offsets.put(/* local */ "var3", new Region(1126, "var3".length()));
 
 			entrySet = offsets.entrySet();
 			startLine = bpLine2;
@@ -166,15 +166,16 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 	}
 
 	private void validateLine(final int line, int valueIndex, CompilationUnitEditor part, JavaDebugHover hover, Entry<String, Region> varData) throws Exception, DebugException {
-		String variableName = varData.getKey();
+		String debugVarName = varData.getKey();
+		String variableName = debugVarName.startsWith(VAL_PREFIX) ? debugVarName.substring(VAL_PREFIX.length()) : debugVarName;
 		IRegion region = varData.getValue();
 		String text = selectAndReveal(part, line, region);
 		assertEquals(variableName, text);
 		Object args = sync(() -> hover.getHoverInfo2(part.getViewer(), region));
 
 		assertNotNull(args);
-		JDILocalVariable var = (JDILocalVariable) args;
-		assertEquals(variableName, var.getName());
+		JDIModificationVariable var = (JDIModificationVariable) args;
+		assertEquals(debugVarName, var.getName());
 		JDIValue value = (JDIValue) var.getValue();
 		assertEquals(JDIObjectValue.class, value.getClass());
 		JDIObjectValue valueObj = (JDIObjectValue) var.getValue();

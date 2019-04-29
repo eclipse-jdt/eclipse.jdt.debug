@@ -34,9 +34,9 @@ public class DebugHoverTest18 {
 			System.out.println(arg);
 
 			run(()->{
-				String var3 = "v2";
-				System.out.println(var2);
+				String var3 = "v3";
 				System.out.println(var3);
+				System.out.println(var2);
 				System.out.println(var1);
 				System.out.println(arg);
 			});

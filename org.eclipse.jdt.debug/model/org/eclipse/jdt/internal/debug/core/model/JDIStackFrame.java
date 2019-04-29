@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -32,9 +34,19 @@ import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdi.internal.FieldImpl;
+import org.eclipse.jdi.internal.ReferenceTypeImpl;
 import org.eclipse.jdi.internal.ValueImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -44,6 +56,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
@@ -127,6 +140,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Whether the current stack frame is the top of the stack
 	 */
 	private boolean fIsTop;
+
+	@SuppressWarnings("restriction")
+	private static final String SYNTHETIC_OUTER_LOCAL_PREFIX = new String(org.eclipse.jdt.internal.compiler.lookup.TypeConstants.SYNTHETIC_OUTER_LOCAL_PREFIX);
 
 	/**
 	 * Creates a new stack frame in the given thread.
@@ -366,7 +382,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					int previousIndex = frames.indexOf(this) + 1;
 					if (previousIndex > 0 && previousIndex < frames.size()) {
 						IJavaStackFrame previousFrame = frames.get(previousIndex);
-						IJavaValue closureValue = JDIValue.createValue((JDIDebugTarget) getDebugTarget(), ((JDIStackFrame) previousFrame).getUnderlyingThisObject());
+						ObjectReference underlyingThisObject = ((JDIStackFrame) previousFrame).getUnderlyingThisObject();
+						IJavaValue closureValue = JDIValue.createValue((JDIDebugTarget) getDebugTarget(), underlyingThisObject);
+						setLambdaVariableNames(closureValue, underlyingThisObject);
 						fVariables.add(new JDILambdaVariable(closureValue));
 					}
 				}
@@ -383,6 +401,73 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 			fRefreshVariables = false;
 			return fVariables;
+		}
+	}
+
+	private void setLambdaVariableNames(IJavaValue value, ObjectReference underlyingThisObject) {
+		try {
+			IType type = JavaDebugUtils.resolveType(value.getJavaType());
+			ASTParser parser = ASTParser.newParser(AST.JLS11);
+			parser.setResolveBindings(true);
+			parser.setSource(type.getTypeRoot());
+			CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+			cu.accept(new LambdaASTVisitor(false, underlyingThisObject, getUnderlyingMethod()));
+		} catch (CoreException e) {
+			logError(e);
+		}
+	}
+
+	private final static class LambdaASTVisitor extends ASTVisitor {
+		private final ObjectReference underlyingThisObject;
+		private Method underlyingMethod;
+
+		private LambdaASTVisitor(boolean visitDocTags, ObjectReference underlyingThisObject, Method underlyingMethod) {
+			super(visitDocTags);
+			this.underlyingThisObject = underlyingThisObject;
+			this.underlyingMethod = underlyingMethod;
+		}
+
+		@Override
+		public boolean visit(LambdaExpression lambdaExpression) {
+			IMethodBinding binding = lambdaExpression.resolveMethodBinding();
+			IVariableBinding[] synVars = binding.getSyntheticOuterLocals();
+			if (synVars == null || synVars.length == 0) {// name cannot be updated if Synthetic Outer Locals are not available
+				return true;
+			}
+			List<Field> allFields = underlyingThisObject.referenceType().fields();
+			ListIterator<Field> listIterator = allFields.listIterator();
+			int i = 0;
+			if (underlyingMethod.isStatic()) {
+				if (synVars.length == allFields.size()) {
+					while (listIterator.hasNext()) {
+						FieldImpl field = (FieldImpl) listIterator.next();
+						String newName = synVars[i].getName();
+						FieldImpl newField = createRenamedCopy(field, newName);
+						listIterator.set(newField);
+						i++;
+					}
+				}
+			} else {
+				if (synVars.length + 1 == allFields.size()) {
+					while (listIterator.hasNext()) {
+						FieldImpl field = (FieldImpl) listIterator.next();
+						String newName = field.name();
+						if (i == 0) {
+							newName = "this"; //$NON-NLS-1$
+						} else {
+							newName = synVars[i - 1].getName();
+						}
+						FieldImpl newField = createRenamedCopy(field, newName);
+						listIterator.set(newField);
+						i++;
+					}
+				}
+			}
+			return true;
+		}
+
+		private FieldImpl createRenamedCopy(FieldImpl field, String newName) {
+			return new FieldImpl((VirtualMachineImpl) field.virtualMachine(), (ReferenceTypeImpl) field.declaringType(), field.getFieldID(), newName, field.signature(), field.genericSignature(), field.modifiers());
 		}
 	}
 
@@ -790,6 +875,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (var instanceof JDIThisVariable) {
 				// save for later - check for instance and static variables
 				thisVariable = var;
+			}
+			if (var instanceof JDILambdaVariable) {
+				// Check if we have match in synthetic fields generated
+				// by compiler for the captured variables (they start with "val$")
+				JDILambdaVariable lambda = (JDILambdaVariable) var;
+				JDIObjectValue ov = (JDIObjectValue) lambda.getValue();
+				IVariable[] lvars = ov.getVariables();
+				for (IVariable lv : lvars) {
+					String name = lv.getName();
+					if (name.startsWith(SYNTHETIC_OUTER_LOCAL_PREFIX) && (SYNTHETIC_OUTER_LOCAL_PREFIX + varName).equals(name)) {
+						possibleMatches.add((IJavaVariable) lv);
+					}
+				}
 			}
 		}
 		for(IJavaVariable variable: possibleMatches){
