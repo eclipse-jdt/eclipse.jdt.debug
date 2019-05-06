@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,6 +52,7 @@ public class StratumTests extends AbstractDebugTest {
 			// TODO ideally need to check "if NN or newer"
 			if (!JavaCore.isSupportedJavaVersion(version)) {
 				// as of 2018-11-15 java 12 was not supported by the sourcelookup agent
+				// as of 2019-05-05 java 12 is supported by the sourcelookup agent
 				assertEquals("Wrong number of available strata", 1, strata.length);
 				assertEquals("Wrong strata", "Java", strata[0]);
 			} else {
