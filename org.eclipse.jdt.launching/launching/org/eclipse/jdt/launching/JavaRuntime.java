@@ -3467,6 +3467,7 @@ public final class JavaRuntime {
 	 * {@link IClasspathAttribute}s of the following names:
 	 * <ul>
 	 * <li>{@link IClasspathAttribute#ADD_EXPORTS}</li>
+	 * <li>{@link IClasspathAttribute#ADD_OPENS}</li>
 	 * <li>{@link IClasspathAttribute#ADD_READS}</li>
 	 * <li>{@link IClasspathAttribute#LIMIT_MODULES}</li>
 	 * </ul>
@@ -3490,6 +3491,7 @@ public final class JavaRuntime {
 				String optName = classpathAttribute.getName();
 				switch (optName) {
 					case IClasspathAttribute.ADD_EXPORTS:
+					case IClasspathAttribute.ADD_OPENS:
 					case IClasspathAttribute.ADD_READS:
 						for (String value : classpathAttribute.getValue().split(COMMA)) {
 							buf.append(OPTION_START).append(optName).append(BLANK).append(value).append(BLANK);
