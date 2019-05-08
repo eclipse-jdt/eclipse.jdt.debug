@@ -3493,9 +3493,7 @@ public final class JavaRuntime {
 					case IClasspathAttribute.ADD_EXPORTS:
 					case IClasspathAttribute.ADD_OPENS:
 					case IClasspathAttribute.ADD_READS:
-						for (String value : classpathAttribute.getValue().split(COMMA)) {
-							buf.append(OPTION_START).append(optName).append(BLANK).append(value).append(BLANK);
-						}
+						buf.append(OPTION_START).append(optName).append(BLANK).append(classpathAttribute.getValue()).append(BLANK);
 						break;
 					case IClasspathAttribute.LIMIT_MODULES:
 						addLimitModules(buf, project, systemLibrary, classpathAttribute.getValue());
