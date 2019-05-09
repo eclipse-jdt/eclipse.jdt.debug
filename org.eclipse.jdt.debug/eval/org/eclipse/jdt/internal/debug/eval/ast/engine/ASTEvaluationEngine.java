@@ -17,10 +17,13 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -392,6 +395,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private CompilationUnit parseCompilationUnit(char[] source,
 			String unitName, IJavaProject project) {
+		return parseCompilationUnit(source, unitName, project, Collections.EMPTY_MAP);
+	}
+
+	private CompilationUnit parseCompilationUnit(char[] source,
+			String unitName, IJavaProject project, Map<String, String> extraCompileOptions) {
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(source);
 		parser.setUnitName(unitName);
@@ -399,6 +407,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		parser.setResolveBindings(true);
 		Map<String, String> options = EvaluationSourceGenerator
 				.getCompilerOptions(project);
+		options = new LinkedHashMap<>(options);
+		for (Entry<String, String> extraCompileOption : extraCompileOptions.entrySet()) {
+			options.put(extraCompileOption.getKey(), extraCompileOption.getValue());
+		}
 		parser.setCompilerOptions(options);
 		return (CompilationUnit) parser.createAST(null);
 	}
@@ -524,6 +536,12 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	@Override
 	public ICompiledExpression getCompiledExpression(String snippet,
 			IJavaReferenceType type) {
+		return getCompiledExpression(snippet, type, Collections.EMPTY_MAP);
+	}
+
+	@Override
+	public ICompiledExpression getCompiledExpression(String snippet,
+			IJavaReferenceType type, Map<String, String> compileOptions) {
 		if (type instanceof IJavaArrayType) {
 			return getCompiledExpression(snippet, (IJavaArrayType) type);
 		}
@@ -538,7 +556,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		try {
 			unit = parseCompilationUnit(
 					mapper.getSource(type, -1, javaProject, false).toCharArray(),
-					mapper.getCompilationUnitName(), javaProject);
+					mapper.getCompilationUnitName(), javaProject, compileOptions);
 		} catch (CoreException e) {
 			InstructionSequence expression = new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());

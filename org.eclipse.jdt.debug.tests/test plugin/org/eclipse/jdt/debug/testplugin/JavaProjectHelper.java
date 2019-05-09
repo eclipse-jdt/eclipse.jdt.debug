@@ -81,6 +81,10 @@ public class JavaProjectHelper {
 	 * path to the 1.8 test source
 	 */
 	public static final IPath TEST_1_8_SRC_DIR= new Path("java8");
+	/**
+	 * path to the 9 test source
+	 */
+	public static final IPath TEST_9_SRC_DIR = new Path("java9");
 
 	/**
 	 * path to the compiler error java file

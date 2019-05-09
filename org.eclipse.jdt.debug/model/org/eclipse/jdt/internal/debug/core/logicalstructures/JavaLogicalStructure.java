@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +32,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -41,6 +47,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
@@ -130,8 +137,10 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		 * @throws DebugException
 		 */
 		public IJavaValue evaluate(String snippet) throws DebugException {
+			Map<String, String> compileOptions =
+					Collections.singletonMap(CompilerOptions.OPTION_JdtDebugCompileMode, JavaCore.ENABLED);
 			ICompiledExpression compiledExpression = fEvaluationEngine
-					.getCompiledExpression(snippet, fEvaluationType);
+					.getCompiledExpression(snippet, fEvaluationType, compileOptions);
 			if (compiledExpression.hasErrors()) {
 				String[] errorMessages = compiledExpression.getErrorMessages();
 				log(errorMessages);
@@ -182,13 +191,10 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		 */
 		private void log(String[] messages) {
 			if (isContributed()) {
-				StringBuilder log = new StringBuilder();
-				for (String message : messages) {
-					log.append(message).append('\n');
-				}
-				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin
-						.getUniqueIdentifier(), IStatus.ERROR, log.toString(),
-						null));
+				String log = Arrays.asList(messages).stream().collect(Collectors.joining("\n")); //$NON-NLS-1$
+				String error = String.format("Error while evaluating '%s' logical structure for type %s with the value '%s'", //$NON-NLS-1$
+						getDescription(), getQualifiedTypeName(), getValue());
+				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, error, new IllegalStateException(log)));
 			}
 		}
 	}

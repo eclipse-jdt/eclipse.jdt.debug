@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -139,6 +139,7 @@ import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
+import org.eclipse.jdt.debug.tests.variables.TestLogicalStructuresJava9;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -205,6 +206,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StaticVariableTests.class));
 		addTest(new TestSuite(ArrayTests.class));
 		addTest(new TestSuite(TestLogicalStructures.class));
+		if (JavaProjectHelper.isJava9Compatible()) {
+			addTest(new TestSuite(TestLogicalStructuresJava9.class));
+		}
 		addTest(new TestSuite(TestInstanceRetrieval.class));
 		addTest(new TestSuite(TestAnonymousInspect.class));
 		if(JavaProjectHelper.isJava7Compatible()) {

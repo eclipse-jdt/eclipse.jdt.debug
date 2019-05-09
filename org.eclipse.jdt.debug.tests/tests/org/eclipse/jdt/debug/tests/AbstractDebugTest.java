@@ -188,6 +188,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONE_FIVE_PROJECT_NAME = "OneFive";
 	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
 	public static final String ONE_EIGHT_PROJECT_NAME = "OneEight";
+	public static final String NINE_PROJECT_NAME = "Nine";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -238,6 +239,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded15 = false;
 	private static boolean loaded17 = false;
 	private static boolean loaded18 = false;
+	private static boolean loaded9 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -267,6 +269,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		loaded17 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_EIGHT_PROJECT_NAME);
 		loaded18 = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(NINE_PROJECT_NAME);
+		loaded9 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_JRE_PROJECT_NAME);
 		loadedJRE = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_EE_PROJECT_NAME);
@@ -493,6 +497,34 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 			handleProjectCreationException(e, ONE_EIGHT_PROJECT_NAME, jp);
         }
+	}
+
+	/**
+	 * Creates the Java 9 compliant project
+	 */
+	synchronized void assert9Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded9) {
+				jp = createProject(NINE_PROJECT_NAME, JavaProjectHelper.TEST_9_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_9_EE_NAME, false);
+				cfgs.add(createLaunchConfiguration(jp, "LogicalStructures"));
+				loaded9 = true;
+				waitForBuild();
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, NINE_PROJECT_NAME, jp);
+		}
 	}
 
 	/**
@@ -763,6 +795,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get18Project() {
 		assert18Project();
 		return getJavaProject(ONE_EIGHT_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'Nine' project, used for Java 9 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get9Project() {
+		assert9Project();
+		return getJavaProject(NINE_PROJECT_NAME);
 	}
 
 	/**
