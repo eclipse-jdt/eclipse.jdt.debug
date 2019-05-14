@@ -62,6 +62,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	public static final String DESCRIPTION = PropertyPageMessages.JavaVariableDetailsPane_description;
 
 	private FocusListener focusListener;
+	private Composite fDetailPaneContainer;
 	private Combo fExpressionHistory;
 	private IDialogSettings fExpressionHistoryDialogSettings;
 	private static final int MAX_HISTORY_SIZE = 20;
@@ -88,6 +89,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 		Composite container = parent;
 		if (fExpressionHistoryDialogSettings != null) {
 			container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+			fDetailPaneContainer = container;
 
 			fExpressionHistory = SWTFactory.createCombo(container, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			fExpressionHistory.addSelectionListener(new SelectionAdapter() {
@@ -299,6 +301,9 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	public void dispose() {
 		if (fExpressionHistory != null) {
 			fExpressionHistory.dispose();
+		}
+		if (fDetailPaneContainer != null) {
+			fDetailPaneContainer.dispose();
 		}
 		if (focusListener != null && getSourceViewer() != null && getSourceViewer().getTextWidget() != null) {
 			getSourceViewer().getTextWidget().removeFocusListener(focusListener);
