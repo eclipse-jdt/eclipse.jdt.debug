@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -43,6 +44,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -195,6 +199,12 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fSourceViewer.setDocument(getRestoredDocument());
 		fSourceViewer.addTextInputListener(this);
+		// Light bulb for content assist hint
+		ControlDecoration decoration = new ControlDecoration(fSourceViewer.getControl(), SWT.TOP | SWT.LEFT);
+		decoration.setShowOnlyOnFocus(true);
+		FieldDecoration dec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
+		decoration.setImage(dec.getImage());
+		decoration.setDescriptionText(JDIContentAssistPreference.getContentAssistDescription());
 		fRestoredContents= null;
 		createActions();
 		createUndoRedoActions();
