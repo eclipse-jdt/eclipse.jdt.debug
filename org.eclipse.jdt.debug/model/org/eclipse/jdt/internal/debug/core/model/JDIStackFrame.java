@@ -407,6 +407,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private void setLambdaVariableNames(IJavaValue value, ObjectReference underlyingThisObject) {
 		try {
 			IType type = JavaDebugUtils.resolveType(value.getJavaType());
+			if (type == null) {
+				return;
+			}
 			ASTParser parser = ASTParser.newParser(AST.JLS11);
 			parser.setResolveBindings(true);
 			parser.setSource(type.getTypeRoot());
