@@ -610,6 +610,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					} else if (runMethodStart <= errorOffset
 							&& errorOffset <= runMethodEnd) {
 						runMethodError = true;
+						DebugPlugin.log(new Status(IStatus.WARNING, DebugPlugin.getUniqueIdentifier(), "Compile error during code evaluation: " //$NON-NLS-1$
+								+ problem.getMessage()));
 					}
 				}
 			}
