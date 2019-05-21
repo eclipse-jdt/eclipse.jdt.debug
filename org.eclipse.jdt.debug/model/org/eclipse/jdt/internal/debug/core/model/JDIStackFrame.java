@@ -433,6 +433,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		@Override
 		public boolean visit(LambdaExpression lambdaExpression) {
 			IMethodBinding binding = lambdaExpression.resolveMethodBinding();
+			if (binding == null) {
+				return true;
+			}
 			IVariableBinding[] synVars = binding.getSyntheticOuterLocals();
 			if (synVars == null || synVars.length == 0) {// name cannot be updated if Synthetic Outer Locals are not available
 				return true;
