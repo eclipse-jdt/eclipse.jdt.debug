@@ -22,11 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.MacInstalledJREs;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -851,7 +855,19 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
 		dialog.setMessage(JREMessages.InstalledJREsBlock_9);
 		dialog.setText(JREMessages.InstalledJREsBlock_10);
-		String path = dialog.open();
+
+		String path = null;
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			String MAC_JAVA_SEARCH_PATH = "/Library/Java/JavaVirtualMachines"; //$NON-NLS-1$
+			dialog.setFilterPath(MAC_JAVA_SEARCH_PATH);
+			path = dialog.open();
+			if (MAC_JAVA_SEARCH_PATH.equals(path)) {
+				doMacSearch();
+				return;
+			}
+		} else {
+			path = dialog.open();
+		}
 		if (path == null) {
 			return;
 		}
@@ -926,6 +942,50 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				}
 				vmAdded(vm);
 			}
+		}
+	}
+
+	/**
+	 * Calls out to {@link MacVMSearch} to find all installed JREs in the standard
+	 * Mac OS location
+	 */
+	private void doMacSearch() {
+		final List<VMStandin> added = new ArrayList<>();
+		IRunnableWithProgress r = new IRunnableWithProgress() {
+			@Override
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				Set<String> exists = new HashSet<>();
+				for (IVMInstall vm : fVMs) {
+					exists.add(vm.getId());
+				}
+				SubMonitor localmonitor = SubMonitor.convert(monitor, JREMessages.MacVMSearch_0, 5);
+				VMStandin[] standins = null;
+				try {
+					standins = MacInstalledJREs.getInstalledJREs(localmonitor);
+					for (int i = 0; i < standins.length; i++) {
+						if (!exists.contains(standins[i].getId())) {
+							added.add(standins[i]);
+						}
+					}
+				}
+				catch(CoreException ce) {
+					JDIDebugUIPlugin.log(ce);
+				}
+				monitor.done();
+			}
+		};
+
+		try {
+            ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell());
+            progress.run(true, true, r);
+		} catch (InvocationTargetException e) {
+			JDIDebugUIPlugin.log(e);
+		} catch (InterruptedException e) {
+			// canceled
+			return;
+		}
+		for(VMStandin vm: added) {
+			vmAdded(vm);
 		}
 	}
 
