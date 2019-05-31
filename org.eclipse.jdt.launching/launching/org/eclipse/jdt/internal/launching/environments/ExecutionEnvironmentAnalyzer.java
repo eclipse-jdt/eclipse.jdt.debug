@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * SPDX-License-Identifier: EPL-2.0
  *
@@ -41,6 +45,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 
+	private static final String JavaSE_13 = "JavaSE-13"; //$NON-NLS-1$
 	private static final String JavaSE_12 = "JavaSE-12"; //$NON-NLS-1$
 	private static final String JavaSE_11 = "JavaSE-11"; //$NON-NLS-1$
 	private static final String JavaSE_10_Plus = "JavaSE-10+"; //$NON-NLS-1$
@@ -114,7 +119,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("12")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("13")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_13);
+				} else if (javaVersion.startsWith("12")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_12);
 				} else if (javaVersion.startsWith("11")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_11);
