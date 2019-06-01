@@ -226,24 +226,38 @@ public abstract class Instruction {
 	 */
 	protected IJavaType getPrimitiveType(String name) throws CoreException {
 		IJavaReferenceType type = null;
-		if ("boolean".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Boolean"); //$NON-NLS-1$
-		} else if ("byte".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Byte"); //$NON-NLS-1$
-		} else if ("char".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Character"); //$NON-NLS-1$
-		} else if ("double".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Double"); //$NON-NLS-1$
-		} else if ("float".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Float"); //$NON-NLS-1$
-		} else if ("int".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Integer"); //$NON-NLS-1$
-		} else if ("long".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Long"); //$NON-NLS-1$
-		} else if ("short".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Short"); //$NON-NLS-1$
-		} else if ("void".equals(name)) { //$NON-NLS-1$
-			type = (IJavaReferenceType) getType("java.lang.Void"); //$NON-NLS-1$
+		if (name != null) {
+			switch (name) {
+				case "boolean": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Boolean"); //$NON-NLS-1$
+					break;
+				case "byte": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Byte"); //$NON-NLS-1$
+					break;
+				case "char": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Character"); //$NON-NLS-1$
+					break;
+				case "double": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Double"); //$NON-NLS-1$
+					break;
+				case "float": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Float"); //$NON-NLS-1$
+					break;
+				case "int": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Integer"); //$NON-NLS-1$
+					break;
+				case "long": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Long"); //$NON-NLS-1$
+					break;
+				case "short": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Short"); //$NON-NLS-1$
+					break;
+				case "void": //$NON-NLS-1$
+					type = (IJavaReferenceType) getType("java.lang.Void"); //$NON-NLS-1$
+					break;
+				default:
+					break;
+			}
 		}
 		if (type != null) {
 			IJavaFieldVariable field = type.getField("TYPE"); //$NON-NLS-1$

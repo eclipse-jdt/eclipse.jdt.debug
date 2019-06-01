@@ -62,12 +62,18 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 				systemLib = locations[0];
 			}
 			if (systemLib != null) {
-				if (variable.equals(JavaRuntime.JRELIB_VARIABLE)) {
-					newPath= systemLib.getSystemLibraryPath();
-				} else if (variable.equals(JavaRuntime.JRESRC_VARIABLE)) {
-					newPath= systemLib.getSystemLibrarySourcePath();
-				} else if (variable.equals(JavaRuntime.JRESRCROOT_VARIABLE)){
-					newPath= systemLib.getPackageRootPath();
+				switch (variable) {
+					case JavaRuntime.JRELIB_VARIABLE:
+						newPath = systemLib.getSystemLibraryPath();
+						break;
+					case JavaRuntime.JRESRC_VARIABLE:
+						newPath = systemLib.getSystemLibrarySourcePath();
+						break;
+					case JavaRuntime.JRESRCROOT_VARIABLE:
+						newPath = systemLib.getPackageRootPath();
+						break;
+					default:
+						break;
 				}
 				if (newPath == null) {
 					return;

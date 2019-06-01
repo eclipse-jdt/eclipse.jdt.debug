@@ -70,31 +70,36 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					all.add(entries[i]);
 					break;
 				case IRuntimeClasspathEntry.OTHER:
-					IRuntimeClasspathEntry2 entry = (IRuntimeClasspathEntry2)entries[i];
+					IRuntimeClasspathEntry2 entry = (IRuntimeClasspathEntry2) entries[i];
 					String typeId = entry.getTypeId();
 					IRuntimeClasspathEntry[] res = null;
-					if (typeId.equals(DefaultProjectClasspathEntry.TYPE_ID)) {
-						// add the resolved children of the project
-						IRuntimeClasspathEntry[] children = entry.getRuntimeClasspathEntries(configuration);
-						res = JavaRuntime.resolveSourceLookupPath(children, configuration);
-					} else if (typeId.equals(VariableClasspathEntry.TYPE_ID)) {
-						// add the archive itself - we currently do not allow a source attachment
-						res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
-					} else {
-                        res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
-                    }
+					switch (typeId) {
+						case DefaultProjectClasspathEntry.TYPE_ID:
+							// add the resolved children of the project
+							IRuntimeClasspathEntry[] children = entry.getRuntimeClasspathEntries(configuration);
+							res = JavaRuntime.resolveSourceLookupPath(children, configuration);
+							break;
+						case VariableClasspathEntry.TYPE_ID:
+							// add the archive itself - we currently do not allow a source attachment
+							res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
+							break;
+						default:
+							res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
+							break;
+					}
 					if (res != null) {
 						for (int j = 0; j < res.length; j++) {
 							all.add(res[j]);
-                            addManifestReferences(res[j], all);
+							addManifestReferences(res[j], all);
 						}
 					}
 					break;
+
 				default:
-					IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
+					IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
 					for (int j = 0; j < resolved.length; j++) {
 						all.add(resolved[j]);
-                        addManifestReferences(resolved[j], all);
+						addManifestReferences(resolved[j], all);
 					}
 					break;
 			}

@@ -969,42 +969,57 @@ public abstract class AbstractJDITest extends TestCase {
 				} else {
 					String next = (i < args.length - 1) ? args[++i] : null;
 					// If specified, passed values override default values
-					if (arg.equals("-launcher")) {
-						vmLauncherName = next;
-					} else if (arg.equals("-address")) {
-						targetAddress = next;
-					} else if (arg.equals("-port")) {
-						fBackEndPort = Integer.parseInt(next);
-					} else if (arg.equals("-cp")) {
-						classPath = next;
-					} else if (arg.equals("-bp")) {
-						bootPath = next;
-					} else if (arg.equals("-vmtype")) {
-						vmType = next;
-					} else if (arg.equals("-stdout")) {
-						fStdoutFile = next;
-					} else if (arg.equals("-stderr")) {
-						fStderrFile = next;
-					} else if (arg.equals("-proxyout")) {
-						fProxyoutFile = next;
-					} else if (arg.equals("-proxyerr")) {
-						fProxyerrFile = next;
-					} else if (arg.equals("-vmcmd")) {
-						fVmCmd = next;
-					} else if (arg.equals("-vmargs")) {
-						fVmArgs = next;
-					} else if (arg.equals("-proxycmd")) {
-						fProxyCmd = next;
-					} else if (arg.equals("-trace")) {
-						if (next.equals("all")) {
-							fVMTraceFlags = com.sun.jdi.VirtualMachine.TRACE_ALL;
-						} else {
-							fVMTraceFlags = Integer.decode(next).intValue();
-						}
-					} else {
-						System.out.println("Invalid option: " + arg);
-						printUsage();
-						return false;
+					switch (arg) {
+						case "-launcher":
+							vmLauncherName = next;
+							break;
+						case "-address":
+							targetAddress = next;
+							break;
+						case "-port":
+							fBackEndPort = Integer.parseInt(next);
+							break;
+						case "-cp":
+							classPath = next;
+							break;
+						case "-bp":
+							bootPath = next;
+							break;
+						case "-vmtype":
+							vmType = next;
+							break;
+						case "-stdout":
+							fStdoutFile = next;
+							break;
+						case "-stderr":
+							fStderrFile = next;
+							break;
+						case "-proxyout":
+							fProxyoutFile = next;
+							break;
+						case "-proxyerr":
+							fProxyerrFile = next;
+							break;
+						case "-vmcmd":
+							fVmCmd = next;
+							break;
+						case "-vmargs":
+							fVmArgs = next;
+							break;
+						case "-proxycmd":
+							fProxyCmd = next;
+							break;
+						case "-trace":
+							if (next.equals("all")) {
+								fVMTraceFlags = com.sun.jdi.VirtualMachine.TRACE_ALL;
+							} else {
+								fVMTraceFlags = Integer.decode(next).intValue();
+							}
+							break;
+						default:
+							System.out.println("Invalid option: " + arg);
+							printUsage();
+							return false;
 					}
 				}
 			}
