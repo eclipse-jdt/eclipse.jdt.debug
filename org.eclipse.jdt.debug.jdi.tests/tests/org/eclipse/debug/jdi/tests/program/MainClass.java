@@ -388,7 +388,7 @@ public class MainClass extends Date implements Runnable, Printable {
 		fEventType = "";
 
 		/* Trigger event according to the field fEventType */
-		if (eventType.equals("")) {
+		if (eventType.isEmpty()) {
 			return;
 		} else if(eventType.equals("refclassload")) {
 			new RefClass();
