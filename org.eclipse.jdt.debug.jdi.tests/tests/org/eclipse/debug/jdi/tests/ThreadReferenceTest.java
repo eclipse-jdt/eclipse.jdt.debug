@@ -180,7 +180,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 
 		// Create a java.lang.Throwable instance in
 		List<ReferenceType> classes = fVM.classesByName("java.lang.Throwable");
-		assertTrue("1", classes.size() != 0);
+		assertTrue("1", !classes.isEmpty());
 		ClassType threadDeathClass = (ClassType) classes.get(0);
 		Method constructor =
 			threadDeathClass.concreteMethodByName("<init>", "()V");

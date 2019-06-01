@@ -496,7 +496,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			}
 		} else if (matches.size() == 1) {
 			openJavaElements(matches.toArray(), line);
-		} else if (matches.size() == 0) {
+		} else if (matches.isEmpty()) {
 			openInputEditDialog(inputText);
 		}
 	}

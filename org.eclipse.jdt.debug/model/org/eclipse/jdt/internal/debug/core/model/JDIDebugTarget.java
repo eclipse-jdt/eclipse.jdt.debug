@@ -2041,7 +2041,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 						new VMDisconnectedException());
 			}
 			List<ReferenceType> classes = vm.classesByName(name);
-			if (classes.size() == 0) {
+			if (classes.isEmpty()) {
 				switch (name.charAt(0)) {
 				case 'b':
 					if (name.equals("boolean")) { //$NON-NLS-1$

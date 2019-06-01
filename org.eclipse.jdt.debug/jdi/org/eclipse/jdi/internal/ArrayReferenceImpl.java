@@ -309,7 +309,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	@Override
 	public void setValues(int index, List<? extends Value> values, int srcIndex, int length)
 			throws InvalidTypeException, ClassNotLoadedException {
-		if (values == null || values.size() == 0) {
+		if (values == null || values.isEmpty()) {
 			// trying to set nothing should do no work
 			return;
 		}

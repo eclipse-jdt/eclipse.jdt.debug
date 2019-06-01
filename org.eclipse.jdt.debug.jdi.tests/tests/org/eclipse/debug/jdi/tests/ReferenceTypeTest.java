@@ -283,7 +283,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		for (int i = 0; i < fTypes.size(); ++i) {
 			ReferenceType type = fTypes.get(i);
 			List<?> methods = type.methods();
-			assertTrue("" + i, (methods.size() != 0) == fHasMethods[i]);
+			assertTrue("" + i, (!methods.isEmpty()) == fHasMethods[i]);
 		}
 	}
 	/**

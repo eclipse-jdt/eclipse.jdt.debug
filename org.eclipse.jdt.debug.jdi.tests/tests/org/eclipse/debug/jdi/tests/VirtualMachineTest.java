@@ -307,7 +307,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 
 		// The test program has started, the number of classes is != 0
 		List<?> classes = fVM.allClasses();
-		assertTrue("1", classes.size() != 0);
+		assertTrue("1", !classes.isEmpty());
 
 		// Collect names of received classes
 		String[] names = new String[classes.size()];
@@ -344,7 +344,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 
 		// The test program has started, the number of threads is != 0
 		List<?> threads = fVM.allThreads();
-		assertTrue("1", threads.size() != 0);
+		assertTrue("1", !threads.isEmpty());
 
 		// Collect names of received threads
 		String[] names = new String[threads.size()];

@@ -203,7 +203,7 @@ public class BinaryBasedSourceGenerator {
 				source.append(getUniqueMethodName(EVAL_METHOD_NAME,
 						referenceType));
 				source.append("() {\nnew "); //$NON-NLS-1$
-				if (interfaceList.size() != 0) {
+				if (!interfaceList.isEmpty()) {
 					source.append(getDotName(interfaceList
 							.get(0).name()));
 				} else {
@@ -212,7 +212,7 @@ public class BinaryBasedSourceGenerator {
 				source.append("()"); //$NON-NLS-1$
 			} else {
 				source.append("public class ").append(ANONYMOUS_CLASS_NAME).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-				if (interfaceList.size() != 0) {
+				if (!interfaceList.isEmpty()) {
 					source.append(" implements ").append(getDotName(interfaceList.get(0).name())); //$NON-NLS-1$
 				} else {
 					source.append(" extends ").append(getDotName(superClassName)); //$NON-NLS-1$
@@ -294,7 +294,7 @@ public class BinaryBasedSourceGenerator {
 					} catch (ClassNotPreparedException e) {
 						return new StringBuilder();
 					}
-					if (interfaces.size() != 0) {
+					if (!interfaces.isEmpty()) {
 						source.append("implements "); //$NON-NLS-1$
 						Iterator<InterfaceType> iterator = interfaces.iterator();
 						InterfaceType interface_ = iterator
@@ -486,7 +486,7 @@ public class BinaryBasedSourceGenerator {
 
 			List<String> arguments = method.argumentTypeNames();
 			int i = 0;
-			if (arguments.size() != 0) {
+			if (!arguments.isEmpty()) {
 				Iterator<String> iterator = arguments.iterator();
 				source.append(getDotName(iterator.next()))
 						.append(" arg").append(i++); //$NON-NLS-1$

@@ -1344,7 +1344,7 @@ public abstract class AbstractJDITest extends TestCase {
 
 			// Ensure that the test didn't leave a modification watchpoint that could change the expected state of the program
 			if (fVM != null) {
-				assertTrue(fVM.eventRequestManager().modificationWatchpointRequests().size() == 0);
+				assertTrue(fVM.eventRequestManager().modificationWatchpointRequests().isEmpty());
 				if (fInControl) {
 					shutDownTarget();
 				}

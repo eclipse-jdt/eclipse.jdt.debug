@@ -108,7 +108,7 @@ public class PacketSendManager extends PacketManager {
 			IOException {
 		LinkedList<JdwpPacket> packetsToSend = new LinkedList<>();
 		synchronized (fOutgoingPackets) {
-			while (fOutgoingPackets.size() == 0) {
+			while (fOutgoingPackets.isEmpty()) {
 				fOutgoingPackets.wait();
 			}
 			packetsToSend.addAll(fOutgoingPackets);
