@@ -91,7 +91,8 @@ public class LibraryLabelProvider extends LabelProvider {
 		} else if (element instanceof SubElement) {
 			SubElement subElement= (SubElement) element;
 			StringBuilder text= new StringBuilder();
-			if (subElement.getType() == SubElement.SOURCE_PATH) {
+			switch (subElement.getType()) {
+			case SubElement.SOURCE_PATH:
 				text.append(JREMessages.VMLibraryBlock_0);
 				IPath systemLibrarySourcePath= subElement.getParent().getSystemLibrarySourcePath();
 				if (systemLibrarySourcePath != null && !Path.EMPTY.equals(systemLibrarySourcePath)) {
@@ -99,7 +100,8 @@ public class LibraryLabelProvider extends LabelProvider {
 				} else {
 					text.append(JREMessages.VMLibraryBlock_1);
 				}
-			} else if(subElement.getType() == SubElement.JAVADOC_URL){
+				break;
+			case SubElement.JAVADOC_URL:
 				text.append(JREMessages.LibraryLabelProvider_0);
 				URL javadocLocation= subElement.getParent().getJavadocLocation();
 				if (javadocLocation != null) {
@@ -107,7 +109,8 @@ public class LibraryLabelProvider extends LabelProvider {
 				} else {
 					text.append(JREMessages.VMLibraryBlock_1);
 				}
-			} else if (subElement.getType() == SubElement.EXTERNAL_ANNOTATIONS_PATH) {
+				break;
+			case SubElement.EXTERNAL_ANNOTATIONS_PATH:
 				text.append(JREMessages.VMExternalAnnsBlock_1);
 				IPath externalAnnotationsPath = subElement.getParent().getExternalAnnotationsPath();
 				if (externalAnnotationsPath != null && !Path.EMPTY.equals(externalAnnotationsPath)) {
@@ -115,6 +118,9 @@ public class LibraryLabelProvider extends LabelProvider {
 				} else {
 					text.append(JREMessages.VMExternalAnnsBlock_2);
 				}
+				break;
+			default:
+				break;
 			}
 			return text.toString();
 		}

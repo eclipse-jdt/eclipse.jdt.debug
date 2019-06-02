@@ -60,7 +60,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
-import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
@@ -530,30 +529,42 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private void addStepReturnValue(List<IJavaVariable> variables) {
 		if (fIsTop) {
 			MethodResult methodResult = fThread.getMethodResult();
-			if (methodResult != null) {
-				if (methodResult.fResultType == ResultType.returned) {
-					if (fDepth + 1 != methodResult.fTargetFrameCount) {
-						// can happen e.g., because of checkPackageAccess/System.getSecurityManager()
-						return;
+			if (methodResult != null && methodResult.fResultType != null) {
+				switch (methodResult.fResultType) {
+					case returned:{
+						if (fDepth + 1 != methodResult.fTargetFrameCount) {
+							// can happen e.g., because of checkPackageAccess/System.getSecurityManager()
+							return;
+						}
+						String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturnValue, methodResult.fMethod.name());
+						variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+						break;
 					}
-					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturnValue, methodResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
-				} else if (methodResult.fResultType == ResultType.returning) {
-					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturningValue, methodResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
-				} else if (methodResult.fResultType == ResultType.threw) {
-					if (fDepth + 1 > methodResult.fTargetFrameCount) {
-						// don't know if this really can happen, but other jvm suprises were not expected either
-						return;
+					case returning:{
+						String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturningValue, methodResult.fMethod.name());
+						variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+						break;
 					}
-					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ExceptionThrown, methodResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
-				} else if (methodResult.fResultType == ResultType.throwing) {
-					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ThrowingException, methodResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
-				} else if (methodResult.fResultType == ResultType.step_timeout) {
-					String msg = JDIDebugModelMessages.JDIStackFrame_NotObservedBecauseOfTimeout;
-					variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), msg), false));
+					case threw:{
+						if (fDepth + 1 > methodResult.fTargetFrameCount) {
+							// don't know if this really can happen, but other jvm suprises were not expected either
+							return;
+						}
+						String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ExceptionThrown, methodResult.fMethod.name());
+						variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+						break;
+					}
+					case throwing:{
+						String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ThrowingException, methodResult.fMethod.name());
+						variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+						break;
+					}
+					case step_timeout:
+						String msg = JDIDebugModelMessages.JDIStackFrame_NotObservedBecauseOfTimeout;
+						variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), msg), false));
+						break;
+					default:
+						break;
 				}
 			} else if (JDIThread.showStepResultIsEnabled(getDebugTarget())) {
 				variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), ""), false)); //$NON-NLS-1$

@@ -88,16 +88,20 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "add.jar", "ext1.jar", "ext2.jar", "opt-ext.jar"};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
-			if (i == 4) {
+			switch (i) {
+			case 4:
 				// ext1 and ext2 can be in either order due to file system ordering
 				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) ||
-						expected[i].equals(libs[i+1].getSystemLibraryPath().lastSegment()));
-			} else if (i == 5) {
+					expected[i].equals(libs[i+1].getSystemLibraryPath().lastSegment()));
+				break;
+			case 5:
 				// ext1 and ext2 can be in either order due to file system ordering
 				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) ||
-						expected[i].equals(libs[i-1].getSystemLibraryPath().lastSegment()));
-			} else {
+					expected[i].equals(libs[i-1].getSystemLibraryPath().lastSegment()));
+				break;
+			default:
 				assertEquals("Wrong library", expected[i], libs[i].getSystemLibraryPath().lastSegment());
+				break;
 			}
 			if ("classes.txt".equals(expected[i])) {
 				assertEquals("source.txt", libs[i].getSystemLibrarySourcePath().lastSegment());
@@ -116,18 +120,23 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		String[] expected = new String[]{"end.txt", "source.txt", "source.txt", "sourceaddsource.jar", "extra1-src.txt", "extra2-src.txt", ""};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
-			if (i == 4) {
+			switch (i) {
+			case 4:
 				// ext1 and ext2 can be in either order due to file system ordering
 				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) ||
-						expected[i].equals(libs[i+1].getSystemLibrarySourcePath().lastSegment()));
-			} else if (i == 5) {
+					expected[i].equals(libs[i+1].getSystemLibrarySourcePath().lastSegment()));
+				break;
+			case 5:
 				// ext1 and ext2 can be in either order due to file system ordering
 				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) ||
-						expected[i].equals(libs[i-1].getSystemLibrarySourcePath().lastSegment()));
-			} else if (i == 6){
+					expected[i].equals(libs[i-1].getSystemLibrarySourcePath().lastSegment()));
+				break;
+			case 6:
 				assertEquals("Wrong attachment", Path.EMPTY, libs[i].getSystemLibrarySourcePath());
-			} else {
+				break;
+			default:
 				assertEquals("Wrong attachment", expected[i], libs[i].getSystemLibrarySourcePath().lastSegment());
+				break;
 			}
 		}
 	}

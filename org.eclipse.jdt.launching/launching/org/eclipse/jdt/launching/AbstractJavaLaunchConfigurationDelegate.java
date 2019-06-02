@@ -473,22 +473,27 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		for (IRuntimeClasspathEntry entry : entries) {
 			String location = entry.getLocation();
 			if (location != null) {
-				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				switch (entry.getClasspathProperty()) {
+				case IRuntimeClasspathEntry.USER_CLASSES:
 					if (!classpathSet.contains(location)) {
 						classpathEntries.add(location);
 						classpathSet.add(location);
 					}
-				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.CLASS_PATH) {
+					break;
+				case IRuntimeClasspathEntry.CLASS_PATH:
 					if (!classpathSet.contains(location)) {
 						classpathEntries.add(location);
 						classpathSet.add(location);
 					}
-
-				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.MODULE_PATH) {
+					break;
+				case IRuntimeClasspathEntry.MODULE_PATH:
 					if (!modulepathSet.contains(location)) {
 						modulepathEntries.add(location);
 						modulepathSet.add(location);
 					}
+					break;
+				default:
+					break;
 				}
 
 			}

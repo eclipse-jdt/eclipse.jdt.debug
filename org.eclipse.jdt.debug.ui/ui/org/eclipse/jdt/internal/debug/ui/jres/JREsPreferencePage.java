@@ -355,15 +355,20 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 					JREMessages.JREsPreferencePage_8 };
 			MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION, buttonLabels, 0);
 			int res = dialog.open();
-			if (res == 0) { // apply
+			switch (res) {
+			case 0:
+				// apply
 				return performOk() && super.okToLeave();
-			} else if (res == 1) { // discard
+			case 1:
+				// discard
 				fJREBlock.fillWithWorkspaceJREs();
 				fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 				initDefaultVM();
 				fJREBlock.initializeTimeStamp();
-			} else {
+				break;
+			default:
 				// apply later
+				break;
 			}
 		}
 		return super.okToLeave();
