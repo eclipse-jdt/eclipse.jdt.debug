@@ -4521,7 +4521,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return signature;
 	}
 
-	private int getPrimitiveTypeId(String typeName) {
+	public static int getPrimitiveTypeId(String typeName) {
 		switch (typeName.charAt(0)) {
 		case 'b': // byte or boolean
 			switch (typeName.charAt(1)) {
