@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.debug" version="2">
+    <resource path="eval/org/eclipse/jdt/internal/debug/eval/ast/engine/ASTInstructionCompiler.java" type="org.eclipse.jdt.internal.debug.eval.ast.engine.ASTInstructionCompiler">
+        <filter comment="Required to supoort Java 13." id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="visit(SwitchExpression)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="jdi/org/eclipse/jdi/Bootstrap.java" type="org.eclipse.jdi.Bootstrap">
         <filter comment="Additional filters for making the JDI interfaces officially internal" id="643842064">
             <message_arguments>
