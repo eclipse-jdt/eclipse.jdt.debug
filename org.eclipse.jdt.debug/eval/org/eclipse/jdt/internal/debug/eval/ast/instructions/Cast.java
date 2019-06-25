@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTInstructionCompiler;
 import org.eclipse.osgi.util.NLS;
 
 public class Cast extends CompoundInstruction {
@@ -63,7 +64,11 @@ public class Cast extends CompoundInstruction {
 
 		if (value instanceof IJavaPrimitiveValue) {
 			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
-			switch (fTypeTypeId) {
+			int newTypeId = fTypeTypeId;
+			if (fTypeTypeId == T_Object) {
+				newTypeId = ASTInstructionCompiler.getPrimitiveTypeId(value.getJavaType().getName());
+			}
+			switch (newTypeId) {
 			case T_double:
 				push(newValue(primitiveValue.getDoubleValue()));
 				break;
