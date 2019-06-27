@@ -116,25 +116,45 @@ public class EECompilationParticipant extends CompilationParticipant {
 	}
 
 	/**
+	 * Validates if --release flag is enabled for the project.
+	 *
+	 * @param eeId
+	 *            execution environment ID
+	 * @param compId
+	 *            project compliance
+	 * @param project
+	 *            associated project
+	 * @return <code>true</code> if --release flag if enabled else <code>false</code>
+	 */
+
+	private boolean isReleaseFlagEnabled(String eeId, String compId, final IJavaProject project) {
+		boolean releaseFlagEnabled = false;
+		if (JavaCore.compareJavaVersions(JavaCore.VERSION_9, eeId) <= 0) {
+			if (JavaCore.compareJavaVersions(JavaCore.VERSION_1_6, compId) <= 0) {
+				String releaseVal = project.getOption(JavaCore.COMPILER_RELEASE, true);
+				if (JavaCore.ENABLED.equals(releaseVal)) {
+					releaseFlagEnabled = true;
+				}
+			}
+		}
+		return releaseFlagEnabled;
+	}
+
+	/**
 	 * Validates the compliance, creating a problem marker for the project as required.
 	 *
-	 * @param id execution environment ID
-	 * @param project associated project
-	 * @param vm VM binding resolved for the project
+	 * @param eeId
+	 *            execution environment ID
+	 * @param project
+	 *            associated project
+	 * @param vm
+	 *            VM binding resolved for the project
 	 */
 	private void validateCompliance(String eeId, final IJavaProject project, IVMInstall vm) {
 		String id = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
 		if (!eeId.equals(id)) {
-			boolean validateCompliance = true;
-			if (JavaCore.compareJavaVersions(JavaCore.VERSION_9, eeId) <= 0) {
-				if (JavaCore.compareJavaVersions(JavaCore.VERSION_1_6, id) <= 0) {
-					String releaseVal = project.getOption(JavaCore.COMPILER_RELEASE, true);
-					if (JavaCore.ENABLED.equals(releaseVal)) {
-						validateCompliance = false;
-					}
-				}
-			}
-			if (validateCompliance) {
+			// validate compliance only if release flag is not enabled
+			if (!isReleaseFlagEnabled(eeId, id, project)) {
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
 				IExecutionEnvironment finalEnvironment = null;
@@ -185,6 +205,13 @@ public class EECompilationParticipant extends CompilationParticipant {
 				}
 				String message = null;
 				if (exact == 0) {
+					if (vm instanceof IVMInstall2) {
+						String eeId = getCompilerCompliance((IVMInstall2) vm);
+						String compId = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+						if (eeId != null && isReleaseFlagEnabled(eeId, compId, project)) {
+							return;
+						}
+					}
 					message = NLS.bind(
 						LaunchingMessages.LaunchingPlugin_35,
 						new String[]{environment.getId()});
