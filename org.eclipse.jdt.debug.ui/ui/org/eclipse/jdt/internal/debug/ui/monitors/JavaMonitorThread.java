@@ -205,7 +205,7 @@ public class JavaMonitorThread extends PlatformObject {
 						int sameMonitor= 0;
 						for (int i= 0; i < ownedMonitors.length; i++) {
 							for (int j= 0; j < fOwnedMonitors.length; j++) {
-								if (ownedMonitors[i].equals(fOwnedMonitors[i].getMonitor())) {
+								if (ownedMonitors[i].equals(fOwnedMonitors[j].getMonitor())) {
 									sameMonitor++;
 									break;
 								}
