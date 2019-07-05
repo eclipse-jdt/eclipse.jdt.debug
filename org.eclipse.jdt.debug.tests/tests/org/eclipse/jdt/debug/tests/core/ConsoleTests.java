@@ -16,6 +16,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -23,7 +24,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.debug.tests.TestUtil;
@@ -139,7 +139,7 @@ public class ConsoleTests extends AbstractDebugTest {
 		try {
 			ILaunchConfiguration launchConfig = getLaunchConfiguration(typeName);
 			ILaunchConfigurationWorkingCopy launchCopy = launchConfig.getWorkingCopy();
-			launchCopy.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, true);
+			launchCopy.setAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, true);
 			target = launchAndTerminate(launchCopy, DEFAULT_TIMEOUT);
 			String content = getConsoleContent(target.getProcess());
 			// normalize new lines to unix style
@@ -168,7 +168,7 @@ public class ConsoleTests extends AbstractDebugTest {
 		try {
 			ILaunchConfiguration launchConfig = getLaunchConfiguration(typeName);
 			ILaunchConfigurationWorkingCopy launchCopy = launchConfig.getWorkingCopy();
-			launchCopy.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, true);
+			launchCopy.setAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, true);
 			launch = launchCopy.launch(ILaunchManager.RUN_MODE, null);
 			TestUtil.waitForJobs(getName(), 0, DEFAULT_TIMEOUT);
 			String content = getConsoleContent(launch.getProcesses()[0]);
