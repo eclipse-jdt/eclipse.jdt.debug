@@ -3492,9 +3492,18 @@ public final class JavaRuntime {
 				switch (optName) {
 					case IClasspathAttribute.ADD_EXPORTS:
 					case IClasspathAttribute.ADD_OPENS:
-					case IClasspathAttribute.ADD_READS:
-						buf.append(OPTION_START).append(optName).append(BLANK).append(classpathAttribute.getValue()).append(BLANK);
+					case IClasspathAttribute.ADD_READS: {
+						String readModules = classpathAttribute.getValue();
+						int equalsIdx = readModules.indexOf('=');
+						if (equalsIdx != -1) {
+							for (String readModule : readModules.split(":")) { //$NON-NLS-1$
+								buf.append(OPTION_START).append(optName).append(BLANK).append(readModule).append(BLANK);
+							}
+						} else {
+							buf.append(OPTION_START).append(optName).append(BLANK).append(readModules).append(BLANK);
+						}
 						break;
+					}
 					case IClasspathAttribute.PATCH_MODULE: {
 						String patchModules = classpathAttribute.getValue();
 						for (String patchModule : patchModules.split("::")) { //$NON-NLS-1$
