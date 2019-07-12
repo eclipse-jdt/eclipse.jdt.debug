@@ -3988,7 +3988,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					storeInstruction(); // jump
 					statementsDefault = new ArrayList<>();
 				} else {
-					if (node.getAST().apiLevel() >= AST.JLS12) {
+					if (node.getAST().apiLevel() == AST.JLS13) {
 						for (Object expression : switchCase.expressions()) {
 							if (expression instanceof StringLiteral) {
 								push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
