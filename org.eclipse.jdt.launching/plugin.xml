@@ -54,6 +54,7 @@
       <launchConfigurationType
             allowPrototypes="true"
             allowCommandLine="true"
+            allowOutputMerging="true"
             delegate="org.eclipse.jdt.launching.sourcelookup.advanced.AdvancedJavaLaunchDelegate"
             delegateDescription="%localJavaApplicationDelegate.description"
             delegateName="%eclipseJDTLauncher.name"

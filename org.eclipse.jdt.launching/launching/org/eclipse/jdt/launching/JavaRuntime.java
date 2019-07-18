@@ -3499,9 +3499,34 @@ public final class JavaRuntime {
 				switch (optName) {
 					case IClasspathAttribute.ADD_EXPORTS:
 					case IClasspathAttribute.ADD_OPENS:
-					case IClasspathAttribute.ADD_READS:
-						buf.append(OPTION_START).append(optName).append(BLANK).append(classpathAttribute.getValue()).append(BLANK);
+					case IClasspathAttribute.ADD_READS: {
+						String readModules = classpathAttribute.getValue();
+						int equalsIdx = readModules.indexOf('=');
+						if (equalsIdx != -1) {
+							for (String readModule : readModules.split(":")) { //$NON-NLS-1$
+								buf.append(OPTION_START).append(optName).append(BLANK).append(readModule).append(BLANK);
+							}
+						} else {
+							buf.append(OPTION_START).append(optName).append(BLANK).append(readModules).append(BLANK);
+						}
 						break;
+					}
+					case IClasspathAttribute.PATCH_MODULE: {
+						String patchModules = classpathAttribute.getValue();
+						for (String patchModule : patchModules.split("::")) { //$NON-NLS-1$
+							int equalsIdx = patchModule.indexOf('=');
+							if (equalsIdx != -1) {
+								if (equalsIdx < patchModule.length() - 1) { // otherwise malformed?
+									String locations = patchModule.substring(equalsIdx + 1);
+									String moduleString = patchModule.substring(0, equalsIdx + 1);
+									buf.append(OPTION_START).append(optName).append(BLANK).append(moduleString).append(toAbsolutePathsString(locations)).append(BLANK);
+								}
+							} else {
+								buf.append(patchModule); // old format not specifying a location
+							}
+						}
+						break;
+					}
 					case IClasspathAttribute.LIMIT_MODULES:
 						addLimitModules(buf, project, systemLibrary, classpathAttribute.getValue());
 						break;
@@ -3511,6 +3536,43 @@ public final class JavaRuntime {
 		return buf.toString().trim();
 	}
 
+	private static String toAbsolutePathsString(String fPaths) {
+		String[] paths = fPaths.split(File.pathSeparator);
+		String[] absPaths = new String[paths.length];
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for (int i = 0; i < paths.length; i++) {
+			IResource resource = root.findMember(new Path(paths[i]));
+			try {
+				absPaths[i] = toAbsolutePath(resource, root);
+			} catch (JavaModelException e) {
+				// JavaPlugin.log(e);
+			}
+			if (absPaths[i] == null) {
+				absPaths[i] = paths[i];
+			}
+		}
+		String allPaths = String.join(File.pathSeparator, absPaths);
+		return allPaths;
+	}
+
+	private static String toAbsolutePath(IResource resource, IWorkspaceRoot root) throws JavaModelException {
+		if (resource instanceof IProject) {
+				// other projects: use the default output locations:
+				return absPath(root, JavaCore.create((IProject) resource).getOutputLocation());
+		} else if (resource != null) {
+			IProject proj = resource.getProject();
+			if (proj != null) {
+				return absPath(root, JavaCore.create(proj).getOutputLocation());
+			}
+			// non-source location as-is:
+			return resource.getLocation().toString();
+		}
+		return null;
+	}
+
+	private static String absPath(IWorkspaceRoot root, IPath path) {
+		return root.findMember(path).getLocation().toString();
+	}
 	private static void addLimitModules(StringBuilder buf, IJavaProject prj, IClasspathEntry systemLibrary, String value) throws JavaModelException {
 		String[] modules = value.split(COMMA);
 		boolean isUnnamed = prj.getModuleDescription() == null;

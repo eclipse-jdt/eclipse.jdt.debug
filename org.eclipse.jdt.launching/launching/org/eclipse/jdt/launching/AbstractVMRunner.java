@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -93,6 +93,28 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		cmdLine = quoteWindowsArgs(cmdLine);
 		return DebugPlugin.exec(cmdLine, workingDirectory, envp);
+	}
+
+	/**
+	 * Executes the given command line using the given working directory and environment
+	 *
+	 * @param cmdLine
+	 *            the command line
+	 * @param workingDirectory
+	 *            the working directory
+	 * @param envp
+	 *            the environment
+	 * @param mergeOutput
+	 *            if <code>true</code> the error stream will be merged with standard output stream and both can be read through the same output stream
+	 * @return the {@link Process}
+	 * @throws CoreException
+	 *             is the execution fails
+	 * @since 3.15
+	 * @see DebugPlugin#exec(String[], File, String[])
+	 */
+	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp, boolean mergeOutput) throws CoreException {
+		cmdLine = quoteWindowsArgs(cmdLine);
+		return DebugPlugin.exec(cmdLine, workingDirectory, envp, mergeOutput);
 	}
 
 	/**

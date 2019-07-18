@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
@@ -131,6 +132,8 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 				runConfig.setOverrideDependencies(getModuleCLIOptions(configuration));
 			}
 		}
+		runConfig.setMergeOutput(configuration.getAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, false));
+
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return null;
