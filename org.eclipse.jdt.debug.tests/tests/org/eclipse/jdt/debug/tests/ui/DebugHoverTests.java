@@ -146,6 +146,41 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		}
 	}
 
+	public void testResolveInStaticInit() throws Exception {
+		final String typeName = "Bug549394";
+		final String expectedMethod1 = "<clinit>";
+		final int framesNumber1 = 1;
+		final int bpLine1 = 18;
+
+		IJavaBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
+		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp1.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod1, framesNumber1, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			Map<String, Region> offsets = new LinkedHashMap<>();
+			offsets.put("local", new Region(657, "local".length()));
+
+			Set<Entry<String, Region>> entrySet = offsets.entrySet();
+			int startLine = bpLine1;
+			int valueIndex = 0;
+			for (Entry<String, Region> varData : entrySet) {
+				// select variables and validate the hover, going backwards from the breakpoint
+				validateLine(startLine--, valueIndex++, part, hover, varData);
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 	private CompilationUnitEditor openEditorAndValidateStack(final String expectedMethod, final int expectedFramesNumber, IFile file, IJavaThread thread) throws Exception, DebugException {
 		// Let now all pending jobs proceed, ignore console jobs
 		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
