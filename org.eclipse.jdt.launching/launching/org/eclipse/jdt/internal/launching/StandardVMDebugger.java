@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -150,8 +149,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 	@Override
 	public String showCommandLine(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		CommandDetails cmd = getCommandLine(configuration, launch, monitor);
-		if (monitor.isCanceled()) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
+
+		CommandDetails cmd = getCommandLine(configuration, launch, subMonitor);
+		if (subMonitor.isCanceled()) {
 			return ""; //$NON-NLS-1$
 		}
 		String[] cmdLine = cmd.getCommandLine();
@@ -160,11 +161,13 @@ public class StandardVMDebugger extends StandardVMRunner {
 	}
 
 	private CommandDetails getCommandLine(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-
-		}
 		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
+
+		// check for cancellation
+		if (subMonitor.isCanceled()) {
+			return null;
+		}
+
 		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Finding_free_socket____2);
 
 		int port= SocketUtil.findFreePort();
@@ -175,7 +178,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		subMonitor.worked(1);
 
 		// check for cancellation
-		if (monitor.isCanceled()) {
+		if (subMonitor.isCanceled()) {
 			return null;
 		}
 
@@ -269,7 +272,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		arguments.toArray(cmdLine);
 
 		// check for cancellation
-		if (monitor.isCanceled()) {
+		if (subMonitor.isCanceled()) {
 			return null;
 		}
 		File workingDir = getWorkingDir(config);
@@ -303,17 +306,15 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 */
 	@Override
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		CommandDetails cmdDetails = getCommandLine(config, launch, monitor);
+		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
+		CommandDetails cmdDetails = getCommandLine(config, launch, subMonitor);
+
 		// check for cancellation
-		if (monitor.isCanceled() || cmdDetails == null) {
+		if (subMonitor.isCanceled() || cmdDetails == null) {
 			return;
 		}
 		String[] cmdLine = cmdDetails.getCommandLine();
 
-		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		subMonitor.beginTask(LaunchingMessages.StandardVMDebugger_Launching_VM____1, 4);
 		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Starting_virtual_machine____4);
 		ListeningConnector connector= getConnector();
@@ -327,7 +328,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		try {
 			try {
 				// check for cancellation
-				if (monitor.isCanceled()) {
+				if (subMonitor.isCanceled()) {
 					return;
 				}
 
@@ -339,7 +340,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				}
 
 				// check for cancellation
-				if (monitor.isCanceled()) {
+				if (subMonitor.isCanceled()) {
 					p.destroy();
 					return;
 				}
@@ -379,7 +380,7 @@ public class StandardVMDebugger extends StandardVMRunner {
                         connectThread.setDaemon(true);
 						connectThread.start();
 						while (connectThread.isAlive()) {
-							if (monitor.isCanceled()) {
+							if (subMonitor.isCanceled()) {
                                 try {
                                     connector.stopListening(map);
                                 } catch (IOException ioe) {
