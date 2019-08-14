@@ -472,6 +472,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug317045"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug549394"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug541110"));
 				cfgs.add(createLaunchConfiguration(jp, "ClosureVariableTest_Bug542989"));

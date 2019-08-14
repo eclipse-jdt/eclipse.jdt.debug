@@ -352,7 +352,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
 								ASTNode root = SharedASTProviderCore.getAST(typeRoot, SharedASTProviderCore.WAIT_NO, null);
             		    		if (root == null) {
-	            		    		ASTParser parser = ASTParser.newParser(AST.JLS4);
+									ASTParser parser = ASTParser.newParser(AST.JLS12);
 	            		    		parser.setSource(typeRoot);
 	            		    		parser.setFocalPosition(hoverRegion.getOffset());
 									root = parser.createAST(null);
