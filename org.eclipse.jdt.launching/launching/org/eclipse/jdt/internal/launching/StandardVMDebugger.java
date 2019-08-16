@@ -303,7 +303,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 */
 	@Override
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		CommandDetails cmdDetails = getCommandLine(config, launch, monitor);
 		// check for cancellation
 		if (monitor.isCanceled() || cmdDetails == null) {
