@@ -103,6 +103,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
@@ -1623,9 +1624,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				Template template = templateProposal.getTemplate();
 				if (template.getName().equals("systrace")) { //$NON-NLS-1$
 					CompilationUnitContextType cuContextType = (CompilationUnitContextType) JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(template.getContextTypeId());
-					CompilationUnitContext context = cuContextType.createContext(document, line.getOffset(), 0, cunit);
+					DocumentTemplateContext context = cuContextType.createContext(document, line.getOffset(), 0, cunit);
 					context.setVariable("selection", EMPTY_STRING); //$NON-NLS-1$
-					context.setForceEvaluation(true);
+					((CompilationUnitContext) context).setForceEvaluation(true);
 					templateBuffer.set(context.evaluate(template).getString());
 					return;
 				}
