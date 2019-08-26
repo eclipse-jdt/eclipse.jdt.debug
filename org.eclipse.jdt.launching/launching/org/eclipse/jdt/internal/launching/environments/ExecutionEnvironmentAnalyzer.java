@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -86,7 +86,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
-		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_11 });
+		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_12 });
 		mappings.put(JavaSE_11, new String[] { JavaSE_10 });
 		mappings.put(JavaSE_12, new String[] { JavaSE_11 });
 	}
