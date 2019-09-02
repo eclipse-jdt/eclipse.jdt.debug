@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdi.internal.InterfaceTypeImpl;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -278,7 +279,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 					}
 					// check if we are inside local type - Signature.createTypeSignature
 					// can't create proper type name out of source field in JavaDebugHover
-					// we get LDebugHoverTest$InnerClass2; instead of LDebugHoverTest$1InnerClass2; 
+					// we get LDebugHoverTest$InnerClass2; instead of LDebugHoverTest$1InnerClass2;
 					signature = signature.replaceFirst("\\$\\d+", "\\$"); //$NON-NLS-1$ //$NON-NLS-2$
 					if (declaringTypeSignature.equals(signature)) {
 						field = fieldTmp;
@@ -307,8 +308,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			for (Field outer : synteticFields) {
 				// retrieve the reference to the "outer" object
 				JDIFieldVariable syntVariable = new JDIFieldVariable(debugTarget, outer, getUnderlyingObject(), fLogicalParent);
-				JDIObjectValue outerObject = (JDIObjectValue) syntVariable.getValue();
-				if (outerObject != null) {
+				IValue value = syntVariable.getValue();
+				if (value instanceof JDIObjectValue) {
+					JDIObjectValue outerObject = (JDIObjectValue) value;
 					// ask "outer" object about field probably declared within
 					return outerObject.getField(name, outer.signature());
 				}
