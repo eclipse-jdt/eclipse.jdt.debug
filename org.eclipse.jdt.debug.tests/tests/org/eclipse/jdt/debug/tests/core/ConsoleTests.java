@@ -295,7 +295,14 @@ public class ConsoleTests extends AbstractDebugTest {
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT); // wait for output appending
 			assertEquals("Test program failed with error.", 0, process.getExitValue());
 			final IDocument consoleDocument = textConsole.getDocument();
-			assertEquals("Wrong number of characters in console.", (numAscii + numUmlaut + 2) * repetitions, consoleDocument.getLength());
+			final int expectedLength = (numAscii + numUmlaut + 2) * repetitions;
+			if (consoleDocument.getLength() > expectedLength) {
+				// debug code for test failures
+				int offset = expectedLength - 20;
+				String trail = consoleDocument.get(offset, consoleDocument.getLength() - offset);
+				System.out.println(trail);
+			}
+			assertEquals("Wrong number of characters in console.", expectedLength, consoleDocument.getLength());
 		} finally {
 			terminateAndRemove(target);
 			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, true);
