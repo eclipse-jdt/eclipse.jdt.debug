@@ -283,11 +283,12 @@ public class ConsoleTests extends AbstractDebugTest {
 		launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arg);
 		launchCopy.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, StandardCharsets.UTF_8.name());
 
-		IJavaDebugTarget target = null;
+		ILaunch launch = null;
 		try {
-			target = launchAndTerminate(launchCopy.doSave(), DEFAULT_TIMEOUT);
-			final IProcess process = target.getProcess();
+			launch = launchCopy.launch(ILaunchManager.RUN_MODE, null);
+			final IProcess process = launch.getProcesses()[0];
 			assertNotNull("Missing VM process", process);
+			TestUtil.waitForJobs(getName(), 25, DEFAULT_TIMEOUT); // wait for console creation
 			final IConsole console = DebugUITools.getConsole(process);
 			assertNotNull("Missing console", console);
 			assertTrue("Console is not a TextConsole", console instanceof TextConsole);
@@ -304,9 +305,16 @@ public class ConsoleTests extends AbstractDebugTest {
 			}
 			assertEquals("Wrong number of characters in console.", expectedLength, consoleDocument.getLength());
 		} finally {
-			terminateAndRemove(target);
 			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, true);
 			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_WRAP, false);
+			if (launch != null) {
+				if (launch.getProcesses() != null) {
+					for (IProcess process : launch.getProcesses()) {
+						process.terminate();
+					}
+				}
+				getLaunchManager().removeLaunch(launch);
+			}
 		}
 	}
 }
