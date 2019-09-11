@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,16 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
@@ -57,7 +61,9 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		return new OrderedTestSuite(ConsoleInputTests.class, new String[] {
 				"testMultiLineInput",
 				"testEOF",
-				"testDeleteAllEnteredText"
+				"testDeleteAllEnteredText",
+				"testBug545769_UTF8InEven",
+				"testBug545769_UTF8InOdd",
 		});
 	}
 
@@ -315,6 +321,68 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			deleteAll(fConsole);
 			String[] list = appendAndGet(fConsole, "c\n", 2);
 			verifyOutput(new String[]{"c", "c"}, list);
+
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			launch.getProcesses()[0].terminate();
+			getLaunchManager().removeLaunch(launch);
+		}
+	}
+
+	/**
+	 * Test if two byte UTF-8 characters get disrupted on there way to the running process input.
+	 * <p>
+	 * This test starts every two byte character on an even byte offset.
+	 * </p>
+	 *
+	 * @throws Exception
+	 *             if the test gets in trouble
+	 */
+	public void testBug545769_UTF8InEven() throws Exception {
+		// 4200 characters result in 8400 bytes which should be more than most common buffer sizes.
+		utf8InputTest("", 4200);
+	}
+
+	/**
+	 * Test if two byte UTF-8 characters get disrupted on there way to the running process input.
+	 * <p>
+	 * This test starts every two byte character on an odd byte offset.
+	 * </p>
+	 *
+	 * @throws Exception
+	 *             if the test gets in trouble
+	 */
+	public void testBug545769_UTF8InOdd() throws Exception {
+		// 4200 characters result in 8400 bytes which should be more than most common buffer sizes.
+		utf8InputTest(">", 4200);
+	}
+
+	/**
+	 * Shared code for the UTF-8 input tests.
+	 * <p>
+	 * Send some two byte UTF-8 characters to process and read the echo back.
+	 * </p>
+	 *
+	 * @param prefix
+	 *            an arbitrary prefix inserted before the two byte UTF-8 characters. Used to move the other characters to specific offsets e.g. a
+	 *            prefix of one byte will produce an input string where every two byte character starts at an odd offset.
+	 * @param numTwoByteCharacters
+	 *            number of two byte UTF-8 characters to send to process
+	 * @throws Exception
+	 *             if the test gets in trouble
+	 */
+	private void utf8InputTest(String prefix, int numTwoByteCharacters) throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		ILaunchConfiguration configuration = getLaunchConfiguration("ConsoleInput");
+		ILaunchConfigurationWorkingCopy configurationCopy = configuration.getWorkingCopy();
+		configurationCopy.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, StandardCharsets.UTF_8.name());
+		ILaunch launch = null;
+		try {
+			launch = configurationCopy.launch(ILaunchManager.RUN_MODE, null);
+			String input = prefix + String.join("", Collections.nCopies(numTwoByteCharacters, "\u00F8"));
+			waitStarted();
+			String[] list = appendAndGet(fConsole, input + "\n", 2);
+			verifyOutput(new String[] { input, input }, list);
 
 		} finally {
 			ConsoleLineTracker.setDelegate(null);

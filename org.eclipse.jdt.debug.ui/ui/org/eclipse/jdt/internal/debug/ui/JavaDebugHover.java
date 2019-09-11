@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IInitializer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
@@ -351,7 +352,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
 								ASTNode root = SharedASTProviderCore.getAST(typeRoot, SharedASTProviderCore.WAIT_NO, null);
             		    		if (root == null) {
-	            		    		ASTParser parser = ASTParser.newParser(AST.JLS4);
+									ASTParser parser = ASTParser.newParser(AST.JLS12);
 	            		    		parser.setSource(typeRoot);
 	            		    		parser.setFocalPosition(hoverRegion.getOffset());
 									root = parser.createAST(null);
@@ -386,9 +387,13 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		if (javaElement instanceof ILocalVariable) {
             		    ILocalVariable var = (ILocalVariable)javaElement;
             		    IJavaElement parent = var.getParent();
-            		    while (!(parent instanceof IMethod) && parent != null) {
+						while (!(parent instanceof IMethod) && !(parent instanceof IInitializer) && parent != null) {
             		    	parent = parent.getParent();
             		    }
+						if (parent instanceof IInitializer && "()V".equals(frame.getSignature()) //$NON-NLS-1$
+								&& "<clinit>".equals(frame.getMethodName())) { //$NON-NLS-1$
+							return findLocalVariable(frame, var.getElementName());
+						}
             		    if (parent instanceof IMethod) {
             				IMethod method = (IMethod) parent;
             				boolean equal = false;

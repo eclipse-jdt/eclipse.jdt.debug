@@ -146,6 +146,142 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		}
 	}
 
+	public void testResolveInStaticInit() throws Exception {
+		final String typeName = "Bug549394";
+		final String expectedMethod1 = "<clinit>";
+		final int framesNumber1 = 1;
+		final int bpLine1 = 18;
+
+		IJavaBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
+		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp1.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod1, framesNumber1, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			Map<String, Region> offsets = new LinkedHashMap<>();
+			offsets.put("local", new Region(657, "local".length()));
+
+			Set<Entry<String, Region>> entrySet = offsets.entrySet();
+			int startLine = bpLine1;
+			int valueIndex = 0;
+			for (Entry<String, Region> varData : entrySet) {
+				// select variables and validate the hover, going backwards from the breakpoint
+				validateLine(startLine--, valueIndex++, part, hover, varData);
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testResolveInInner() throws Exception {
+		final String typeName = "Bug317045";
+		final String typeName1 = typeName + "$Class0";
+		final String typeName2 = typeName;
+		final String typeName3 = typeName + "$Class2";
+		final String expectedMethod1 = "run0";
+		final String expectedMethod2 = "run11";
+		final String expectedMethod3 = "run2";
+		final int framesNumber1 = 3;
+		final int framesNumber2 = 4;
+		final int framesNumber3 = 3;
+		final int bpLine1 = 61;
+		final int bpLine2 = 39;
+		final int bpLine3 = 71;
+
+		IJavaBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName1);
+		IJavaBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName2);
+		IJavaBreakpoint bp3 = createLineBreakpoint(bpLine3, "", typeName + ".java", typeName3);
+		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		bp3.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp1.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod1, framesNumber1, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			Map<String, Region> offsets = new LinkedHashMap<>();
+			offsets.put("var3", new Region(1832, "var3".length()));
+			offsets.put("var2", new Region(1803, "var2".length()));
+			offsets.put("var1", new Region(1774, "var1".length()));
+			offsets.put("var0", new Region(1745, "var0".length()));
+			String[] values = { "3", "2", "1", "00" };
+			Set<Entry<String, Region>> entrySet = offsets.entrySet();
+			int startLine = bpLine1;
+			int valueIndex = 0;
+			for (Entry<String, Region> varData : entrySet) {
+				// select variables and validate the hover, going backwards from the breakpoint
+				validateLine(startLine--, part, hover, varData, values[valueIndex++]);
+			}
+
+			resumeToLineBreakpoint(thread, (ILineBreakpoint) bp2);
+			part = openEditorAndValidateStack(expectedMethod2, framesNumber2, file, thread);
+
+			offsets = new LinkedHashMap<>();
+			offsets.put("var3", new Region(1242, "var3".length()));
+			offsets.put("var2", new Region(1210, "var2".length()));
+			offsets.put("var1", new Region(1178, "var1".length()));
+			offsets.put("var0", new Region(1146, "var0".length()));
+			values = new String[] { "3", "21", "11", "00" };
+
+			entrySet = offsets.entrySet();
+			startLine = bpLine2;
+			valueIndex = 0;
+			for (Entry<String, Region> varData : entrySet) {
+				// select variables and validate the hover, going backwards from the breakpoint
+				validateLine(startLine--, part, hover, varData, values[valueIndex++]);
+			}
+
+			offsets = new LinkedHashMap<>();
+			offsets.put("var3", new Region(1030, "var3".length()));
+			offsets.put("var2", new Region(1000, "var2".length()));
+			offsets.put("var1", new Region(970, "var1".length()));
+			offsets.put("var0", new Region(940, "var0".length()));
+			values = new String[] { "3", "2", "11", "00" };
+
+			entrySet = offsets.entrySet();
+			startLine = 32;
+			valueIndex = 0;
+			for (Entry<String, Region> varData : entrySet) {
+				// select variables and validate the hover, going backwards from the breakpoint
+				validateLine(startLine--, part, hover, varData, values[valueIndex++]);
+			}
+
+			resumeToLineBreakpoint(thread, (ILineBreakpoint) bp3);
+			part = openEditorAndValidateStack(expectedMethod3, framesNumber3, file, thread);
+
+			offsets = new LinkedHashMap<>();
+			offsets.put("var3", new Region(2040, "var3".length()));
+			offsets.put("var2", new Region(2011, "var2".length()));
+			offsets.put("var1", new Region(1982, "var1".length()));
+			offsets.put("var0", new Region(1953, "var0".length()));
+			values = new String[] { "3", "22", "1", "00" };
+			entrySet = offsets.entrySet();
+			startLine = bpLine3;
+			valueIndex = 0;
+			for (Entry<String, Region> varData : entrySet) {
+				// select variables and validate the hover, going backwards from the breakpoint
+				validateLine(startLine--, part, hover, varData, values[valueIndex++]);
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 	private CompilationUnitEditor openEditorAndValidateStack(final String expectedMethod, final int expectedFramesNumber, IFile file, IJavaThread thread) throws Exception, DebugException {
 		// Let now all pending jobs proceed, ignore console jobs
 		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
@@ -181,6 +317,24 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		JDIObjectValue valueObj = (JDIObjectValue) var.getValue();
 		StringReferenceImpl object = (StringReferenceImpl) valueObj.getUnderlyingObject();
 		assertEquals("v" + valueIndex, object.value());
+	}
+
+	private void validateLine(final int line, CompilationUnitEditor part, JavaDebugHover hover, Entry<String, Region> varData, String varValue) throws Exception, DebugException {
+		String debugVarName = varData.getKey();
+		String variableName = debugVarName;
+		IRegion region = varData.getValue();
+		String text = selectAndReveal(part, line, region);
+		assertEquals(variableName, text);
+		Object args = sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+		assertNotNull(args);
+		JDIModificationVariable var = (JDIModificationVariable) args;
+		assertEquals(debugVarName, var.getName());
+		JDIValue value = (JDIValue) var.getValue();
+		assertEquals(JDIObjectValue.class, value.getClass());
+		JDIObjectValue valueObj = (JDIObjectValue) var.getValue();
+		StringReferenceImpl object = (StringReferenceImpl) valueObj.getUnderlyingObject();
+		assertEquals(varValue, object.value());
 	}
 
 	String selectAndReveal(CompilationUnitEditor editor, int line, IRegion region) throws Exception {

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdi.internal.InterfaceTypeImpl;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -258,33 +259,63 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
-	 * java.lang.String)
-	 */
 	@Override
-	public IJavaFieldVariable getField(String name,
-			String declaringTypeSignature) throws DebugException {
+	public IJavaFieldVariable getField(final String name, final String declaringTypeSignature) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
 		try {
 			Field field = null;
 			Field fieldTmp = null;
+			List<Field> synteticFields = new ArrayList<>();
 			Iterator<Field> fields = ref.allFields().iterator();
-			while (fields.hasNext()) {
+			List<ReferenceType> superTypes = null;
+			main: while (fields.hasNext()) {
 				fieldTmp = fields.next();
-				if (name.equals(fieldTmp.name())
-						&& declaringTypeSignature.equals(fieldTmp
-								.declaringType().signature())) {
-					field = fieldTmp;
-					break;
+				if (name.equals(fieldTmp.name())) {
+					ReferenceType declaringType = fieldTmp.declaringType();
+					String signature = declaringType.signature();
+					if (declaringTypeSignature.equals(signature)) {
+						field = fieldTmp;
+						break;
+					}
+					// check if we are inside local type - Signature.createTypeSignature
+					// can't create proper type name out of source field in JavaDebugHover
+					// we get LDebugHoverTest$InnerClass2; instead of LDebugHoverTest$1InnerClass2;
+					signature = signature.replaceFirst("\\$\\d+", "\\$"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (declaringTypeSignature.equals(signature)) {
+						field = fieldTmp;
+						break;
+					}
+					if (superTypes == null) {
+						superTypes = superTypes(ref);
+					}
+					for (ReferenceType st : superTypes) {
+						if (st.signature().equals(signature)) {
+							field = fieldTmp;
+							break main;
+						}
+					}
+				}
+				if (fieldTmp.isSynthetic()) {
+					synteticFields.add(fieldTmp);
 				}
 			}
+			JDIDebugTarget debugTarget = (JDIDebugTarget) getDebugTarget();
 			if (field != null) {
-				return new JDIFieldVariable((JDIDebugTarget) getDebugTarget(),
-						field, getUnderlyingObject(), fLogicalParent);
+				return new JDIFieldVariable(debugTarget, field, getUnderlyingObject(), fLogicalParent);
 			}
+
+			// Check possible references of variables defined in outer class
+			for (Field outer : synteticFields) {
+				// retrieve the reference to the "outer" object
+				JDIFieldVariable syntVariable = new JDIFieldVariable(debugTarget, outer, getUnderlyingObject(), fLogicalParent);
+				IValue value = syntVariable.getValue();
+				if (value instanceof JDIObjectValue) {
+					JDIObjectValue outerObject = (JDIObjectValue) value;
+					// ask "outer" object about field probably declared within
+					return outerObject.getField(name, outer.signature());
+				}
+			}
+
 		} catch (RuntimeException e) {
 			targetRequestFailed(
 					MessageFormat.format(
@@ -293,6 +324,20 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		}
 		// it is possible to return null
 		return null;
+	}
+
+	static List<ReferenceType> superTypes(ReferenceType type) {
+		List<ReferenceType> superTypes = new ArrayList<>();
+		ReferenceType t = type;
+		while (t instanceof ClassType) {
+			ClassType ct = (ClassType) t;
+			t = ct.superclass();
+			if (t == null || "java.lang.Object".equals(t.name())) { //$NON-NLS-1$
+				break;
+			}
+			superTypes.add(t);
+		}
+		return superTypes;
 	}
 
 	/**
