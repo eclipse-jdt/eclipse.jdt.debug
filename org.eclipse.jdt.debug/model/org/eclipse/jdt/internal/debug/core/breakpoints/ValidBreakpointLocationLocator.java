@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -315,6 +319,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		case ASTNode.CHARACTER_LITERAL:
 		case ASTNode.NUMBER_LITERAL:
 		case ASTNode.STRING_LITERAL:
+		case ASTNode.TEXT_BLOCK:
 			return true;
 		case ASTNode.SIMPLE_NAME:
 		case ASTNode.QUALIFIED_NAME:
