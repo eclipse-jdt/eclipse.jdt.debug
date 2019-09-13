@@ -154,7 +154,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -162,9 +161,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
@@ -311,16 +308,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
 	        // turn off monitor information
 	        jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
-
-	        // turn off workbench heap monitor
-	        PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
-	        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-	        for (int i = 0; i < windows.length; i++) {
-	            IWorkbenchWindow window = windows[i];
-	            if(window instanceof WorkbenchWindow){
-	                ((WorkbenchWindow) window).showHeapStatus(false);
-	            }
-	        }
 
 	        //make sure we are auto-refreshing external workspace changes
 	        IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
