@@ -102,6 +102,7 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextBlock;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -1226,6 +1227,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(StringLiteral node) {
+		return visit(node, true);
+	}
+
+	@Override
+	public boolean visit(TextBlock node) {
 		return visit(node, true);
 	}
 

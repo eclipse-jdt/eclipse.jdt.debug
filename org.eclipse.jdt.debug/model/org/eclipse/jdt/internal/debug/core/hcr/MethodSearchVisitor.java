@@ -8,6 +8,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
@@ -91,6 +96,7 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextBlock;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -523,6 +529,11 @@ public class MethodSearchVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(StringLiteral node) {
+		return isSearching();
+	}
+
+	@Override
+	public boolean visit(TextBlock node) {
 		return isSearching();
 	}
 
