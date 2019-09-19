@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -98,6 +98,7 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextBlock;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -315,6 +316,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		case ASTNode.CHARACTER_LITERAL:
 		case ASTNode.NUMBER_LITERAL:
 		case ASTNode.STRING_LITERAL:
+		case ASTNode.TEXT_BLOCK:
 			return true;
 		case ASTNode.SIMPLE_NAME:
 		case ASTNode.QUALIFIED_NAME:
@@ -1221,6 +1223,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(StringLiteral node) {
+		return visit(node, true);
+	}
+
+	@Override
+	public boolean visit(TextBlock node) {
 		return visit(node, true);
 	}
 

@@ -8,6 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - Bug 427089
@@ -1281,6 +1282,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(StringLiteral node) {
+		if (!isActive() || hasErrors()) {
+			return;
+		}
+		storeInstruction();
+	}
+
+	@Override
+	public void endVisit(TextBlock node) {
 		if (!isActive() || hasErrors()) {
 			return;
 		}
@@ -3756,6 +3765,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return true;
 	}
 
+	@Override
+	public boolean visit(TextBlock node) {
+		if (!isActive()) {
+			return false;
+		}
+
+		push(new PushString(node.getEscapedValue()));
+		
+		return true;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(SuperConstructorInvocation)
 	 */
@@ -3988,9 +4008,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					storeInstruction(); // jump
 					statementsDefault = new ArrayList<>();
 				} else {
-					if (node.getAST().apiLevel() >= AST.JLS12) {
+					if (node.getAST().apiLevel() == AST.JLS13) {
 						for (Object expression : switchCase.expressions()) {
-							if (expression instanceof StringLiteral) {
+							if (expression instanceof StringLiteral || expression instanceof TextBlock) {
 								push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
 							} else {
 								push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
@@ -4001,7 +4021,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 							storeInstruction(); // equal-equal
 						}
 					} else {
-						if (switchCase.getExpression() instanceof StringLiteral) {
+						if (switchCase.getExpression() instanceof StringLiteral || switchCase.getExpression() instanceof TextBlock) {
 							push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
 							push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));

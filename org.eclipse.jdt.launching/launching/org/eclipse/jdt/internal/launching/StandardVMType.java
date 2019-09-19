@@ -844,7 +844,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if (version.startsWith(JavaCore.VERSION_12)) {
+			if (version.startsWith(JavaCore.VERSION_13)) {
+				return new URL("https://docs.oracle.com/en/java/javase/13/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_12)) {
 				return new URL("https://docs.oracle.com/en/java/javase/12/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_11)) {
 				return new URL("https://docs.oracle.com/en/java/javase/11/docs/api/"); //$NON-NLS-1$

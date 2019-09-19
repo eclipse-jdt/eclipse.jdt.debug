@@ -91,6 +91,7 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextBlock;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -523,6 +524,11 @@ public class MethodSearchVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(StringLiteral node) {
+		return isSearching();
+	}
+
+	@Override
+	public boolean visit(TextBlock node) {
 		return isSearching();
 	}
 

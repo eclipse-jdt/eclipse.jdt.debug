@@ -1,5 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.debug" version="2">
+    <resource path="eval/org/eclipse/jdt/internal/debug/eval/ast/engine/ASTInstructionCompiler.java" type="org.eclipse.jdt.internal.debug.eval.ast.engine.ASTInstructionCompiler">
+        <filter comment="For Java 13" id="640712815">
+            <message_arguments>
+                <message_argument value="SwitchCase"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="expressions()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="For Java 13" id="640712815">
+            <message_arguments>
+                <message_argument value="TextBlock"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="getEscapedValue()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="For Java 13" id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="endVisit(TextBlock)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Required to supoort Java 13." id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="visit(SwitchExpression)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="For Java 13" id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="visit(TextBlock)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="eval/org/eclipse/jdt/internal/debug/eval/ast/engine/SourceBasedSourceGenerator.java" type="org.eclipse.jdt.internal.debug.eval.ast.engine.SourceBasedSourceGenerator">
+        <filter comment="For Java 13" id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="SourceBasedSourceGenerator"/>
+                <message_argument value="visit(TextBlock)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="jdi/org/eclipse/jdi/Bootstrap.java" type="org.eclipse.jdi.Bootstrap">
         <filter comment="Additional filters for making the JDI interfaces officially internal" id="643842064">
             <message_arguments>
@@ -68,6 +114,24 @@
                 <message_argument value="VirtualMachine"/>
                 <message_argument value="JDIDebugModel"/>
                 <message_argument value="newDebugTarget(ILaunch, VirtualMachine, String, IProcess, boolean, boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/jdt/internal/debug/core/breakpoints/ValidBreakpointLocationLocator.java" type="org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator">
+        <filter comment="For Java 13" id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="ValidBreakpointLocationLocator"/>
+                <message_argument value="visit(TextBlock)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/jdt/internal/debug/core/hcr/MethodSearchVisitor.java" type="org.eclipse.jdt.internal.debug.core.hcr.MethodSearchVisitor">
+        <filter comment="For Java 13" id="642777099">
+            <message_arguments>
+                <message_argument value="ASTVisitor"/>
+                <message_argument value="MethodSearchVisitor"/>
+                <message_argument value="visit(TextBlock)"/>
             </message_arguments>
         </filter>
     </resource>
