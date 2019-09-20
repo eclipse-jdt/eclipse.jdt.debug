@@ -131,7 +131,7 @@ public class ConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test synchronization of standard and error output stream of started process.
 	 * <p>
-	 * This variant tests output on multiple lines and is launched in DEBUG mode.
+	 * This variant tests output on multiple lines.
 	 * </p>
 	 *
 	 * @throws Exception
@@ -139,20 +139,21 @@ public class ConsoleTests extends AbstractDebugTest {
 	 */
 	public void testConsoleOutputSynchronization() throws Exception {
 		String typeName = "OutSync";
-		IJavaDebugTarget target = null;
+		ILaunch launch = null;
 		try {
 			ILaunchConfiguration launchConfig = getLaunchConfiguration(typeName);
 			ILaunchConfigurationWorkingCopy launchCopy = launchConfig.getWorkingCopy();
 			launchCopy.setAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, true);
-			target = launchAndTerminate(launchCopy, DEFAULT_TIMEOUT);
-			String content = getConsoleContent(target.getProcess());
+			launch = launchCopy.launch(ILaunchManager.RUN_MODE, null);
+			TestUtil.waitForJobs(getName(), 0, DEFAULT_TIMEOUT);
+			String content = getConsoleContent(launch.getProcesses()[0]);
 			// normalize new lines to unix style
 			content = content.replace("\r\n", "\n").replace('\r', '\n');
 			String expectedOutput = String.join("", Collections.nCopies(content.length() / 4, "o\ne\n"));
 			assertEquals("Received wrong output. Probably not synchronized.", expectedOutput, content);
 		} finally {
-			if (target != null) {
-				terminateAndRemove(target);
+			if (launch != null) {
+				getLaunchManager().removeLaunch(launch);
 			}
 		}
 	}
@@ -160,7 +161,7 @@ public class ConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test synchronization of standard and error output stream of started process.
 	 * <p>
-	 * This variant tests output on single line and is launched in RUN mode.
+	 * This variant tests output on single line.
 	 * </p>
 	 *
 	 * @throws Exception
