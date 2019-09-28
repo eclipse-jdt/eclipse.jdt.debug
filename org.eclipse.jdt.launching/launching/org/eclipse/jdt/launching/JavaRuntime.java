@@ -35,7 +35,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -3460,7 +3462,7 @@ public final class JavaRuntime {
 			}
 		}
 		catch (CoreException e) {
-			e.printStackTrace();
+			LaunchingPlugin.log(e);
 		}
 		return cliOptionString.toString().trim();
 	}
@@ -3541,7 +3543,7 @@ public final class JavaRuntime {
 			try {
 				absPaths[i] = toAbsolutePath(resource, root);
 			} catch (JavaModelException e) {
-				// JavaPlugin.log(e);
+				LaunchingPlugin.log(e);
 			}
 			if (absPaths[i] == null) {
 				absPaths[i] = paths[i];
@@ -3576,23 +3578,82 @@ public final class JavaRuntime {
 			Set<String> selected = new HashSet<>(Arrays.asList(modules));
 			List<IPackageFragmentRoot> allSystemRoots = Arrays.asList(prj.findUnfilteredPackageFragmentRoots(systemLibrary));
 			Set<String> defaultModules = getDefaultModules(allSystemRoots);
-			Set<String> limit = new HashSet<>(defaultModules);
-			if (limit.retainAll(selected)) { // limit = selected ∩ default -- only add the option, if limit ⊂ default
+			Set<String> limit = new HashSet<>(defaultModules); // contains some redundancy, but is no full closure
+
+			// selected contains the minimal representation, now compute the transitive closure for comparison with semi-closed defaultModules:
+			Map<String, IModuleDescription> allModules = allSystemRoots.stream() //
+					.map(r -> r.getModuleDescription()) //
+					.filter(Objects::nonNull) //
+					.collect(Collectors.toMap(IModuleDescription::getElementName, module -> module));
+			Set<String> selectedClosure = closure(selected, new HashSet<>(), allModules);
+
+			if (limit.retainAll(selectedClosure)) { // limit = selected ∩ default -- only add the option, if limit ⊂ default
 				if (limit.isEmpty()) {
 					throw new IllegalArgumentException("Cannot hide all modules, at least java.base is required"); //$NON-NLS-1$
 				}
-				buf.append(LIMIT_MODULES).append(joinedSortedList(limit)).append(BLANK);
+				buf.append(LIMIT_MODULES).append(joinedSortedList(reduceNames(limit, allModules.values()))).append(BLANK);
 			}
 
-			Set<String> add = new HashSet<>(selected);
-			add.removeAll(defaultModules);
-			if (!add.isEmpty()) { // add = selected \ default
-				buf.append(ADD_MODULES).append(joinedSortedList(add)).append(BLANK);
+			selectedClosure.removeAll(defaultModules);
+			if (!selectedClosure.isEmpty()) { // add = selected \ default
+				buf.append(ADD_MODULES).append(joinedSortedList(selectedClosure)).append(BLANK);
 			}
 		} else {
 			Arrays.sort(modules);
 			buf.append(LIMIT_MODULES).append(String.join(COMMA, modules)).append(BLANK);
 		}
+	}
+
+	private static Set<String> closure(Collection<String> moduleNames, Set<String> collected, Map<String, IModuleDescription> allModules) {
+		for (String name : moduleNames) {
+			if (collected.add(name)) {
+				IModuleDescription module = allModules.get(name);
+				if (module != null) {
+					try {
+						closure(Arrays.asList(module.getRequiredModuleNames()), collected, allModules);
+					} catch (JavaModelException e) {
+						LaunchingPlugin.log(e);
+					}
+				}
+			}
+		}
+		return collected;
+	}
+
+	private static Collection<String> reduceNames(Collection<String> names, Collection<IModuleDescription> allModules) {
+		// build a reverse dependency tree:
+		Map<String, List<String>> moduleRequiredByModules = new HashMap<>();
+		for (IModuleDescription module : allModules) {
+			if (!names.contains(module.getElementName())) {
+				continue;
+			}
+			try {
+				for (String required : module.getRequiredModuleNames()) {
+					List<String> dominators = moduleRequiredByModules.get(required);
+					if (dominators == null) {
+						moduleRequiredByModules.put(required, dominators = new ArrayList<>());
+					}
+					dominators.add(module.getElementName());
+				}
+			} catch (CoreException e) {
+				LaunchingPlugin.log(e);
+				return names; // unreduced
+			}
+		}
+		// use the tree to find and eliminate redundancy:
+		List<String> reduced = new ArrayList<>();
+		outer: for (String name : names) {
+			List<String> dominators = moduleRequiredByModules.get(name);
+			if (dominators != null) {
+				for (String dominator : dominators) {
+					if (names.contains(dominator)) {
+						continue outer;
+					}
+				}
+			}
+			reduced.add(name);
+		}
+		return reduced;
 	}
 
 	private static Set<String> getDefaultModules(List<IPackageFragmentRoot> allSystemRoots) throws JavaModelException {

@@ -77,6 +77,7 @@ import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
+import org.eclipse.jdt.debug.tests.core.ModuleOptionsTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
@@ -233,6 +234,9 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(BootpathTests.class));
 		}
 		addTest(new TestSuite(EEDefinitionTests.class));
+		if (JavaProjectHelper.isJava9Compatible()) {
+			addTest(new TestSuite(ModuleOptionsTests.class));
+		}
 
 	//VM Install/Environment tests
 		addTest(new TestSuite(VMInstallTests.class));
