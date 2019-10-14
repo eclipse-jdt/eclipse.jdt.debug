@@ -53,6 +53,7 @@ public class StratumTests extends AbstractDebugTest {
 			if (!JavaCore.isSupportedJavaVersion(version)) {
 				// as of 2018-11-15 java 12 was not supported by the sourcelookup agent
 				// as of 2019-05-05 java 12 is supported by the sourcelookup agent
+				// as of 2019-10-14 java 13 is supported by the sourcelookup agent
 				assertEquals("Wrong number of available strata", 1, strata.length);
 				assertEquals("Wrong strata", "Java", strata[0]);
 			} else {
