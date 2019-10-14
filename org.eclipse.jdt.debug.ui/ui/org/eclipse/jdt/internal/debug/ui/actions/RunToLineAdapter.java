@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.actions.RunToLineHandler;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -73,8 +74,14 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						@Override
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
-							ASTParser parser = ASTParser.newParser(AST.JLS9);
+							ASTParser parser = ASTParser.newParser(AST.JLS13);
 							parser.setSource(document.get().toCharArray());
+							Map<String, String> options = JavaCore.getOptions();
+							options.put(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+							options.put(JavaCore.COMPILER_PB_REPORT_PREVIEW_FEATURES, JavaCore.IGNORE);
+							options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.latestSupportedJavaVersion());
+							options.put(JavaCore.COMPILER_SOURCE, JavaCore.latestSupportedJavaVersion());
+							parser.setCompilerOptions(options);
 							CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 							ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
 							compilationUnit.accept(locator);
