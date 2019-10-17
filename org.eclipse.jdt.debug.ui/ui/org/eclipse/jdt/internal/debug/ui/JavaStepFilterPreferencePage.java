@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -452,15 +452,16 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 */
 	@Override
 	protected void performDefaults() {
-		boolean stepenabled = DebugUITools.isUseStepFilters();
-		fUseStepFiltersButton.setSelection(stepenabled);
-		setPageEnablement(stepenabled);
+		// Cannot use DebugUITools.isUseStepFilters() as this not give the default value, no API from Platform to get the default value
+		fUseStepFiltersButton.setSelection(false);
+		setPageEnablement(false);
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
 		fFilterStaticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		fFilterConstructorButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
 		fFilterGetterButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_GETTERS));
 		fFilterSetterButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SETTERS));
 		fStepThruButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS));
+
 		fTableViewer.getTable().removeAll();
 		initTableState(true);
 		super.performDefaults();
