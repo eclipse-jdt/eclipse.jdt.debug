@@ -68,6 +68,7 @@ import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
@@ -1239,7 +1240,8 @@ public final class JavaRuntime {
 					if (project == null || !p.isOpen() || !project.exists()) {
 						return new IRuntimeClasspathEntry[0];
 					}
-					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty(), excludeTestCode);
+					IClasspathAttribute[] attributes = entry.getClasspathEntry().getExtraAttributes();
+					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty(), attributes, excludeTestCode);
 					if (entries != null) {
 						return entries;
 					}
@@ -1343,7 +1345,8 @@ public final class JavaRuntime {
 					}
 				}
 				// now resolve the archive (recursively)
-				IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, entry.getClasspathEntry().isExported());
+				IClasspathEntry cpEntry = entry.getClasspathEntry();
+				IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, null, cpEntry.getExtraAttributes(), cpEntry.isExported());
 				IRuntimeClasspathEntry runtimeArchEntry = newRuntimeClasspathEntry(archEntry);
 				runtimeArchEntry.setClasspathProperty(entry.getClasspathProperty());
 				if (configuration == null) {
@@ -1363,6 +1366,8 @@ public final class JavaRuntime {
 	 *            the {@link IJavaProject} to resolve the output locations for
 	 * @param classpathProperty
 	 *            the type of classpath entries to create
+	 * @param attributes
+	 *            extra attributes of the original classpath entry
 	 * @param excludeTestCode
 	 *            if true, output folders corresponding to test sources are excluded
 	 *
@@ -1370,7 +1375,7 @@ public final class JavaRuntime {
 	 * @throws CoreException
 	 *             if output resolution encounters a problem
 	 */
-	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty, boolean excludeTestCode) throws CoreException {
+	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty, IClasspathAttribute[] attributes, boolean excludeTestCode) throws CoreException {
 		List<IPath> nonDefault = new ArrayList<>();
 		boolean defaultUsedByNonTest = false;
 		if (project.exists() && project.getProject().isOpen()) {
@@ -1391,7 +1396,7 @@ public final class JavaRuntime {
 				}
 			}
 		}
-		boolean isModular = project.getModuleDescription() != null;
+		boolean isModular = project.getModuleDescription() != null && !isPatching(project);
 		if (nonDefault.isEmpty() && !isModular && !excludeTestCode) {
 			// return here only if non-modular, because patch-module might be needed otherwise
 			return null;
@@ -1405,7 +1410,7 @@ public final class JavaRuntime {
 		}
 		IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
 		for (int i = 0; i < locations.length; i++) {
-			IClasspathEntry newEntry = JavaCore.newLibraryEntry(nonDefault.get(i), null, null);
+			IClasspathEntry newEntry = JavaCore.newLibraryEntry(nonDefault.get(i), null, null, null, attributes, false);
 			locations[i] = new RuntimeClasspathEntry(newEntry);
 			if (isModular && !containsModuleInfo(locations[i])) {
 				locations[i].setClasspathProperty(IRuntimeClasspathEntry.PATCH_MODULE);
@@ -1415,6 +1420,20 @@ public final class JavaRuntime {
 			}
 		}
 		return locations;
+	}
+
+	private static boolean isPatching(IJavaProject project) throws JavaModelException {
+		IModuleDescription module = project.getModuleDescription();
+		if (module == null) {
+			return false;
+		}
+		IJavaElement ancestor = module.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+		if (ancestor != null) {
+			if (((IPackageFragmentRoot) ancestor).isArchive() || !project.equals(ancestor.getJavaProject())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean containsModuleInfo(IRuntimeClasspathEntry entry) {
@@ -1480,7 +1499,8 @@ public final class JavaRuntime {
 					IProject p = (IProject)resource;
 					IJavaProject jp = JavaCore.create(p);
 					if (jp != null && p.isOpen() && jp.exists()) {
-						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty(), excludeTestCode);
+						IClasspathAttribute[] attributes = entry.getClasspathEntry().getExtraAttributes();
+						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty(), attributes, excludeTestCode);
 						if (entries != null) {
 							return entries;
 						}
@@ -3426,8 +3446,10 @@ public final class JavaRuntime {
 	 * <li>{@link IClasspathAttribute#ADD_EXPORTS}</li>
 	 * <li>{@link IClasspathAttribute#ADD_READS}</li>
 	 * <li>{@link IClasspathAttribute#LIMIT_MODULES}</li>
-	 * <li>{@link IClasspathAttribute#PATCH_MODULE}</li>
 	 * </ul>
+	 * {@link IClasspathAttribute#PATCH_MODULE} is not handled here, but in
+	 * {@link AbstractJavaLaunchConfigurationDelegate#getModuleCLIOptions(ILaunchConfiguration)}, which then collates all options referring to the
+	 * same module.
 	 *
 	 * @since 3.10
 	 */
@@ -3509,22 +3531,8 @@ public final class JavaRuntime {
 						}
 						break;
 					}
-					case IClasspathAttribute.PATCH_MODULE: {
-						String patchModules = classpathAttribute.getValue();
-						for (String patchModule : patchModules.split("::")) { //$NON-NLS-1$
-							int equalsIdx = patchModule.indexOf('=');
-							if (equalsIdx != -1) {
-								if (equalsIdx < patchModule.length() - 1) { // otherwise malformed?
-									String locations = patchModule.substring(equalsIdx + 1);
-									String moduleString = patchModule.substring(0, equalsIdx + 1);
-									buf.append(OPTION_START).append(optName).append(BLANK).append(moduleString).append(toAbsolutePathsString(locations)).append(BLANK);
-								}
-							} else {
-								buf.append(patchModule); // old format not specifying a location
-							}
-						}
-						break;
-					}
+					// case IClasspathAttribute.PATCH_MODULE: handled in
+					// org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate.getModuleCLIOptions(ILaunchConfiguration)
 					case IClasspathAttribute.LIMIT_MODULES:
 						addLimitModules(buf, project, systemLibrary, classpathAttribute.getValue());
 						break;
@@ -3532,44 +3540,6 @@ public final class JavaRuntime {
 			}
 		}
 		return buf.toString().trim();
-	}
-
-	private static String toAbsolutePathsString(String fPaths) {
-		String[] paths = fPaths.split(File.pathSeparator);
-		String[] absPaths = new String[paths.length];
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		for (int i = 0; i < paths.length; i++) {
-			IResource resource = root.findMember(new Path(paths[i]));
-			try {
-				absPaths[i] = toAbsolutePath(resource, root);
-			} catch (JavaModelException e) {
-				LaunchingPlugin.log(e);
-			}
-			if (absPaths[i] == null) {
-				absPaths[i] = paths[i];
-			}
-		}
-		String allPaths = String.join(File.pathSeparator, absPaths);
-		return allPaths;
-	}
-
-	private static String toAbsolutePath(IResource resource, IWorkspaceRoot root) throws JavaModelException {
-		if (resource instanceof IProject) {
-				// other projects: use the default output locations:
-				return absPath(root, JavaCore.create((IProject) resource).getOutputLocation());
-		} else if (resource != null) {
-			IProject proj = resource.getProject();
-			if (proj != null) {
-				return absPath(root, JavaCore.create(proj).getOutputLocation());
-			}
-			// non-source location as-is:
-			return resource.getLocation().toString();
-		}
-		return null;
-	}
-
-	private static String absPath(IWorkspaceRoot root, IPath path) {
-		return root.findMember(path).getLocation().toString();
 	}
 	private static void addLimitModules(StringBuilder buf, IJavaProject prj, IClasspathEntry systemLibrary, String value) throws JavaModelException {
 		String[] modules = value.split(COMMA);

@@ -32,6 +32,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -51,9 +52,12 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -1158,14 +1162,30 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 					IModuleDescription moduleDescription = javaProject == null ? null : javaProject.getModuleDescription();
 					if (moduleDescription != null) {
 						String moduleName = moduleDescription.getElementName();
-						String locations = moduleToLocations.get(moduleName);
-						if (locations == null) {
-							moduleToLocations.put(moduleName, location);
-						} else {
-							moduleToLocations.put(moduleName, locations + File.pathSeparator + location);
-						}
+						addPatchModuleLocations(moduleToLocations, moduleName, location);
 					} else {
 						// should not happen, log?
+					}
+				} else {
+					for (IClasspathAttribute attribute : entry.getClasspathEntry().getExtraAttributes()) {
+						if (IClasspathAttribute.PATCH_MODULE.equals(attribute.getName())) {
+							String patchModules = attribute.getValue();
+							for (String patchModule : patchModules.split("::")) { //$NON-NLS-1$
+								int equalsIdx = patchModule.indexOf('=');
+								if (equalsIdx != -1) {
+									if (equalsIdx < patchModule.length() - 1) { // otherwise malformed?
+										String locations = toAbsolutePathsString(patchModule.substring(equalsIdx + 1));
+										String moduleName = patchModule.substring(0, equalsIdx);
+										addPatchModuleLocations(moduleToLocations, moduleName, locations);
+									}
+								} else {
+									// old format not specifying a location: (TODO: multiple locations?)
+									addPatchModuleLocations(moduleToLocations, patchModule, entry.getLocation());
+								}
+							}
+
+							break;
+						}
 					}
 				}
 			}
@@ -1195,6 +1215,64 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			}
 		}
 		return DebugPlugin.renderArguments(list.toArray(new String[list.size()]), null);
+	}
+
+	private void addPatchModuleLocations(Map<String, String> moduleToLocations, String moduleName, String locations) {
+		String existing = moduleToLocations.get(moduleName);
+		if (existing == null) {
+			moduleToLocations.put(moduleName, locations);
+		} else {
+			moduleToLocations.put(moduleName, existing + File.pathSeparator + locations);
+		}
+	}
+
+	private static String toAbsolutePathsString(String fPaths) {
+		String[] paths = fPaths.split(File.pathSeparator);
+		String[] absPaths = new String[paths.length];
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for (int i = 0; i < paths.length; i++) {
+			IResource resource = root.findMember(new Path(paths[i]));
+			try {
+				absPaths[i] = toAbsolutePath(resource, root);
+			} catch (CoreException e) {
+				LaunchingPlugin.log(e);
+			}
+			if (absPaths[i] == null) {
+				absPaths[i] = paths[i];
+			}
+		}
+		String allPaths = String.join(File.pathSeparator, absPaths);
+		return allPaths;
+	}
+
+	private static String toAbsolutePath(IResource resource, IWorkspaceRoot root) throws CoreException {
+		IJavaElement element = JavaCore.create(resource);
+		if (element != null && element.exists()) {
+			if (element instanceof IJavaProject) {
+				Set<String> paths = new HashSet<>();
+				IJavaProject project = (IJavaProject) element;
+				paths.add(absPath(root, project.getOutputLocation()));
+				for (IClasspathEntry entry : project.getResolvedClasspath(true)) {
+					if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getOutputLocation() != null) {
+						paths.add(absPath(root, entry.getOutputLocation()));
+					}
+				}
+				return String.join(File.pathSeparator, paths);
+			} else if (element instanceof IPackageFragmentRoot) {
+				IPackageFragmentRoot packageRoot = (IPackageFragmentRoot) element;
+				IClasspathEntry entry = packageRoot.getJavaProject().getClasspathEntryFor(resource.getFullPath());
+				return absPath(root, entry.getOutputLocation());
+			}
+		}
+		if (resource != null) {
+			// non-source location as-is:
+			return resource.getLocation().toString();
+		}
+		return null;
+	}
+
+	private static String absPath(IWorkspaceRoot root, IPath path) {
+		return root.findMember(path).getLocation().toString();
 	}
 
 	/**
