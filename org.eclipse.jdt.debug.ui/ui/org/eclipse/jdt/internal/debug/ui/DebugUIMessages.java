@@ -51,6 +51,14 @@ public class DebugUIMessages extends NLS {
 
 	public static String JavaDebugPreferencePage_27;
 
+	public static String JavaDebugPreferencePage_SuspendOnRecurrencePolicy;
+
+	public static String JavaDebugPreferencePage_SuspendOnRecurrencePolicy_Always;
+
+	public static String JavaDebugPreferencePage_SuspendOnRecurrencePolicy_Unconfigured;
+
+	public static String JavaDebugPreferencePage_SuspendOnRecurrencePolicy_OnlyOnce;
+
 	public static String JavaDebugPreferencePage_description;
 	public static String JavaDebugPreferencePage_Enable_hot_code_replace_1;
 	public static String JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1;

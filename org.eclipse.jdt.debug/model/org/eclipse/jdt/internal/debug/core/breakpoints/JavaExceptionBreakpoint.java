@@ -25,18 +25,24 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
+import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Location;
@@ -332,15 +338,13 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	@Override
 	public SuspendOnRecurrenceStrategy getSuspendOnRecurrenceStrategy() throws CoreException {
-		int valueIndex = ensureMarker().getAttribute(SUSPEND_ON_RECURRENCE, SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED.ordinal());
+		SuspendOnRecurrenceStrategy defaultStrategy = getWorkspaceSuspendOnRecurrenceStrategy();
+		int valueIndex = ensureMarker().getAttribute(SUSPEND_ON_RECURRENCE, defaultStrategy.ordinal());
 		return SuspendOnRecurrenceStrategy.values()[valueIndex];
 	}
 
 	@Override
 	public void setSuspendOnRecurrenceStrategy(SuspendOnRecurrenceStrategy strategy) throws CoreException {
-		if (strategy == getSuspendOnRecurrenceStrategy()) {
-			return;
-		}
 		setAttribute(SUSPEND_ON_RECURRENCE, strategy.ordinal());
 		// don't re-create, the change only affects the debugger, not the target
 	}
@@ -801,5 +805,22 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 					fLastException);
 		}
 		return null;
+	}
+
+	private static SuspendOnRecurrenceStrategy getWorkspaceSuspendOnRecurrenceStrategy() {
+		SuspendOnRecurrenceStrategy strategy = SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED;
+		IPreferencesService preferencesService = Platform.getPreferencesService();
+		if (preferencesService != null) {
+			String preferenceName = JDIDebugModel.PREF_SUSPEND_ON_RECURRENCE_STRATEGY;
+			String strategyPreference = preferencesService.getString(JDIDebugModel.getPluginIdentifier(), JDIDebugModel.PREF_SUSPEND_ON_RECURRENCE_STRATEGY, SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED.name(), null);
+			try {
+				strategy = SuspendOnRecurrenceStrategy.valueOf(strategyPreference);
+			} catch (IllegalArgumentException e) {
+				String message = NLS.bind("Value \"{0}\" of preference \"{1}\" is illegal.", strategyPreference, preferenceName); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), message, e);
+				JDIDebugPlugin.log(status);
+			}
+		}
+		return strategy;
 	}
 }

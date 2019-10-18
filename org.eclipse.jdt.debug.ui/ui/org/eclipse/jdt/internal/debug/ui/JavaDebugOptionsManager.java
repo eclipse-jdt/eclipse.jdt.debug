@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -65,6 +67,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
@@ -84,7 +87,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -603,11 +605,12 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			return false; // not a recurrence
 		}
 		if (skip == SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED) {
-			skip = askUserExceptionRecurrence(exceptionBreakpoint);
-			try {
-				exceptionBreakpoint.setSuspendOnRecurrenceStrategy(skip);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
+			skip = askUserExceptionRecurrence();
+			if (skip != SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED) {
+				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+				if (prefs != null) {
+					prefs.put(JDIDebugModel.PREF_SUSPEND_ON_RECURRENCE_STRATEGY, skip.name());
+				}
 			}
 		}
 		switch (skip) {
@@ -618,10 +621,10 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		}
 	}
 
-	private static SuspendOnRecurrenceStrategy askUserExceptionRecurrence(IJavaExceptionBreakpoint breakpoint) {
+	private static SuspendOnRecurrenceStrategy askUserExceptionRecurrence() {
 		Shell shell = JDIDebugUIPlugin.getShell();
 		MessageDialog question = new MessageDialog(shell, DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogTitle, null, //
-				MessageFormat.format(DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogMessage, breakpoint.getExceptionTypeName()), //
+				DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogMessage, //
 				MessageDialog.QUESTION, 0, //
 				DebugUIMessages.JavaDebugOptionsManager_skip_buttonLabel, //
 				DebugUIMessages.JavaDebugOptionsManager_suspend_buttonLabel, //

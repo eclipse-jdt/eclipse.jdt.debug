@@ -128,6 +128,15 @@ public class JDIDebugModel {
 	public static final int DEF_SHOW_STEP_TIMEOUT = 7000;
 
 	/**
+	 * The preference key for the behavior of exception breakpoint hits recurring for the same exception instance.
+	 *
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint.SuspendOnRecurrenceStrategy
+	 *
+	 * @since 3.14
+	 */
+	public static final String PREF_SUSPEND_ON_RECURRENCE_STRATEGY = getPluginIdentifier() + ".PREF_SUSPEND_ON_RECURRENCE_STRATEGY"; //$NON-NLS-1$
+
+	/**
 	 * Not to be instantiated.
 	 */
 	private JDIDebugModel() {
