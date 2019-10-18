@@ -1308,11 +1308,12 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					// re-index stack frames - See Bug 47198
 					fThread.computeStackFrames();
 					if (fDepth == -1) {
+						// try it once more before throwing error
+						fThread.computeStackFrames();
+						if (fDepth == -1) {
 						// If depth is -1, then this is an invalid frame
-						throw new DebugException(new Status(IStatus.ERROR,
-								JDIDebugPlugin.getUniqueIdentifier(),
-								IJavaStackFrame.ERR_INVALID_STACK_FRAME,
-								JDIDebugModelMessages.JDIStackFrame_25, null));
+							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.JDIStackFrame_25, null));
+						}
 					}
 				} else {
 					throw new DebugException(new Status(IStatus.ERROR,
