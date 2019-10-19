@@ -68,7 +68,6 @@ import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
@@ -1396,7 +1395,7 @@ public final class JavaRuntime {
 				}
 			}
 		}
-		boolean isModular = project.getModuleDescription() != null && !isPatching(project);
+		boolean isModular = project.getOwnModuleDescription() != null;
 		if (nonDefault.isEmpty() && !isModular && !excludeTestCode) {
 			// return here only if non-modular, because patch-module might be needed otherwise
 			return null;
@@ -1420,20 +1419,6 @@ public final class JavaRuntime {
 			}
 		}
 		return locations;
-	}
-
-	private static boolean isPatching(IJavaProject project) throws JavaModelException {
-		IModuleDescription module = project.getModuleDescription();
-		if (module == null) {
-			return false;
-		}
-		IJavaElement ancestor = module.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-		if (ancestor != null) {
-			if (((IPackageFragmentRoot) ancestor).isArchive() || !project.equals(ancestor.getJavaProject())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private static boolean containsModuleInfo(IRuntimeClasspathEntry entry) {
