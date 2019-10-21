@@ -372,6 +372,15 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_EXCLUDE_TEST_CODE = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_EXCLUDE_TEST_CODE"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. When set, the JPMS option {@code --add-modules} will be added to the command line with the provided string
+	 * value as the option's argument. This attribute is specifically designed to support the special arguments "ALL-DEFAULT", "ALL-SYSTEM", and
+	 * "ALL-MODULE-PATH".
+	 *
+	 * @since 3.16
+	 */
+	public static final String ATTR_SPECIAL_ADD_MODULES = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_SPECIAL_ADD_MODULES"; //$NON-NLS-1$
+
+	/**
 	 * @since 3.11
 	 */
 	public static final String ATTR_USE_CLASSPATH_ONLY_JAR = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_USE_CLASSPATH_ONLY_JAR"; //$NON-NLS-1$

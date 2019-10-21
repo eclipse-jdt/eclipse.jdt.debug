@@ -1190,7 +1190,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				}
 			}
 		}
-		if (moduleToLocations.isEmpty()) {
+		String addModules = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SPECIAL_ADD_MODULES, ""); //$NON-NLS-1$
+		if (moduleToLocations.isEmpty() && addModules.isEmpty()) {
 			return moduleCLIOptions;
 		}
 
@@ -1213,6 +1214,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 					list.add(moduleName + '=' + "ALL-UNNAMED"); //$NON-NLS-1$
 				}
 			}
+		}
+		if (!addModules.isEmpty()) {
+			list.add("--add-modules"); //$NON-NLS-1$
+			list.add(addModules);
 		}
 		return DebugPlugin.renderArguments(list.toArray(new String[list.size()]), null);
 	}

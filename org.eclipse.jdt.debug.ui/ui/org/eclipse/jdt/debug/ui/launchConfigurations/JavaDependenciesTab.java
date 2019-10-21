@@ -66,6 +66,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
@@ -85,6 +86,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class JavaDependenciesTab extends JavaClasspathTab {
 
+	private static final String NO_ADDED_MODULES = "---"; //$NON-NLS-1$
+
+	private static final String[] SPECIAL_ADD_MODULE_OPTIONS = new String[] { NO_ADDED_MODULES, //
+			"ALL-DEFAULT", "ALL-SYSTEM", "ALL-MODULE-PATH" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 	private DependencyModel fModel;
 
 	protected static final String DIALOG_SETTINGS_PREFIX = "JavaDependenciesTab"; //$NON-NLS-1$
@@ -95,6 +101,8 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 	protected ILaunchConfiguration fLaunchConfiguration;
 
 	private Button fExcludeTestCodeButton;
+
+	private Combo fAddModulesBox;
 
 	/**
 	 * Constructor
@@ -152,6 +160,17 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 			public void widgetSelected(SelectionEvent evt) {
 				setDirty(true);
 				updateLaunchConfigurationDialog();
+			}
+		});
+
+		Composite addModComp = SWTFactory.createComposite(comp, 2, 1, SWT.HORIZONTAL);
+		SWTFactory.createLabel(addModComp, LauncherMessages.JavaDependenciesTab_add_modules_label, 1);
+		fAddModulesBox = SWTFactory.createCombo(addModComp, SWT.READ_ONLY, 1, SPECIAL_ADD_MODULE_OPTIONS);
+		fAddModulesBox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(true);
+				getLaunchConfigurationDialog().updateButtons();
 			}
 		});
 	}
@@ -231,6 +250,7 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 		fClasspathViewer.getTreeViewer().expandToLevel(2);
 		try {
 			fExcludeTestCodeButton.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false));
+			fAddModulesBox.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SPECIAL_ADD_MODULES, NO_ADDED_MODULES));
 		} catch (CoreException e) {
 		}
 	}
@@ -329,6 +349,12 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 				if (previousExcludeTestCode != fExcludeTestCodeButton.getSelection()) {
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, fExcludeTestCodeButton.getSelection());
 					fClasspathViewer.setEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
+				}
+				String add = fAddModulesBox.getText();
+				if (add.equals(NO_ADDED_MODULES)) {
+					configuration.removeAttribute(IJavaLaunchConfigurationConstants.ATTR_SPECIAL_ADD_MODULES);
+				} else {
+					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SPECIAL_ADD_MODULES, add);
 				}
 			}
 			catch (CoreException e) {

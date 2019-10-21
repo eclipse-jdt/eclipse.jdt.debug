@@ -119,6 +119,7 @@ public class LauncherMessages extends NLS {
 
 	public static String JavaDependenciesTab_0;
 	public static String JavaDependenciesTab_Dependencies_3;
+	public static String JavaDependenciesTab_add_modules_label;
 
 	public static String JavaSourceLookupTab_Source_1;
 
