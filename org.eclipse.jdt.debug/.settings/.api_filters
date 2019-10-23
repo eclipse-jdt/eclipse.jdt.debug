@@ -15,6 +15,13 @@
                 <message_argument value="getEscapedValue()"/>
             </message_arguments>
         </filter>
+        <filter comment="preview related API" id="640712815">
+            <message_arguments>
+                <message_argument value="TextBlock"/>
+                <message_argument value="ASTInstructionCompiler"/>
+                <message_argument value="getLiteralValue()"/>
+            </message_arguments>
+        </filter>
         <filter comment="For Java 13" id="642777099">
             <message_arguments>
                 <message_argument value="ASTVisitor"/>

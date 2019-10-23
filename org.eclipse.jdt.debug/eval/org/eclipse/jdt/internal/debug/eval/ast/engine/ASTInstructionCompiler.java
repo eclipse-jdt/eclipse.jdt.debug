@@ -3771,8 +3771,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		push(new PushString(node.getEscapedValue()));
-		
+		push(new PushString(node.getLiteralValue()));
+
 		return true;
 	}
 

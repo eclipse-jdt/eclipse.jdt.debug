@@ -400,7 +400,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private CompilationUnit parseCompilationUnit(char[] source,
 			String unitName, IJavaProject project, Map<String, String> extraCompileOptions) {
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		ASTParser parser = ASTParser.newParser(AST.JLS13);
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);
