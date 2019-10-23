@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.resources.IFile;
@@ -81,6 +82,7 @@ import org.eclipse.jdt.internal.corext.template.java.CompilationUnitContext;
 import org.eclipse.jdt.internal.corext.template.java.CompilationUnitContextType;
 import org.eclipse.jdt.internal.corext.template.java.JavaContextType;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.core.breakpoints.FirstLambdaLocationLocator;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
@@ -101,6 +103,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
@@ -245,6 +248,123 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.schedule();
     }
 
+	public void toggleLambdaMethodBreakpoints(final IWorkbenchPart part, final ISelection finalSelection, final ValidBreakpointLocationLocator loc) {
+		Job job = new Job("Toggle Lambda Method Breakpoints") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				try {
+					return doToggleLambdaMethodBreakpoints(part, finalSelection, loc, monitor);
+				} catch (CoreException e) {
+					return e.getStatus();
+				} finally {
+					BreakpointToggleUtils.setUnsetTracepoints(false);
+				}
+			}
+		};
+		job.setPriority(Job.INTERACTIVE);
+		job.setSystem(true);
+		job.schedule();
+	}
+
+	public void toggleLambdaEntryMethodBreakpoints(final IWorkbenchPart part, final ISelection finalSelection, final String lambdaMethodName) {
+		Job job = new Job("Toggle Lambda Entry Method Breakpoints") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				try {
+					return doToggleLambdaEntryMethodBreakpoints(part, finalSelection, lambdaMethodName, monitor);
+				} catch (CoreException e) {
+					return e.getStatus();
+				} finally {
+					BreakpointToggleUtils.setUnsetTracepoints(false);
+				}
+			}
+		};
+		job.setPriority(Job.INTERACTIVE);
+		job.setSystem(true);
+		job.schedule();
+	}
+
+	static IStatus doToggleLambdaEntryMethodBreakpoints(IWorkbenchPart part, ISelection selection, String lambdaMethodName, IProgressMonitor monitor) throws CoreException {
+		ITextEditor textEditor = getTextEditor(part);
+		if (textEditor == null || !(selection instanceof ITextSelection)) {
+			return Status.OK_STATUS;
+		}
+		ITextSelection textSelection = (ITextSelection) selection;
+		IEditorInput editorInput = textEditor.getEditorInput();
+		ITypeRoot root = getTypeRoot(editorInput);
+		if (root instanceof ICompilationUnit) {
+			ICompilationUnit unit = (ICompilationUnit) root;
+			synchronized (unit) {
+				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
+			}
+			IJavaElement[] elements = unit.codeSelect(textSelection.getOffset(), textSelection.getLength());
+			if (elements == null || elements.length == 0) {
+				BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
+				return Status.OK_STATUS;
+			}
+			IMethod method = null;
+			if (elements[0] instanceof IMethod) {
+				method = (IMethod) elements[0];
+			} else if (elements[0].getParent() instanceof IMethod) {
+				method = (IMethod) elements[0].getParent();
+			}
+
+			if (method != null) {
+				doToggleMethodBreakpoint(method, lambdaMethodName, part, selection, monitor);
+			} else {
+				BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
+			}
+		}
+		return Status.OK_STATUS;
+	}
+
+
+	static IStatus doToggleLambdaMethodBreakpoints(IWorkbenchPart part, ISelection selection, ValidBreakpointLocationLocator loc, IProgressMonitor monitor) throws CoreException {
+		ITextEditor textEditor = getTextEditor(part);
+		if (textEditor == null || !(selection instanceof ITextSelection)) {
+			return Status.OK_STATUS;
+		}
+		ITextSelection textSelection = (ITextSelection) selection;
+		IEditorInput editorInput = textEditor.getEditorInput();
+		ITypeRoot root = getTypeRoot(editorInput);
+		if (root instanceof ICompilationUnit) {
+			ICompilationUnit unit = (ICompilationUnit) root;
+			synchronized (unit) {
+				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
+			}
+			IJavaElement[] elements = unit.codeSelect(textSelection.getOffset(), textSelection.getLength());
+			if (elements == null || elements.length == 0) {
+				ValidBreakpointLocationLocator locNew = new ValidBreakpointLocationLocator(loc.getCompilationUnit(), textSelection.getStartLine()
+						+ 1, true, true);
+				locNew.getCompilationUnit().accept(locNew);
+				toggleLineBreakpoints(part, selection, false, locNew);
+				return Status.OK_STATUS;
+			}
+			IMethod method = null;
+			if (elements[0] instanceof IMethod) {
+				method = (IMethod) elements[0];
+			} else if (elements[0].getParent() instanceof IMethod) {
+				method = (IMethod) elements[0].getParent();
+			}
+
+			if (method != null) {
+				doToggleMethodBreakpoint(method, loc.getLambdaMethodName(), part, selection, monitor);
+			} else {
+				ValidBreakpointLocationLocator locNew = new ValidBreakpointLocationLocator(loc.getCompilationUnit(), textSelection.getStartLine()
+						+ 1, true, true);
+				locNew.getCompilationUnit().accept(locNew);
+				toggleLineBreakpoints(part, selection, false, locNew);
+			}
+
+		}
+		return Status.OK_STATUS;
+	}
 	static IStatus doToggleMethodBreakpoints(IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
 		BreakpointToggleUtils.report(null, part);
 		ISelection selection = finalSelection;
@@ -272,6 +392,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	}
 
 	private static void doToggleMethodBreakpoint(IMethod member, IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
+		doToggleMethodBreakpoint(member, null, part, finalSelection, monitor);
+	}
+
+	private static void doToggleMethodBreakpoint(IMethod member, String lambdaMethodName, IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
 		IJavaBreakpoint breakpoint = getMethodBreakpoint(member);
 		if (breakpoint != null) {
 			if (BreakpointToggleUtils.isToggleTracepoints()) {
@@ -293,7 +417,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, member);
 		IType type = member.getDeclaringType();
 		String signature = member.getSignature();
-		String mname = member.getElementName();
+		String mname = Optional.ofNullable(lambdaMethodName).orElse(member.getElementName());
 		if (member.isConstructor()) {
 			mname = "<init>"; //$NON-NLS-1$
 			if (type.isEnum()) {
@@ -1432,9 +1556,21 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			JDIDebugUIPlugin.log("Failed to parse CU for: " + editor.getTitle(), new IllegalStateException()); //$NON-NLS-1$
 			return;
 		}
-		ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
+		ValidBreakpointLocationLocator loc = null;
+		boolean lambdaEntryBP = false;
+		if (BreakpointToggleUtils.isToggleLambdaEntryBreakpoint()) {
+			loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine()
+				+ 1, true, true, ts.getOffset(), ts.getLength());
+			lambdaEntryBP = true;
+			BreakpointToggleUtils.setUnsetLambdaEntryBreakpoint(false);
+		} else {
+			loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
+		}
 		unit.accept(loc);
-		if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
+
+		if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LAMBDA_METHOD) {
+			toggleLambdaMethodBreakpoints(part, ts, loc);
+		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
 			toggleMethodBreakpoints(part, ts);
 		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
 			if (BreakpointToggleUtils.isToggleTracepoints()) {
@@ -1444,7 +1580,31 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			}
 			toggleWatchpoints(part, ts);
 		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
-			toggleLineBreakpoints(part, ts, false, loc);
+			if (lambdaEntryBP) {
+				IEditorInput editorInput = editor.getEditorInput();
+				IDocumentProvider documentProvider = editor.getDocumentProvider();
+				if (documentProvider == null) {
+					BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
+					throw new CoreException(Status.CANCEL_STATUS);
+				}
+				IDocument document = documentProvider.getDocument(editorInput);
+				try {
+					IRegion region = document.getLineInformation(ts.getStartLine());
+					FirstLambdaLocationLocator firstLambda = new FirstLambdaLocationLocator(region.getOffset(), region.getOffset() + region.getLength());
+					unit.accept(firstLambda);
+					if (firstLambda.getNodeLength() == -1 || firstLambda.getNodeOffset() == -1) {
+						BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
+						return;
+					}
+					ITextSelection textSelection = new TextSelection(document, firstLambda.getNodeOffset(), firstLambda.getNodeLength());
+					toggleLambdaEntryMethodBreakpoints(part, textSelection, firstLambda.getLambdaMethodName());
+				} catch (BadLocationException e) {
+					BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
+				}
+
+			} else {
+				toggleLineBreakpoints(part, ts, false, loc);
+			}
 		}
 	}
 

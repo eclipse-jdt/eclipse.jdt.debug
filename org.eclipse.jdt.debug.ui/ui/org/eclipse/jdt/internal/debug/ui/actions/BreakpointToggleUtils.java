@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 IBM Corporation and others.
+ * Copyright (c) 2016, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
 public class BreakpointToggleUtils {
 
 	private static boolean isTracepoint = false;
+	private static boolean isLambdaEntryBreakpoint = false;
 
 
 	public static void setUnsetTracepoints(boolean tracePoint) {
@@ -33,6 +34,14 @@ public class BreakpointToggleUtils {
 
 	public static boolean isToggleTracepoints() {
 		return isTracepoint;
+	}
+
+	public static void setUnsetLambdaEntryBreakpoint(boolean lambdaEntryBreakpoint) {
+		isLambdaEntryBreakpoint = lambdaEntryBreakpoint;
+	}
+
+	public static boolean isToggleLambdaEntryBreakpoint() {
+		return isLambdaEntryBreakpoint;
 	}
 
 	/**

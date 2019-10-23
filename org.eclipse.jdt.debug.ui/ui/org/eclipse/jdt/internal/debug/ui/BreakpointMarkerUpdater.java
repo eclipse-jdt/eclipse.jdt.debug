@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
@@ -67,6 +68,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  *
  * @since 3.3
  */
+@SuppressWarnings("deprecation")
 public class BreakpointMarkerUpdater implements IMarkerUpdater {
 
 	public BreakpointMarkerUpdater() {}
@@ -113,7 +115,22 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			return false;
 		}
 		try {
-			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())+1, true, true);
+			ValidBreakpointLocationLocator loc;
+			if (breakpoint instanceof IJavaMethodBreakpoint && ((IJavaMethodBreakpoint) breakpoint).isEntry()) {
+				IMarker m = breakpoint.getMarker();
+				if (m != null) {
+					int charStart = m.getAttribute(IMarker.CHAR_START, -1);
+					int charEnd = m.getAttribute(IMarker.CHAR_END, -1);
+					int length = charEnd - charStart + 1;
+					loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())
+							+ 1, true, true, position.getOffset(), length);
+
+				} else {
+					loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset()) + 1, true, true);
+				}
+			} else {
+				loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset()) + 1, true, true);
+			}
 			unit.accept(loc);
 			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
 				return false;
