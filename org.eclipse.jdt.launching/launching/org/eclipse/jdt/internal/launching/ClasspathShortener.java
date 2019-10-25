@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Cedric Chabanois and others.
+ * Copyright (c) 2018, 2019 Cedric Chabanois and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -383,7 +383,7 @@ public class ClasspathShortener {
 			File classPathFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
 					+ "%s-classpath-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
 
-			byte[] bytes = ("-classpath " + classpath).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
+			byte[] bytes = ("-classpath " + quoteWindowsPath(classpath)).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
 
 			Files.write(classPathFile.toPath(), bytes);
 			return classPathFile;
@@ -398,7 +398,7 @@ public class ClasspathShortener {
 			File modulePathFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
 					+ "%s-module-path-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
 
-			byte[] bytes = ("--module-path " + modulePath).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
+			byte[] bytes = ("--module-path " + quoteWindowsPath(modulePath)).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
 
 			Files.write(modulePathFile.toPath(), bytes);
 			return modulePathFile;
@@ -440,7 +440,7 @@ public class ClasspathShortener {
 		if (envp == null) {
 			envp = getEnvpFromNativeEnvironment();
 		}
-		String classpathEnvVar = CLASSPATH_ENV_VAR_PREFIX + classpath;
+		String classpathEnvVar = CLASSPATH_ENV_VAR_PREFIX + quoteWindowsPath(classpath);
 		int index = getEnvClasspathIndex(envp);
 		if (index < 0) {
 			envp = Arrays.copyOf(envp, envp.length + 1);
@@ -479,6 +479,13 @@ public class ClasspathShortener {
 			}
 		}
 		return -1;
+	}
+
+	public String quoteWindowsPath(String path) {
+		if (os.equals(Platform.OS_WIN32)) {
+			return "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return path;
 	}
 
 }

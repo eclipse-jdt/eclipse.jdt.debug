@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Cedric Chabanois and others.
+ * Copyright (c) 2018, 2019 Cedric Chabanois and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -142,7 +142,8 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertEquals(1, classpathShortener.getProcessTempFiles().size());
 		assertArrayEquals(new String[] { JAVA_10_PATH, ENCODING_ARG, "@" + classpathShortener.getProcessTempFiles().get(0).getAbsolutePath(),
 				MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
-		assertEquals("-classpath " + classpath, getFileContents(classpathShortener.getProcessTempFiles().get(0)));
+		assertEquals("-classpath "
+				+ classpathShortener.quoteWindowsPath(classpath), getFileContents(classpathShortener.getProcessTempFiles().get(0)));
 	}
 
 	public void testArgFileUsedForLongModulePath() throws Exception {
@@ -160,7 +161,8 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertEquals(1, classpathShortener.getProcessTempFiles().size());
 		assertArrayEquals(new String[] { JAVA_10_PATH, ENCODING_ARG, "@" + classpathShortener.getProcessTempFiles().get(0).getAbsolutePath(),
 				MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
-		assertEquals("--module-path " + modulepath, getFileContents(classpathShortener.getProcessTempFiles().get(0)));
+		assertEquals("--module-path "
+				+ classpathShortener.quoteWindowsPath(modulepath), getFileContents(classpathShortener.getProcessTempFiles().get(0)));
 	}
 
 	public void testLongClasspathAndLongModulePath() throws Exception {
@@ -180,8 +182,10 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertArrayEquals(new String[] { JAVA_10_PATH, ENCODING_ARG, "@" + classpathShortener.getProcessTempFiles().get(0).getAbsolutePath(),
 				"@" + classpathShortener.getProcessTempFiles().get(1).getAbsolutePath(), MAIN_CLASS, "-arg1",
 				"arg2" }, classpathShortener.getCmdLine());
-		assertEquals("-classpath " + classpath, getFileContents(classpathShortener.getProcessTempFiles().get(0)));
-		assertEquals("--module-path " + modulepath, getFileContents(classpathShortener.getProcessTempFiles().get(1)));
+		assertEquals("-classpath "
+				+ classpathShortener.quoteWindowsPath(classpath), getFileContents(classpathShortener.getProcessTempFiles().get(0)));
+		assertEquals("--module-path "
+				+ classpathShortener.quoteWindowsPath(modulepath), getFileContents(classpathShortener.getProcessTempFiles().get(1)));
 	}
 
 	public void testClasspathOnlyJarUsedForLongClasspathOnJava8() throws Exception {
@@ -221,7 +225,8 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		// Then
 		assertTrue(result);
 		assertEquals(0, classpathShortener.getProcessTempFiles().size());
-		assertArrayEquals(new String[] { "PATH=C:\\WINDOWS\\System32;C:\\WINDOWS", "CLASSPATH=" + classpath }, classpathShortener.getEnvp());
+		assertArrayEquals(new String[] { "PATH=C:\\WINDOWS\\System32;C:\\WINDOWS",
+				"CLASSPATH=" + classpathShortener.quoteWindowsPath(classpath) }, classpathShortener.getEnvp());
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 
@@ -239,7 +244,8 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		// Then
 		assertTrue(result);
 		assertEquals(0, classpathShortener.getProcessTempFiles().size());
-		assertArrayEquals(new String[] { "MYVAR1=value1", "MYVAR2=value2", "CLASSPATH=" + classpath }, classpathShortener.getEnvp());
+		assertArrayEquals(new String[] { "MYVAR1=value1", "MYVAR2=value2",
+				"CLASSPATH=" + classpathShortener.quoteWindowsPath(classpath) }, classpathShortener.getEnvp());
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 
@@ -260,7 +266,8 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		// Then
 		assertTrue(result);
 		assertEquals(0, classpathShortener.getProcessTempFiles().size());
-		assertArrayEquals(new String[] { "PATH=C:\\WINDOWS\\System32;C:\\WINDOWS", "CLASSPATH=" + classpath }, classpathShortener.getEnvp());
+		assertArrayEquals(new String[] { "PATH=C:\\WINDOWS\\System32;C:\\WINDOWS",
+				"CLASSPATH=" + classpathShortener.quoteWindowsPath(classpath) }, classpathShortener.getEnvp());
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 
