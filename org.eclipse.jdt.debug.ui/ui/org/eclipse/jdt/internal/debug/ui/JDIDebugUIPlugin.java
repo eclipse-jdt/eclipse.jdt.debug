@@ -221,7 +221,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static IWorkbenchPage getActivePage() {

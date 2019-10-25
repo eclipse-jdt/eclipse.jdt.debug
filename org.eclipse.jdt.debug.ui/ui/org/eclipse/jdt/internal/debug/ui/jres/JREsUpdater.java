@@ -26,6 +26,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Processes add/removed/changed VMs.
@@ -106,7 +107,7 @@ public class JREsUpdater {
 			}
 		};
 		try {
-			JDIDebugUIPlugin.getDefault().getWorkbench().getProgressService().busyCursorWhile(runnable);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {
