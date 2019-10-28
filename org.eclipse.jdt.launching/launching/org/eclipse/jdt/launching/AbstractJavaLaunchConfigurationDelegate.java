@@ -1179,8 +1179,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 										addPatchModuleLocations(moduleToLocations, moduleName, locations);
 									}
 								} else {
-									// old format not specifying a location: (TODO: multiple locations?)
-									addPatchModuleLocations(moduleToLocations, patchModule, entry.getLocation());
+									// old (discouraged) format without explicit paths: list all output locations of the current project
+									IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+									addPatchModuleLocations(moduleToLocations, patchModule, toAbsolutePathsString(javaProject.getOutputLocation().toString()));
+									for (IClasspathEntry cpEntry : javaProject.getRawClasspath()) {
+										if (cpEntry.getOutputLocation() != null) {
+											addPatchModuleLocations(moduleToLocations, patchModule, toAbsolutePathsString(cpEntry.getOutputLocation().toString()));
+										}
+									}
 								}
 							}
 
