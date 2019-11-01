@@ -84,7 +84,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			events.get().clear();
 
 			resumeToLineBreakpoint(thread, bp2);
-			TestUtil.waitForJobs(getName(), 100, 3000);
+			TestUtil.waitForJobs(getName(), 1000, 3000);
 
 			// expect one single "CHANGE" event for second thread
 			List<DebugEvent> changeEvents = getStateChangeEvents(events, second);

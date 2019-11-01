@@ -2391,12 +2391,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		private static final String METHOD_SIGNATURE = "(Ljava/lang/String;)V"; //$NON-NLS-1$
 
 		private EventRequest request;
+		private ThreadChangeNotifierJob notfierJob;
 
 		ThreadNameChangeHandler() {
 			String disableListenerSystemProperty = System.getProperty(DISABLE_THREAD_NAME_CHANGE_LISTENER);
 			boolean isDisabled = String.valueOf(Boolean.TRUE).equals(disableListenerSystemProperty);
 			if (!isDisabled) {
 				createRequest();
+				notfierJob = new ThreadChangeNotifierJob();
 			}
 		}
 
@@ -2450,6 +2452,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			if (request != null) {
 				removeJDIEventListener(this, request);
 			}
+			if (notfierJob != null) {
+				notfierJob.stop();
+			}
 		}
 
 		@Override
@@ -2461,7 +2466,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			}
 			if (thread != null) {
 				// trigger updates on the thread
-				DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { new DebugEvent(thread, DebugEvent.CHANGE, DebugEvent.STATE) });
+				notfierJob.notifyAboutChange(thread);
 			}
 			// we never suspend the thread
 			return true;
@@ -2481,6 +2486,59 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			if (isAvailable()) {
 				JDIDebugPlugin.log(status);
 			}
+		}
+	}
+
+	/**
+	 * Job to throttle thread name change events notification.
+	 */
+	class ThreadChangeNotifierJob extends Job {
+
+		private final LinkedHashSet<JDIThread> queue;
+
+		public ThreadChangeNotifierJob() {
+			super(JDIDebugModelMessages.JDIDebugTarget_ThreadNameNotifier);
+			setSystem(true);
+			setPriority(Job.DECORATE);
+			queue = new LinkedHashSet<>();
+		}
+
+		public void notifyAboutChange(JDIThread thread) {
+			synchronized (queue) {
+				if (queue.add(thread)) {
+					// if there are too many threads changing names, they may slow down debugger
+					int delay = Math.min(1000, 300 * queue.size());
+					schedule(delay);
+				}
+			}
+		}
+
+		void stop() {
+			synchronized (queue) {
+				queue.clear();
+			}
+			cancel();
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			DebugEvent[] events;
+			synchronized (queue) {
+				events = queue.stream().map(t -> new DebugEvent(t, DebugEvent.CHANGE, DebugEvent.STATE)).toArray(DebugEvent[]::new);
+				queue.clear();
+			}
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			// Dispatch known events
+			DebugPlugin.getDefault().fireDebugEventSet(events);
+			return Status.OK_STATUS;
+		}
+
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == JDIDebugTarget.this;
 		}
 	}
 

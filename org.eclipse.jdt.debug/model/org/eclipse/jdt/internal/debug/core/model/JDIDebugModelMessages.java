@@ -61,6 +61,7 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIDebugTarget_Unable_to_create_class_prepare_request__3;
 	public static String JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4;
 	public static String JDIDebugTarget_0;
+	public static String JDIDebugTarget_ThreadNameNotifier;
 
 	public static String JDIFieldVariable_exception_modifying_value;
 	public static String JDIFieldVariable_exception_retrieving_field_name;
