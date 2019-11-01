@@ -174,7 +174,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     			synchronized(this) {
                     engine.evaluate(stringValue, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
     				try {
-    					this.wait();
+						if (results[0] == null) {
+							this.wait();
+						}
     				} catch (InterruptedException e) {
     					if (results[0] == null){
 	    					IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.JavaObjectValueEditor_0, e);
