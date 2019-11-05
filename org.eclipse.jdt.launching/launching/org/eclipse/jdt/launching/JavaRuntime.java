@@ -526,9 +526,6 @@ public final class JavaRuntime {
 			File location = install.getInstallLocation();
 			if (location != null) {
 				if (location.exists()) {
-					if (LaunchingPlugin.isVMLogging()) {
-						LaunchingPlugin.log(LaunchingMessages.VMLogging_3 + install.getInstallLocation());
-					}
 					return install;
 				}
 			}
@@ -542,11 +539,7 @@ public final class JavaRuntime {
 			fgVMTypes = null;
 			initializeVMs();
 		}
-		install = getVMFromCompositeId(getDefaultVMId());
-		if (LaunchingPlugin.isVMLogging()) {
-			LaunchingPlugin.log(LaunchingMessages.VMLogging_3 + install.getInstallLocation());
-		}
-		return install;
+		return getVMFromCompositeId(getDefaultVMId());
 	}
 
 	/**
@@ -3310,6 +3303,9 @@ public final class JavaRuntime {
 	 * @param vm the backing {@link IVMInstall}
 	 */
 	private static void updateCompliance(IVMInstall vm) {
+		if (LaunchingPlugin.isVMLogging()) {
+			LaunchingPlugin.log("Compliance needs an update."); //$NON-NLS-1$
+		}
         if (vm instanceof IVMInstall2) {
             String javaVersion = ((IVMInstall2)vm).getJavaVersion();
             if (javaVersion != null) {
@@ -3357,9 +3353,15 @@ public final class JavaRuntime {
 				}
             	// only update the compliance settings if they are default settings, otherwise the
             	// settings have already been modified by a tool or user
+				if (LaunchingPlugin.isVMLogging()) {
+					LaunchingPlugin.log("Compliance to be updated is: " + compliance); //$NON-NLS-1$
+				}
             	if (isDefault) {
-            		JavaCore.setComplianceOptions(compliance, options);
-            		JavaCore.setOptions(options);
+					JavaCore.setComplianceOptions(compliance, options);
+					JavaCore.setOptions(options);
+					if (LaunchingPlugin.isVMLogging()) {
+						LaunchingPlugin.log("Compliance Options are updated."); //$NON-NLS-1$
+					}
             	}
 
             }
