@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Image;
  *
  * @since 3.7
  */
-@SuppressWarnings("restriction")
 public class SourceElementLabelProviderAdapter extends SourceElementLabelProvider {
 
 	// Append Root path to identify full path for duplicate Java elements in source lookup dialog

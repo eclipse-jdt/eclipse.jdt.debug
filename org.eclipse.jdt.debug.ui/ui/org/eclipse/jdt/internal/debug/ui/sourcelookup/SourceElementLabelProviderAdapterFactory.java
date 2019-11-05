@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ public class SourceElementLabelProviderAdapterFactory implements IAdapterFactory
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	@Override
-	@SuppressWarnings({ "unchecked", "restriction" })
+	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(org.eclipse.debug.internal.ui.sourcelookup.SourceElementLabelProvider.class)
 				&& adaptableObject instanceof IJavaElement) {
@@ -37,7 +37,6 @@ public class SourceElementLabelProviderAdapterFactory implements IAdapterFactory
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
-	@SuppressWarnings("restriction")
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] { org.eclipse.debug.internal.ui.sourcelookup.SourceElementLabelProvider.class };
