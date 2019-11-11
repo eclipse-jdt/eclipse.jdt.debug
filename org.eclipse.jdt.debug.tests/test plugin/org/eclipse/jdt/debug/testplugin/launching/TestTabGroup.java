@@ -16,7 +16,6 @@ package org.eclipse.jdt.debug.testplugin.launching;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * Test tab group implementation
@@ -24,15 +23,9 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
  */
 public class TestTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = {
-				new CommonTab()
-		};
-		setTabs(tabs);
+		setTabs(new CommonTab());
 	}
 
 }
