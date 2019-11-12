@@ -203,6 +203,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_suspended_linebreakpoint;
 	public static String thread_daemon_suspended_methodentry;
 	public static String thread_daemon_suspended_exception;
+	public static String thread_daemon_suspended_exception_uncaught;
 	public static String thread_daemon_suspended_methodexit;
 	public static String thread_daemon_suspended_fieldmodification;
 	public static String thread_daemon_suspended_runtoline;
@@ -218,6 +219,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_system_suspended_linebreakpoint;
 	public static String thread_system_suspended_methodentry;
 	public static String thread_system_suspended_exception;
+	public static String thread_system_suspended_exception_uncaught;
 	public static String thread_system_suspended_methodexit;
 	public static String thread_system_suspended_fieldmodification;
 	public static String thread_system_suspended_runtoline;
@@ -233,6 +235,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_system_suspended_linebreakpoint;
 	public static String thread_daemon_system_suspended_methodentry;
 	public static String thread_daemon_system_suspended_exception;
+	public static String thread_daemon_system_suspended_exception_uncaught;
 	public static String thread_daemon_system_suspended_methodexit;
 	public static String thread_daemon_system_suspended_fieldmodification;
 	public static String thread_daemon_system_suspended_runtoline;
