@@ -323,9 +323,9 @@ public class DebugUIMessages extends NLS {
 
 	public static String JavaDebugOptionsManager_exceptionRecurrence_dialogTitle;
 	public static String JavaDebugOptionsManager_exceptionRecurrence_dialogMessage;
-	public static String JavaDebugOptionsManager_cancel_buttonLabel;
 	public static String JavaDebugOptionsManager_skip_buttonLabel;
 	public static String JavaDebugOptionsManager_suspend_buttonLabel;
+	public static String JavaDebugOptionsManager_exceptionRecurrence_remember_decision;
 
 	public static String JavaDebugOptionsManager_Line_breakpoint___4;
 
