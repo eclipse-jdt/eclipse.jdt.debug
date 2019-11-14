@@ -48,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <p>
  * This class may be instantiated.
  * </p>
- * 
+ *
  * @see IJavaSourceLocation
  * @since 2.0
  * @deprecated In 3.0, the debug platform provides source lookup facilities that should be used in place of the Java source lookup support provided in

@@ -39,7 +39,7 @@ public interface IJDIHelpers {
 	/**
 	 * If the given element is a {@link IStackFrame}, returns classes locations of the stack frames "beneath" the given element. The returned iterable
 	 * does not include {@code null} elements.
-	 * 
+	 *
 	 * Returns empty iterable if the given element is not a {@link IStackFrame}.
 	 */
 	public Iterable<File> getStackFramesClassesLocations(Object element) throws DebugException;
