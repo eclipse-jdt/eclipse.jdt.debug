@@ -192,8 +192,9 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		execString += " -Xrunjdwp:transport=dt_socket,address=" + address + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		// Add User specified options.
-		if (fOptions != null)
+		if (fOptions != null) {
 			execString += " " + fOptions; //$NON-NLS-1$
+		}
 
 		// Add Main class.
 		execString += " " + fMain; //$NON-NLS-1$
