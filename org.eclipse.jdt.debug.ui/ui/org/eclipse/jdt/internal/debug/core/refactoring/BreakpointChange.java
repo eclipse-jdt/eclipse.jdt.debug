@@ -86,12 +86,12 @@ public abstract class BreakpointChange extends Change {
 	 */
 	protected void apply(IJavaBreakpoint breakpoint) throws CoreException {
 		breakpoint.setHitCount(fHitCount);
-		for (int i = 0; i < fInstanceFilters.length; i++) {
-			breakpoint.addInstanceFilter(fInstanceFilters[i]);
+		for (IJavaObject filter : fInstanceFilters) {
+			breakpoint.addInstanceFilter(filter);
 		}
 		breakpoint.setSuspendPolicy(fSuspendPolicy);
-		for (int i = 0; i < fThreadFilters.length; i++) {
-			breakpoint.setThreadFilter(fThreadFilters[i]);
+		for (IJavaThread filter : fThreadFilters) {
+			breakpoint.setThreadFilter(filter);
 		}
 		breakpoint.setEnabled(fEnabled);
 	}

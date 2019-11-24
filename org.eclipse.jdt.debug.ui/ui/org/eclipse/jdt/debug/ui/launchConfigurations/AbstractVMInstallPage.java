@@ -173,8 +173,8 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	 */
 	private boolean isDuplicateName(String name) {
 		if (fExistingNames != null) {
-			for (int i = 0; i < fExistingNames.length; i++) {
-				if (name.equals(fExistingNames[i])) {
+			for (String n : fExistingNames) {
+				if (name.equals(n)) {
 					return true;
 				}
 			}
@@ -240,9 +240,7 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	 */
 	protected void updatePageStatus() {
 		IStatus max = Status.OK_STATUS;
-		IStatus[] vmStatus = getVMStatus();
-		for (int i = 0; i < vmStatus.length; i++) {
-			IStatus status = vmStatus[i];
+		for (IStatus status : getVMStatus()) {
 			if (status.getSeverity() > max.getSeverity()) {
 				max = status;
 			}

@@ -193,18 +193,17 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		String modelId = JDIDebugPlugin.getUniqueIdentifier();
 		String markerType= JavaLineBreakpoint.getMarkerType();
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] breakpoints= manager.getBreakpoints(modelId);
-		for (int i = 0; i < breakpoints.length; i++) {
-			if (!(breakpoints[i] instanceof IJavaLineBreakpoint)) {
+		for (IBreakpoint b : manager.getBreakpoints(modelId)) {
+			if (!(b instanceof IJavaLineBreakpoint)) {
 				continue;
 			}
-			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
+			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) b;
 			IMarker marker = breakpoint.getMarker();
 			if (marker != null && marker.exists() && marker.getType().equals(markerType) && currentmarker.getId() != marker.getId()) {
 				String breakpointTypeName = breakpoint.getTypeName();
 				if ((JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$')))
-						&& breakpoint.getLineNumber() == lineNumber && resource.equals(marker.getResource())) {
-						return breakpoint;
+					&& breakpoint.getLineNumber() == lineNumber && resource.equals(marker.getResource())) {
+					return breakpoint;
 				}
 			}
 		}

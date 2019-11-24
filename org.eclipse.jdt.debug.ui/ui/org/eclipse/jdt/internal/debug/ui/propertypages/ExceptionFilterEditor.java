@@ -183,8 +183,8 @@ public class ExceptionFilterEditor {
 		Object[] filters = fFilterContentProvider.getElements(null);
 		List<String> inclusionFilters = new ArrayList<>(filters.length);
 		List<String> exclusionFilters = new ArrayList<>(filters.length);
-		for (int i = 0; i < filters.length; i++) {
-			Filter filter = (Filter) filters[i];
+		for (Object f : filters) {
+			Filter filter = (Filter) f;
 			String name = filter.getName();
 			if (name.equals(DEFAULT_PACKAGE)) {
 				name = ""; //$NON-NLS-1$
@@ -350,9 +350,8 @@ public class ExceptionFilterEditor {
 			return;
 			// otherwise, commit the new value if not a duplicate
 		} else {
-			Object[] filters = fFilterContentProvider.getElements(null);
-			for (int i = 0; i < filters.length; i++) {
-				Filter filter = (Filter) filters[i];
+			for (Object f : fFilterContentProvider.getElements(null)) {
+				Filter filter = (Filter) f;
 				if (filter.getName().equals(trimmedValue)) {
 					removeNewFilter();
 					cleanupEditor();
@@ -446,8 +445,8 @@ public class ExceptionFilterEditor {
 		}
 		Object[] packages = dialog.getResult();
 		if (packages != null) {
-			for (int i = 0; i < packages.length; i++) {
-				IJavaElement pkg = (IJavaElement) packages[i];
+			for (Object p : packages) {
+				IJavaElement pkg = (IJavaElement) p;
 				String filter = pkg.getElementName();
 				if (filter.length() < 1) {
 					filter = DEFAULT_PACKAGE;
@@ -479,10 +478,9 @@ public class ExceptionFilterEditor {
 		}
 
 		Object[] types = dialog.getResult();
-		IType type;
 		if (types != null) {
-			for (int i = 0; i < types.length; i++) {
-				type = (IType) types[i];
+			for (Object t : types) {
+				IType type = (IType) t;
 				Filter f = fFilterContentProvider.addFilter(type.getFullyQualifiedName());
 				fFilterContentProvider.checkFilter(f, true);
 			}
@@ -522,8 +520,7 @@ public class ExceptionFilterEditor {
 		}
 
 		protected void populateFilters(String[] filters, boolean checked) {
-			for (int i = 0; i < filters.length; i++) {
-				String name = filters[i];
+			for (String name : filters) {
 				if (name.length() == 0) {
 					name = DEFAULT_PACKAGE;
 				}
@@ -542,8 +539,8 @@ public class ExceptionFilterEditor {
 		}
 
 		public void removeFilters(Object[] filters) {
-			for (int i = 0; i < filters.length; i++) {
-				Filter filter = (Filter) filters[i];
+			for (Object f : filters) {
+				Filter filter = (Filter) f;
 				fFilters.remove(filter);
 			}
 			fViewer.remove(filters);

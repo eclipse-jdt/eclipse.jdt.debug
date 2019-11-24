@@ -69,8 +69,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	@Override
 	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destFieldName) throws CoreException, OperationCanceledException {
 		IField originalField = (IField) getOriginalElement();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : markers) {
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaWatchpoint) {
 				IJavaWatchpoint watchpoint = (IJavaWatchpoint) breakpoint;

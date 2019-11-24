@@ -129,9 +129,9 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 						JDIDebugModel.getPluginIdentifier());
 		IJavaExceptionBreakpoint breakpoint = null;
 		boolean exists = false;
-		for (int j = 0; j < breakpoints.length; j++) {
-			if (breakpoints[j] instanceof IJavaExceptionBreakpoint) {
-				breakpoint = (IJavaExceptionBreakpoint) breakpoints[j];
+		for (IBreakpoint b : breakpoints) {
+			if (b instanceof IJavaExceptionBreakpoint) {
+				breakpoint = (IJavaExceptionBreakpoint) b;
 				String typeName = breakpoint.getTypeName();
 				if (typeName != null && typeName.equals(type.getFullyQualifiedName())) {
 					exists = true;

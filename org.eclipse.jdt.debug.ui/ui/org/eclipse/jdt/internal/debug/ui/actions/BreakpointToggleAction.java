@@ -177,8 +177,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 			IStructuredSelection selection= getStructuredSelection();
 			if (selection != null) {
 				IBreakpoint selectedBreakpoint= (IBreakpoint)selection.getFirstElement();
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint = breakpoints[i];
+				for (IBreakpoint breakpoint : breakpoints) {
 					if (selectedBreakpoint.equals(breakpoint)) {
 						selectionChanged(getAction(), selection);
 						return;

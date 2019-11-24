@@ -56,8 +56,7 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destProjectName) throws CoreException, OperationCanceledException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(destProjectName);
 		IJavaProject destProject = JavaCore.create(project);
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : markers) {
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;

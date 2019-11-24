@@ -40,8 +40,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	public void addPropertyListener(IPropertyListener listener) {
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].addPropertyListener(listener);
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.addPropertyListener(listener);
 		}
 	}
 
@@ -50,8 +50,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	public void removePropertyListener(IPropertyListener listener) {
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].removePropertyListener(listener);
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.removePropertyListener(listener);
 		}
 	}
 
@@ -60,8 +60,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	protected void dispose() {
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].dispose();
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.dispose();
 		}
 		fEditors = null;
 	}
@@ -72,8 +72,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	@Override
 	public Control createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].createControl(comp);
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.createControl(comp);
 		}
 		return comp;
 	}
@@ -91,8 +91,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	public void doSave() throws CoreException {
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].doSave();
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.doSave();
 		}
 	}
 
@@ -101,8 +101,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	public boolean isDirty() {
-		for (int i = 0; i < fEditors.length; i++) {
-			if (fEditors[i].isDirty()) {
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			if (editor.isDirty()) {
 				return true;
 			}
 		}
@@ -114,8 +114,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	public IStatus getStatus() {
-		for (int i = 0; i < fEditors.length; i++) {
-			IStatus status = fEditors[i].getStatus();
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			IStatus status = editor.getStatus();
 			if (!status.isOK()) {
 				return status;
 			}
@@ -136,8 +136,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	@Override
 	public void setInput(Object breakpoint) throws CoreException {
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].setInput(breakpoint);
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.setInput(breakpoint);
 		}
 	}
 
@@ -147,8 +147,8 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	@Override
 	public void setMnemonics(boolean mnemonics) {
 		super.setMnemonics(mnemonics);
-		for (int i = 0; i < fEditors.length; i++) {
-			fEditors[i].setMnemonics(mnemonics);
+		for (AbstractJavaBreakpointEditor editor : fEditors) {
+			editor.setMnemonics(mnemonics);
 		}
 	}
 

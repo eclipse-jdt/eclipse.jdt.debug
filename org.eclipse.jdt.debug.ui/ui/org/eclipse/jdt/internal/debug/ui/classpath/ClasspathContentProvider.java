@@ -170,9 +170,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		}
 		if (parentElement == null) {
 			List<Object> all= new ArrayList<>();
-			Object[] topEntries= model.getEntries();
-			for (int i = 0; i < topEntries.length; i++) {
-				Object object = topEntries[i];
+			for (Object object : model.getEntries()) {
 				if (object instanceof ClasspathEntry) {
 					all.add(object);
 				} else if (object instanceof ClasspathGroup) {
@@ -219,16 +217,14 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
 		model.removeAll();
-		IRuntimeClasspathEntry entry;
-		for (int i = 0; i < entries.length; i++) {
-			entry= entries[i];
+		for (IRuntimeClasspathEntry entry : entries) {
 			switch (entry.getClasspathProperty()) {
-				case IRuntimeClasspathEntry.USER_CLASSES:
-					model.addEntry(ClasspathModel.USER, entry);
-					break;
-				default:
-					model.addEntry(ClasspathModel.BOOTSTRAP, entry);
-					break;
+			case IRuntimeClasspathEntry.USER_CLASSES:
+				model.addEntry(ClasspathModel.USER, entry);
+				break;
+			default:
+				model.addEntry(ClasspathModel.BOOTSTRAP, entry);
+				break;
 			}
 		}
 		refresh();

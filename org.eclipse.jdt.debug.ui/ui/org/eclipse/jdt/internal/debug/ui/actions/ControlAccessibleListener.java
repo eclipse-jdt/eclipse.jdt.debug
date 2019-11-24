@@ -31,10 +31,9 @@ public class ControlAccessibleListener extends AccessibleAdapter {
 
 	public static void addListener(Control comp, String name) {
 		//strip mnemonic
-		String[] strs = name.split("&"); //$NON-NLS-1$
 		StringBuilder stripped = new StringBuilder();
-		for (int i = 0; i < strs.length; i++) {
-			stripped.append(strs[i]);
+		for (String str : name.split("&")) { //$NON-NLS-1$
+			stripped.append(str);
 		}
 		comp.getAccessible().addAccessibleListener(new ControlAccessibleListener(stripped.toString()));
 	}

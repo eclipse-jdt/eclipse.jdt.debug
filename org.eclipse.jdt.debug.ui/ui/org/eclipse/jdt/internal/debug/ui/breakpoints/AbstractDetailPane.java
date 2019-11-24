@@ -147,8 +147,8 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 * @param autosave the auto-save properties
 	 */
 	protected void addAutosaveProperties(int[] autosave) {
-		for (int i = 0; i < autosave.length; i++) {
-			fAutoSaveProperties.add(new Integer(autosave[i]));
+		for (int element : autosave) {
+			fAutoSaveProperties.add(new Integer(element));
 		}
 	}
 

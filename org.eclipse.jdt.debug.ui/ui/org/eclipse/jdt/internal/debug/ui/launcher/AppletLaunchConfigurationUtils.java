@@ -145,10 +145,9 @@ public class AppletLaunchConfigurationUtils {
 		}
 		if (element instanceof ICompilationUnit) {
 			ICompilationUnit cu= (ICompilationUnit)element;
-			IType[] types= cu.getAllTypes();
-			for (int i= 0; i < types.length; i++) {
-				if (isSubclassOfApplet(monitor, types[i])) {
-					result.add(types[i]);
+			for (IType type : cu.getAllTypes()) {
+				if (isSubclassOfApplet(monitor, type)) {
+					result.add(type);
 				}
 			}
 		} else if (element instanceof IOrdinaryClassFile) {

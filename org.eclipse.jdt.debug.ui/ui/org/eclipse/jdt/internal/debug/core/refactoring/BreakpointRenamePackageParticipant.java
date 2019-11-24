@@ -51,8 +51,7 @@ public class BreakpointRenamePackageParticipant extends BreakpointRenameParticip
 		IPackageFragment originalPackage = (IPackageFragment) getOriginalElement();
 		String originalPackageName = originalPackage.getElementName();
 		IPackageFragmentRoot root = (IPackageFragmentRoot)originalPackage.getParent();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : markers) {
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;

@@ -50,9 +50,9 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 	public void setViewer(IClasspathViewer viewer) {
 		super.setViewer(viewer);
 		if (fActions != null) {
-			for (int i = 0; i < fActions.length; i++) {
-				if (fActions[i] instanceof RuntimeClasspathAction) {
-					((RuntimeClasspathAction)fActions[i]).setViewer(viewer);
+			for (IAction action : fActions) {
+				if (action instanceof RuntimeClasspathAction) {
+					((RuntimeClasspathAction) action).setViewer(viewer);
 				}
 			}
 		}

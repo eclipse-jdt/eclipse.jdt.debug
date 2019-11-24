@@ -44,16 +44,14 @@ public class DependenciesContentProvider extends ClasspathContentProvider {
 	@Override
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
 		model.removeAll();
-		IRuntimeClasspathEntry entry;
-		for (int i = 0; i < entries.length; i++) {
-			entry= entries[i];
+		for (IRuntimeClasspathEntry entry : entries) {
 			switch (entry.getClasspathProperty()) {
-				case IRuntimeClasspathEntry.MODULE_PATH:
-					model.addEntry(DependencyModel.MODULE_PATH, entry);
-					break;
-				default:
-					model.addEntry(DependencyModel.CLASS_PATH, entry);
-					break;
+			case IRuntimeClasspathEntry.MODULE_PATH:
+				model.addEntry(DependencyModel.MODULE_PATH, entry);
+				break;
+			default:
+				model.addEntry(DependencyModel.CLASS_PATH, entry);
+				break;
 			}
 		}
 		refresh();

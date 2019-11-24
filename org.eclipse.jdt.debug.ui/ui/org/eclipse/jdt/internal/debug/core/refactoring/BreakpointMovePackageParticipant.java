@@ -49,8 +49,7 @@ public class BreakpointMovePackageParticipant extends BreakpointMoveParticipant 
 	@Override
 	protected void gatherChanges(IMarker[] markers, List<Change> changes) throws CoreException, OperationCanceledException {
 		IPackageFragmentRoot destRoot = (IPackageFragmentRoot)getDestination();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : markers) {
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;

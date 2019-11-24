@@ -84,29 +84,28 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
         newType = (IType) BreakpointChange.findElement(destCU, newType);
 
 
-        for (int i = 0; i < markers.length; i++) {
-            IMarker marker = markers[i];
-            IBreakpoint breakpoint = getBreakpoint(marker);
-            if (breakpoint instanceof IJavaBreakpoint) {
-                IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;
-                IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
-                IType destType = null;
-                if (breakpointType != null) {
-                	IJavaElement element = null;
-                	if (isContained(originalType, breakpointType)) {
-                		element = BreakpointChange.findElement(newType, breakpointType);
-                	} else if (isContained(originalCU, breakpointType)) {
-                		// non public, or other type in the CU
-                		element = BreakpointChange.findElement(destCU, breakpointType);
-                	}
-                	if (element instanceof IType) {
-                		destType = (IType) element;
-                		changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
-                	}
-                }
-
-            }
-        }
+		for (IMarker marker : markers) {
+			IBreakpoint breakpoint = getBreakpoint(marker);
+			if (breakpoint instanceof IJavaBreakpoint) {
+				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;
+				IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
+				IType destType = null;
+				if (breakpointType != null) {
+					IJavaElement element = null;
+					if (isContained(originalType, breakpointType)) {
+						element = BreakpointChange.findElement(newType, breakpointType);
+					} else if (isContained(originalCU, breakpointType)) {
+						// non public, or other type in the CU
+						element = BreakpointChange.findElement(destCU, breakpointType);
+					}
+					if (element instanceof IType) {
+						destType = (IType) element;
+						changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
+					}
+				}
+				
+			}
+		}
 
     }
 
