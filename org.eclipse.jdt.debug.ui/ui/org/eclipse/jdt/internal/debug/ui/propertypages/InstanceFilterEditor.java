@@ -93,9 +93,8 @@ public class InstanceFilterEditor {
 	 */
 	protected void setInitialCheckedState() {
 		try {
-			IJavaObject[] objects = fBreakpoint.getInstanceFilters();
-			for (int i= 0; i < objects.length; i++) {
-				fCheckHandler.checkObject(objects[i], true);
+			for (IJavaObject object : fBreakpoint.getInstanceFilters()) {
+				fCheckHandler.checkObject(object, true);
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
@@ -104,10 +103,9 @@ public class InstanceFilterEditor {
 
 	protected void doStore() {
 		try {
-			IJavaObject[] objects = fBreakpoint.getInstanceFilters();
-			for (int i= 0; i < objects.length; i++) {
-				if (!fInstanceViewer.getChecked(objects[i])) {
-					fBreakpoint.removeInstanceFilter(objects[i]);
+			for (IJavaObject object : fBreakpoint.getInstanceFilters()) {
+				if (!fInstanceViewer.getChecked(object)) {
+					fBreakpoint.removeInstanceFilter(object);
 				}
 			}
 		}  catch (CoreException e) {

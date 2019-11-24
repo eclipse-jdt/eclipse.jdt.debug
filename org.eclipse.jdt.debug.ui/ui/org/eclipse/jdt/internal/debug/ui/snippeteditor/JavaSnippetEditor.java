@@ -506,11 +506,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		if (fVM != null) {
 			DebugPlugin.getDefault().addDebugEventFilter(this);
 			try {
-				IThread[] threads= fVM.getThreads();
-				for (int i = 0; i < threads.length; i++) {
-					IThread iThread = threads[i];
-					if (iThread.isSuspended()) {
-						iThread.resume();
+				for (IThread thread : fVM.getThreads()) {
+					if (thread.isSuspended()) {
+						thread.resume();
 					}
 				}
 			} catch (DebugException de) {
@@ -630,10 +628,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			public void run() {
 				Shell shell= getShell();
 				if (fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
-					List<ISnippetStateChangedListener> v = new ArrayList<>(fSnippetStateListeners);
-					for (int i= 0; i < v.size(); i++) {
-						ISnippetStateChangedListener l= v.get(i);
-						l.snippetStateChanged(JavaSnippetEditor.this);
+					for (ISnippetStateChangedListener listener : new ArrayList<>(fSnippetStateListeners)) {
+						listener.snippetStateChanged(JavaSnippetEditor.this);
 					}
 				}
 			}
@@ -844,8 +840,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		String delimiter = document.getLegalLineDelimiters()[0];
 
 		final StringBuilder errorString = new StringBuilder();
-		for (int i = 0; i < errors.length; i++) {
-			errorString.append(errors[i] + delimiter);
+		for (String error : errors) {
+			errorString.append(error + delimiter);
 		}
 
 		Runnable r = new Runnable() {
@@ -1083,8 +1079,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	@Override
 	public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent e = events[i];
+		for (DebugEvent e : events) {
 			Object source = e.getSource();
 			if (source instanceof IDebugElement) {
 				IDebugElement de = (IDebugElement)source;
@@ -1117,19 +1112,18 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 								if (e.getDetail() == DebugEvent.STEP_END && (lineNumber == 28)
 									&& f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") //$NON-NLS-1$
 									&& jt.getDebugTarget() == fVM) {
-								    // restore step filters
-								    target.setStepFiltersEnabled(fStepFiltersSetting);
+									// restore step filters
+									target.setStepFiltersEnabled(fStepFiltersSetting);
 									setThread(jt);
 									return null;
 								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bps.length > 0 && bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
 									// locate the 'eval' method and step over
-									IStackFrame[] frames = jt.getStackFrames();
-									for (int j = 0; j < frames.length; j++) {
-										IJavaStackFrame frame = (IJavaStackFrame)frames[j];
+									for (IStackFrame stackframe :  jt.getStackFrames()) {
+										IJavaStackFrame frame = (IJavaStackFrame) stackframe;
 										if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
-										    // ignore step filters for this step
-										    fStepFiltersSetting = target.isStepFiltersEnabled();
-										    target.setStepFiltersEnabled(false);
+											// ignore step filters for this step
+											fStepFiltersSetting = target.isStepFiltersEnabled();
+											target.setStepFiltersEnabled(false);
 											frame.stepOver();
 											return null;
 										}

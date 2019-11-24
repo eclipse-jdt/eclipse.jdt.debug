@@ -79,18 +79,15 @@ public class ThreadFilterEditor {
 	}
 
 	protected void doStore() {
-		IDebugTarget[] targets= getDebugTargets();
 		IJavaDebugTarget target;
-		IThread[] threads;
 		IJavaThread thread;
-		for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-			target = targets[i].getAdapter(IJavaDebugTarget.class);
+		for (IDebugTarget debugTarget : getDebugTargets()) {
+			target = debugTarget.getAdapter(IJavaDebugTarget.class);
 			if (target != null) {
 				try {
 					if (fThreadViewer.getChecked(target)) {
-						threads= target.getThreads();
-						for (int j=0, numThreads= threads.length; j < numThreads; j++) {
-							thread= (IJavaThread)threads[j];
+						for (IThread targetThread : target.getThreads()) {
+							thread= (IJavaThread)targetThread;
 							if (fThreadViewer.getChecked(thread)) {
 								// thread selected for filtering
 								fPage.getBreakpoint().setThreadFilter(thread);
@@ -116,9 +113,8 @@ public class ThreadFilterEditor {
 	 */
 	protected void setInitialCheckedState() {
 		try {
-			IDebugTarget[] targets= getDebugTargets();
-			for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-				IJavaDebugTarget target = targets[i].getAdapter(IJavaDebugTarget.class);
+			for (IDebugTarget debugTarget : getDebugTargets()) {
+				IJavaDebugTarget target = debugTarget.getAdapter(IJavaDebugTarget.class);
 				if (target != null) {
 					IJavaThread filteredThread= fPage.getBreakpoint().getThreadFilter(target);
 					if (filteredThread != null) {
@@ -176,8 +172,8 @@ public class ThreadFilterEditor {
 				IThread thread;
 				boolean checkedThread= false;
 				// Try to check the "main" thread by default
-				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-					thread= threads[i];
+				for (IThread targetThread : threads) {
+					thread= targetThread;
 					String name= null;
 					try {
 						name= thread.getName();
@@ -191,8 +187,8 @@ public class ThreadFilterEditor {
 				// If the main thread couldn't be checked, check the first
 				// available thread
 				if (!checkedThread) {
-					for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-						if (fThreadViewer.setChecked(threads[i], true)) {
+					for (IThread targetThread : threads) {
+						if (fThreadViewer.setChecked(targetThread, true)) {
 							break;
 						}
 					}
@@ -205,8 +201,8 @@ public class ThreadFilterEditor {
 					JDIDebugUIPlugin.log(exception);
 					return;
 				}
-				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-					fThreadViewer.setChecked(threads[i], false);
+				for (IThread thread : threads) {
+					fThreadViewer.setChecked(thread, false);
 				}
 			}
 		}
@@ -235,10 +231,10 @@ public class ThreadFilterEditor {
 					JDIDebugUIPlugin.log(exception);
 					return;
 				}
-				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-					if (threads[i] != thread) {
+				for (IThread targetThread : threads) {
+					if (targetThread != thread) {
 						// Uncheck all threads other than the selected thread
-						fThreadViewer.setChecked(threads[i], false);
+						fThreadViewer.setChecked(targetThread, false);
 					}
 				}
 			} else {
@@ -257,8 +253,8 @@ public class ThreadFilterEditor {
 			IDebugTarget target;
 			IThread[] threads;
 			boolean checkedThread;
-			for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-				target= targets[i];
+			for (IDebugTarget debugTarget : targets) {
+				target= debugTarget;
 				if (!fThreadViewer.getChecked(target)) {
 					continue;
 				}
@@ -269,8 +265,8 @@ public class ThreadFilterEditor {
 					continue;
 				}
 				checkedThread= false;
-				for (int j= 0, numThreads= threads.length; j < numThreads; j++) {
-					if (fThreadViewer.getChecked(threads[j])) {
+				for (IThread thread : threads) {
+					if (fThreadViewer.getChecked(thread)) {
 						checkedThread= true;
 						break;
 					}
@@ -306,10 +302,10 @@ public class ThreadFilterEditor {
 				ILaunch[] launches= ((ILaunchManager) parent).getLaunches();
 				IDebugTarget[] targets;
 				IJavaDebugTarget target;
-				for (int i= 0, numLaunches= launches.length; i < numLaunches; i++) {
-					targets= launches[i].getDebugTargets();
-					for (int j= 0, numTargets= targets.length; j < numTargets; j++) {
-						target= targets[j].getAdapter(IJavaDebugTarget.class);
+				for (ILaunch launch : launches) {
+					targets= launch.getDebugTargets();
+					for (IDebugTarget debugTarget : targets) {
+						target= debugTarget.getAdapter(IJavaDebugTarget.class);
 						if (target != null && !target.isDisconnected() && !target.isTerminated()) {
 							children.add(target);
 						}
