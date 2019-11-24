@@ -14,7 +14,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -79,8 +78,8 @@ public class InstructionSequence implements ICompiledExpression {
 	public Message[] getErrors() {
 		Message[] messages = new Message[fErrors.size()];
 		int i = 0;
-		for (Iterator<String> iter = fErrors.iterator(); iter.hasNext();) {
-			messages[i++] = new Message(iter.next(), -1);
+		for (String errorMsg : fErrors) {
+			messages[i++] = new Message(errorMsg, -1);
 		}
 		return messages;
 	}

@@ -4132,17 +4132,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction(); // jump
 		}
 
-		for (Iterator<slot> iter = jumpsStatements.iterator(); iter.hasNext();) {
-			currentslot = iter.next();
-			for (Iterator<ConditionalJump> iterator = currentslot.jumps.iterator(); iterator.hasNext();) {
-				ConditionalJump condJump = iterator.next();
+		for (slot slot : jumpsStatements) {
+			for (ConditionalJump condJump : slot.jumps) {
 				condJump.setOffset((fCounter - fInstructions.indexOf(condJump)) - 1);
 			}
 			if (currentslot.stmts != null) {
 				push(new Pop(0));
 				storeInstruction(); // pop
-				for (Iterator<Statement> iterator = currentslot.stmts.iterator(); iterator.hasNext();) {
-					iterator.next().accept(this);
+				for (Statement statement : currentslot.stmts) {
+					statement.accept(this);
 				}
 			}
 		}
@@ -4152,8 +4150,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			jumpDefault.setOffset((fCounter - fInstructions.indexOf(jumpDefault)) - 1);
 			push(new Pop(0));
 			storeInstruction(); // pop
-			for (Iterator<Statement> iterator = statementsDefault.iterator(); iterator.hasNext();) {
-				iterator.next().accept(this);
+			for (Statement statement : statementsDefault) {
+				statement.accept(this);
 			}
 		} else if(jumpEnd != null){
 			jumpEnd.setOffset((fCounter - fInstructions.indexOf(jumpEnd)) - 1);

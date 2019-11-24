@@ -453,10 +453,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	public IJavaThread[] getWaitingThreads() throws DebugException {
 		List<JDIThread> waiting = new ArrayList<>();
 		try {
-			List<ThreadReference> threads = getUnderlyingObject().waitingThreads();
 			JDIDebugTarget debugTarget = (JDIDebugTarget) getDebugTarget();
-			for (Iterator<ThreadReference> iter = threads.iterator(); iter.hasNext();) {
-				JDIThread jdiThread = debugTarget.findThread(iter.next());
+			for (ThreadReference threadReference : getUnderlyingObject().waitingThreads()) {
+				JDIThread jdiThread = debugTarget.findThread(threadReference);
 				if (jdiThread != null) {
 					waiting.add(jdiThread);
 				}

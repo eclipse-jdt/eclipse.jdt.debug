@@ -427,8 +427,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			fSnippetStartPosition += source.length();
 			source.append(buffer.toString());
 		}
-		for (Iterator<BodyDeclaration> iterator = list.iterator(); iterator.hasNext();) {
-			BodyDeclaration bodyDeclaration = iterator.next();
+		for (BodyDeclaration bodyDeclaration : list) {
 			if (bodyDeclaration instanceof FieldDeclaration) {
 				source.append(buildFieldDeclaration((FieldDeclaration) bodyDeclaration));
 			} else if (bodyDeclaration instanceof MethodDeclaration) {

@@ -122,9 +122,8 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 */
 	private static void addAllLogicalStructures(
 			List<JavaLogicalStructure> pluginContributedJavaLogicalStructures) {
-		for (Iterator<JavaLogicalStructure> iter = pluginContributedJavaLogicalStructures.iterator(); iter
-				.hasNext();) {
-			addLogicalStructure(iter.next());
+		for (JavaLogicalStructure logicalStructure : pluginContributedJavaLogicalStructures) {
+			addLogicalStructure(logicalStructure);
 		}
 	}
 
@@ -208,17 +207,14 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 */
 	public static void saveUserDefinedJavaLogicalStructures() {
 		StringBuilder logicalStructuresString = new StringBuilder();
-		for (Iterator<JavaLogicalStructure> iter = fUserDefinedJavaLogicalStructures.iterator(); iter
-				.hasNext();) {
-			JavaLogicalStructure logicalStructure = iter
-					.next();
+		for (JavaLogicalStructure logicalStructure : fUserDefinedJavaLogicalStructures) {
 			logicalStructuresString.append(
-					logicalStructure.getQualifiedTypeName()).append('\0');
+				logicalStructure.getQualifiedTypeName()).append('\0');
 			logicalStructuresString.append(logicalStructure.getDescription())
-					.append('\0');
+				.append('\0');
 			logicalStructuresString.append(
-					logicalStructure.isSubtypes() ? IS_SUBTYPE_TRUE
-							: IS_SUBTYPE_FALSE).append('\0');
+				logicalStructure.isSubtypes() ? IS_SUBTYPE_TRUE
+					: IS_SUBTYPE_FALSE).append('\0');
 			String value = logicalStructure.getValue();
 			if (value != null) {
 				logicalStructuresString.append(value);
@@ -249,13 +245,11 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		JavaLogicalStructure[] logicalStructures = new JavaLogicalStructure[fPluginContributedJavaLogicalStructures
 				.size() + fUserDefinedJavaLogicalStructures.size()];
 		int i = 0;
-		for (Iterator<JavaLogicalStructure> iter = fPluginContributedJavaLogicalStructures.iterator(); iter
-				.hasNext();) {
-			logicalStructures[i++] = iter.next();
+		for (JavaLogicalStructure logicalStructure : fPluginContributedJavaLogicalStructures) {
+			logicalStructures[i++] = logicalStructure;
 		}
-		for (Iterator<JavaLogicalStructure> iter = fUserDefinedJavaLogicalStructures.iterator(); iter
-				.hasNext();) {
-			logicalStructures[i++] = iter.next();
+		for (JavaLogicalStructure logicalStructure : fUserDefinedJavaLogicalStructures) {
+			logicalStructures[i++] = logicalStructure;
 		}
 		return logicalStructures;
 	}

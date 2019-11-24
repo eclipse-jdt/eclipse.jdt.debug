@@ -613,9 +613,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		// communicating with SUN's VM.
 		// It seems to expect them 'the wrong way around'.
 		if (fThreadStepFilters != null) {
-			for (int i = 0; i < fThreadStepFilters.size(); i++) {
-				ThreadStepFilter filter = fThreadStepFilters
-						.get(i);
+			for (ThreadStepFilter filter : fThreadStepFilters) {
 				writeByte(MODIF_KIND_STEP,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				filter.fThread.write(this, outData);
@@ -626,17 +624,15 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			}
 		}
 		if (fFieldFilters != null) {
-			for (int i = 0; i < fFieldFilters.size(); i++) {
+			for (FieldImpl field : fFieldFilters) {
 				writeByte(MODIF_KIND_FIELDONLY,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				fFieldFilters.get(i).writeWithReferenceType(this,
+				field.writeWithReferenceType(this,
 						outData);
 			}
 		}
 		if (fExceptionFilters != null) {
-			for (int i = 0; i < fExceptionFilters.size(); i++) {
-				ExceptionFilter filter = fExceptionFilters
-						.get(i);
+			for (ExceptionFilter filter : fExceptionFilters) {
 				writeByte(MODIF_KIND_EXCEPTIONONLY,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				if (filter.fException != null)
@@ -649,66 +645,66 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			}
 		}
 		if (fLocationFilters != null) {
-			for (int i = 0; i < fLocationFilters.size(); i++) {
+			for (LocationImpl locationFilter : fLocationFilters) {
 				writeByte(MODIF_KIND_LOCATIONONLY,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				fLocationFilters.get(i).write(this, outData);
+				locationFilter.write(this, outData);
 			}
 		}
 		if (fClassExclusionFilters != null) {
-			for (int i = 0; i < fClassExclusionFilters.size(); i++) {
+			for (String classExclusionFilter : fClassExclusionFilters) {
 				writeByte(MODIF_KIND_CLASSEXCLUDE,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				writeString(fClassExclusionFilters.get(i),
+				writeString(classExclusionFilter,
 						"class excl. filter", outData); //$NON-NLS-1$
 			}
 		}
 		if (fClassFilters != null) {
-			for (int i = 0; i < fClassFilters.size(); i++) {
+			for (String classFilter : fClassFilters) {
 				writeByte(MODIF_KIND_CLASSMATCH,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				writeString(fClassFilters.get(i),
+				writeString(classFilter,
 						"class filter", outData); //$NON-NLS-1$
 			}
 		}
 		if (fClassFilterRefs != null) {
-			for (int i = 0; i < fClassFilterRefs.size(); i++) {
+			for (ReferenceType classFilterRef : fClassFilterRefs) {
 				writeByte(MODIF_KIND_CLASSONLY,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				((ReferenceTypeImpl) fClassFilterRefs.get(i)).write(this,
+				((ReferenceTypeImpl) classFilterRef).write(this,
 						outData);
 			}
 		}
 		if (fThreadFilters != null) {
-			for (int i = 0; i < fThreadFilters.size(); i++) {
+			for (ThreadReference threadFilter : fThreadFilters) {
 				writeByte(MODIF_KIND_THREADONLY,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				((ThreadReferenceImpl) fThreadFilters.get(i)).write(this,
+				((ThreadReferenceImpl) threadFilter).write(this,
 						outData);
 			}
 		}
 		if (fCountFilters != null) {
-			for (int i = 0; i < fCountFilters.size(); i++) {
+			for (Integer countFilter : fCountFilters) {
 				writeByte(MODIF_KIND_COUNT,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				writeInt(fCountFilters.get(i).intValue(),
+				writeInt(countFilter.intValue(),
 						"count filter", outData); //$NON-NLS-1$
 			}
 		}
 		if (fInstanceFilters != null) {
-			for (int i = 0; i < fInstanceFilters.size(); i++) {
+			for (ObjectReference instanceFilter : fInstanceFilters) {
 				writeByte(MODIF_KIND_INSTANCE,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				((ObjectReferenceImpl) fInstanceFilters.get(i)).write(this,
+				((ObjectReferenceImpl) instanceFilter).write(this,
 						outData);
 			}
 		}
 		if (fSourceNameFilters != null) {
 			if (supportsSourceNameFilters()) {
-				for (int i = 0; i < fSourceNameFilters.size(); i++) {
+				for (String sourceNameFilter : fSourceNameFilters) {
 					writeByte(MODIF_KIND_SOURCE_NAME_FILTER,
 							"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-					writeString(fSourceNameFilters.get(i),
+					writeString(sourceNameFilter,
 							"modifier", outData); //$NON-NLS-1$
 				}
 			}
@@ -732,13 +728,11 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		if (fStepSizeMap != null)
 			return;
 
-		java.lang.reflect.Field[] fields = EventRequestImpl.class
-				.getDeclaredFields();
 		fStepSizeMap = new HashMap<>();
 		fStepDepthMap = new HashMap<>();
 		fSuspendPolicyMap = new HashMap<>();
 		fModifierKindMap = new HashMap<>();
-		for (Field field : fields) {
+		for (Field field : EventRequestImpl.class.getDeclaredFields()) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)

@@ -158,8 +158,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			List<Integer> list = new ArrayList<>();
 			List<int[]> outputLines = fLineInfo.get(new Integer(lineNumber));
 			if (outputLines != null) {
-				for (Iterator<int[]> iter = outputLines.iterator(); iter.hasNext();) {
-					int[] info = iter.next();
+				for (int[] info : outputLines) {
 					int outputLineNumber = info[0];
 					int length = info[1];
 					if (length == 0) {
@@ -282,8 +281,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				throws AbsentInformationException {
 			FileInfo fileInfo = null;
 			// get the FileInfo object
-			for (Iterator<FileInfo> iter = fFileInfos.iterator(); iter.hasNext();) {
-				FileInfo element = iter.next();
+			for (FileInfo element : fFileInfos) {
 				if (element.fFileId == lineFileId) {
 					fileInfo = element;
 				}
@@ -333,8 +331,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 *            the source name to search.
 		 */
 		public FileInfo getFileInfo(String sourceName) {
-			for (Iterator<FileInfo> iter = fFileInfos.iterator(); iter.hasNext();) {
-				FileInfo fileInfo = iter.next();
+			for (FileInfo fileInfo : fFileInfos) {
 				if (fileInfo.fFileName.equals(sourceName)) {
 					return fileInfo;
 				}
@@ -583,8 +580,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		List<Method> visibleMethods = new ArrayList<>();
 
 		// The methods of its own (own methods() command).
-		for (Iterator<Method> iter = methods().iterator(); iter.hasNext();) {
-			MethodImpl method = (MethodImpl) iter.next();
+		for (Method m : methods()) {
+			MethodImpl method = (MethodImpl) m;
 			namesAndSignatures.add(method.name() + method.signature());
 			visibleMethods.add(method);
 		}
@@ -1542,8 +1539,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				throw new AbsentInformationException(
 						JDIMessages.ReferenceTypeImpl_30);
 			}
-			for (Iterator<FileInfo> iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
-				list.add(iter.next().fFileName);
+			for (FileInfo fileInfo : stratum.fFileInfos) {
+				list.add(fileInfo.fFileName);
 			}
 			return list;
 		}
@@ -1564,8 +1561,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		Stratum stratum = getStratum(stratumId);
 		if (stratum != null) {
 			// return the source paths defined for this stratum in the SMAP.
-			for (Iterator<FileInfo> iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
-				FileInfo fileInfo = iter.next();
+			for (FileInfo fileInfo : stratum.fFileInfos) {
 				String path = fileInfo.fAbsoluteFileName;
 				if (path == null) {
 					path = getPath(fileInfo.fFileName);
@@ -1906,8 +1902,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				fileId = lineInfos.get(0)[0];
 			}
 		}
-		for (Iterator<FileInfo> iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
-			FileInfo fileInfo = iter.next();
+		for (FileInfo fileInfo : stratum.fFileInfos) {
 			if (fileInfo.fFileId == fileId) {
 				return fileInfo;
 			}
@@ -2088,8 +2083,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				for (int i = 0, length = javaStratumLineNumberTable.length; i < length; i++) {
 					List<int[]> lineInfos = stratum.getInputLineInfos(javaStratumLineNumberTable[i]);
 					if (lineInfos != null) {
-						for (Iterator<int[]> iter = lineInfos.iterator(); iter.hasNext();) {
-							int[] lineInfo = iter.next();
+						for (int[] lineInfo : lineInfos) {
 							if (lineInfo[0] == fileId) {
 								if (!lineInfo.equals(lineInfoTable[lastIndex])) {
 									lineInfoTable[i] = lineInfo;

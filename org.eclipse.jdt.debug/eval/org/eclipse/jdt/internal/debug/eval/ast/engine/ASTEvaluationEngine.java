@@ -341,8 +341,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				}
 			}
 			// Adding outer class variables to inner class scope
-			for (int i = 0; i < innerClassFields.length; i++) {
-				IVariable var = innerClassFields[i];
+			for (IVariable var : innerClassFields) {
 				if (var instanceof IJavaVariable && var.getName().startsWith(ANONYMOUS_VAR_PREFIX)) {
 					String name = var.getName().substring(ANONYMOUS_VAR_PREFIX.length());
 					if (!names.contains(name)) {

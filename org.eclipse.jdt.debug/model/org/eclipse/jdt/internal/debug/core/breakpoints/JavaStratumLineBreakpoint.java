@@ -247,8 +247,8 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	private boolean containsMatch(List<String> strings, String key) {
-		for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
-			if (iter.next().equals(key)) {
+		for (String string : strings) {
+			if (string.equals(key)) {
 				return true;
 			}
 		}

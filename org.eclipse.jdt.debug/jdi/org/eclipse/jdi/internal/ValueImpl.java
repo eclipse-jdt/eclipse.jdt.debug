@@ -140,8 +140,9 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 			throws IOException {
 		JdwpObjectID nullID = new JdwpObjectID(target.virtualMachineImpl());
 		nullID.write(out);
-		if (target.fVerboseWriter != null)
+		if (target.fVerboseWriter != null) {
 			target.fVerboseWriter.println("objectReference", nullID.value()); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -269,9 +270,8 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 						return;
 					}
 				} else {
-					List<InterfaceType> interfaces = ((ClassType) valueType).allInterfaces();
-					for (Iterator<InterfaceType> iter = interfaces.iterator(); iter.hasNext();) {
-						if (checkInterfaceType(iter.next(),
+					for (InterfaceType interfaceType : ((ClassType) valueType).allInterfaces()) {
+						if (checkInterfaceType(interfaceType,
 								(InterfaceType) type)) {
 							return;
 						}
@@ -291,9 +291,8 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 		if (valueType.equals(type)) {
 			return true;
 		}
-		List<InterfaceType> superInterfaces = valueType.superinterfaces();
-		for (Iterator<InterfaceType> iter = superInterfaces.iterator(); iter.hasNext();) {
-			if (checkInterfaceType(iter.next(), type)) {
+		for (InterfaceType interfaceType : valueType.superinterfaces()) {
+			if (checkInterfaceType(interfaceType, type)) {
 				return true;
 			}
 		}

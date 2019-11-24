@@ -274,8 +274,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		Iterator<LocalVariable> iter = variables().iterator();
 		while (iter.hasNext()) {
 			LocalVariable var = iter.next();
-			if (var.isArgument())
+			if (var.isArgument()) {
 				result.add(var);
+			}
 		}
 		fArguments = result;
 		return fArguments;
@@ -290,10 +291,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fArgumentTypeNames != null) {
 			return fArgumentTypeNames;
 		}
-		List<String> argumentTypeSignatures = argumentTypeSignatures();
 		List<String> result = new ArrayList<>();
-		for (Iterator<String> iter = argumentTypeSignatures.iterator(); iter.hasNext();) {
-			result.add(TypeImpl.signatureToName(iter.next()));
+		for (String signature : argumentTypeSignatures()) {
+			result.add(TypeImpl.signatureToName(signature));
 		}
 
 		fArgumentTypeNames = result;
@@ -394,15 +394,17 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 */
 	@Override
 	public int compareTo(Method method) {
-		if (method == null || !method.getClass().equals(this.getClass()))
+		if (method == null || !method.getClass().equals(this.getClass())) {
 			throw new ClassCastException(
 					JDIMessages.MethodImpl_Can__t_compare_method_to_given_object_6);
+		}
 
 		// See if declaring types are the same, if not return comparison between
 		// declaring types.
 		Method type2 = method;
-		if (!declaringType().equals(type2.declaringType()))
+		if (!declaringType().equals(type2.declaringType())) {
 			return declaringType().compareTo(type2.declaringType());
+		}
 
 		// Return comparison of position within declaring type.
 		int index1 = declaringType().methods().indexOf(this);
@@ -699,8 +701,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		// See Location.
 		ReferenceTypeImpl referenceType = ReferenceTypeImpl.readWithTypeTag(
 				target, in);
-		if (referenceType == null)
+		if (referenceType == null) {
 			return null;
+		}
 
 		JdwpMethodID ID = new JdwpMethodID(vmImpl);
 		if (target.fVerboseWriter != null) {
@@ -877,16 +880,15 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 */
 	protected List<Location> javaStratumLocationsOfLines(List<Integer> javaLines)	throws AbsentInformationException {
 		Set<Long> tmpLocations = new TreeSet<>();
-		for (Iterator<Integer> iter = javaLines.iterator(); iter.hasNext();) {
-			Integer key = iter.next();
+		for (Integer key : javaLines) {
 			List<Long> indexes = javaStratumLineToCodeIndexes(key.intValue());
 			if (indexes != null) {
 				tmpLocations.addAll(indexes);
 			}
 		}
 		List<Location> locations = new ArrayList<>();
-		for (Iterator<Long> iter = tmpLocations.iterator(); iter.hasNext();) {
-			long index = iter.next().longValue();
+		for (Long location : tmpLocations) {
+			long index = location.longValue();
 			int position = Arrays.binarySearch(fCodeIndexTable, index);
 			if(position < 0) {
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=388172
