@@ -676,7 +676,21 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	@Override
 	public IThread[] getThreads() {
 		synchronized (fThreads) {
-			return fThreads.toArray(new IThread[0]);
+			IThread[] threads = new IThread[fThreads.size()];
+			int index = 0;
+			for (JDIThread thread : fThreads) {
+				if (!thread.isSystemThread()) {
+					threads[index] = thread;
+					++index;
+				}
+			}
+			for (JDIThread thread : fThreads) {
+				if (thread.isSystemThread()) {
+					threads[index] = thread;
+					++index;
+				}
+			}
+			return threads;
 		}
 	}
 
