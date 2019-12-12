@@ -741,6 +741,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				fVMs.add(result);
 				//refresh from model
 				fVMList.refresh();
+				if (fVMs.size() == 1) {
+					// if this added JRE is the only JRE present, select it
+					setCheckedJRE(result);
+				}
 				fVMList.setSelection(new StructuredSelection(result));
 				//ensure labels are updated
 				fVMList.refresh(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -126,7 +126,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 
 			if (fTemplateEngine != null) {
 				fTemplateEngine.reset();
-				fTemplateEngine.complete(viewer, position, null);
+				fTemplateEngine.complete(viewer, viewer.getSelectedRange(), position, null);
 
 				TemplateProposal[] templateResults= fTemplateEngine.getResults();
 

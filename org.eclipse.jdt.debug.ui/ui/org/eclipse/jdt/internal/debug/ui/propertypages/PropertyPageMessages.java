@@ -84,7 +84,6 @@ public class PropertyPageMessages extends NLS {
 
 	public static String JavaVariableDetailsPane_choosePreviousExpression;
 	public static String JavaVariableDetailsPane_description;
-	public static String JavaVariableDetailsPane_historySeparator;
 	public static String JavaVariableDetailsPane_name;
 	public static String JavaVariableDetailsPane_settings;
 

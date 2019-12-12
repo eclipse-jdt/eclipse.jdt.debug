@@ -76,6 +76,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnCompilationErrorListener;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -84,6 +85,14 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -605,13 +614,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			return false; // not a recurrence
 		}
 		if (skip == SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED) {
-			skip = askUserExceptionRecurrence();
-			if (skip != SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED) {
-				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
-				if (prefs != null) {
-					prefs.put(JDIDebugModel.PREF_SUSPEND_ON_RECURRENCE_STRATEGY, skip.name());
-				}
-			}
+			skip = new AskRecurrenceDialog(JDIDebugUIPlugin.getShell()).getAnswer();
 		}
 		switch (skip) {
 			case SKIP_RECURRENCES:
@@ -621,23 +624,67 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		}
 	}
 
-	private static SuspendOnRecurrenceStrategy askUserExceptionRecurrence() {
-		Shell shell = JDIDebugUIPlugin.getShell();
-		MessageDialog question = new MessageDialog(shell, DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogTitle, null, //
-				DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogMessage, //
-				MessageDialog.QUESTION, 0, //
-				DebugUIMessages.JavaDebugOptionsManager_skip_buttonLabel, //
-				DebugUIMessages.JavaDebugOptionsManager_suspend_buttonLabel, //
-				DebugUIMessages.JavaDebugOptionsManager_cancel_buttonLabel);
-		int answer[] = { -1 };
-		shell.getDisplay().syncExec(() -> answer[0] = question.open());
-		switch (answer[0]) {
-			case 0:
-				return SuspendOnRecurrenceStrategy.SKIP_RECURRENCES;
-			case 1:
-				return SuspendOnRecurrenceStrategy.SUSPEND_ALWAYS;
-			default:
-				return SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED;
+	private static final class AskRecurrenceDialog extends MessageDialog {
+
+		private boolean fRememberChoice;
+		private SuspendOnRecurrenceStrategy fStrategy;
+
+		private AskRecurrenceDialog(Shell parentShell) {
+			super(parentShell, DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogTitle, null, //
+					DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_dialogMessage,
+					MessageDialog.QUESTION, 0, //
+					DebugUIMessages.JavaDebugOptionsManager_skip_buttonLabel, //
+					DebugUIMessages.JavaDebugOptionsManager_suspend_buttonLabel);
+			parentShell.getDisplay().syncExec(() -> open());
+		}
+
+		@Override
+		protected Control createCustomArea(Composite parent) {
+			Composite panel = new Composite(parent, SWT.NONE);
+			panel.setFont(parent.getFont());
+
+			GridLayout layout = new GridLayout(1, false);
+			layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+			panel.setLayout(layout);
+
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.verticalAlignment = GridData.END;
+			panel.setLayoutData(data);
+
+			Button button = new Button(panel, SWT.CHECK);
+			button.setText(DebugUIMessages.JavaDebugOptionsManager_exceptionRecurrence_remember_decision);
+			button.setSelection(false);
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					fRememberChoice = !fRememberChoice;
+				}
+			});
+			return panel;
+		}
+
+		@Override
+		public int open() {
+			int ret = super.open();
+			switch (ret) {
+				case 0:
+					fStrategy = SuspendOnRecurrenceStrategy.SKIP_RECURRENCES;
+					break;
+				case 1:
+					fStrategy = SuspendOnRecurrenceStrategy.SUSPEND_ALWAYS;
+					break;
+			}
+			if (fRememberChoice) {
+				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+				if (prefs != null) {
+					prefs.put(JDIDebugModel.PREF_SUSPEND_ON_RECURRENCE_STRATEGY, fStrategy.name());
+				}
+			}
+			return ret;
+		}
+
+		public SuspendOnRecurrenceStrategy getAnswer() {
+			return fStrategy;
 		}
 	}
 

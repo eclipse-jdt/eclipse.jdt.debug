@@ -203,6 +203,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_suspended_linebreakpoint;
 	public static String thread_daemon_suspended_methodentry;
 	public static String thread_daemon_suspended_exception;
+	public static String thread_daemon_suspended_exception_uncaught;
 	public static String thread_daemon_suspended_methodexit;
 	public static String thread_daemon_suspended_fieldmodification;
 	public static String thread_daemon_suspended_runtoline;
@@ -218,6 +219,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_system_suspended_linebreakpoint;
 	public static String thread_system_suspended_methodentry;
 	public static String thread_system_suspended_exception;
+	public static String thread_system_suspended_exception_uncaught;
 	public static String thread_system_suspended_methodexit;
 	public static String thread_system_suspended_fieldmodification;
 	public static String thread_system_suspended_runtoline;
@@ -233,6 +235,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_system_suspended_linebreakpoint;
 	public static String thread_daemon_system_suspended_methodentry;
 	public static String thread_daemon_system_suspended_exception;
+	public static String thread_daemon_system_suspended_exception_uncaught;
 	public static String thread_daemon_system_suspended_methodexit;
 	public static String thread_daemon_system_suspended_fieldmodification;
 	public static String thread_daemon_system_suspended_runtoline;
@@ -323,9 +326,9 @@ public class DebugUIMessages extends NLS {
 
 	public static String JavaDebugOptionsManager_exceptionRecurrence_dialogTitle;
 	public static String JavaDebugOptionsManager_exceptionRecurrence_dialogMessage;
-	public static String JavaDebugOptionsManager_cancel_buttonLabel;
 	public static String JavaDebugOptionsManager_skip_buttonLabel;
 	public static String JavaDebugOptionsManager_suspend_buttonLabel;
+	public static String JavaDebugOptionsManager_exceptionRecurrence_remember_decision;
 
 	public static String JavaDebugOptionsManager_Line_breakpoint___4;
 

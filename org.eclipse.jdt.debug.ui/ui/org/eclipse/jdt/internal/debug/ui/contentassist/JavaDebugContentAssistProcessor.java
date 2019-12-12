@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Completion processor for the Java debugger. This completion processor
@@ -168,13 +169,15 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 
 			if (fJavaEngine != null) {
 				fJavaEngine.reset();
-				fJavaEngine.complete(viewer, documentOffset, null);
+				Point selectionAsPoint = new Point(selection.getOffset(), selection.getLength());
+				fJavaEngine.complete(viewer, selectionAsPoint, documentOffset, null);
 				total.addAll(Arrays.asList(fJavaEngine.getResults()));
 			}
 
 			if (fStatementEngine != null) {
 				fStatementEngine.reset();
-				fStatementEngine.complete(viewer, documentOffset, null);
+				Point selectionAsPoint = new Point(selection.getOffset(), selection.getLength());
+				fStatementEngine.complete(viewer, selectionAsPoint, documentOffset, null);
 				total.addAll(Arrays.asList(fStatementEngine.getResults()));
 			}
 
