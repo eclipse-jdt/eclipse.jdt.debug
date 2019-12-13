@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011-2016 Igor Fedorenko
+ * Copyright (c) 2011, 2019 Igor Fedorenko
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *      Igor Fedorenko - initial API and implementation
+ *      IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.jdt.launching.internal.javaagent;
 
@@ -35,11 +36,13 @@ public class Premain {
 		if (major < 0 || major > ClassfileTransformer.MAX_CLASS_MAJOR) {
 			String vendor = System.getProperty("java.vendor"); //$NON-NLS-1$
 			String version = System.getProperty("java.version"); //$NON-NLS-1$
-			System.err.printf("JRE %s/%s is not supported, advanced source lookup disabled.\n", vendor, version); //$NON-NLS-1$
+			System.err.printf("JRE %s/%s is not supported, advanced source lookup disabled.\n Eclipse debugger will use less precise source lookup implementation for this debug session, but everything else will continue to work otherwise.\n" //$NON-NLS-1$
+						+ "Upgrading Eclipse to the latest version will likely make this warning go away.", vendor, version); //$NON-NLS-1$
 			return;
 		}
 
 		inst.addTransformer(new ClassFileTransformer() {
+			@Override
 			public byte[] transform(ClassLoader loader, final String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 				try {
 					if (protectionDomain == null) {
