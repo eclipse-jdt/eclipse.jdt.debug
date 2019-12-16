@@ -100,7 +100,8 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		runConfig.setWorkingDirectory(workingDirName);
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 		runConfig.setPreviewEnabled(supportsPreviewFeatures(configuration));
-		if (supportsModule()) {
+		// Module name not required for Scrapbook page
+		if (supportsModule() && !mainTypeName.equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain")) { //$NON-NLS-1$
 			// Module name need not be the same as project name
 			String defaultModuleName = null;
 			String moduleName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, defaultModuleName);
