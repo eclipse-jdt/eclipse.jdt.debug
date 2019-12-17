@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -191,6 +191,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
 			fProjText.setText(type.getJavaProject().getElementName());
+			fModuleName = getModuleName(type);
 		}
 	}
 
@@ -251,6 +252,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText().trim());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, fModuleName);
 		mapResources(config);
 
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility

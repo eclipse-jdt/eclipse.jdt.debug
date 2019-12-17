@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -115,6 +116,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			wc = configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(type.getTypeQualifiedName('.')));
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, getModuleName(type));
 			if (!isTestCode(type)) {
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, true);
 			}
@@ -210,5 +212,16 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	@Override
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_2;
+	}
+
+	private String getModuleName(IType type) {
+		IJavaElement javaElement = type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+		if (javaElement instanceof IPackageFragmentRoot) {
+			IModuleDescription moduleDescription = ((IPackageFragmentRoot) (javaElement)).getModuleDescription();
+			if (moduleDescription != null) {
+				return moduleDescription.getElementName();
+			}
+		}
+		return ""; //$NON-NLS-1$
 	}
 }

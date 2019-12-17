@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -84,6 +84,8 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	protected Text fProjText;
 
 	private Button fProjButton;
+
+	protected String fModuleName = EMPTY_STRING;
 
 	private WidgetListener fListener = new WidgetListener();
 

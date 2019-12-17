@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -81,6 +81,13 @@ public interface IJavaLaunchConfigurationConstants {
 	 * of a main type to launch.
 	 */
 	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MAIN_TYPE";	 //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is the module name for the main type to launch.
+	 * 
+	 * @since 3.17
+	 */
+	public static final String ATTR_MODULE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MODULE_NAME"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying

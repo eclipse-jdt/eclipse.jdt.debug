@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,8 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IModuleDescription;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -104,6 +106,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	 */
 	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = null;
+		String moduleName = EMPTY_STRING;
 		if (javaElement instanceof IMember) {
 			IMember member = (IMember)javaElement;
 			if (member.isBinary()) {
@@ -119,8 +122,10 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 				MainMethodSearchEngine engine = new MainMethodSearchEngine();
 				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);
 				if (types != null && (types.length > 0)) {
-					// Simply grab the first main type found in the searched element
+					// Simply grab the first main type found in the searched element and set the module name
 					name = types[0].getFullyQualifiedName();
+					moduleName = getModuleName(types[0]);
+
 				}
 			}
 			catch (InterruptedException ie) {JDIDebugUIPlugin.log(ie);}
@@ -130,6 +135,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 			name = EMPTY_STRING;
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, moduleName);
 		if (name.length() > 0) {
 			int index = name.lastIndexOf('.');
 			if (index > 0) {
@@ -146,23 +152,37 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	 */
 	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
 		String mainTypeName = EMPTY_STRING;
+		String moduleName = EMPTY_STRING;
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
+			moduleName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		}
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
 		fMainText.setText(mainTypeName);
+		fModuleName = moduleName;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab#initializeAttributes()
-	 * 
+	 *
 	 * @since 3.9
 	 */
 	@Override
 	protected void initializeAttributes() {
 		super.initializeAttributes();
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, LauncherMessages.SharedJavaMainTab_AttributeLabel_MainTypeName);
+	}
+
+	protected String getModuleName(IType type) {
+		IJavaElement javaElement = type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+		if (javaElement instanceof IPackageFragmentRoot) {
+			IModuleDescription moduleDescription = ((IPackageFragmentRoot) (javaElement)).getModuleDescription();
+			if (moduleDescription != null) {
+				return moduleDescription.getElementName();
+			}
+		}
+		return EMPTY_STRING;
 	}
 }
