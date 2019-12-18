@@ -8,10 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *      Bug Menot - Bug 445867
@@ -356,7 +352,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
 								ASTNode root = SharedASTProviderCore.getAST(typeRoot, SharedASTProviderCore.WAIT_NO, null);
             		    		if (root == null) {
-									ASTParser parser = ASTParser.newParser(AST.JLS14);
+									ASTParser parser = ASTParser.newParser(AST.JLS13);
 	            		    		parser.setSource(typeRoot);
 	            		    		parser.setFocalPosition(hoverRegion.getOffset());
 									root = parser.createAST(null);
