@@ -203,7 +203,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fBundleDescription.setValue(key, new Boolean(b.getSelection()));
+				fBundleDescription.setValue(key, Boolean.valueOf(b.getSelection()));
 				checkIfPageComplete();
 			}
 		});
