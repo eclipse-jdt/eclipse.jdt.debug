@@ -8,6 +8,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -4008,7 +4011,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					storeInstruction(); // jump
 					statementsDefault = new ArrayList<>();
 				} else {
-					if (node.getAST().apiLevel() == AST.JLS13) {
+					if (node.getAST().apiLevel() >= AST.JLS14) {
 						for (Object expression : switchCase.expressions()) {
 							if (expression instanceof StringLiteral || expression instanceof TextBlock) {
 								push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
