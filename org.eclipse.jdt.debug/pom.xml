@@ -20,4 +20,7 @@
   <artifactId>org.eclipse.jdt.debug</artifactId>
   <version>3.14.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <properties>
+    <maven.compiler.release>8</maven.compiler.release>
+  </properties>
 </project>
