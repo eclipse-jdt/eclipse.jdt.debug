@@ -47,6 +47,7 @@ public class JDIDebugPluginPreferenceInitializer extends
 		node.putInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, 100);
 		node.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true);
 		node.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true);
+		node.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, false);
 		node.putInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT);
 		node.putBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true);
 	}

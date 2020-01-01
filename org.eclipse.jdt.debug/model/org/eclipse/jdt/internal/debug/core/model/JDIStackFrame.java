@@ -510,7 +510,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					String msg = JDIDebugModelMessages.JDIStackFrame_NotObservedBecauseOfTimeout;
 					variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), msg), false));
 				}
-			} else if(JDIThread.showStepResultIsEnabled()) {
+			} else if (JDIThread.showStepResultIsEnabled(getDebugTarget())) {
 				variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), ""), false)); //$NON-NLS-1$
 			}
 		}

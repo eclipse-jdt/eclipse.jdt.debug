@@ -113,6 +113,13 @@ public class JDIDebugModel {
 			+ ".PREF_SHOW_STEP_RESULT"; //$NON-NLS-1$
 
 	/**
+	 * Preference key for specifying if PREF_SHOW_STEP_RESULT is respected for remote debugging.
+	 *
+	 * @since 3.15
+	 */
+	public static final String PREF_SHOW_STEP_RESULT_REMOTE = getPluginIdentifier() + ".PREF_SHOW_STEP_RESULT_REMOTE"; //$NON-NLS-1$
+
+	/**
 	 * Preference key for specifying if the timeout (in ms) after which the return method result of a step operation is not observed any longer (0
 	 * means no timeout, a negative value means: simulate a timeout condition).
 	 *
