@@ -156,7 +156,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 			moduleName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, EMPTY_STRING);
-			if (moduleName.equals("")) { //$NON-NLS-1$
+			if (moduleName.isEmpty()) {
 				moduleName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 			}
 		}
