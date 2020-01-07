@@ -84,7 +84,7 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is the module name for the main type to launch.
-	 * 
+	 *
 	 * @since 3.17
 	 */
 	public static final String ATTR_MODULE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MODULE_NAME"; //$NON-NLS-1$

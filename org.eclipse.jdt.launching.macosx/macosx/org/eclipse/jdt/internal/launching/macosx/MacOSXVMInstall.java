@@ -35,11 +35,11 @@ public class MacOSXVMInstall extends AbstractVMInstall {
 		if (ILaunchManager.RUN_MODE.equals(mode)) {
 			return new MacOSXVMRunner(this);
 		}
-		
+
 		if (ILaunchManager.DEBUG_MODE.equals(mode)) {
 			return new MacOSXDebugVMRunner(this);
 		}
-		
+
 		return null;
 	}
 

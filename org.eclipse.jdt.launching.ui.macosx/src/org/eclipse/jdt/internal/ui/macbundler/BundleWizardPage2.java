@@ -29,11 +29,11 @@ import org.eclipse.swt.widgets.Text;
 
 
 public class BundleWizardPage2 extends BundleWizardBasePage {
-	
+
 	Text fWorkingDir;
 	Table fClassPath;
 	Table fResources;
-	
+
 
 	protected BundleWizardPage2(BundleDescription bd) {
 		super("page2", bd); //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 
 	@Override
 	public void createContents(Composite parent) {
-		
+
 		Composite c= createComposite(parent, 2);
 			createLabel(c, Util.getString("page2.workingDirectory.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
 			fWorkingDir= createText(c, WORKINGDIR, 1);
@@ -49,7 +49,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 		fClassPath= createTableGroup(parent, Util.getString("page2.addToClasspath.group.label"), true); //$NON-NLS-1$
 		fResources= createTableGroup(parent, Util.getString("page2.addToBundle.group.label"), false); //$NON-NLS-1$
 	}
-	
+
 	Table createTableGroup(Composite parent, String groupName, final boolean onClasspath) {
 		Group g1= createGroup(parent, groupName, 1);
 			final Table table= new Table(g1, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
@@ -99,13 +99,13 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 			});
 		return table;
 	}
-	
+
 	private void add(Table t, ResourceInfo ri) {
 		TableItem ti= new TableItem(t, SWT.NONE);
 		ti.setData(ri);
 		ti.setText(ri.fPath);
 	}
-		
+
 	private void remove(Table table, boolean b, Button removeButton) {
 		TableItem[] selection= table.getSelection();
 		for (int i= 0; i < selection.length; i++) {
@@ -135,7 +135,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 				add(fClassPath, ris[i]);
 			}
 		}
-		
+
 		if (fResources != null) {
 			fResources.removeAll();
 			ResourceInfo[] ris= fBundleDescription.getResources(false);
@@ -144,7 +144,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 			}
 		}
 	}
-		
+
 	@Override
 	public boolean isPageComplete() {
 		return true;

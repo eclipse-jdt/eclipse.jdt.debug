@@ -37,7 +37,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 class BundleDescription implements BundleAttributes {
-	
+
 	private static final String STUB= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub"; //$NON-NLS-1$
 	private static final String ICON= "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Resources/GenericApp.icns"; //$NON-NLS-1$
 	private static  Set<String> RUN_MODE;
@@ -45,18 +45,18 @@ class BundleDescription implements BundleAttributes {
 		RUN_MODE = new HashSet<String>();
 		RUN_MODE.add(ILaunchManager.RUN_MODE);
 	}
-		
+
 	private ListenerList<IPropertyChangeListener> fListeners= new ListenerList<>();
 	private Properties fProperties= new Properties();
 	private List<ResourceInfo> fClassPath= new ArrayList<ResourceInfo>();
 	private List<ResourceInfo> fResources= new ArrayList<ResourceInfo>();
 	Properties fProperties2= new Properties();
-	
-	
+
+
 	BundleDescription() {
 		clear();
 	}
-	
+
 	void clear() {
 		fProperties.clear();
 		fClassPath.clear();
@@ -65,7 +65,7 @@ class BundleDescription implements BundleAttributes {
 		fProperties.put(SIGNATURE, "????"); //$NON-NLS-1$
 		fProperties.put(ICONFILE, ICON);
 	}
-	
+
 	void addResource(ResourceInfo ri, boolean onClasspath) {
 		if (onClasspath) {
 			fClassPath.add(ri);
@@ -73,12 +73,12 @@ class BundleDescription implements BundleAttributes {
 			fResources.add(ri);
 		}
 	}
-	
+
 	boolean removeResource(ResourceInfo ri, boolean onClasspath) {
 		if (onClasspath) {
 			return fClassPath.remove(ri);
 		}
-		return fResources.remove(ri);	
+		return fResources.remove(ri);
 	}
 
 	ResourceInfo[] getResources(boolean onClasspath) {
@@ -87,23 +87,23 @@ class BundleDescription implements BundleAttributes {
 		}
 		return fResources.toArray(new ResourceInfo[fResources.size()]);
 	}
-	
+
 	void addListener(IPropertyChangeListener listener) {
 		fListeners.add(listener);
 	}
-	
+
 	void removeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 	String get(String key) {
 		return fProperties.getProperty(key);
 	}
-	
+
 	public String get(String key, String dflt) {
 		return fProperties.getProperty(key, dflt);
 	}
-	
+
 	public boolean get(String key, boolean dflt) {
 		Boolean v= (Boolean) fProperties.get(key);
 		if (v == null) {
@@ -111,11 +111,11 @@ class BundleDescription implements BundleAttributes {
 		}
 		return v.booleanValue();
 	}
-	
+
 	void setValue(String key, Object value) {
 		fProperties.put(key, value);
 	}
-	
+
 	private static AbstractJavaLaunchConfigurationDelegate getDelegate(ILaunchConfiguration lc) throws CoreException {
 		ILaunchDelegate[] delegates = lc.getType().getDelegates(RUN_MODE);
 		for (int i = 0; i < delegates.length; i++) {
@@ -125,7 +125,7 @@ class BundleDescription implements BundleAttributes {
 		}
 		throw new CoreException(new Status(IStatus.ERROR, MacOSXUILaunchingPlugin.getUniqueIdentifier(), "Internal Error: missing Java launcher")); //$NON-NLS-1$
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	void inititialize(ILaunchConfiguration lc) {
 		AbstractJavaLaunchConfigurationDelegate lcd;
@@ -134,11 +134,11 @@ class BundleDescription implements BundleAttributes {
 		} catch (CoreException e) {
 			return;
 		}
-		
+
 		String appName= lc.getName();
 		fProperties.put(APPNAME, appName);
 		fProperties.put(GETINFO, appName + Util.getString("BundleDescription.copyright.format")); //$NON-NLS-1$
-		
+
 		try {
 			fProperties.put(MAINCLASS, lcd.getMainTypeName(lc));
 		} catch (CoreException e) {
@@ -161,7 +161,7 @@ class BundleDescription implements BundleAttributes {
 		} catch (CoreException e) {
 			fProperties.put(MAINCLASS, ""); //$NON-NLS-1$
 		}
-		
+
 		try {
 			String[] classpath= lcd.getClasspath(lc);
 			for (int i= 0; i < classpath.length; i++) {
@@ -170,7 +170,7 @@ class BundleDescription implements BundleAttributes {
 		} catch (CoreException e) {
 			//
 		}
-		
+
 		String vmOptions2= ""; //$NON-NLS-1$
 		String vmOptions= null;
 		try {
@@ -202,7 +202,7 @@ class BundleDescription implements BundleAttributes {
 		}
 
 		fProperties.put(VMOPTIONS, vmOptions2);
-		
+
 		boolean isSWT= false;
 		Iterator<ResourceInfo> iter= fResources.iterator();
 		while (iter.hasNext()) {
@@ -213,20 +213,20 @@ class BundleDescription implements BundleAttributes {
 			}
 		}
 		fProperties.put(USES_SWT, Boolean.valueOf(isSWT));
-		
+
 		String launcher= null;
 		if (isSWT)
 		 {
 			launcher= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
 		}
-		
+
 		if (launcher == null) {
 			setValue(JVMVERSION, "1.4*"); //$NON-NLS-1$
-			launcher= STUB;		
+			launcher= STUB;
 		}
 		setValue(LAUNCHER, launcher);
 
-		
+
 		IJavaProject p= null;
 		try {
 			p= lcd.getJavaProject(lc);
@@ -239,10 +239,10 @@ class BundleDescription implements BundleAttributes {
 		else {
 			fProperties.put(IDENTIFIER, ""); //$NON-NLS-1$
 		}
-				
+
 		fireChange();
 	}
-	
+
 	void fireChange() {
 		PropertyChangeEvent e= new PropertyChangeEvent(this, ALL, null, null);
 		for (IPropertyChangeListener listener : fListeners) {
@@ -255,7 +255,7 @@ class BundleDescription implements BundleAttributes {
 		if (path.startsWith("../")) { //$NON-NLS-1$
 			lib_dir= new File(wd, path);
 		} else {
-			lib_dir= new File(path);			
+			lib_dir= new File(path);
 		}
 		if (lib_dir.isDirectory()) {
 			File[] dlls= lib_dir.listFiles();
@@ -272,7 +272,7 @@ class BundleDescription implements BundleAttributes {
 			}
 		}
 	}
-	
+
 	static boolean verify(ILaunchConfiguration lc) {
 		String name= lc.getName();
 		if (name.indexOf("jpage") >= 0) { //$NON-NLS-1$
@@ -289,7 +289,7 @@ class BundleDescription implements BundleAttributes {
 			return false;
 		}
 	}
-	
+
 	static boolean matches(ILaunchConfiguration lc, IJavaProject project) {
 		AbstractJavaLaunchConfigurationDelegate lcd;
 		try {

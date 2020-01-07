@@ -43,16 +43,16 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 	public void createContents(Composite c) {
 
 		Composite c1= createComposite(c, 4);
-			
+
 			createLabel(c1, Util.getString("page3.identifier.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
 			fIdentifier= createText(c1, IDENTIFIER, 1);
-		
+
 			createLabel(c1, Util.getString("page3.signature.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
 			fSignature= createText(c1, SIGNATURE, 1);
 
 		createLabel(c, Util.getString("page3.vmOptions.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
 		fVMOptions= createText(c, VMOPTIONS, 2);
-		
+
 		Group g= createGroup(c, Util.getString("page3.propertiesGroup.label"), 1); //$NON-NLS-1$
 		fProperties= new Table(g, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		fProperties.setHeaderVisible(true);
@@ -64,11 +64,11 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 			}
 		});
 		setHeightHint(fProperties, 60);
-		
+
 		TableColumn col0= new TableColumn(fProperties, SWT.NONE);
 		col0.setText(Util.getString("page3.keys.column.label")); //$NON-NLS-1$
 		col0.setWidth(150);
-		
+
 		TableColumn col1= new TableColumn(fProperties, SWT.NONE);
 		col1.setText(Util.getString("page3.values.column.label")); //$NON-NLS-1$
 		col1.setWidth(150);
@@ -93,9 +93,9 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 				ti.setText(0, key);
 				ti.setText(1, value);
 			}
-		}		
+		}
 	}
-	
+
 	@Override
 	public boolean isPageComplete() {
 		return true;
