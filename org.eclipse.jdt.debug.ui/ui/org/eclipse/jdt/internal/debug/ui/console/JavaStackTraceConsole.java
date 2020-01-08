@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Paul Pazderski - Bug 546900: Fix IO handling in JavaStacktraceConsole
  *     Paul Pazderski - Bug 343023: Clear the initial stack trace console message on first edit
+ *     Paul Pazderski - Bug 304219: Recognize more typical stack trace keywords for formatting
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
@@ -21,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -79,6 +82,10 @@ public class JavaStackTraceConsole extends TextConsole {
 
     public final static String CONSOLE_TYPE = "javaStackTraceConsole"; //$NON-NLS-1$
     public final static String FILE_NAME = JDIDebugUIPlugin.getDefault().getStateLocation().toOSString() + File.separator + "stackTraceConsole.txt"; //$NON-NLS-1$
+
+	private static final String NL = "\n"; //$NON-NLS-1$
+	private static final String INDENT_STR = "    "; //$NON-NLS-1$
+	private static final int INDENT_WIDTH = 4;
 
     private JavaStackTraceConsolePartitioner partitioner = new JavaStackTraceConsolePartitioner();
     private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
@@ -234,98 +241,136 @@ public class JavaStackTraceConsole extends TextConsole {
 
     }
 
-    /**
-     * Underlying format operation
-     * @param trace the stack trace to format
-     * @return the formatted stack trace for this console
-     */
-    private String format(String trace) {
-        StringTokenizer tokenizer = new StringTokenizer(trace, " \t\n\r\f", true); //$NON-NLS-1$
-        StringBuilder formattedTrace = new StringBuilder();
+	/**
+	 * Underlying format operation
+	 *
+	 * @param trace
+	 *            the stack trace to format
+	 * @return the formatted stack trace for this console
+	 */
+	private String format(String trace) {
+		StringTokenizer tokenizer = new StringTokenizer(trace, " \t\n\r\f", true); //$NON-NLS-1$
+		StringBuilder formattedTrace = new StringBuilder(trace.length());
 
-        boolean insideAt = false;
-        boolean newLine = true;
-        int pendingSpaces = 0;
-        boolean antTrace = false;
+		boolean insideAt = false;
+		boolean newLine = true;
+		int pendingSpaces = 0;
+		boolean antTrace = false;
+		int depth = 1;
+		// Block depth map is used to find the most likely indentation for a Caused.
+		// In combination with Suppressed the correct indentation can be ambiguous.
+		// Map has indentation in number of spaces of a previous block as key and formated
+		// indentation depth used for this block as value.
+		Map<Integer, Integer> blockDepth = new HashMap<>(3);
 
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            if (token.length() == 0)
-			 {
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.isEmpty()) {
 				continue; // paranoid
 			}
-            char c = token.charAt(0);
-            // handle delimiters
-            switch (c) {
-            case ' ':
-                if (newLine) {
-                    pendingSpaces++;
-                } else {
-                    pendingSpaces = 1;
-                }
-                continue;
-            case '\t':
-                if (newLine) {
-                    pendingSpaces += 4;
-                } else {
-                    pendingSpaces = 1;
-                }
-                continue;
-            case '\n':
-            case '\r':
-            case '\f':
-                if (insideAt) {
-                    pendingSpaces = 1;
-                } else {
-                    pendingSpaces = 0;
-                    newLine = true;
-                }
-                continue;
-            }
-            // consider newlines only before token starting with char '\"' or
-            // token "at" or "-".
-            if (newLine || antTrace) {
-                if (c == '\"') { // leading thread name, e.g. "Worker-124"
-                                    // prio=5
-                    formattedTrace.append("\n\n"); //$NON-NLS-1$  print 2 lines to break between threads
-                } else if ("-".equals(token)) { //$NON-NLS-1$ - locked ...
-                    formattedTrace.append("\n"); //$NON-NLS-1$
-                    formattedTrace.append("    "); //$NON-NLS-1$
-                    formattedTrace.append(token);
-                    pendingSpaces = 0;
-                    continue;
-                } else if ("at".equals(token)) { //$NON-NLS-1$  at ...
-                    if (!antTrace) {
-                        formattedTrace.append("\n"); //$NON-NLS-1$
-                        formattedTrace.append("    "); //$NON-NLS-1$
-                    } else {
-                        formattedTrace.append(' ');
-                    }
-                    insideAt = true;
-                    formattedTrace.append(token);
-                    pendingSpaces = 0;
-                    continue;
-                } else if (c == '[') {
-                    if(antTrace) {
-                        formattedTrace.append("\n"); //$NON-NLS-1$
-                    }
-                    formattedTrace.append(token);
-                    pendingSpaces = 0;
-                    newLine = false;
-                    antTrace = true;
-                    continue;
-                }
-                newLine = false;
-            }
-            if (pendingSpaces > 0) {
-                for (int i = 0; i < pendingSpaces; i++) {
-                    formattedTrace.append(' ');
-                }
-                pendingSpaces = 0;
-            }
-            formattedTrace.append(token);
-            insideAt = false;
-        }
-        return formattedTrace.toString();
-    }
+			char c = token.charAt(0);
+			// handle delimiters
+			switch (c) {
+				case ' ':
+					if (newLine) {
+						pendingSpaces++;
+					} else {
+						pendingSpaces = 1;
+					}
+					continue;
+				case '\t':
+					if (newLine) {
+						pendingSpaces += INDENT_WIDTH;
+					} else {
+						pendingSpaces = 1;
+					}
+					continue;
+				case '\n':
+				case '\r':
+				case '\f':
+					if (insideAt) {
+						pendingSpaces = 1;
+					} else {
+						pendingSpaces = 0;
+						newLine = true;
+					}
+					continue;
+			}
+			// consider newlines only before token starting with char '\"' or
+			// token "at", "-", "...", "Caused by:", "Suppressed:" and "[CIRCULAR".
+			if (newLine) {
+				if (c == '\"') { // leading thread name, e.g. "Worker-124" prio=5
+					formattedTrace.append(NL + NL); // print 2 lines to break between threads
+				} else if (c == '-' // - locked <address>
+						|| "...".equals(token)) { //$NON-NLS-1$ ... xx more
+					applyIndentedToken(formattedTrace, depth, token, antTrace);
+					pendingSpaces = 0;
+					continue;
+				} else if ("at".equals(token)) { //$NON-NLS-1$ at method
+					insideAt = true;
+					applyIndentedToken(formattedTrace, depth, token, antTrace);
+					pendingSpaces = 0;
+					continue;
+				} else if (c == '[') {
+					if ("[CIRCULAR".equals(token)) { //$NON-NLS-1$ [CIRCULAR REFERENCE:toString()]
+						applyIndentedToken(formattedTrace, depth, token, antTrace);
+						pendingSpaces = 0;
+					} else {
+						if (antTrace) {
+							formattedTrace.append(NL);
+						}
+						formattedTrace.append(token);
+						pendingSpaces = 0;
+						antTrace = true;
+					}
+					continue;
+				} else if ("Caused".equals(token)) { //$NON-NLS-1$ Caused by: reason
+					// Guess depth for Cause block. This can be interpreted as if the Caused
+					// block is moved to the left until it aligns with a previous Suppressed
+					// block or hit the line begin.
+					depth = 0;
+					for (Map.Entry<Integer, Integer> block : blockDepth.entrySet()) {
+						if (block.getKey() <= pendingSpaces && block.getValue() > depth) {
+							depth = block.getValue();
+						}
+					}
+					applyIndentedToken(formattedTrace, depth, token, antTrace);
+					depth++;
+					pendingSpaces = 0;
+					continue;
+				} else if ("Suppressed:".equals(token)) { //$NON-NLS-1$ Suppressed: reason
+					if (depth >= 2) {
+						depth--;
+					}
+					blockDepth.put(pendingSpaces, depth);
+					applyIndentedToken(formattedTrace, depth, token, antTrace);
+					depth = 2;
+					pendingSpaces = 0;
+					continue;
+				}
+				newLine = false;
+			}
+			if (pendingSpaces > 0) {
+				for (int i = 0; i < pendingSpaces; i++) {
+					formattedTrace.append(' ');
+				}
+				pendingSpaces = 0;
+			}
+			formattedTrace.append(token);
+			insideAt = false;
+		}
+		return formattedTrace.toString();
+	}
+
+	private void applyIndentedToken(StringBuilder formattedTrace, int depth, String token, boolean antTrace) {
+		if (antTrace) {
+			formattedTrace.append(' ');
+		} else {
+			formattedTrace.append(NL);
+		}
+		for (int i = 0; i < depth; i++) {
+			formattedTrace.append(INDENT_STR);
+		}
+		formattedTrace.append(token);
+	}
 }
