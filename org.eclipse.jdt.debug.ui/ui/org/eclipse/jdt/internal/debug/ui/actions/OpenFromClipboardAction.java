@@ -248,7 +248,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private static boolean isSingleLineInput(String inputText) {
-		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+		String lineDelimiter = System.lineSeparator();
 		String s = inputText.trim();
 		return s.indexOf(lineDelimiter) == -1;
 	}
