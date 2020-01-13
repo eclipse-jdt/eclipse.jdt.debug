@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -951,7 +951,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
 		synchronized (fThread) {
-			if ((fStackFrame == null || fThisObject == null) && !isStatic()) {
+			if ((fStackFrame == null || fThisObject == null) && !isStatic() && !(getUnderlyingStackFrame() == null)) {
 				try {
 					fThisObject = getUnderlyingStackFrame().thisObject();
 				} catch (RuntimeException e) {
