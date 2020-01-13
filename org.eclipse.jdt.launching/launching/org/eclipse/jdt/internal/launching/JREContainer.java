@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -293,6 +293,7 @@ public class JREContainer implements IClasspathContainer {
 	 * @param environmentId execution environment the resolution is for, or <code>null</code>
 	 * @return classpath entries
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	private static IClasspathEntry[] computeClasspathEntries(IVMInstall vm, IJavaProject project, String environmentId) {
 		LibraryLocation[] libs = vm.getLibraryLocations();
 		boolean overrideJavaDoc = false;

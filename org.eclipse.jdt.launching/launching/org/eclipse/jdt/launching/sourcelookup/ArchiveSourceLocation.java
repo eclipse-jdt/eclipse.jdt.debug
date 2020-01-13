@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -156,7 +156,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		try {
-			if (getArchive() == null) {
+			ZipFile zip = getArchive();
+			if (zip == null) {
 				return null;
 			}
 
@@ -172,7 +173,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				}
 				ZipEntry entry = getArchive().getEntry(entryPath.toString());
 				if (entry != null) {
-					return new ZipEntryStorage(getArchive(), entry);
+					return new ZipEntryStorage(zip, entry);
 				}
 				int index = typeName.lastIndexOf('$');
 				if (index > lastSlash) {
