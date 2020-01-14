@@ -36,7 +36,7 @@ public class MockReorgQueries implements IReorgQueries {
 	}
 
 	private void run(int queryID) {
-		fQueriesRun.add(new Integer(queryID));
+		fQueriesRun.add(Integer.valueOf(queryID));
 	}
 
 	//List<Integer>

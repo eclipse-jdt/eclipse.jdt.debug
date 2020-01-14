@@ -68,9 +68,9 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
                 if (isBoolean(var)) {
                     try {
                         if (var.getValue().getValueString().equals(Boolean.toString(true))) {
-                            return new Integer(0);
+                            return Integer.valueOf(0);
                         }
-                        return new Integer(1);
+                        return Integer.valueOf(1);
                     } catch (DebugException e) {
                     }
                 }

@@ -57,19 +57,19 @@ public class PlusOperator extends BinaryOperator {
 		case T_boolean:
 			return Boolean.valueOf(primitiveValue.getBooleanValue()).toString();
 		case T_byte:
-			return new Integer(primitiveValue.getByteValue()).toString();
+			return Integer.valueOf(primitiveValue.getByteValue()).toString();
 		case T_char:
-			return new Character(primitiveValue.getCharValue()).toString();
+			return Character.valueOf(primitiveValue.getCharValue()).toString();
 		case T_double:
-			return new Double(primitiveValue.getDoubleValue()).toString();
+			return Double.valueOf(primitiveValue.getDoubleValue()).toString();
 		case T_float:
-			return new Float(primitiveValue.getFloatValue()).toString();
+			return Float.valueOf(primitiveValue.getFloatValue()).toString();
 		case T_int:
-			return new Integer(primitiveValue.getIntValue()).toString();
+			return Integer.valueOf(primitiveValue.getIntValue()).toString();
 		case T_long:
-			return new Long(primitiveValue.getLongValue()).toString();
+			return Long.valueOf(primitiveValue.getLongValue()).toString();
 		case T_short:
-			return new Integer(primitiveValue.getShortValue()).toString();
+			return Integer.valueOf(primitiveValue.getShortValue()).toString();
 		}
 		return NULL;
 	}

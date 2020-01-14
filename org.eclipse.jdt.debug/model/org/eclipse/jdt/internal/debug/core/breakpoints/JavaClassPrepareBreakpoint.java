@@ -97,13 +97,12 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 				// add attributes
 				attributes.put(IBreakpoint.ID, getModelIdentifier());
-				attributes.put(IMarker.CHAR_START, new Integer(charStart));
-				attributes.put(IMarker.CHAR_END, new Integer(charEnd));
+				attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
+				attributes.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
 				attributes.put(TYPE_NAME, typeName);
-				attributes.put(MEMBER_TYPE, new Integer(memberType));
+				attributes.put(MEMBER_TYPE, Integer.valueOf(memberType));
 				attributes.put(ENABLED, Boolean.TRUE);
-				attributes.put(SUSPEND_POLICY, new Integer(
-						getDefaultSuspendPolicy()));
+				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 
 				ensureMarker().setAttributes(attributes);
 

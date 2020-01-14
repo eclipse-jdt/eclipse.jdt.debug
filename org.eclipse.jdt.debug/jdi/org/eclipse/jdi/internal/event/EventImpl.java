@@ -223,7 +223,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 
 			try {
 				String name = field.getName();
-				Integer intValue = new Integer(field.getInt(null));
+				Integer intValue = Integer.valueOf(field.getInt(null));
 
 				if (name.startsWith("EVENT_")) { //$NON-NLS-1$
 					name = name.substring(6);

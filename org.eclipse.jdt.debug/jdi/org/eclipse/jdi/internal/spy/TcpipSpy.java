@@ -158,7 +158,7 @@ public class TcpipSpy extends Thread {
 
 	public static JdwpCommandPacket getCommand(int id) {
 		JdwpConversation conversation = fPackets
-				.get(new Integer(id));
+				.get(Integer.valueOf(id));
 		if (conversation != null)
 			return conversation.getCommand();
 		return null;
@@ -167,10 +167,10 @@ public class TcpipSpy extends Thread {
 	protected static void store(JdwpPacket packet) {
 		int id = packet.getId();
 		JdwpConversation conversation = fPackets
-				.get(new Integer(id));
+				.get(Integer.valueOf(id));
 		if (conversation == null) {
 			conversation = new JdwpConversation(id);
-			fPackets.put(new Integer(id), conversation);
+			fPackets.put(Integer.valueOf(id), conversation);
 		}
 
 		if ((packet.getFlags() & JdwpPacket.FLAG_REPLY_PACKET) != 0) {

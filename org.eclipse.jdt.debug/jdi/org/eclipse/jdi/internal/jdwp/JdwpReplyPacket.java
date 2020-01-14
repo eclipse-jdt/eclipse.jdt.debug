@@ -150,7 +150,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 				continue;
 
 			try {
-				Integer intValue = new Integer(field.getInt(null));
+				Integer intValue = Integer.valueOf(field.getInt(null));
 				fErrorMap.put(intValue, field.getName());
 			} catch (IllegalAccessException e) {
 				// Will not occur for own class.

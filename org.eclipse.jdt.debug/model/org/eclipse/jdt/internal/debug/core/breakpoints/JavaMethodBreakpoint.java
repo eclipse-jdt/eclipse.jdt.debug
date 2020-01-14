@@ -107,13 +107,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * Flag indicating that this breakpoint last suspended execution due to a
 	 * method entry
 	 */
-	protected static final Integer ENTRY_EVENT = new Integer(0);
+	protected static final Integer ENTRY_EVENT = Integer.valueOf(0);
 
 	/**
 	 * Flag indicating that this breakpoint last suspended execution due to a
 	 * method exit
 	 */
-	protected static final Integer EXIT_EVENT = new Integer(1);
+	protected static final Integer EXIT_EVENT = Integer.valueOf(1);
 
 	/**
 	 * Maps each debug target that is suspended for this breakpoint to reason
@@ -162,8 +162,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 				attributes.put(ENTRY, Boolean.valueOf(entry));
 				attributes.put(EXIT, Boolean.valueOf(exit));
 				attributes.put(NATIVE, Boolean.valueOf(nativeOnly));
-				attributes.put(SUSPEND_POLICY, new Integer(
-						getDefaultSuspendPolicy()));
+				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				register(register);
@@ -374,7 +373,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 		} else {
 			int hitCount = getHitCount();
 			if (hitCount > 0) {
-				request.putProperty(HIT_COUNT, new Integer(hitCount));
+				request.putProperty(HIT_COUNT, Integer.valueOf(hitCount));
 			}
 		}
 	}
@@ -520,7 +519,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 		int hitCount = count.intValue();
 		if (hitCount > 0) {
 			hitCount--;
-			count = new Integer(hitCount);
+			count = Integer.valueOf(hitCount);
 			event.request().putProperty(HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit

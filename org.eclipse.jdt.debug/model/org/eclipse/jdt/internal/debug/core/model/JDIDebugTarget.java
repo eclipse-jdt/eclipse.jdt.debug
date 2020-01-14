@@ -2013,7 +2013,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 					try {
 						org.eclipse.jdi.hcr.ReferenceType rt = (org.eclipse.jdi.hcr.ReferenceType) type;
 						if (rt.isVersionKnown()) {
-							return new Integer(rt.getClassFileVersion());
+							return Integer.valueOf(rt.getClassFileVersion());
 						}
 					} catch (RuntimeException e) {
 						targetRequestFailed(

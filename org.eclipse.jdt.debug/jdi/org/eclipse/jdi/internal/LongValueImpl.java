@@ -77,7 +77,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		long value = target.readLong("longValue", in); //$NON-NLS-1$
-		return new LongValueImpl(vmImpl, new Long(value));
+		return new LongValueImpl(vmImpl, Long.valueOf(value));
 	}
 
 	/**

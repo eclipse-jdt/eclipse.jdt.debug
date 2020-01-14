@@ -751,7 +751,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public ByteValue mirrorOf(byte value) {
-		return new ByteValueImpl(virtualMachineImpl(), new Byte(value));
+		return new ByteValueImpl(virtualMachineImpl(), Byte.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -759,7 +759,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public CharValue mirrorOf(char value) {
-		return new CharValueImpl(virtualMachineImpl(), new Character(value));
+		return new CharValueImpl(virtualMachineImpl(), Character.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -767,7 +767,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public DoubleValue mirrorOf(double value) {
-		return new DoubleValueImpl(virtualMachineImpl(), new Double(value));
+		return new DoubleValueImpl(virtualMachineImpl(), Double.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -775,7 +775,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public FloatValue mirrorOf(float value) {
-		return new FloatValueImpl(virtualMachineImpl(), new Float(value));
+		return new FloatValueImpl(virtualMachineImpl(), Float.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -783,7 +783,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public IntegerValue mirrorOf(int value) {
-		return new IntegerValueImpl(virtualMachineImpl(), new Integer(value));
+		return new IntegerValueImpl(virtualMachineImpl(), Integer.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -791,7 +791,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public LongValue mirrorOf(long value) {
-		return new LongValueImpl(virtualMachineImpl(), new Long(value));
+		return new LongValueImpl(virtualMachineImpl(), Long.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -799,7 +799,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	@Override
 	public ShortValue mirrorOf(short value) {
-		return new ShortValueImpl(virtualMachineImpl(), new Short(value));
+		return new ShortValueImpl(virtualMachineImpl(), Short.valueOf(value));
 	}
 
 	/* (non-Javadoc)
@@ -1198,7 +1198,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			try {
 				String name = field.getName();
 				if (name.startsWith("HCR_RELOAD_")) { //$NON-NLS-1$
-					Integer intValue = new Integer(field.getInt(null));
+					Integer intValue = Integer.valueOf(field.getInt(null));
 					name = name.substring(4);
 					fgHCRResultMap.put(intValue, name);
 				}

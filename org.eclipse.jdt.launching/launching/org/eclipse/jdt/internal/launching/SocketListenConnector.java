@@ -107,7 +107,7 @@ public class SocketListenConnector implements IVMConnector {
 		// retain default behaviour to accept 1 connection only
 		int connectionLimit = 1;
 		if (arguments.containsKey("connectionLimit")) { //$NON-NLS-1$
-			connectionLimit = Integer.valueOf(arguments.get("connectionLimit")); //$NON-NLS-1$
+			connectionLimit = Integer.parseInt(arguments.get("connectionLimit")); //$NON-NLS-1$
 		}
 
 		try {

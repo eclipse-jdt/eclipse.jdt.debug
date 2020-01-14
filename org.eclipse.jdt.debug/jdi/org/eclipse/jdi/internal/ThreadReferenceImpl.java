@@ -750,7 +750,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 			try {
 				String name = field.getName();
 				int value = field.getInt(null);
-				Integer intValue = new Integer(value);
+				Integer intValue = Integer.valueOf(value);
 
 				if (name.startsWith("JDWP_THREAD_STATUS_")) { //$NON-NLS-1$
 					name = name.substring(19);

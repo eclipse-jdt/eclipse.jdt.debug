@@ -171,13 +171,13 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fTimeoutText.setValidRange(JDIDebugModel.DEF_REQUEST_TIMEOUT, Integer.MAX_VALUE);
-		fTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JDIDebugModel.DEF_REQUEST_TIMEOUT)}));
+		fTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {Integer.valueOf(JDIDebugModel.DEF_REQUEST_TIMEOUT)}));
 		fTimeoutText.load();
 		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, space);
 		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fConnectionTimeoutText.setValidRange(JavaRuntime.DEF_CONNECT_TIMEOUT, Integer.MAX_VALUE);
-		fConnectionTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JavaRuntime.DEF_CONNECT_TIMEOUT)}));
+		fConnectionTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {Integer.valueOf(JavaRuntime.DEF_CONNECT_TIMEOUT)}));
 		fConnectionTimeoutText.load();
 
 		SWTFactory.createVerticalSpacer(composite, 1);
@@ -200,7 +200,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fShowStepTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fShowStepTimeoutText.setValidRange(-1, Integer.MAX_VALUE);
 		fShowStepTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {
-				new Integer(-1) }));
+				Integer.valueOf(-1) }));
 		fShowStepTimeoutText.load();
 
 		SWTFactory.createVerticalSpacer(composite, 1);
@@ -293,14 +293,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true));
 			fShowStepResult.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true));
 			fShowStepResultRemote.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, true));
-			fShowStepTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_SHOW_STEP_RESULT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT)).toString());
-			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
+			fShowStepTimeoutText.setStringValue(Integer.valueOf(prefs.getInt(JDIDebugModel.PREF_SHOW_STEP_RESULT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT)).toString());
+			fTimeoutText.setStringValue(Integer.valueOf(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
 			fAdvancedSourcelookup.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true));
 		}
 		prefs = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
-			fConnectionTimeoutText.setStringValue(new Integer(prefs.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT,JavaRuntime.DEF_CONNECT_TIMEOUT)).toString());
+			fConnectionTimeoutText.setStringValue(Integer.valueOf(prefs.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT,JavaRuntime.DEF_CONNECT_TIMEOUT)).toString());
 			fOnlyIncludeExportedEntries.setSelection(prefs.getBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false));
 		}
 		super.performDefaults();
@@ -335,13 +335,13 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true, null));
 		fShowStepResult.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null));
 		fShowStepResultRemote.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, false, null));
-		fShowStepTimeoutText.setStringValue(new Integer(prefs.getInt(bundleId, JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT, null)).toString());
-		fTimeoutText.setStringValue(new Integer(prefs.getInt(bundleId, JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT, null)).toString());
+		fShowStepTimeoutText.setStringValue(Integer.valueOf(prefs.getInt(bundleId, JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT, null)).toString());
+		fTimeoutText.setStringValue(Integer.valueOf(prefs.getInt(bundleId, JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT, null)).toString());
 		fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true, null));
 		fAdvancedSourcelookup.setSelection(prefs.getBoolean(bundleId, JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true, null));
 
 		bundleId = LaunchingPlugin.ID_PLUGIN;
-		fConnectionTimeoutText.setStringValue(new Integer(prefs.getInt(bundleId, JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT, null)).toString());
+		fConnectionTimeoutText.setStringValue(Integer.valueOf(prefs.getInt(bundleId, JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT, null)).toString());
 		fOnlyIncludeExportedEntries.setSelection(prefs.getBoolean(bundleId, JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false, null));
 	}
 

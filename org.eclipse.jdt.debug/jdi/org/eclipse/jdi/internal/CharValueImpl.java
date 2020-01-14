@@ -77,7 +77,7 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue, Comp
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		char value = target.readChar("charValue", in); //$NON-NLS-1$
-		return new CharValueImpl(vmImpl, new Character(value));
+		return new CharValueImpl(vmImpl, Character.valueOf(value));
 	}
 
 	/**

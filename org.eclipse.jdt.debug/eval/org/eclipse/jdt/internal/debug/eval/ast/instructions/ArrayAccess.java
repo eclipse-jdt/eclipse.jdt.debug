@@ -45,7 +45,7 @@ public class ArrayAccess extends ArrayInstruction {
 							IStatus.OK,
 							MessageFormat
 									.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index,
-											new Object[] { new Integer(index) }),
+											new Object[] { Integer.valueOf(index) }),
 							null));
 		}
 		push(array.getVariable(index));

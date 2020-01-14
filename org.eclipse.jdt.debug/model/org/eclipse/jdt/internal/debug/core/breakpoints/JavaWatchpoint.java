@@ -84,12 +84,12 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * Flag indicating that this breakpoint last suspended execution due to a
 	 * field access
 	 */
-	protected static final Integer ACCESS_EVENT = new Integer(0);
+	protected static final Integer ACCESS_EVENT = Integer.valueOf(0);
 	/**
 	 * Flag indicating that this breakpoint last suspended execution due to a
 	 * field modification
 	 */
-	protected static final Integer MODIFICATION_EVENT = new Integer(1);
+	protected static final Integer MODIFICATION_EVENT = Integer.valueOf(1);
 	/**
 	 * Maps each debug target that is suspended for this breakpoint to reason
 	 * that this breakpoint suspended it. Reasons include:
@@ -120,8 +120,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 				addLineBreakpointAttributes(attributes, getModelIdentifier(),
 						true, lineNumber, charStart, charEnd);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				attributes.put(SUSPEND_POLICY, new Integer(
-						getDefaultSuspendPolicy()));
+				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 				// configure the field handle
 				addFieldName(attributes, fieldName);
 				// configure the access and modification flags to defaults

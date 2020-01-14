@@ -354,6 +354,7 @@ public class ClasspathShortener {
 			manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 			manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, manifestClasspath.toString());
 			try (JarOutputStream target = new JarOutputStream(new FileOutputStream(jarFile), manifest)) {
+				target.hashCode(); // avoid warning that target is unused
 			}
 			return jarFile;
 		} catch (IOException e) {

@@ -198,7 +198,7 @@ public class VerboseWriter {
 	public void println(String description, double value) {
 		printDescription(description);
 		printHex(value);
-		print(new Double(value).toString());
+		print(Double.valueOf(value).toString());
 		println();
 	}
 
@@ -208,7 +208,7 @@ public class VerboseWriter {
 	public void println(String description, float value) {
 		printDescription(description);
 		printHex(value);
-		print(new Float(value).toString());
+		print(Float.valueOf(value).toString());
 		println();
 	}
 
@@ -409,7 +409,7 @@ public class VerboseWriter {
 	 * strings.
 	 */
 	public void printValue(int value, Map<Integer, String> valueToString) {
-		Integer val = new Integer(value);
+		Integer val = Integer.valueOf(value);
 		if (valueToString == null) {
 			print(val.toString());
 			return;
@@ -443,7 +443,7 @@ public class VerboseWriter {
 	 * the bits.
 	 */
 	public void printValue(int value, String[] bitNames) {
-		Integer val = new Integer(value);
+		Integer val = Integer.valueOf(value);
 		if (bitNames == null) {
 			print(val.toString());
 			return;

@@ -191,7 +191,7 @@ public class PacketReceiveManager extends PacketManager {
 		// Check for a timeout.
 		if (packet == null) {
 			synchronized (fTimedOutPackets) {
-				fTimedOutPackets.add(new Integer(id));
+				fTimedOutPackets.add(Integer.valueOf(id));
 			}
 			throw new TimeoutException(NLS.bind(
 					ConnectMessages.PacketReceiveManager_0, new String[] { id
@@ -276,7 +276,7 @@ public class PacketReceiveManager extends PacketManager {
 			if (fTimedOutPackets.isEmpty()) {
 				return false;
 			}
-			Integer id = new Integer(packet.getId());
+			Integer id = Integer.valueOf(packet.getId());
 			return fTimedOutPackets.remove(id);
 		}
 	}

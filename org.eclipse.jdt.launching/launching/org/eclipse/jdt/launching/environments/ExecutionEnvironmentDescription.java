@@ -180,8 +180,8 @@ public final class ExecutionEnvironmentDescription {
 	private static final String EE_ARG_FILTER = "-Dee."; //$NON-NLS-1$
 
 	// Regex constants for handling the source mapping
-	private static final Character WILDCARD_SINGLE_CHAR = new Character('?');
-	private static final Character WILDCARD_MULTI_CHAR = new Character('*');
+	private static final Character WILDCARD_SINGLE_CHAR = Character.valueOf('?');
+	private static final Character WILDCARD_MULTI_CHAR = Character.valueOf('*');
 	private static final String REGEX_SPECIAL_CHARS = "+()^$.{}[]|\\"; //$NON-NLS-1$
 
 	/**

@@ -160,8 +160,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 				addStratumPatternAndHitCount(attributes, stratum, sourceName,
 						sourcePath, pattern, hitCount);
 				// set attributes
-				attributes.put(SUSPEND_POLICY, new Integer(
-						getDefaultSuspendPolicy()));
+				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 				ensureMarker().setAttributes(attributes);
 
 				register(register);
@@ -184,7 +183,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 			attributes.put(SOURCE_PATH, sourcePath);
 		}
 		if (hitCount > 0) {
-			attributes.put(HIT_COUNT, new Integer(hitCount));
+			attributes.put(HIT_COUNT, Integer.valueOf(hitCount));
 			attributes.put(EXPIRED, Boolean.FALSE);
 		}
 	}

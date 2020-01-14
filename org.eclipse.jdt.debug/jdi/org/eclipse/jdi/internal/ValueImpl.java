@@ -320,29 +320,29 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 		switch (typeSignature) {
 		case 'D':
 			if (valueTypeSignature != 'Z') {
-				return new DoubleValueImpl(vm, new Double(value.doubleValue()));
+				return new DoubleValueImpl(vm, Double.valueOf(value.doubleValue()));
 			}
 			break;
 		case 'F':
 			if (valueTypeSignature != 'Z' && valueTypeSignature != 'D') {
-				return new FloatValueImpl(vm, new Float(value.floatValue()));
+				return new FloatValueImpl(vm, Float.valueOf(value.floatValue()));
 			}
 			break;
 		case 'J':
 			if (valueTypeSignature != 'Z' && valueTypeSignature != 'D'
 					&& valueTypeSignature != 'F') {
-				return new LongValueImpl(vm, new Long(value.longValue()));
+				return new LongValueImpl(vm, Long.valueOf(value.longValue()));
 			}
 			break;
 		case 'I':
 			if (valueTypeSignature == 'B' || valueTypeSignature == 'C'
 					|| valueTypeSignature == 'S') {
-				return new IntegerValueImpl(vm, new Integer(value.intValue()));
+				return new IntegerValueImpl(vm, Integer.valueOf(value.intValue()));
 			}
 			break;
 		case 'S':
 			if (valueTypeSignature == 'B') {
-				return new ShortValueImpl(vm, new Short(value.shortValue()));
+				return new ShortValueImpl(vm, Short.valueOf(value.shortValue()));
 			}
 			break;
 		}

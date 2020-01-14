@@ -237,14 +237,14 @@ public abstract class ConnectorImpl implements Connector {
 
 		@Override
 		public void setValue(String value) {
-			fValue = new Integer(value);
+			fValue = Integer.valueOf(value);
 		}
 
 		@Override
 		public boolean isValid(String value) {
 			Integer val;
 			try {
-				val = new Integer(value);
+				val = Integer.valueOf(value);
 			} catch (NumberFormatException e) {
 				return false;
 			}
@@ -269,7 +269,7 @@ public abstract class ConnectorImpl implements Connector {
 		 */
 		@Override
 		public void setValue(int value) {
-			fValue = new Integer(value);
+			fValue = Integer.valueOf(value);
 		}
 
 		/* (non-Javadoc)
@@ -301,7 +301,7 @@ public abstract class ConnectorImpl implements Connector {
 		 */
 		@Override
 		public String stringValueOf(int value) {
-			return new Integer(value).toString();
+			return Integer.valueOf(value).toString();
 		}
 	}
 

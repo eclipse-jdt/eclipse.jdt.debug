@@ -77,7 +77,7 @@ public class FloatValueImpl extends PrimitiveValueImpl implements FloatValue, Co
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		float value = target.readFloat("floatValue", in); //$NON-NLS-1$
-		return new FloatValueImpl(vmImpl, new Float(value));
+		return new FloatValueImpl(vmImpl, Float.valueOf(value));
 	}
 
 	/**

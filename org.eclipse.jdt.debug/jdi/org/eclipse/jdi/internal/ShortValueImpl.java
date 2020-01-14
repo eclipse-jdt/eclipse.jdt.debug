@@ -77,7 +77,7 @@ public class ShortValueImpl extends PrimitiveValueImpl implements ShortValue {
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		short value = target.readShort("shortValue", in); //$NON-NLS-1$
-		return new ShortValueImpl(vmImpl, new Short(value));
+		return new ShortValueImpl(vmImpl, Short.valueOf(value));
 	}
 
 	/**

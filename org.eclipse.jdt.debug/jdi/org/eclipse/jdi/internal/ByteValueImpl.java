@@ -82,7 +82,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue, Comp
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		byte value = target.readByte("byteValue", in); //$NON-NLS-1$
-		return new ByteValueImpl(vmImpl, new Byte(value));
+		return new ByteValueImpl(vmImpl, Byte.valueOf(value));
 	}
 
 	/**

@@ -117,7 +117,7 @@ public abstract class JdwpID {
 	 */
 	@Override
 	public String toString() {
-		return new Long(fValue).toString();
+		return Long.valueOf(fValue).toString();
 	}
 
 	/**
@@ -174,7 +174,7 @@ public abstract class JdwpID {
 
 			try {
 				String name = field.getName();
-				Integer intValue = new Integer(field.getInt(null));
+				Integer intValue = Integer.valueOf(field.getInt(null));
 				if (name.startsWith("TYPE_TAG_")) { //$NON-NLS-1$
 					name = name.substring(9);
 					fTypeTagMap.put(intValue, name);

@@ -77,7 +77,7 @@ public class IntegerValueImpl extends PrimitiveValueImpl implements IntegerValue
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		int value = target.readInt("integerValue", in); //$NON-NLS-1$
-		return new IntegerValueImpl(vmImpl, new Integer(value));
+		return new IntegerValueImpl(vmImpl, Integer.valueOf(value));
 	}
 
 	/**

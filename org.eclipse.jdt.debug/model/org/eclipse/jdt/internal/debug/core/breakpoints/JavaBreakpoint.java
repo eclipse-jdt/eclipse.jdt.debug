@@ -577,7 +577,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		int hitCount = getHitCount();
 		if (hitCount > 0) {
 			request.addCountFilter(hitCount);
-			request.putProperty(HIT_COUNT, new Integer(hitCount));
+			request.putProperty(HIT_COUNT, Integer.valueOf(hitCount));
 		}
 	}
 
@@ -941,7 +941,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (isInstalled()) {
 			attributes = new ArrayList<>(3);
 			attributes.add(INSTALL_COUNT);
-			values.add(new Integer(0));
+			values.add(Integer.valueOf(0));
 		}
 		if (isExpired()) {
 			if (attributes == null) {
@@ -986,11 +986,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (getHitCount() != count) {
 			if (!isEnabled() && count > -1) {
 				setAttributes(new String[] { ENABLED, HIT_COUNT, EXPIRED },
-						new Object[] { Boolean.TRUE, new Integer(count),
+						new Object[] { Boolean.TRUE, Integer.valueOf(count),
 								Boolean.FALSE });
 			} else {
 				setAttributes(new String[] { HIT_COUNT, EXPIRED },
-						new Object[] { new Integer(count), Boolean.FALSE });
+						new Object[] { Integer.valueOf(count), Boolean.FALSE });
 			}
 			recreate();
 		}

@@ -90,8 +90,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 						methodSignature);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
 				// set attributes
-				attributes.put(SUSPEND_POLICY, new Integer(
-						getDefaultSuspendPolicy()));
+				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 				ensureMarker().setAttributes(attributes);
 
 				register(register);

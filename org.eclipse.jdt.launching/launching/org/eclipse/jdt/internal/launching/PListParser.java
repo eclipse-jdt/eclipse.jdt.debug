@@ -158,7 +158,7 @@ public class PListParser {
 			return Boolean.FALSE;
 		} else if(nodeName.equalsIgnoreCase(INT_ELEMENT)) {
 			try {
-				return new Integer(Integer.parseInt(getText(element)));
+				return Integer.valueOf(Integer.parseInt(getText(element)));
 			} catch (NumberFormatException e) {
 				abort(e);
 			}

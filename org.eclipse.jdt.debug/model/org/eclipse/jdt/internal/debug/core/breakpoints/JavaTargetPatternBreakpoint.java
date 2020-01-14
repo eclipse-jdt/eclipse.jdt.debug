@@ -74,8 +74,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 				addLineBreakpointAttributes(attributes, getModelIdentifier(),
 						true, lineNumber, charStart, charEnd);
 				addSourceNameAndHitCount(attributes, sourceName, hitCount);
-				attributes.put(SUSPEND_POLICY, new Integer(
-						getDefaultSuspendPolicy()));
+				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 
@@ -215,7 +214,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 			attributes.put(SOURCE_NAME, sourceName);
 		}
 		if (hitCount > 0) {
-			attributes.put(HIT_COUNT, new Integer(hitCount));
+			attributes.put(HIT_COUNT, Integer.valueOf(hitCount));
 			attributes.put(EXPIRED, Boolean.FALSE);
 		}
 	}

@@ -656,7 +656,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		char charValue= (char)longValue;
 		StringBuilder charText = new StringBuilder();
 		if (Character.getType(charValue) == Character.CONTROL) {
-			Character ctrl = new Character((char) (charValue + 64));
+			Character ctrl = Character.valueOf((char) (charValue + 64));
 			charText.append('^');
 			charText.append(ctrl);
 			switch (charValue) { // common use
@@ -670,7 +670,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				case 127: charText.append(" (DEL)"); break; //$NON-NLS-1$
 			}
 		} else {
-			charText.append(new Character(charValue));
+			charText.append(Character.valueOf(charValue));
 		}
 		return charText.toString();
 	}

@@ -62,7 +62,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("JVMPlatformVersion", "1.5");
 			map.put("JVMVersion", "1.5.0_24");
 			map.put("test", Boolean.FALSE);
-			map.put("testint", new Integer(42));
+			map.put("testint", Integer.valueOf(42));
 			assertEquals("Incorrect values parsed", map, jres[0]);
 
 			map = new HashMap<>();

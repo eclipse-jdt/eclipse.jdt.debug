@@ -45,7 +45,8 @@ public class SocketUtil {
 
 		for (int i= 0; i < 10; i++) {
 			int port= getRandomPort(searchFrom, searchTo);
-			try (Socket s= new Socket(host, port)){
+			try (Socket s = new Socket(host, port)) {
+				s.getLocalPort(); // avoid warning on s being unused
 			} catch (ConnectException e) {
 				return port;
 			} catch (IOException e) {

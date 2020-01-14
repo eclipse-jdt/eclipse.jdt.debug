@@ -136,7 +136,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		getLineTable();
 
-		return fLineToCodeIndexes.get(new Integer(line));
+		return fLineToCodeIndexes.get(Integer.valueOf(line));
 	}
 
 	/**
@@ -186,9 +186,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			fJavaStratumLineNumberTable = new int[nrOfElements];
 			for (int i = 0; i < nrOfElements; i++) {
 				long lineCodeIndex = readLong("code index", replyData); //$NON-NLS-1$
-				Long lineCodeIndexLong = new Long(lineCodeIndex);
+				Long lineCodeIndexLong = Long.valueOf(lineCodeIndex);
 				int lineNr = readInt("line nr", replyData); //$NON-NLS-1$
-				Integer lineNrInt = new Integer(lineNr);
+				Integer lineNrInt = Integer.valueOf(lineNr);
 
 				// Add entry to code-index to line mapping.
 				fCodeIndexToLine.put(lineCodeIndexLong, lineNrInt);
@@ -231,14 +231,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		long index = lineCodeIndex;
 		// Search for the line where this code index is located.
 		do {
-			lineCodeIndexObj = new Long(index);
+			lineCodeIndexObj = Long.valueOf(index);
 			lineNrObj = javaStratumCodeIndexToLine().get(lineCodeIndexObj);
 		} while (lineNrObj == null && --index >= fLowestValidCodeIndex);
 		if (lineNrObj == null) {
 			if (lineCodeIndex >= fLowestValidCodeIndex) {
 				index = lineCodeIndex;
 				do {
-					lineCodeIndexObj = new Long(index);
+					lineCodeIndexObj = Long.valueOf(index);
 					lineNrObj = javaStratumCodeIndexToLine().get(lineCodeIndexObj);
 				} while (lineNrObj == null && ++index <= fHighestValidCodeIndex);
 				if (lineNrObj != null) {
@@ -467,7 +467,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return null;
 		}
 		try {
-			Integer lineNrInt = javaStratumCodeIndexToLine().get(new Long(index));
+			Integer lineNrInt = javaStratumCodeIndexToLine().get(Long.valueOf(index));
 			if (lineNrInt == null) {
 				throw new AbsentInformationException(MessageFormat.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2, new Object[] { Long.toString(index) }));
 			}
@@ -897,7 +897,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 				//See http://docs.oracle.com/javase/6/docs/platform/jpda/jdwp/jdwp-protocol.html#JDWP_Method_LineTable for more information
 				continue;
 			}
-			if (position == 0 || !tmpLocations.contains(new Long(fCodeIndexTable[position - 1]))) {
+			if (position == 0 || !tmpLocations.contains(Long.valueOf(fCodeIndexTable[position - 1]))) {
 				locations.add(new LocationImpl(virtualMachineImpl(), this, index));
 			}
 		}

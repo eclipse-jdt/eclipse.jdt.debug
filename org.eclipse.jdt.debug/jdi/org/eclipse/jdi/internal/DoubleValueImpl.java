@@ -77,7 +77,7 @@ public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue, 
 			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		double value = target.readDouble("doubleValue", in); //$NON-NLS-1$
-		return new DoubleValueImpl(vmImpl, new Double(value));
+		return new DoubleValueImpl(vmImpl, Double.valueOf(value));
 	}
 
 	/**

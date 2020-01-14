@@ -127,14 +127,14 @@ public class JavaLaunchableTester extends PropertyTester {
 
 
     static {
-        fgModifiers.put("public",       new Integer(Flags.AccPublic)); //$NON-NLS-1$
-        fgModifiers.put("protected",    new Integer(Flags.AccProtected)); //$NON-NLS-1$
-        fgModifiers.put("private",      new Integer(Flags.AccPrivate)); //$NON-NLS-1$
-        fgModifiers.put("static",       new Integer(Flags.AccStatic)); //$NON-NLS-1$
-        fgModifiers.put("final",        new Integer(Flags.AccFinal)); //$NON-NLS-1$
-        fgModifiers.put("synchronized", new Integer(Flags.AccSynchronized)); //$NON-NLS-1$
-        fgModifiers.put("abstract",     new Integer(Flags.AccAbstract)); //$NON-NLS-1$
-        fgModifiers.put("native",       new Integer(Flags.AccNative)); //$NON-NLS-1$
+        fgModifiers.put("public",       Integer.valueOf(Flags.AccPublic)); //$NON-NLS-1$
+        fgModifiers.put("protected",    Integer.valueOf(Flags.AccProtected)); //$NON-NLS-1$
+        fgModifiers.put("private",      Integer.valueOf(Flags.AccPrivate)); //$NON-NLS-1$
+        fgModifiers.put("static",       Integer.valueOf(Flags.AccStatic)); //$NON-NLS-1$
+        fgModifiers.put("final",        Integer.valueOf(Flags.AccFinal)); //$NON-NLS-1$
+        fgModifiers.put("synchronized", Integer.valueOf(Flags.AccSynchronized)); //$NON-NLS-1$
+        fgModifiers.put("abstract",     Integer.valueOf(Flags.AccAbstract)); //$NON-NLS-1$
+        fgModifiers.put("native",       Integer.valueOf(Flags.AccNative)); //$NON-NLS-1$
     }
 
 	/**

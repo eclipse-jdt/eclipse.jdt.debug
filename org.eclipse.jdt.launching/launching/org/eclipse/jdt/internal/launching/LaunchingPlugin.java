@@ -1018,7 +1018,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 					}
 				}
 				//if there is no recorded stamp we have to assume it is new
-				stamp = new Long(fstamp);
+				stamp = Long.valueOf(fstamp);
 				fgInstallTimeMap.put(location, stamp);
 				writeInstallInfo();
 				fgHasChanged.add(location);
@@ -1057,7 +1057,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 								String loc = element.getAttribute("loc"); //$NON-NLS-1$
 								String stamp = element.getAttribute("stamp"); //$NON-NLS-1$
 								try {
-									Long l = new Long(stamp);
+									Long l = Long.valueOf(stamp);
 									fgInstallTimeMap.put(loc, l);
 								}
 								catch(NumberFormatException nfe) {

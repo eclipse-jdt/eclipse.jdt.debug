@@ -137,7 +137,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 */
 		public void addLineInfo(int inputLine, int outputStartLine,
 				int outputLineRange) {
-			Integer key = new Integer(inputLine);
+			Integer key = Integer.valueOf(inputLine);
 			List<int[]> outputLines = fLineInfo.get(key);
 			if (outputLines == null) {
 				outputLines = new ArrayList<>();
@@ -156,7 +156,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 */
 		public List<Integer> getOutputLinesForLine(int lineNumber) {
 			List<Integer> list = new ArrayList<>();
-			List<int[]> outputLines = fLineInfo.get(new Integer(lineNumber));
+			List<int[]> outputLines = fLineInfo.get(Integer.valueOf(lineNumber));
 			if (outputLines != null) {
 				for (int[] info : outputLines) {
 					int outputLineNumber = info[0];
@@ -165,7 +165,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 						length = length + 1;
 					}
 					for (int i = 0; i < length; i++) {
-						list.add(new Integer(outputLineNumber++));
+						list.add(Integer.valueOf(outputLineNumber++));
 					}
 				}
 			}
@@ -313,7 +313,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 */
 		private void addLineInfoToMap(int inputStartLine, int lineFileId,
 				int outputStartLine) {
-			Integer key = new Integer(outputStartLine);
+			Integer key = Integer.valueOf(outputStartLine);
 			List<int[]> inputLines = fOutputLineToInputLine.get(key);
 			if (inputLines == null) {
 				inputLines = new ArrayList<>();
@@ -344,8 +344,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * @return
 		 */
 		public List<int[]> getInputLineInfos(int outputLineNumber) {
-			return fOutputLineToInputLine.get(new Integer(
-					outputLineNumber));
+			return fOutputLineToInputLine.get(Integer.valueOf(outputLineNumber));
 		}
 
 	}
@@ -2029,7 +2028,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_34);
 			}
 		} else { // Java stratum
-			javaLines.add(new Integer(lineNumber));
+			javaLines.add(Integer.valueOf(lineNumber));
 		}
 		return method.javaStratumLocationsOfLines(javaLines);
 	}

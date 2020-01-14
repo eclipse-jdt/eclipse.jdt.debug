@@ -349,7 +349,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		if (fCountFilters == null)
 			fCountFilters = new ArrayList<>();
 
-		fCountFilters.add(new Integer(count));
+		fCountFilters.add(Integer.valueOf(count));
 	}
 
 	/**
@@ -740,7 +740,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 
 			try {
 				String name = field.getName();
-				Integer intValue = new Integer(field.getInt(null));
+				Integer intValue = Integer.valueOf(field.getInt(null));
 				if (name.startsWith("STEP_SIZE_")) { //$NON-NLS-1$
 					name = name.substring(10);
 					fStepSizeMap.put(intValue, name);

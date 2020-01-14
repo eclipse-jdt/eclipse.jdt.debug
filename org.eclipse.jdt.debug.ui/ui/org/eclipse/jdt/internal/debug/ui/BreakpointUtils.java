@@ -247,8 +247,8 @@ public class BreakpointUtils {
 	 */
 	public static void addJavaBreakpointAttributesWithMemberDetails(Map<String, Object> attributes, IJavaElement element, int memberStart, int memberEnd) {
 		addJavaBreakpointAttributes(attributes, element);
-		attributes.put(MEMBER_START, new Integer(memberStart));
-		attributes.put(MEMBER_END, new Integer(memberEnd));
+		attributes.put(MEMBER_START, Integer.valueOf(memberStart));
+		attributes.put(MEMBER_END, Integer.valueOf(memberEnd));
 	}
 
 	/**

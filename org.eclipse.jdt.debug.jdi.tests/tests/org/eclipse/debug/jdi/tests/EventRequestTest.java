@@ -113,29 +113,29 @@ public class EventRequestTest extends AbstractJDITest {
 	 */
 	public void testJDIProperties() {
 		EventRequest request = fRequests.get(0);
-		request.putProperty(new Integer(0), "prop1");
-		String prop = (String) request.getProperty(new Integer(0));
+		request.putProperty(Integer.valueOf(0), "prop1");
+		String prop = (String) request.getProperty(Integer.valueOf(0));
 		assertTrue("1", prop.equals("prop1"));
 
-		request.putProperty(new Integer(0), null);
-		prop = (String) request.getProperty(new Integer(0));
+		request.putProperty(Integer.valueOf(0), null);
+		prop = (String) request.getProperty(Integer.valueOf(0));
 		assertTrue("2", prop == null);
 
-		request.putProperty(new Integer(0), "prop2");
-		request.putProperty(new Integer(0), "prop3");
-		prop = (String) request.getProperty(new Integer(0));
+		request.putProperty(Integer.valueOf(0), "prop2");
+		request.putProperty(Integer.valueOf(0), "prop3");
+		prop = (String) request.getProperty(Integer.valueOf(0));
 		assertTrue("3", prop.equals("prop3"));
 
-		request.putProperty(new Integer(0), null);
-		prop = (String) request.getProperty(new Integer(0));
+		request.putProperty(Integer.valueOf(0), null);
+		prop = (String) request.getProperty(Integer.valueOf(0));
 		assertTrue("4", prop == null);
 
-		request.putProperty(new Integer(1), null);
-		prop = (String) request.getProperty(new Integer(1));
+		request.putProperty(Integer.valueOf(1), null);
+		prop = (String) request.getProperty(Integer.valueOf(1));
 		assertTrue("5", prop == null);
 
-		request.putProperty(new Integer(1), "prop1");
-		prop = (String) request.getProperty(new Integer(1));
+		request.putProperty(Integer.valueOf(1), "prop1");
+		prop = (String) request.getProperty(Integer.valueOf(1));
 		assertTrue("6", prop.equals("prop1"));
 
 	}

@@ -312,7 +312,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 						IMarker.LOCATION},
 					new Object[] {
 						message,
-						new Integer(severity),
+						Integer.valueOf(severity),
 						LaunchingMessages.LaunchingPlugin_37
 					});
 		} catch (CoreException e) {
@@ -340,7 +340,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 							IMarker.LOCATION },
 						new Object[] {
 								message,
-								new Integer(severity),
+								Integer.valueOf(severity),
 								location
 						});
 		} catch (CoreException e) {
