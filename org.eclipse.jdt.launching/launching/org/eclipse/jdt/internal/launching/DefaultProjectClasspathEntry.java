@@ -372,7 +372,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */

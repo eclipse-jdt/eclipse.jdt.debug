@@ -37,6 +37,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.core.model.IStepFilter;
@@ -2580,7 +2581,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				attachFiltersToStepRequest(request);
 				request.enable();
 
-				if (manager.virtualMachine().canGetMethodReturnValues() && showStepResultIsEnabled()) {
+				if (manager.virtualMachine().canGetMethodReturnValues() && showStepResultIsEnabled(getDebugTarget())) {
 					if (fCurrentMethodExitRequest != null) {
 						removeJDIEventListener(this, fCurrentMethodExitRequest);
 						manager.deleteEventRequest(fCurrentMethodExitRequest);
@@ -3842,7 +3843,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
     protected DropToFrameHandler createDropToFrameHandler(IStackFrame stackFrame) throws DebugException {
         return new DropToFrameHandler(stackFrame);
     }
-	public static boolean showStepResultIsEnabled() {
+	public static boolean showStepResultIsEnabled(IDebugTarget debugTarget) {
+		if (debugTarget == null || debugTarget.getProcess() == null) {
+			return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, false, null);
+		}
 		return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null);
 	}
 

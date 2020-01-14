@@ -29,7 +29,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * </ul>
  * <p>
  * A provider extension is defined in <code>plugin.xml</code>. Following is an example definition of a runtime classpath provider extension.
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.jdt.launching.classpathProviders"&gt;
  *   &lt;classpathProvider&gt;
@@ -38,7 +38,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  *   &lt;/classpathProvider&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * The attributes are specified as follows:
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this extension. This identifier may be used to reference a provider on one of the launch

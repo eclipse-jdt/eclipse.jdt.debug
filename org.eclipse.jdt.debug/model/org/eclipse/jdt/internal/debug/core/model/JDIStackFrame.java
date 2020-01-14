@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -510,7 +510,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					String msg = JDIDebugModelMessages.JDIStackFrame_NotObservedBecauseOfTimeout;
 					variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), msg), false));
 				}
-			} else if(JDIThread.showStepResultIsEnabled()) {
+			} else if (JDIThread.showStepResultIsEnabled(getDebugTarget())) {
 				variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), ""), false)); //$NON-NLS-1$
 			}
 		}
@@ -951,7 +951,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
 		synchronized (fThread) {
-			if ((fStackFrame == null || fThisObject == null) && !isStatic()) {
+			if ((fStackFrame == null || fThisObject == null) && !isStatic() && !(getUnderlyingStackFrame() == null)) {
 				try {
 					fThisObject = getUnderlyingStackFrame().thisObject();
 				} catch (RuntimeException e) {

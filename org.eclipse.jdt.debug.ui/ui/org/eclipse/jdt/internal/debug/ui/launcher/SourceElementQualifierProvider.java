@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,8 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -49,16 +51,23 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 			return fJavaLabels.getText(parent);
 		} else if (element instanceof ZipEntryStorage) {
 			ZipEntryStorage storage = (ZipEntryStorage)element;
-			String zipFileName = storage.getArchive().getName();
-			IPath path = new Path(zipFileName);
-			IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
-			IResource res = entry.getResource();
-			if (res == null) {
-				// external
-				return zipFileName;
+			try (ZipFile archive = storage.getArchive()) {
+				String zipFileName = archive.getName();
+				IPath path = new Path(zipFileName);
+				IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
+				IResource res = entry.getResource();
+				if (res == null) {
+					// external
+					return zipFileName;
+				}
+				// internal
+				return res.getName();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			// internal
-			return res.getName();
+			// ZipFile archive = storage.getArchive();
+			// String zipFileName = archive.getName();
+
 		} else if (element instanceof LocalFileStorage) {
 			LocalFileStorage storage = (LocalFileStorage)element;
 			File extFile = storage.getFile();

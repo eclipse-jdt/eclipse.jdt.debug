@@ -226,7 +226,7 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertTrue(result);
 		assertEquals(0, classpathShortener.getProcessTempFiles().size());
 		assertArrayEquals(new String[] { "PATH=C:\\WINDOWS\\System32;C:\\WINDOWS",
-				"CLASSPATH=" + classpathShortener.quoteWindowsPath(classpath) }, classpathShortener.getEnvp());
+				"CLASSPATH=" + classpath }, classpathShortener.getEnvp());
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 
@@ -245,7 +245,7 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertTrue(result);
 		assertEquals(0, classpathShortener.getProcessTempFiles().size());
 		assertArrayEquals(new String[] { "MYVAR1=value1", "MYVAR2=value2",
-				"CLASSPATH=" + classpathShortener.quoteWindowsPath(classpath) }, classpathShortener.getEnvp());
+				"CLASSPATH=" + classpath }, classpathShortener.getEnvp());
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 
@@ -267,7 +267,7 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertTrue(result);
 		assertEquals(0, classpathShortener.getProcessTempFiles().size());
 		assertArrayEquals(new String[] { "PATH=C:\\WINDOWS\\System32;C:\\WINDOWS",
-				"CLASSPATH=" + classpathShortener.quoteWindowsPath(classpath) }, classpathShortener.getEnvp());
+				"CLASSPATH=" + classpath }, classpathShortener.getEnvp());
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 

@@ -215,6 +215,8 @@ public class EvaluationSourceGenerator {
 						token = scanner.getNextToken();
 						if (token == ITerminalSymbols.TokenNameEOF) {
 							return true;
+						} else if (token == ITerminalSymbols.TokenNameEQUAL) {
+							return false;
 						}
 					}
 					count = 3;

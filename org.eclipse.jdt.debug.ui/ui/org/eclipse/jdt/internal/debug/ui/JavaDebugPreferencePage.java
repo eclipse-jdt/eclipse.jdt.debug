@@ -98,6 +98,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fAlertObsoleteButton;
 	private Button fPerformHCRWithCompilationErrors;
 	private Button fShowStepResult;
+	private Button fShowStepResultRemote;
 	private Button fAdvancedSourcelookup;
 
 	// Timeout preference widgets
@@ -188,9 +189,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fOnlyIncludeExportedEntries = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_only_include_exported_entries, null, false, 1);
 
 		SWTFactory.createVerticalSpacer(composite, 1);
-		fShowStepResult = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_1, null, false, 1);
+		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_1, 1, 1, GridData.FILL_HORIZONTAL);
+		fShowStepResult = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_local, null, false, 1);
 
-		Composite space1 = SWTFactory.createComposite(composite, composite.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+		fShowStepResultRemote = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_remote, null, false, 1);
+
+		Composite space1 = SWTFactory.createComposite(group, composite.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		fShowStepTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_ShowStepTimeout_ms_1, space1);
 		fShowStepTimeoutText.setPage(this);
 		fShowStepTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
@@ -239,6 +243,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			prefs.put(JDIDebugModel.PREF_SUSPEND_ON_RECURRENCE_STRATEGY, SuspendOnRecurrenceStrategy.values()[suspendOnRecurranceIndex].name());
 			prefs.putBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
 			prefs.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, fShowStepResult.getSelection());
+			prefs.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, fShowStepResultRemote.getSelection());
 			prefs.putInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, fShowStepTimeoutText.getIntValue());
 			prefs.putInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 			prefs.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, fFilterUnrelatedBreakpoints.getSelection());
@@ -287,6 +292,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fSuspendOnRecurringExceptionBreakpoints.select(suspendOnRecurranceIndex);
 			fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true));
 			fShowStepResult.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true));
+			fShowStepResultRemote.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, true));
 			fShowStepTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_SHOW_STEP_RESULT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT)).toString());
 			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
@@ -328,6 +334,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendOnRecurringExceptionBreakpoints.select(suspendOnRecurranceIndex);
 		fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true, null));
 		fShowStepResult.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null));
+		fShowStepResultRemote.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, false, null));
 		fShowStepTimeoutText.setStringValue(new Integer(prefs.getInt(bundleId, JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT, null)).toString());
 		fTimeoutText.setStringValue(new Integer(prefs.getInt(bundleId, JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT, null)).toString());
 		fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true, null));

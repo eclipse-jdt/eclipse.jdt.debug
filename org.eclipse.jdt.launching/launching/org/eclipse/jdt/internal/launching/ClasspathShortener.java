@@ -440,7 +440,7 @@ public class ClasspathShortener {
 		if (envp == null) {
 			envp = getEnvpFromNativeEnvironment();
 		}
-		String classpathEnvVar = CLASSPATH_ENV_VAR_PREFIX + quoteWindowsPath(classpath);
+		String classpathEnvVar = CLASSPATH_ENV_VAR_PREFIX + classpath;
 		int index = getEnvClasspathIndex(envp);
 		if (index < 0) {
 			envp = Arrays.copyOf(envp, envp.length + 1);
@@ -483,7 +483,21 @@ public class ClasspathShortener {
 
 	public String quoteWindowsPath(String path) {
 		if (os.equals(Platform.OS_WIN32)) {
-			return "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+			int length = path.length();
+			StringBuilder newPath = new StringBuilder(length);
+			boolean insideQuote = false;
+			for (int i = 0; i < length; i++) {
+				char c = path.charAt(i);
+				if (c == ' ' && !insideQuote) {
+					newPath.append('"');
+					insideQuote = true;
+				} else if (insideQuote) {
+					newPath.append('"');
+					insideQuote = false;
+				}
+				newPath.append(c);
+			}
+			return newPath.toString();
 		}
 		return path;
 	}

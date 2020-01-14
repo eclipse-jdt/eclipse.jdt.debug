@@ -155,7 +155,10 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		String moduleName = EMPTY_STRING;
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
-			moduleName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
+			moduleName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, EMPTY_STRING);
+			if (moduleName.isEmpty()) {
+				moduleName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
+			}
 		}
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
 		fMainText.setText(mainTypeName);

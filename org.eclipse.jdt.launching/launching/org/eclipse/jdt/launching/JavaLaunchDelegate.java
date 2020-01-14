@@ -103,23 +103,23 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		// Module name not required for Scrapbook page
 		if (supportsModule() && !mainTypeName.equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain")) { //$NON-NLS-1$
 			// Module name need not be the same as project name
-			String defaultModuleName = null;
-			String moduleName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, defaultModuleName);
-			if (moduleName != null) {
-				runConfig.setModuleDescription(moduleName);
-			} else {
-				try {
-					IJavaProject proj = JavaRuntime.getJavaProject(configuration);
-					if (proj != null) {
-						IModuleDescription module = proj == null ? null : proj.getModuleDescription();
-						String modName = module == null ? null : module.getElementName();
-						if (modName != null) {
+			try {
+				IJavaProject proj = JavaRuntime.getJavaProject(configuration);
+				if (proj != null) {
+					IModuleDescription module = proj == null ? null : proj.getModuleDescription();
+					String modName = module == null ? null : module.getElementName();
+					if (modName != null && modName.length() > 0) {
+						String defaultModuleName = null;
+						String moduleName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, defaultModuleName);
+						if (moduleName != null) {
+							runConfig.setModuleDescription(moduleName);
+						} else {
 							runConfig.setModuleDescription(modName);
 						}
 					}
-				} catch (CoreException e) {
-					// Not a java Project so no need to set module description
 				}
+			} catch (CoreException e) {
+				// Not a java Project so no need to set module description
 			}
 		}
 
