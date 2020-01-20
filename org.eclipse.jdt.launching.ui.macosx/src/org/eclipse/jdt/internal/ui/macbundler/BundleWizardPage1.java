@@ -197,7 +197,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 	// private stuff
 
 	private void collectLaunchConfigs() {
-		ArrayList<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		ArrayList<ILaunchConfiguration> configs = new ArrayList<>();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		try {
