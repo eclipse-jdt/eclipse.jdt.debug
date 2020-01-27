@@ -198,7 +198,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 		}
 		fHitCountButton.setEnabled(enabled);
-		fHitCountButton.setSelection(enabled & hasHitCount);
+		fHitCountButton.setSelection(enabled && hasHitCount);
 		fHitCountText.setEnabled(hasHitCount);
 		fHitCountText.setText(text);
 		fSuspendThread.setEnabled(enabled);
