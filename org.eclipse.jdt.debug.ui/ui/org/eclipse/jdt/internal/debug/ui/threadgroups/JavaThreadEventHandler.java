@@ -305,6 +305,10 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 	}
 
+	void addSuspendedThread(IJavaThread thread) {
+		queueSuspendedThread(thread);
+	}
+
 	/**
 	 * Do not update for quiet resume/suspend
 	 */

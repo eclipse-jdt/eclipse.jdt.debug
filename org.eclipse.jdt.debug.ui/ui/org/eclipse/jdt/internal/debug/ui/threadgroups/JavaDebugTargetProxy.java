@@ -26,12 +26,14 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy;
 import org.eclipse.debug.internal.ui.viewers.update.StackFrameEventHandler;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaElementContentProvider;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
@@ -125,6 +127,8 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
                     return;
                 }
             }
+			// Bug 559579: ensure the JavaThreadEventHandler has all suspended threads in case the Debug view is opened post launch
+			addSuspendedThreadsToThreadHandler(delta);
             // expand the target if no suspended thread
             fireModelChanged(delta);
         }
@@ -158,5 +162,22 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 			}
 		}
 		return stackFrameIndex;
+	}
+
+	private void addSuspendedThreadsToThreadHandler(ModelDelta delta) {
+		delta.accept(new IModelDeltaVisitor() {
+			@Override
+			public boolean visit(IModelDelta delta, int depth) {
+				Object element = delta.getElement();
+				if (element instanceof IJavaThread) {
+					IJavaThread thread = (IJavaThread) element;
+					boolean suspended = thread.isSuspended();
+					if (suspended) {
+						fThreadEventHandler.addSuspendedThread(thread);
+					}
+				}
+				return true;
+			}
+		});
 	}
 }
