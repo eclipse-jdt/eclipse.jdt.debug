@@ -207,7 +207,7 @@ public class JavaVarActionFilter implements IActionFilter {
 						return !var.isFinal() & !(var.isFinal() & var.isStatic());
 					}
 				}
-				else if (name.equals("DetailFormatterFilter") & (varValue instanceof IJavaObject)) { //$NON-NLS-1$
+				else if (name.equals("DetailFormatterFilter") && (varValue instanceof IJavaObject)) { //$NON-NLS-1$
 					if(value.equals("isDefined")) { //$NON-NLS-1$
 						return JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType());
 					}

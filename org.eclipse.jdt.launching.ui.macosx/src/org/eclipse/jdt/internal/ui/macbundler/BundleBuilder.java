@@ -38,11 +38,11 @@ import org.w3c.dom.Element;
 
 
 public class BundleBuilder implements BundleAttributes {
-	
+
 	private List<Process> fProcesses= new ArrayList<Process>();
 	private BundleDescription fBundleDescription;
-	
-	
+
+
 	/**
 	 * Create a new bundle
 	 * @param bd the new description
@@ -50,9 +50,9 @@ public class BundleBuilder implements BundleAttributes {
 	 * @throws IOException if something happens
 	 */
 	public void createBundle(BundleDescription bd, IProgressMonitor pm) throws IOException {
-		
+
 		fBundleDescription= bd;
-		
+
 		File tmp_dir= new File(bd.get(DESTINATIONDIRECTORY));
 		String app_dir_name= bd.get(APPNAME) + ".app";	//$NON-NLS-1$
 		File app_dir= new File(tmp_dir, app_dir_name);
@@ -60,7 +60,7 @@ public class BundleBuilder implements BundleAttributes {
 			deleteDir(app_dir);
 		}
 		app_dir= createDir(tmp_dir, app_dir_name, false);
-		
+
 		File contents_dir= createDir(app_dir, "Contents", false);	//$NON-NLS-1$
 		createPkgInfo(contents_dir);
 
@@ -68,14 +68,14 @@ public class BundleBuilder implements BundleAttributes {
 		String launcher_path= bd.get(LAUNCHER);
 		if (launcher_path == null) {
 			throw new IOException();
-		}		
+		}
 		String launcher= copyFile(macos_dir, launcher_path, null);
-		
+
 		File resources_dir= createDir(contents_dir, "Resources", false);	//$NON-NLS-1$
 		File java_dir= createDir(resources_dir, "Java", false);	//$NON-NLS-1$
-				
+
 		createInfoPList(contents_dir, resources_dir, java_dir, launcher);
-		
+
 		Iterator<Process> iter= fProcesses.iterator();
 		while (iter.hasNext()) {
 			Process p= iter.next();
@@ -84,32 +84,32 @@ public class BundleBuilder implements BundleAttributes {
 			} catch (InterruptedException e) {
 				// silently ignore
 			}
-		}		
+		}
 	}
-	
+
 	private void createInfoPList(File contents_dir, File resources_dir, File java_dir, String launcher) throws IOException {
 		DocumentBuilder docBuilder= null;
 		DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
-		try {   	
+		try {
 			docBuilder= factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex) {
 			System.err.println("createInfoPList: could not get XML builder"); //$NON-NLS-1$
 			throw new IOException("Could not get XML builder"); //$NON-NLS-1$
 		}
 		Document doc= docBuilder.newDocument();
-		
+
 		Element plist= doc.createElement("plist"); //$NON-NLS-1$
 		doc.appendChild(plist);
 		plist.setAttribute("version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		Element dict= doc.createElement("dict"); //$NON-NLS-1$
 		plist.appendChild(dict);
-		
+
 		pair(dict, "CFBundleExecutable", null, launcher); //$NON-NLS-1$
 		pair(dict, "CFBundleGetInfoString", GETINFO, null); //$NON-NLS-1$
 		pair(dict, "CFBundleInfoDictionaryVersion", null, "6.0"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		String iconName= null;
 		String appName= fBundleDescription.get(APPNAME, null);
 		if (appName != null)
@@ -121,41 +121,41 @@ public class BundleBuilder implements BundleAttributes {
 		 {
 			pair(dict, "CFBundleIconFile", null, fname); //$NON-NLS-1$
 		}
-		
+
 		pair(dict, "CFBundleIdentifier", IDENTIFIER, null); //$NON-NLS-1$
 		pair(dict, "CFBundleName", APPNAME, null); //$NON-NLS-1$
 		pair(dict, "CFBundlePackageType", null, "APPL"); //$NON-NLS-1$ //$NON-NLS-2$
 		pair(dict, "CFBundleShortVersionString", VERSION, null); //$NON-NLS-1$
 		pair(dict, "CFBundleSignature", SIGNATURE, "????"); //$NON-NLS-1$ //$NON-NLS-2$
 		pair(dict, "CFBundleVersion", null, "1.0.1"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		Element jdict= doc.createElement("dict"); //$NON-NLS-1$
 		add(dict, "Java", jdict); //$NON-NLS-1$
-		
+
 		pair(jdict, "JVMVersion", JVMVERSION, null); //$NON-NLS-1$
 		pair(jdict, "MainClass", MAINCLASS, null); //$NON-NLS-1$
 		pair(jdict, "WorkingDirectory", WORKINGDIR, null); //$NON-NLS-1$
-		
+
 		if (fBundleDescription.get(USES_SWT, false))
 		 {
 			addTrue(jdict, "StartOnMainThread"); //$NON-NLS-1$
 		}
-		
+
 		String arguments= fBundleDescription.get(ARGUMENTS, null);
 		if (arguments != null) {
 			Element argArray= doc.createElement("array");	//$NON-NLS-1$
 			add(jdict, "Arguments", argArray);	//$NON-NLS-1$
-			StringTokenizer st= new StringTokenizer(arguments);	
+			StringTokenizer st= new StringTokenizer(arguments);
 			while (st.hasMoreTokens()) {
 				String arg= st.nextToken();
 				Element type= doc.createElement("string"); //$NON-NLS-1$
-				argArray.appendChild(type);	
-				type.appendChild(doc.createTextNode(arg));			
+				argArray.appendChild(type);
+				type.appendChild(doc.createTextNode(arg));
 			}
 		}
-		
+
 		pair(jdict, "VMOptions", VMOPTIONS, null); //$NON-NLS-1$
-		
+
 		int[] id= new int[] { 0 };
 		ResourceInfo[] ris= fBundleDescription.getResources(true);
 		if (ris.length > 0) {
@@ -196,7 +196,7 @@ public class BundleBuilder implements BundleAttributes {
 			System.err.println("createInfoPList: could not transform to XML"); //$NON-NLS-1$
 		}
 	}
-	
+
 	private void add(Element dict, String key, Element value) {
 		Document document= dict.getOwnerDocument();
 		Element k= document.createElement("key"); //$NON-NLS-1$
@@ -204,18 +204,18 @@ public class BundleBuilder implements BundleAttributes {
 		k.appendChild(document.createTextNode(key));
 		dict.appendChild(value);
 	}
-	
+
 	private void create(Element parent, String s) {
 		Document document= parent.getOwnerDocument();
 		Element type= document.createElement("string"); //$NON-NLS-1$
-		parent.appendChild(type);	
+		parent.appendChild(type);
 		type.appendChild(document.createTextNode(s));
 	}
 
 	private void createTrue(Element parent) {
 		Document document= parent.getOwnerDocument();
 		Element type= document.createElement("true"); //$NON-NLS-1$
-		parent.appendChild(type);	
+		parent.appendChild(type);
 	}
 
 	private void add(Element dict, String key, String value) {
@@ -225,7 +225,7 @@ public class BundleBuilder implements BundleAttributes {
 		k.appendChild(document.createTextNode(key));
 		create(dict, value);
 	}
-	
+
 	private void addTrue(Element dict, String key) {
 		Document document= dict.getOwnerDocument();
 		Element k= document.createElement("key"); //$NON-NLS-1$
@@ -233,7 +233,7 @@ public class BundleBuilder implements BundleAttributes {
 		k.appendChild(document.createTextNode(key));
 		createTrue(dict);
 	}
-	
+
 	private void pair(Element dict, String outkey, String inkey, String dflt) {
 		String value= null;
 		if (inkey != null) {
@@ -245,7 +245,7 @@ public class BundleBuilder implements BundleAttributes {
 			add(dict, outkey, value);
 		}
 	}
-	
+
 	private String processClasspathEntry(File java_dir, String name, int[] id_ref) throws IOException {
 		File f= new File(name);
 		if (f.isDirectory()) {
@@ -259,14 +259,14 @@ public class BundleBuilder implements BundleAttributes {
 		}
 		return "$JAVAROOT/" + name; //$NON-NLS-1$
 	}
-	
+
 	private void createPkgInfo(File contents_dir) throws IOException {
 		File pkgInfo= new File(contents_dir, "PkgInfo"); //$NON-NLS-1$
 		try (FileOutputStream os = new FileOutputStream(pkgInfo)) {
 			os.write(("APPL" + fBundleDescription.get(SIGNATURE, "????")).getBytes()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-		
+
 	private static void deleteDir(File dir) {
 		File[] files= dir.listFiles();
 		if (files != null) {
@@ -276,7 +276,7 @@ public class BundleBuilder implements BundleAttributes {
 		}
 		dir.delete();
 	}
-	
+
 	private File createDir(File parent_dir, String dir_name, boolean remove) throws IOException {
 		File dir= new File(parent_dir, dir_name);
 		if (dir.exists()) {
@@ -291,7 +291,7 @@ public class BundleBuilder implements BundleAttributes {
 		}
 		return dir;
 	}
-	
+
 	private String copyFile(File todir, String fromPath, String toname) throws IOException {
 		if (toname == null) {
 			int pos= fromPath.lastIndexOf('/');

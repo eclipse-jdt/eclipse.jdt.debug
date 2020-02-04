@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 
 
 public class Util {
-	
+
 	private static final String RESOURCE_BUNDLE= "org.eclipse.jdt.internal.ui.macbundler.BundleMessages";	//$NON-NLS-1$
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 

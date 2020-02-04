@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
 
 
 public abstract class BundleWizardBasePage extends DialogPage implements IWizardPage, BundleAttributes, IPropertyChangeListener {
-	
+
 	/**
 	 * The page that was shown right before this page became visible;
 	 * <code>null</code> if none.
@@ -51,20 +51,20 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	 * if this page has yet to be added to a wizard.
 	 */
 	private IWizard fWizard;
-	
+
 	BundleDescription fBundleDescription;
 
-	
+
 	BundleWizardBasePage(String key, BundleDescription bd) {
 		super(Util.getString(key + ".title")); //$NON-NLS-1$
 		fKey= key;
 		fBundleDescription= bd;
 		//setMessage(Util.getString(fKey + ".message")); //$NON-NLS-1$
 		setDescription(Util.getString(fKey + ".description")); //$NON-NLS-1$
-		
+
 		bd.addListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in WizardPage
 	 */
@@ -77,7 +77,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 		}
 		super.setVisible(visible);
 	}
-	
+
 	void enterPage() {
 		//System.out.println("enterPage: " + getName());
 	}
@@ -102,18 +102,18 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	 */
 	@Override
 	final public void createControl(Composite parent) {
-		
+
 		Composite c= new Composite(parent, SWT.NULL);
 		c.setLayout(new GridLayout(1, false));
 		setControl(c);
-		
+
 		createContents(c);
 
 		checkIfPageComplete();
 	}
-	
+
 	abstract public void createContents(Composite parent);
-	
+
 	static void setHeightHint(Control control, int height) {
 		GridData gd1= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		gd1.heightHint= height;
@@ -142,7 +142,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 		if (lines == 2) {
 			gd.heightHint= 30;
 		}
-		t.setLayoutData(gd);	
+		t.setLayoutData(gd);
 		hookField(t, key);
 		return t;
 	}
@@ -178,7 +178,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 		c.setLayout(gl);
 		return c;
 	}
-	
+
 	void hookField(final Text tf, final String key) {
 		tf.addModifyListener(new ModifyListener() {
 			@Override
@@ -188,7 +188,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 			}
 		});
 	}
-		
+
 	void hookField(final Combo tf, final String key) {
 		tf.addModifyListener(new ModifyListener() {
 			@Override
@@ -198,17 +198,17 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 			}
 		});
 	}
-	
+
 	void hookButton(final Button b, final String key) {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fBundleDescription.setValue(key, new Boolean(b.getSelection()));
+				fBundleDescription.setValue(key, Boolean.valueOf(b.getSelection()));
 				checkIfPageComplete();
 			}
 		});
 	}
-	
+
 	final void checkIfPageComplete() {
 		IWizardContainer c= (fWizard != null) ? fWizard.getContainer() : null;
 		if (c != null && this == c.getCurrentPage()) {
@@ -217,7 +217,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	}
 
 	/////////////////////////////////////////////////////////
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
 	 */

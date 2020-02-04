@@ -12,15 +12,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.macbundler;
-   
+
 /**
  * All keys used in the BundleDescription.
  */
 public interface BundleAttributes {
 	static final String LAUNCHER = "CFBundleExecutable"; //$NON-NLS-1$
-	
+
 	static final String ALL= "ALL"; //$NON-NLS-1$
-	
+
 	static final String GETINFO = "GetInfo"; //$NON-NLS-1$
 	static final String IDENTIFIER = "Identifier"; //$NON-NLS-1$
 	static final String ICONFILE = "IconFile"; //$NON-NLS-1$

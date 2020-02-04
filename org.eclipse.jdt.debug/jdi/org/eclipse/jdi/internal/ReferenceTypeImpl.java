@@ -18,6 +18,7 @@ package org.eclipse.jdi.internal;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -1715,9 +1716,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		if (lastDotOffset == -1) {
 			return sourceName;
 		}
-		char fileSeparator = System.getProperty("file.separator").charAt(0); //$NON-NLS-1$
-		return name.substring(0, lastDotOffset).replace('.', fileSeparator)
-				+ fileSeparator + sourceName;
+		return name.substring(0, lastDotOffset).replace('.', File.separatorChar) + File.separatorChar + sourceName;
 	}
 
 	/**

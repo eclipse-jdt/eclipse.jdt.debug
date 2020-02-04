@@ -26,11 +26,11 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		Assert.isTrue(fgPlugin == null);
 		fgPlugin= this;
 	}
-	
+
 	public static MacOSXLaunchingPlugin getDefault() {
 		return fgPlugin;
 	}
-	
+
 	/*
 	 * Convenience method which returns the unique identifier of this plug-in.
 	 */

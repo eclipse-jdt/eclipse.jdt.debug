@@ -23,9 +23,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-
 import org.eclipse.jdi.Bootstrap;
 
 import com.sun.jdi.AbsentInformationException;
@@ -61,6 +58,9 @@ import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ExceptionRequest;
 import com.sun.jdi.request.ModificationWatchpointRequest;
 import com.sun.jdi.request.StepRequest;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
 
 /**
  * Tests for com.sun.jdi.* and JDWP commands.
@@ -145,8 +145,9 @@ public abstract class AbstractJDITest extends TestCase {
 			if (parameters.length == 0 && name.startsWith(match)) {
 				if (!isExcludedTest(name)) {
 					result.add(name);
-				} else
+				} else {
 					System.out.println(name + " is excluded.");
+				}
 			}
 		}
 		return result;
@@ -359,8 +360,9 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected ClassType getClass(String name) {
 		List<?> classes = fVM.classesByName(name);
-		if (classes.size() == 0)
+		if (classes.size() == 0) {
 			return null;
+		}
 
 		return (ClassType) classes.get(0);
 	}
@@ -398,8 +400,9 @@ public abstract class AbstractJDITest extends TestCase {
 
 		// Get field
 		Field result = type.fieldByName(fieldName);
-		if (result == null)
+		if (result == null) {
 			throw new Error("Unknown field: " + fieldName);
+		}
 
 		return result;
 	}
@@ -488,8 +491,9 @@ public abstract class AbstractJDITest extends TestCase {
 				break;
 			}
 		}
-		if (method == null)
+		if (method == null) {
 			throw new Error("Unknown method: " + name + signature);
+		}
 
 		return method;
 	}
@@ -562,8 +566,9 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected ClassType getSystemType() {
 		List<ReferenceType> classes = fVM.classesByName("java.lang.Object");
-		if (classes.size() == 0)
+		if (classes.size() == 0) {
 			return null;
+		}
 
 		return (ClassType) classes.get(0);
 	}
@@ -581,8 +586,9 @@ public abstract class AbstractJDITest extends TestCase {
 
 	private ThreadReference getThread(String fieldName) {
 		ClassType type = getMainClass();
-		if (type == null)
+		if (type == null) {
 			return null;
+		}
 
 		// Get static field "fThread"
 		List<Field> fields = type.fields();
@@ -590,14 +596,16 @@ public abstract class AbstractJDITest extends TestCase {
 		Field field = null;
 		while (iterator.hasNext()) {
 			field = iterator.next();
-			if (field.name().equals(fieldName))
+			if (field.name().equals(fieldName)) {
 				break;
+			}
 		}
 
 		// Get value of "fThread"
 		Value value = type.getValue(field);
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 
 		return (ThreadReference) value;
 	}
@@ -617,11 +625,14 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	private boolean isExcludedTest(String testName) {
 		String[] excludedTests = excludedTests();
-		if (excludedTests == null)
+		if (excludedTests == null) {
 			return false;
-		for (int i = 0; i < excludedTests.length; i++)
-			if (testName.equals(excludedTests[i]))
+		}
+		for (int i = 0; i < excludedTests.length; i++) {
+			if (testName.equals(excludedTests[i])) {
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -636,8 +647,9 @@ public abstract class AbstractJDITest extends TestCase {
 	protected boolean vmIsRunning() {
 		boolean isRunning = false;
 		try {
-			if (fLaunchedVM != null)
+			if (fLaunchedVM != null) {
 				fLaunchedVM.exitValue();
+			}
 		} catch (IllegalThreadStateException e) {
 			isRunning = true;
 		}
@@ -645,14 +657,15 @@ public abstract class AbstractJDITest extends TestCase {
 	}
 
 	protected void launchTarget() {
-		if (fVmCmd != null)
+		if (fVmCmd != null) {
 			launchCommandLineTarget();
-		else if (fVMLauncherName.equals("SunVMLauncher"))
+		} else if (fVMLauncherName.equals("SunVMLauncher")) {
 			launchSunTarget();
-		else if (fVMLauncherName.equals("IBMVMLauncher"))
+		} else if (fVMLauncherName.equals("IBMVMLauncher")) {
 			launchIBMTarget();
-		else
+		} else {
 			launchJ9Target();
+		}
 	}
 
 	/**
@@ -700,9 +713,9 @@ public abstract class AbstractJDITest extends TestCase {
 			int index = 0;
 			String binDirectory =
 				fTargetAddress
-					+ System.getProperty("file.separator")
+					+ File.separatorChar
 					+ "bin"
-					+ System.getProperty("file.separator");
+					+ File.separatorChar;
 
 			proxyString[index++] = binDirectory + "j9proxy";
 			proxyString[index++] = "localhost:" + (fBackEndPort - 1);
@@ -719,8 +732,9 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 			commandLine.add(launcher);
 
-			if (fBootPath.length() > 0)
+			if (fBootPath.length() > 0) {
 				commandLine.add("-bp:" + fBootPath);
+			}
 			commandLine.add("-cp:" + fClassPath);
 			commandLine.add("-debug:" + (fBackEndPort - 1));
 			injectVMArgs(commandLine);
@@ -745,8 +759,8 @@ public abstract class AbstractJDITest extends TestCase {
 			} else {
 				binDirectory.append(fTargetAddress);
 			}
-			binDirectory.append(System.getProperty("file.separator"));
-			binDirectory.append("bin").append(System.getProperty("file.separator"));
+			binDirectory.append(File.separatorChar);
+			binDirectory.append("bin").append(File.separatorChar);
 
 			Vector<String> commandLine = new Vector<>();
 
@@ -784,9 +798,9 @@ public abstract class AbstractJDITest extends TestCase {
 			// Launch target VM
 			String binDirectory =
 				fTargetAddress
-					+ System.getProperty("file.separator")
+					+ File.separatorChar
 					+ "bin"
-					+ System.getProperty("file.separator");
+					+ File.separatorChar;
 
 			Vector<String> commandLine = new Vector<>();
 
@@ -860,16 +874,18 @@ public abstract class AbstractJDITest extends TestCase {
 			try {
 				VirtualMachineManager manager = Bootstrap.virtualMachineManager();
 				List<AttachingConnector> connectors = manager.attachingConnectors();
-				if (connectors.size() == 0)
+				if (connectors.size() == 0) {
 					break;
+				}
 				AttachingConnector connector = connectors.get(0);
 				Map<String, Argument> args = connector.defaultArguments();
 				args.get("port").setValue(String.valueOf(fBackEndPort));
 				args.get("hostname").setValue("localhost");
 
 				fVM = connector.attach(args);
-				if (fVMTraceFlags != com.sun.jdi.VirtualMachine.TRACE_NONE)
+				if (fVMTraceFlags != com.sun.jdi.VirtualMachine.TRACE_NONE) {
 					fVM.setDebugTraceMode(fVMTraceFlags);
+				}
 				break;
 			} catch (IllegalConnectorArgumentsException e) {
 			} catch (IOException e) {
@@ -893,8 +909,9 @@ public abstract class AbstractJDITest extends TestCase {
 						int read;
 						do {
 							read = in.read();
-							if (read != -1)
+							if (read != -1) {
 								System.out.print((char) read);
+							}
 						} while (read != -1);
 					}
 				} catch (IOException e) {
@@ -1055,8 +1072,9 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected void runSuite(String[] args) {
 		// Check args
-		if (!parseArgs(args))
+		if (!parseArgs(args)) {
 			return;
+		}
 
 		// Run test
 		System.out.println(new java.util.Date());
@@ -1131,8 +1149,9 @@ public abstract class AbstractJDITest extends TestCase {
 
 		// We want subsequent connections to use different ports, unless a
 		// VM exec sting is given.
-		if (fVmCmd == null)
+		if (fVmCmd == null) {
 			fBackEndPort += 2;
+		}
 	}
 	/**
 	 * Starts the threads that reads from the VM and proxy input and error streams
@@ -1164,8 +1183,9 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 		fConsoleErrorReader.start();
 
-		if (fLaunchedProxy == null)
+		if (fLaunchedProxy == null) {
 			return;
+		}
 
 		if (fProxyoutFile != null) {
 			fProxyReader =
@@ -1199,14 +1219,18 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Stops the console reader.
 	 */
 	private void stopConsoleReaders() {
-		if (fConsoleReader != null)
+		if (fConsoleReader != null) {
 			fConsoleReader.stop();
-		if (fConsoleErrorReader != null)
+		}
+		if (fConsoleErrorReader != null) {
 			fConsoleErrorReader.stop();
-		if (fProxyReader != null)
+		}
+		if (fProxyReader != null) {
 			fProxyReader.stop();
-		if (fProxyErrorReader != null)
+		}
+		if (fProxyErrorReader != null) {
 			fProxyErrorReader.stop();
+		}
 	}
 	/**
 	 * Starts event reader.
@@ -1222,10 +1246,12 @@ public abstract class AbstractJDITest extends TestCase {
 		fEventReader.stop();
 	}
 	protected void killVM() {
-		if (fLaunchedVM != null)
+		if (fLaunchedVM != null) {
 			fLaunchedVM.destroy();
-		if (fLaunchedProxy != null)
+		}
+		if (fLaunchedProxy != null) {
 			fLaunchedProxy.destroy();
+		}
 	}
 	/**
 	 * Starts the target program.
@@ -1328,9 +1354,10 @@ public abstract class AbstractJDITest extends TestCase {
 		String eventType,
 		boolean shouldGo) {
 		Event event = triggerAndWait(request, eventType, shouldGo, TIMEOUT);
-		if (event == null)
+		if (event == null) {
 			throw new Error(
 				"Event for " + request + " didn't come in after " + TIMEOUT + "ms");
+		}
 
 		return event;
 	}
@@ -1346,10 +1373,11 @@ public abstract class AbstractJDITest extends TestCase {
 		boolean shouldGo,
 		long time) {
 		// Suspend only if asked
-		if (shouldGo)
+		if (shouldGo) {
 			request.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-		else
+		} else {
 			request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		}
 
 		// Enable request
 		request.enable();
@@ -1397,8 +1425,9 @@ public abstract class AbstractJDITest extends TestCase {
 		// Resume the test thread
 		ThreadReference thread = getThread();
 		int suspendCount = thread.suspendCount();
-		for (int i = 0; i < suspendCount; i++)
+		for (int i = 0; i < suspendCount; i++) {
 			thread.resume();
+		}
 	}
 	/**
 	 * Triggers a step event and waits for it to come in.
@@ -1434,14 +1463,16 @@ public abstract class AbstractJDITest extends TestCase {
 
 		// Trigger step event
 		int suspendCount = thread.suspendCount();
-		for (int i = 0; i < suspendCount; i++)
+		for (int i = 0; i < suspendCount; i++) {
 			thread.resume();
+		}
 
 		// Wait for the event to come in
 		StepEvent event = (StepEvent) waitForEvent(waiter, timeout);
 		fEventReader.removeEventListener(waiter);
-		if (event == null)
+		if (event == null) {
 			throw new Error("StepEvent didn't come in after " + timeout + "ms");
+		}
 
 		// Stop getting step events
 		fVM.eventRequestManager().deleteEventRequest(eventRequest);
@@ -1455,8 +1486,9 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Output verbose string if asked for.
 	 */
 	protected void verbose(String verboseString) {
-		if (fVerbose)
+		if (fVerbose) {
 			System.out.println(verboseString);
+		}
 	}
 	/**
 	 * Waits for an event to come in using the given waiter.
@@ -1500,15 +1532,17 @@ public abstract class AbstractJDITest extends TestCase {
 			ExceptionEvent event = (ExceptionEvent) waitForEvent(waiter, TIMEOUT);
 
 			// Throw error if event is null
-			if (event == null)
+			if (event == null) {
 				throw new Error("Target program was not ready after " + TIMEOUT + "ms");
+			}
 
 			// Get the method where the exception was thrown
 			Method meth = event.location().method();
-			if (meth == null || !meth.name().equals("printAndSignal"))
+			if (meth == null || !meth.name().equals("printAndSignal")) {
 				fVM.resume();
-			else
+			} else {
 				break;
+			}
 		}
 
 		// Disable request

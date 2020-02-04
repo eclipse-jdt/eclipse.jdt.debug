@@ -309,7 +309,7 @@ public final class ExecutionEnvironmentDescription {
 			boolean appendArgument = !key.startsWith(EE_ARG_FILTER);
 			if (appendArgument) {
 				arguments.append(key);
-				if (!value.equals("")) { //$NON-NLS-1$
+				if (!value.isEmpty()) {
 					arguments.append('=');
 					value = resolveHome(value);
 					if (value.indexOf(' ') > -1){

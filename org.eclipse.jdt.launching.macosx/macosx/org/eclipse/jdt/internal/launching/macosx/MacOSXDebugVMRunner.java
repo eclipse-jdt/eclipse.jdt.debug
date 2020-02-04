@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.jdt.launching.IVMInstall;
  * Special override for MacOSX wrapping
  */
 public class MacOSXDebugVMRunner extends StandardVMDebugger {
-	
+
 	/**
 	 * Constructor
 	 * @param vmInstance

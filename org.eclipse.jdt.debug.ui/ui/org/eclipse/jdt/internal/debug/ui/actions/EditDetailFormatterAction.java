@@ -54,7 +54,7 @@ public class EditDetailFormatterAction extends ObjectActionDelegate {
 			}
 			JavaDetailFormattersManager fm = JavaDetailFormattersManager.getDefault();
 			DetailFormatter formatter = fm.getAssociatedDetailFormatter(type);
-			if(formatter == null & type instanceof IJavaClassType) {
+			if(formatter == null && type instanceof IJavaClassType) {
 				formatter = fm.getDetailFormatterFromInterface((IJavaClassType) type);
 				if(formatter == null) {
 					formatter = fm.getDetailFormatterFromSuperclass((IJavaClassType) type);

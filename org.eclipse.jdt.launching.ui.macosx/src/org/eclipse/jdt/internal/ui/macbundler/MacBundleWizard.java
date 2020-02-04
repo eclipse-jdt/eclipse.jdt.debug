@@ -25,14 +25,14 @@ import org.eclipse.ui.IWorkbench;
 
 
 public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttributes {
-	
+
 	IWorkbench fWorkbench;
 	IStructuredSelection fSelection;
 	BundleDescription fBundleDescription= new BundleDescription();
 
 	public MacBundleWizard() {
 		setDefaultPageImageDescriptor(createWizardImageDescriptor("exportapp_wiz.png")); //$NON-NLS-1$
- 		setWindowTitle(Util.getString("MacBundleWizard.title")); //$NON-NLS-1$	
+ 		setWindowTitle(Util.getString("MacBundleWizard.title")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -43,7 +43,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 		fWorkbench= workbench;
 		fSelection= selection;
 	}
-	
+
 	IStructuredSelection getSelection() {
 		return fSelection;
 	}
@@ -64,7 +64,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	@Override
-	public boolean performFinish() {		
+	public boolean performFinish() {
 		try {
 			BundleBuilder bb= new BundleBuilder();
 			bb.createBundle(fBundleDescription, null);
@@ -77,7 +77,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 
 	private static ImageDescriptor createWizardImageDescriptor(String name) {
 		try {
-			URL baseUrl= MacOSXUILaunchingPlugin.getDefault().getBundle().getEntry("/icons/full/wizban/"); //$NON-NLS-1$	
+			URL baseUrl= MacOSXUILaunchingPlugin.getDefault().getBundle().getEntry("/icons/full/wizban/"); //$NON-NLS-1$
 			if (baseUrl != null) {
 				return ImageDescriptor.createFromURL(new URL(baseUrl, name));
 			}

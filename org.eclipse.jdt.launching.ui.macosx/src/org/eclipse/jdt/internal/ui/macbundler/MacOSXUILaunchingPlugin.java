@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Plugin;
 
 
 public class MacOSXUILaunchingPlugin extends Plugin {
-	
+
 	private static MacOSXUILaunchingPlugin fgPlugin;
 
 	public MacOSXUILaunchingPlugin() {
@@ -26,7 +26,7 @@ public class MacOSXUILaunchingPlugin extends Plugin {
 		Assert.isTrue(fgPlugin == null);
 		fgPlugin= this;
 	}
-	
+
 	public static MacOSXUILaunchingPlugin getDefault() {
 		return fgPlugin;
 	}
@@ -43,5 +43,4 @@ public class MacOSXUILaunchingPlugin extends Plugin {
 		}
 		return getDefault().getBundle().getSymbolicName();
 	}
-	
 }

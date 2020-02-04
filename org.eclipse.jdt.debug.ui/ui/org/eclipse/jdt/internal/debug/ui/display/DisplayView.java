@@ -126,7 +126,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			try {
 				// add a cariage return if needed.
 				if (offset != document.getLineInformationOfOffset(offset).getOffset()) {
-					expression= System.getProperty("line.separator") + expression.trim(); //$NON-NLS-1$
+					expression= System.lineSeparator() + expression.trim();
 				}
 				fSourceViewer.getDocument().replace(offset, 0, expression);
 				fSourceViewer.setSelectedRange(offset + expression.length(), 0);
@@ -141,7 +141,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		 */
 		@Override
 		public void displayExpressionValue(String value) {
-			value= System.getProperty("line.separator") + '\t' + value; //$NON-NLS-1$
+			value= System.lineSeparator() + '\t' + value;
 			ITextSelection selection= (ITextSelection)fSourceViewer.getSelection();
 
 			int offset= selection.getOffset() + selection.getLength();

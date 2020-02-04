@@ -37,9 +37,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * This class provides the implementation of the {@link IVMInstallType} for Mac OSX.
- * 
- * The default VM locations are outlined below. each VM except for developer VMs provide links in the 
- * <code>/System/Library/Frameworks/JavaVM.framework/Versions/</code> folder, with a link named 
+ *
+ * The default VM locations are outlined below. each VM except for developer VMs provide links in the
+ * <code>/System/Library/Frameworks/JavaVM.framework/Versions/</code> folder, with a link named
  * <code>CurrentJDK</code> that points to the VM you have set using the Java preference tool in the system preferences.
  * <br><br>
  * The directory structure for Java VMs prior to Snow Leopard is as follows:
@@ -52,7 +52,7 @@ import org.eclipse.osgi.util.NLS;
  *     Home/
  *       src.jar
  * </pre>
- * 
+ *
  * The directory structure for developer VMs is:
  * <pre>
  * /Library/Java/JavaVirtualMachines/
@@ -64,7 +64,7 @@ import org.eclipse.osgi.util.NLS;
  *         ...
  *         src.zip
  * </pre>
- * 
+ *
  * The directory structure for Snow Leopard and Lion VMs is:
  * <pre>
  * /System/Library/Java/JavaVirtualMachines/
@@ -74,12 +74,12 @@ import org.eclipse.osgi.util.NLS;
  *       Home/
  *         src.zip
  * </pre>
- * 
+ *
  * @see http://developer.apple.com/library/mac/#qa/qa1170/_index.html
  * @see http://developer.apple.com/library/mac/#releasenotes/Java/JavaSnowLeopardUpdate3LeopardUpdate8RN/NewandNoteworthy/NewandNoteworthy.html#//apple_ref/doc/uid/TP40010380-CH4-SW1
  */
 public class MacOSXVMInstallType extends StandardVMType {
-	
+
 	/** The OS keeps all the JVM versions in this directory */
 	private static final String JVM_VERSION_LOC= "/System/Library/Frameworks/JavaVM.framework/Versions/";	//$NON-NLS-1$
 	private static final File JVM_VERSIONS_FOLDER= new File(JVM_VERSION_LOC);
@@ -89,7 +89,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	private static final String JVM_HOME= "Home";	//$NON-NLS-1$
 	/** The doc (for all JVMs) lives here (if the developer kit has been expanded)*/
 	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/";	//$NON-NLS-1$
-	/** The doc for 1.4.1 is kept in a sub directory of the above. */ 
+	/** The doc for 1.4.1 is kept in a sub directory of the above. */
 	private static final String JAVADOC_SUBDIR= "/doc/api";	//$NON-NLS-1$
 	/**
 	 * The name of the src.zip file for the JDK source
@@ -118,20 +118,20 @@ public class MacOSXVMInstallType extends StandardVMType {
 	static final String JVM_CLASSES = "Classes"; //$NON-NLS-1$
 	/**
 	 * The name of the Versions folder for legacy JRE/JDK installs
-	 * @since 3.2.200 
+	 * @since 3.2.200
 	 */
 	static final String JVM_VERSIONS = "Versions"; //$NON-NLS-1$
-				
+
 	@Override
 	public String getName() {
 		return Messages.MacOSXVMInstallType_0;
 	}
-	
+
 	@Override
 	public IVMInstall doCreateVMInstall(String id) {
 		return new MacOSXVMInstall(this, id);
 	}
-			
+
 	/*
 	 * @see IVMInstallType#detectInstallLocation()
 	 */
@@ -141,7 +141,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			// try to find the VM used to launch Eclipse
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=407402
 			File defaultLocation = getJavaHomeLocation();
-			
+
 			// find all installed VMs
 			VMStandin[] vms = MacInstalledJREs.getInstalledJREs(null);
 			File firstLocation = null;
@@ -161,7 +161,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 					defaultInstall = install;
 				}
 			}
-			
+
 			// determine the default VM
 			if (defaultInstall == null) {
 				if (defaultLocation != null) {
@@ -194,8 +194,8 @@ public class MacOSXVMInstallType extends StandardVMType {
 
 	/**
 	 * The proper way to find installed JREs is to parse the XML output produced from "java_home -X"
-	 * (see bug 325777). However, if that fails, revert to the hard coded search. 
-	 * 
+	 * (see bug 325777). However, if that fails, revert to the hard coded search.
+	 *
 	 * @return file that points to the default JRE install
 	 */
 	private File detectInstallLocationOld() {
@@ -204,7 +204,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			return null;
 		}
 		if (!JVM_VERSIONS_FOLDER.exists() || !JVM_VERSIONS_FOLDER.isDirectory()) {
-			String message= NLS.bind(Messages.MacOSXVMInstallType_1, JVM_VERSIONS_FOLDER); 
+			String message= NLS.bind(Messages.MacOSXVMInstallType_1, JVM_VERSIONS_FOLDER);
 			LaunchingPlugin.log(message);
 			return null;
 		}
@@ -239,11 +239,11 @@ public class MacOSXVMInstallType extends StandardVMType {
 		}
 		return defaultLocation;
 	}
-	
+
 	/**
 	 * The proper way to find installed JREs is to parse the XML output produced from "java_home -X"
-	 * (see bug 325777). However, if that fails, revert to the hard coded search. 
-	 * 
+	 * (see bug 325777). However, if that fails, revert to the hard coded search.
+	 *
 	 * @return array of files that point to JRE install directories
 	 */
 	private File[] getAllVersionsOld() {
@@ -257,13 +257,13 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/**
 	 * The proper way to find the default JRE is to parse the XML output produced from "java_home -X"
 	 * and take the first entry in the list. However, if that fails, revert to the hard coded search.
-	 * 
+	 *
 	 * @return a file that points to the default JRE install directory
 	 */
 	private File getCurrentJDKOld() {
 		return resolveSymbolicLinks(new File(JVM_VERSIONS_FOLDER, CURRENT_JDK));
 	}
-	
+
 	private File resolveSymbolicLinks(File file) {
 		try {
 			return file.getCanonicalFile();
@@ -285,9 +285,9 @@ public class MacOSXVMInstallType extends StandardVMType {
 		File classes = new File(installLocation, "../Classes"); //$NON-NLS-1$
 		File lib1= new File(classes, "classes.jar"); //$NON-NLS-1$
 		File lib2= new File(classes, "ui.jar"); //$NON-NLS-1$
-		
+
 		String[] libs = new String[] { lib1.toString(),lib2.toString() };
-		
+
 		File lib = new File(installLocation, "lib"); //$NON-NLS-1$
 		File extDir = new File(lib, "ext"); //$NON-NLS-1$
 		String[] dirs = null;
@@ -303,11 +303,11 @@ public class MacOSXVMInstallType extends StandardVMType {
 			endDirs = new String[] {endDir.getAbsolutePath()};
 		} else {
 			endDirs = new String[0];
-		} 
-		
+		}
+
 		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrarySource(java.io.File)
 	 */
@@ -344,12 +344,12 @@ public class MacOSXVMInstallType extends StandardVMType {
 	}
 
 	/**
-	 * Checks to see if <code>src.zip</code> or <code>src.jar</code> exists in the given parent 
+	 * Checks to see if <code>src.zip</code> or <code>src.jar</code> exists in the given parent
 	 * folder. Returns <code>null</code> if it does not exist.
 	 * <br><br>
 	 * The newer naming of the archive is <code>src.zip</code> and the older (pre-1.6) is
 	 * <code>src.jar</code>
-	 * 
+	 *
 	 * @param parent the parent directory
 	 * @return the {@link File} for the source archive or <code>null</code>
 	 * @since 3.2.200
@@ -367,7 +367,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#validateInstallLocation(java.io.File)
 	 */
@@ -381,14 +381,14 @@ public class MacOSXVMInstallType extends StandardVMType {
 		}
 		return new Status(IStatus.ERROR, id, 0, Messages.MacOSXVMInstallType_2, null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultJavadocLocation(java.io.File)
 	 */
 	@Override
 	public URL getDefaultJavadocLocation(File installLocation) {
 		// try in local filesystem
-		String id= null;	
+		String id= null;
 		try {
 			String post= File.separator + JVM_HOME;
 			String path= installLocation.getCanonicalPath();
@@ -416,7 +416,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 				}
 			}
 		}
-		
+
 		// fall back
 		return super.getDefaultJavadocLocation(installLocation);
 	}

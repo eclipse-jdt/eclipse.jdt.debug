@@ -14,9 +14,9 @@
 package org.eclipse.jdt.internal.ui.macbundler;
 
 public class ResourceInfo {
-	
+
 	String fPath;
-	
+
 	ResourceInfo(String path) {
 		fPath= path;
 	}
