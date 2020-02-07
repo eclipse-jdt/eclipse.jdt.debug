@@ -1725,7 +1725,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	private Stratum getStratum(String stratumId) {
 		if (!VirtualMachineImpl.JAVA_STRATUM_NAME.equals(stratumId)
 				&& isSourceDebugExtensionAvailable()) {
-			if (stratumId == null || !fStrata.keySet().contains(stratumId)) {
+			if (stratumId == null || !fStrata.containsKey(stratumId)) {
 				stratumId = fDefaultStratumId;
 			}
 			if (!VirtualMachineImpl.JAVA_STRATUM_NAME.equals(stratumId)) {
