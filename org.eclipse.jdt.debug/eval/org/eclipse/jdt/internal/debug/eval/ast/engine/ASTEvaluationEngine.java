@@ -625,7 +625,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 
 		ASTInstructionCompiler visitor = new ASTInstructionCompiler(
-				mapper.getSnippetStart(), snippet, getJavaProject());
+				mapper.getSnippetStart(), snippet);
 		unit.accept(visitor);
 
 		return visitor.getInstructions();

@@ -29,7 +29,6 @@ public class InstructionsEvaluationMessages extends NLS {
 	public static String AssignmentOperator_operator_1;
 	public static String Cast_ClassCastException__Cannot_cast__0__as__1___1;
 	public static String Cast_cast_3;
-	public static String Run_Remote_1;
 	public static String ConditionalJump_conditional_jump_1;
 	public static String Constructor_constructor__1;
 	public static String LocalVariableCreation_create_local_variable__0___1___1;
