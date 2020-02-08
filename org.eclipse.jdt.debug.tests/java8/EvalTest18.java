@@ -19,5 +19,17 @@ public class EvalTest18 {
 	public static void main(String[] args) {
 		List<String> strings = Arrays.asList("One", "Two", "Three");
 		System.out.println("Count of strings in stream from array =" + strings.stream().count());
+		nextMain();
 	}
+	
+	public static void nextMain() {
+		int someInt = 22; List<Integer> l = Arrays.asList(1,2,3,4);
+		
+		System.out.println("Just some int = " + someInt);
+		
+		for (int i : l ) {
+			System.out.println("i = " + i);
+		}
+	}
+	
 }
