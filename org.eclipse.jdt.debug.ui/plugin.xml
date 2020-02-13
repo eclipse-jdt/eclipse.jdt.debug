@@ -3406,6 +3406,7 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
             regex="\(\w*${java_extensions_regex}\S*\)"
             qualifier="${java_extensions_regex}"
+            flags="UNICODE_CHARACTER_CLASS"
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
          <enablement>
             <or>
@@ -3432,6 +3433,7 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.console.JavaExceptionConsoleTracker"
             regex="\w[^\(\s]+Exception[\s|:]"
             qualifier="Exception[\s|:]"
+            flags="UNICODE_CHARACTER_CLASS"
             id="org.eclipse.jdt.debug.ui.JavaExceptionConsoleTracker">
          <enablement>
             <or>
