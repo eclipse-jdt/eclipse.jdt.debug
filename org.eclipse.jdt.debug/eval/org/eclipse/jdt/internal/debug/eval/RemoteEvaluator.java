@@ -1,6 +1,6 @@
 /*******************************************************************************
 
- * Copyright (c) 2019 Jesper Steen Møller and others.
+ * Copyright (c) 2019, 2020 Jesper Steen Møller and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  *
  * Contributors:
  *     Jesper Steen Møller - initial API and implementation
+ *     IBM Corporation - Bug 448473 - [1.8][debug] Cannot use lambda expressions in breakpoint properties and display/expression view
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval;
 
@@ -81,7 +82,13 @@ public class RemoteEvaluator {
 		}
 
 		JDIDebugTarget debugTarget = ((JDIDebugTarget) theThread.getDebugTarget());
-		IJavaClassType unsafeClass = (IJavaClassType) findType("sun.misc.Unsafe", debugTarget); //$NON-NLS-1$
+		IJavaClassType unsafeClass;
+		try {
+			unsafeClass = (IJavaClassType) findType("sun.misc.Unsafe", debugTarget); //$NON-NLS-1$
+		} catch (DebugException ex) {
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, EvaluationMessages.RemoteEvaluationEngine_Evaluation_failed___unable_to_load_in_modular_project,
+					null));
+		}
 
 		// IJavaValue[] getDeclaredFieldArgs = new IJavaValue[] { getDebugTarget().newValue("theUnsafe") }; //$NON-NLS-1$
 		IJavaFieldVariable theField = unsafeClass.getField("theUnsafe"); //$NON-NLS-1$
