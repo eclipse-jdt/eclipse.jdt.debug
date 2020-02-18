@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval;
 
-import static org.eclipse.jdt.internal.eval.EvaluationConstants.LOCAL_VAR_PREFIX;
+import static org.eclipse.jdt.core.eval.ICodeSnippetRequestor.LOCAL_VAR_PREFIX;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,11 +24,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
+import org.eclipse.jdt.core.eval.IEvaluationContext;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.EvaluationEngineMessages;
 
 /**
  * A builder for a reuseable expression evaluator against a runnng VM.
@@ -39,11 +45,12 @@ public class RemoteEvaluatorBuilder {
 
 	private IJavaProject javaProject;
 	private ExpressionBinder binder;
-	private String enclosingTypeName;
-	private boolean isStatic;
-	private boolean isConstructor;
-	private List<String> argumentNames = new ArrayList<>();
-	private List<String> argumentTypeNames = new ArrayList<>();
+	private final String enclosingTypeName;
+	private final String packageName;
+	private final boolean isStatic;
+	private final boolean isConstructor;
+	private final List<String> argumentNames = new ArrayList<>();
+	private final List<String> argumentTypeNames = new ArrayList<>();
 
 	/**
 	 * The names and bytecodes of the code snippet class to instantiate
@@ -55,11 +62,14 @@ public class RemoteEvaluatorBuilder {
 	 */
 	private String codeSnippetClassName = null;
 	private String snippet = null;
+	private final ITypeBinding enclosingClass;
 
-	public RemoteEvaluatorBuilder(IJavaProject javaProject, ExpressionBinder binder, String enclosingTypeName, boolean isStatic, boolean isConstructor) {
+	public RemoteEvaluatorBuilder(IJavaProject javaProject, ExpressionBinder binder, ITypeBinding enclosingClass, boolean isStatic, boolean isConstructor) {
 		this.javaProject = javaProject;
 		this.binder = binder;
-		this.enclosingTypeName = enclosingTypeName;
+		this.enclosingClass = enclosingClass;
+		this.enclosingTypeName = enclosingClass.getQualifiedName();
+		this.packageName = enclosingClass.getPackage().getName();
 		this.isStatic = isStatic;
 		this.isConstructor = isConstructor;
 	}
@@ -85,7 +95,7 @@ public class RemoteEvaluatorBuilder {
 
 	private static Object EVALUATE_CODE_SNIPPET_LOCK = new Object();
 
-	public RemoteEvaluator build() throws JavaModelException {
+	public RemoteEvaluator build() throws JavaModelException, DebugException {
 
 		List<String> boundVariableNames = getVariableNames();
 		List<String> boundVariableTypeNames = getVariableTypeNames();
@@ -93,12 +103,23 @@ public class RemoteEvaluatorBuilder {
 		List<String> errors = new ArrayList<>();
 		IType enclosingType = this.javaProject.findType(enclosingTypeName);
 
+		if (enclosingType == null) {
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), EvaluationEngineMessages.ASTInstructionCompiler_Functional_expressions_cannot_be_evaluated_inside_local_and_or_anonymous_classes));
+		}
+
 		synchronized (EVALUATE_CODE_SNIPPET_LOCK) {
-			this.javaProject.newEvaluationContext().evaluateCodeSnippet(this.snippet, boundVariableTypeNames.toArray(new String[boundVariableNames.size()]), boundVariableNames.toArray(new String[boundVariableNames.size()]), new int[boundVariableNames.size()], enclosingType, isStatic, isConstructor, new ICodeSnippetRequestor() {
+			IEvaluationContext context = this.javaProject.newEvaluationContext();
+			if (!packageName.startsWith("java.")) { //$NON-NLS-1$
+				context.setPackageName(this.packageName);
+			}
+			// System.out.println(this.snippet);
+			context.evaluateCodeSnippet(this.snippet, boundVariableTypeNames.toArray(new String[boundVariableNames.size()]), boundVariableNames.toArray(new String[boundVariableNames.size()]), new int[boundVariableNames.size()], enclosingType, isStatic, isConstructor, new ICodeSnippetRequestor() {
 
 				@Override
 				public void acceptProblem(IMarker problemMarker, String fragmentSource, int fragmentKind) {
-					errors.add(problemMarker.toString());
+					if (problemMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) >= IMarker.SEVERITY_ERROR) {
+						errors.add(problemMarker.toString());
+					}
 				}
 
 				@Override
@@ -116,12 +137,10 @@ public class RemoteEvaluatorBuilder {
 		}
 
 		if (!errors.isEmpty()) {
-			//LE//$NON-NLS-1$
-			//LE//$NON-NLS-1$
-			throw new RuntimeException(errors.toString());
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), errors.toString()));
 		}
 
-		return new RemoteEvaluator(classFiles, codeSnippetClassName, getVariableNames());
+		return new RemoteEvaluator(classFiles, codeSnippetClassName, getVariableNames(), enclosingType.getFullyQualifiedName('$'));
 	}
 
 	private void setCodeSnippetClassName(String codeSnippetClassName) {
@@ -147,10 +166,10 @@ public class RemoteEvaluatorBuilder {
 		return Collections.unmodifiableList(argumentNames);
 	}
 
-	public String allocateNewVariable(IVariableBinding binding) {
-		String varName = "bound$" + argumentNames.size(); //$NON-NLS-1$
+	public String allocateNewVariable(ITypeBinding binding, String hint) {
+		String varName = hint + "$" + argumentNames.size(); //$NON-NLS-1$
 		argumentNames.add(varName);
-		argumentTypeNames.add(binding.getType().getQualifiedName());
+		argumentTypeNames.add(binding.getQualifiedName());
 		return varName;
 	}
 
@@ -216,19 +235,6 @@ public class RemoteEvaluatorBuilder {
 		 * The string buffer into which the serialized representation of the AST is written.
 		 */
 		protected StringBuilder buffer = new StringBuilder();
-
-		/**
-		 * Returns the string accumulated in the visit.
-		 *
-		 * @return the serialized
-		 */
-		// public String getResult() {
-		// return buffer.toString();
-		// }
-
-		// public Map<String, ITypeBinding> getCaptures() {
-		// return Collections.emptyMap();
-		// }
 
 		private int indent = 2;
 
@@ -597,9 +603,9 @@ public class RemoteEvaluatorBuilder {
 
 		@Override
 		public boolean visit(CastExpression node) {
-			buffer.append("(");//$NON-NLS-1$
+			//buffer.append("(");//$NON-NLS-1$
 			node.getType().accept(this);
-			buffer.append(")");//$NON-NLS-1$
+			//buffer.append(")");//$NON-NLS-1$
 			node.getExpression().accept(this);
 			return false;
 		}
@@ -869,6 +875,14 @@ public class RemoteEvaluatorBuilder {
 
 		@Override
 		public boolean visit(FieldAccess node) {
+			/* TODO: Make tricks here when we access fields where we have non-public access */
+			ITypeBinding instanceType = node.getExpression().resolveTypeBinding();
+			if (instanceType.isAssignmentCompatible(RemoteEvaluatorBuilder.this.enclosingClass)) {
+				node.getExpression().accept(this);
+				buffer.append(".");//$NON-NLS-1$ */
+				buffer.append(node.getName().getIdentifier());
+				return false;
+			}
 			node.getExpression().accept(this);
 			buffer.append(".");//$NON-NLS-1$
 			node.getName().accept(this);
@@ -1197,6 +1211,12 @@ public class RemoteEvaluatorBuilder {
 			if (node.getExpression() != null) {
 				node.getExpression().accept(this);
 				buffer.append(".");//$NON-NLS-1$
+			} else {
+				String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(node.resolveMethodBinding().getDeclaringClass(), "this"); //$NON-NLS-1$
+				binder.bindThis(RemoteEvaluatorBuilder.this.enclosingClass, newVarName);
+				// buffer.append("this."); //$NON-NLS-1$
+				buffer.append(newVarName);
+				buffer.append(".");//$NON-NLS-1$
 			}
 			if (node.getAST().apiLevel() >= JLS3) {
 				if (!node.typeArguments().isEmpty()) {
@@ -1469,18 +1489,31 @@ public class RemoteEvaluatorBuilder {
 			if (!isLocalBinding(binding)) {
 				if (binding instanceof IVariableBinding) {
 					IVariableBinding vb = ((IVariableBinding) binding);
-					Object constant = vb.getConstantValue();
-					if (constant != null) {
-						buffer.append(constant);
-						return false;
-					}
-					if (!vb.isField()) {
-						String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable((IVariableBinding) binding);
+					// For future optimization: Check for duplicates, so same value is only bound once
+					if (vb.isField()) {
+						if (Modifier.isStatic(vb.getModifiers())) {
+							ITypeBinding declaringClass = vb.getDeclaringClass();
+							buffer.append(declaringClass.getQualifiedName());
+							buffer.append("."); //$NON-NLS-1$
+							buffer.append(node.getIdentifier());
+
+						} else {
+							// TODO: Fix this to use same method as visit(FieldAccess)
+							ITypeBinding declaringClass = vb.getDeclaringClass();
+							String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(declaringClass, "this"); //$NON-NLS-1$
+							binder.bindThis(declaringClass, newVarName);
+							// buffer.append("this."); //$NON-NLS-1$
+							buffer.append(newVarName);
+							buffer.append("."); //$NON-NLS-1$
+							buffer.append(node.getIdentifier());
+						}
+					} else {
+						String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(vb.getType(), node.getIdentifier());
 						binder.bind((IVariableBinding) binding, newVarName);
-						buffer.append("this."); //$NON-NLS-1$
+						// buffer.append("this."); //$NON-NLS-1$
 						buffer.append(newVarName);
-						return false;
 					}
+					return false;
 				}
 			}
 
@@ -1751,11 +1784,12 @@ public class RemoteEvaluatorBuilder {
 
 		@Override
 		public boolean visit(ThisExpression node) {
-			if (node.getQualifier() != null) {
-				node.getQualifier().accept(this);
-				buffer.append(".");//$NON-NLS-1$
-			}
-			buffer.append("this");//$NON-NLS-1$
+			ITypeBinding thisType = node.resolveTypeBinding();
+
+			String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(thisType, "this"); //$NON-NLS-1$
+			binder.bindThis(thisType, newVarName);
+			// buffer.append("this."); //$NON-NLS-1$
+			buffer.append(newVarName);
 			return false;
 		}
 

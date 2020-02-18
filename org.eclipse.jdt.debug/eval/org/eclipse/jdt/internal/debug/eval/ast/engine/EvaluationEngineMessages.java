@@ -62,6 +62,7 @@ public class EvaluationEngineMessages extends NLS {
 	public static String ASTInstructionCompiler_Lambda_expressions_cannot_be_used_in_an_evaluation_expression;
 	public static String ASTInstructionCompiler_Reference_expressions_cannot_be_used_in_an_evaluation_expression;
 	public static String ASTInstructionCompiler_Switch_expressions_cannot_be_used_in_an_evaluation_expression;
+	public static String ASTInstructionCompiler_Functional_expressions_cannot_be_evaluated_inside_local_and_or_anonymous_classes;
 
 	static {
 		// load message values from bundle file

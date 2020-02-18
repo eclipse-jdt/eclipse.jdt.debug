@@ -23,6 +23,7 @@ import java.util.Stack;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -2161,14 +2162,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-		RemoteEvaluatorBuilder builder = makeBuilder(node);
-		builder.acceptMethodReference(node, node.resolveTypeBinding());
 		try {
+			RemoteEvaluatorBuilder builder = makeBuilder(node);
+			builder.acceptMethodReference(node, node.resolveTypeBinding());
 			RemoteEvaluator remoteEvaluator = builder.build();
 			push(new RemoteOperator(builder.getSnippet(), node.getStartPosition(), remoteEvaluator));
 			storeInstruction();
-		} catch (JavaModelException e) {
+		} catch (JavaModelException | DebugException e) {
 			addErrorMessage(e.getMessage());
+			setHasError(true);
 		}
 		return false;
 	}
@@ -2369,39 +2371,36 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		RemoteEvaluatorBuilder builder = makeBuilder(node);
-		builder.acceptMethodReference(node, node.resolveTypeBinding());
 		try {
+			RemoteEvaluatorBuilder builder = makeBuilder(node);
+			builder.acceptMethodReference(node, node.resolveTypeBinding());
 			RemoteEvaluator remoteEvaluator = builder.build();
 			push(new RemoteOperator(builder.getSnippet(), node.getStartPosition(), remoteEvaluator));
 			storeInstruction();
-		} catch (JavaModelException e) {
+		} catch (JavaModelException | DebugException e) {
 			addErrorMessage(e.getMessage());
+			setHasError(true);
 		}
 
 		return false;
 	}
 
-	private RemoteEvaluatorBuilder makeBuilder(ASTNode node) {
+	private RemoteEvaluatorBuilder makeBuilder(ASTNode node) throws DebugException {
 		RemoteEvaluatorBuilder builder = new RemoteEvaluatorBuilder(fJavaProject, new ExpressionBinder() {
 			@Override
 			public void bind(IVariableBinding variableBinding, String asVariableName) {
 				String variableId = variableBinding.getName();
-				ITypeBinding declaringTypeBinding = variableBinding.getDeclaringClass();
-				if (variableBinding.isField()) {
-					if (Modifier.isStatic(variableBinding.getModifiers())) {
-						push(new PushStaticFieldVariable(variableId, getTypeName(declaringTypeBinding), fCounter));
-					} else {
-						push(new PushFieldVariable(variableId, getTypeSignature(declaringTypeBinding), fCounter));
-						push(new PushThis(getEnclosingLevel(node, declaringTypeBinding)));
-						storeInstruction();
-					}
-				} else {
-					push(new PushLocalVariable(variableId));
-				}
+				push(new PushLocalVariable(variableId));
 				storeInstruction();
 			}
-		}, getEnclosingClass(node).getQualifiedName(), false, false);
+
+			@Override
+			public void bindThis(ITypeBinding typeBinding, String asVariableName) {
+				push(new PushThis(getEnclosingLevel(node, typeBinding)));
+				storeInstruction();
+			}
+
+		}, getEnclosingClass(node), isStaticContext(node), false);
 		return builder;
 	}
 
@@ -2416,6 +2415,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			node = node.getParent();
 		}
 		return null;
+	}
+
+	private boolean isStaticContext(ASTNode node) {
+		while (node != null) {
+			if (node instanceof MethodDeclaration) {
+				return Modifier.isStatic(((MethodDeclaration) node).getModifiers());
+			} else if (node instanceof Initializer) {
+				return Modifier.isStatic(((Initializer) node).getModifiers());
+			}
+			node = node.getParent();
+		}
+		return false;
 	}
 
 	/**
@@ -2925,14 +2936,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		RemoteEvaluatorBuilder builder = makeBuilder(node);
-		builder.acceptLambda(node, node.resolveTypeBinding());
 		try {
+			RemoteEvaluatorBuilder builder = makeBuilder(node);
+			builder.acceptLambda(node, node.resolveTypeBinding());
 			RemoteEvaluator remoteEvaluator = builder.build();
 			push(new RemoteOperator(builder.getSnippet(), node.getStartPosition(), remoteEvaluator));
 			storeInstruction();
-		} catch (JavaModelException e) {
+		} catch (JavaModelException | DebugException e) {
 			addErrorMessage(e.getMessage());
+			setHasError(true);
 		}
 		return false;
 	}
@@ -4318,14 +4330,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		RemoteEvaluatorBuilder builder = makeBuilder(node);
-		builder.acceptMethodReference(node, node.resolveTypeBinding());
 		try {
+			RemoteEvaluatorBuilder builder = makeBuilder(node);
+			builder.acceptMethodReference(node, node.resolveTypeBinding());
 			RemoteEvaluator remoteEvaluator = builder.build();
 			push(new RemoteOperator(builder.getSnippet(), node.getStartPosition(), remoteEvaluator));
 			storeInstruction();
-		} catch (JavaModelException e) {
+		} catch (JavaModelException | DebugException e) {
 			addErrorMessage(e.getMessage());
+			setHasError(true);
 		}
 
 		return false;

@@ -28,8 +28,8 @@ public class EvaluationMessages extends NLS {
 	public static String LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__6;
 	public static String LocalEvaluationEngine_Evaluation_failed___unable_to_initialize___this___context__5;
 	public static String LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__4;
-	public static String RemoteEvaluationEngine_Evaluation_failed___unable_to_load_in_modular_project;
-
+	public static String RemoteEvaluationEngine_Evaluation_failed___unable_to_instantiate_snippet_class;
+	public static String RemoteEvaluationEngine_Evaluation_failed___unable_to_find_injected_class;
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, EvaluationMessages.class);

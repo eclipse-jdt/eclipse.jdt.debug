@@ -15,9 +15,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval;
 
-import static org.eclipse.jdt.internal.eval.EvaluationConstants.LOCAL_VAR_PREFIX;
+import static org.eclipse.jdt.core.eval.ICodeSnippetRequestor.LOCAL_VAR_PREFIX;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -61,16 +59,20 @@ public class RemoteEvaluator {
 
 	private IJavaClassObject loadedClass = null;
 
+	private String enclosingTypeName;
+
 	/**
 	 * Constructs a new evaluation engine for the given VM in the context of the specified project. Class files required for the evaluation will be
 	 * deployed to the specified directory (which must be on the class path of the VM in order for evaluation to work).
 	 *
+	 * @param classFiles
 	 * @param codeSnippetClassName
-	 * @param classFiles2
 	 * @param variableNames
+	 * @param enclosingTypeName
 	 */
-	public RemoteEvaluator(LinkedHashMap<String, byte[]> classFiles, String codeSnippetClassName, List<String> variableNames) {
+	public RemoteEvaluator(LinkedHashMap<String, byte[]> classFiles, String codeSnippetClassName, List<String> variableNames, String enclosingTypeName) {
 		this.classFiles = classFiles;
+		this.enclosingTypeName = enclosingTypeName;
 		this.codeSnippetClassName = codeSnippetClassName.replace('.', '/');
 		this.variableNames = variableNames;
 	}
@@ -80,32 +82,12 @@ public class RemoteEvaluator {
 		if (loadedClass != null) {
 			return loadedClass;
 		}
-
 		JDIDebugTarget debugTarget = ((JDIDebugTarget) theThread.getDebugTarget());
-		IJavaClassType unsafeClass;
-		try {
-			unsafeClass = (IJavaClassType) findType("sun.misc.Unsafe", debugTarget); //$NON-NLS-1$
-		} catch (DebugException ex) {
-			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, EvaluationMessages.RemoteEvaluationEngine_Evaluation_failed___unable_to_load_in_modular_project,
-					null));
-		}
-
-		// IJavaValue[] getDeclaredFieldArgs = new IJavaValue[] { getDebugTarget().newValue("theUnsafe") }; //$NON-NLS-1$
-		IJavaFieldVariable theField = unsafeClass.getField("theUnsafe"); //$NON-NLS-1$
-		IJavaObject theUnsafe = (IJavaObject) theField.getValue();
-
-		// IJavaValue[] setAccessibleArgs = new IJavaValue[] { getDebugTarget().newValue(true) };
-		// theField.sendMessage(
-		// "setAccessible", "(Z)V", setAccessibleArgs, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
-
-		// IJavaValue[] getArgs = new IJavaValue[] { getDebugTarget().newValue(null) };
-		// IJavaObject theUnsafe = (IJavaObject) theField
-		// .sendMessage(
-		// "get", "()Ljava/lang/Object;", getArgs, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
-
 		IJavaClassObject theMainClass = null;
+		IJavaObject classloader = null;
 
-		IJavaReferenceType byteArrayType = findType("byte[]", debugTarget);//$NON-NLS-1$
+		IJavaReferenceType surroundingClass = findType(this.enclosingTypeName, debugTarget);
+		classloader = surroundingClass.getClassLoaderObject();
 
 		for (Map.Entry<String, byte[]> entry : classFiles.entrySet()) {
 			String className = entry.getKey();
@@ -116,27 +98,35 @@ public class RemoteEvaluator {
 					theMainClass = existingClass.getClassObject();
 				}
 			} else {
-				byte[] classBytes = entry.getValue();
-				IJavaArray byteArray = ((IJavaArrayType) byteArrayType).newInstance(classBytes.length);
-
-				IJavaValue[] debugClassBytes = new IJavaValue[classBytes.length];
-				for (int ix = 0; ix < classBytes.length; ++ix) {
-					debugClassBytes[ix] = ((JDIDebugTarget) theThread.getDebugTarget()).newValue(classBytes[ix]);
-				}
-				byteArray.setValues(debugClassBytes);
-				IJavaValue[] defineClassArgs = new IJavaValue[] {
-						debugTarget.newValue(className),
+				IJavaArray byteArray = createClassBytes(theThread, debugTarget, entry);
+				IJavaValue[] defineClassArgs = new IJavaValue[] { // args for defineClass
+						debugTarget.newValue(className.replaceAll("/", ".")), // class name //$NON-NLS-1$ //$NON-NLS-2$
 						byteArray, // classBytes,
-						debugTarget.newValue(0), debugTarget.newValue(classBytes.length), debugTarget.nullValue(), // classloader
+						debugTarget.newValue(0), // offset
+						debugTarget.newValue(entry.getValue().length), // length
 						debugTarget.nullValue() // protection domain
 				};
-				IJavaClassObject theClass = (IJavaClassObject) theUnsafe.sendMessage("defineClass", "(Ljava/lang/String;[BIILjava/lang/ClassLoader;Ljava/security/ProtectionDomain;)Ljava/lang/Class;", defineClassArgs, theThread, false); //$NON-NLS-1$//$NON-NLS-2$
+
+				IJavaClassObject theClass = (IJavaClassObject) classloader.sendMessage("defineClass", "(Ljava/lang/String;[BIILjava/security/ProtectionDomain;)Ljava/lang/Class;", defineClassArgs, theThread, false); //$NON-NLS-1$//$NON-NLS-2$
 				if (codeSnippetClassName.equals(className)) {
 					theMainClass = theClass;
 				}
 			}
 		}
 		return theMainClass;
+	}
+
+	private IJavaArray createClassBytes(IJavaThread theThread, JDIDebugTarget debugTarget, Map.Entry<String, byte[]> entry) throws DebugException {
+		IJavaReferenceType byteArrayType = findType("byte[]", debugTarget);//$NON-NLS-1$
+		byte[] classBytes = entry.getValue();
+		IJavaArray byteArray = ((IJavaArrayType) byteArrayType).newInstance(classBytes.length);
+
+		IJavaValue[] debugClassBytes = new IJavaValue[classBytes.length];
+		for (int ix = 0; ix < classBytes.length; ++ix) {
+			debugClassBytes[ix] = ((JDIDebugTarget) theThread.getDebugTarget()).newValue(classBytes[ix]);
+		}
+		byteArray.setValues(debugClassBytes);
+		return byteArray;
 	}
 
 	private IJavaReferenceType findType(String typeName, IJavaDebugTarget debugTarget) throws DebugException {
@@ -148,7 +138,7 @@ public class RemoteEvaluator {
 							IStatus.ERROR,
 							JDIDebugModel.getPluginIdentifier(),
 							DebugException.REQUEST_FAILED,
-							EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_instantiate_code_snippet_class__11,
+							EvaluationMessages.RemoteEvaluationEngine_Evaluation_failed___unable_to_find_injected_class,
 							null));
 		}
 		return theClass;
@@ -311,61 +301,6 @@ public class RemoteEvaluator {
 						null));
 	}
 
-	/**
-	 * Returns a copy of the type name with '$' replaced by '.', or returns
-	 * <code>null</code> if the given type name refers to an anonymous inner
-	 * class.
-	 *
-	 * @param typeName
-	 *            a fully qualified type name
-	 * @return a copy of the type name with '$' replaced by '.', or returns
-	 *         <code>null</code> if the given type name refers to an anonymous
-	 *         inner class.
-	 */
-	protected String getTranslatedTypeName(String typeName) {
-		int index = typeName.lastIndexOf('$');
-		if (index == -1) {
-			return typeName;
-		}
-		if (index + 1 > typeName.length()) {
-			// invalid name
-			return typeName;
-		}
-		String last = typeName.substring(index + 1);
-		try {
-			Integer.parseInt(last);
-			return null;
-		} catch (NumberFormatException e) {
-			return typeName.replace('$', '.');
-		}
-	}
-
-	/**
-	 * Returns an array of simple type names that are part of the given type's
-	 * qualified name. For example, if the given name is <code>x.y.A$B</code>,
-	 * an array with <code>["A", "B"]</code> is returned.
-	 *
-	 * @param typeName
-	 *            fully qualified type name
-	 * @return array of nested type names
-	 */
-	protected String[] getNestedTypeNames(String typeName) {
-		int index = typeName.lastIndexOf('.');
-		if (index >= 0) {
-			typeName = typeName.substring(index + 1);
-		}
-		index = typeName.indexOf('$');
-		ArrayList<String> list = new ArrayList<>(1);
-		while (index >= 0) {
-			list.add(typeName.substring(0, index));
-			typeName = typeName.substring(index + 1);
-			index = typeName.indexOf('$');
-		}
-		list.add(typeName);
-		return list.toArray(new String[list.size()]);
-	}
-
-	/**
 	/**
 	 * Returns the name of the code snippet to instantiate to run the current
 	 * evaluation.

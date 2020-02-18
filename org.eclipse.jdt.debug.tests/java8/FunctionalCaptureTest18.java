@@ -84,43 +84,47 @@ public class FunctionalCaptureTest18 {
 		assertFunctionalExpression(n -> n - parameter, parameter, 0);
 
 		/* Capture instance fields */
-		/* But not yet on project's types */
-		assertFunctionalExpression(n -> n - publicField, 2, 1);/* SKIP */
+		/* But not yet on enclosing instance's instance fields */
+		assertFunctionalExpression(n -> n - publicField, 2, 1);
+		assertFunctionalExpression(n -> n - this.publicField, 2, 1);
 		assertFunctionalExpression(n -> n - privateField, 4, 2);/* SKIP */
+		assertFunctionalExpression(n -> n - this.privateField, 4, 2);/* SKIP */
 		
 		/* Capture static fields */
-		/* But not yet on project's types */
-		assertFunctionalExpression(n -> n - publicStaticField, 6, 3);/* SKIP */
+		/* But not yet on non-public fields */
+		assertFunctionalExpression(n -> n - publicStaticField, 6, 3);
 		assertFunctionalExpression(n -> n - privateStaticField, 8, 4);/* SKIP */
 
 		/* Evaluate unbound method references */
-		assertFunctionalExpression(FunctionalCaptureTest18::publicMethod, this, 5);/* SKIP */
+		/* But not yet on project's non-public methods */
+		assertFunctionalExpression(FunctionalCaptureTest18::publicMethod, this, 5);
 		assertFunctionalExpression(FunctionalCaptureTest18::privateMethod, this, 6);/* SKIP */
 
 		/* Evaluate instance method references */
 		assertFunctionalExpression("Hello, "::concat, "World", "Hello, World");
-		/* But not yet on project's types */
-		assertFunctionalExpression(this::publicArgMethod, 1, 7);/* SKIP */
+		/* But not yet this-references */
+		assertFunctionalExpression(this::publicArgMethod, 1, 7);
 		assertFunctionalExpression(this::privateArgMethod, 1, 8);/* SKIP */
 
 		/* Evaluate static method references */
 		assertFunctionalExpression(Integer::valueOf, "16", 16);
-		/* But not yet on project's types */
-		assertFunctionalExpression(FunctionalCaptureTest18::publicStaticMethod, 17, 9);/* SKIP */
+		assertFunctionalExpression(FunctionalCaptureTest18::publicStaticMethod, 17, 9);
+		/* But not yet on project's non-public methods */
 		assertFunctionalExpression(FunctionalCaptureTest18::privateStaticMethod, 19, 10);/* SKIP */
 
 		/* Capture methods */
 		assertFunctionalExpression(s -> Integer.valueOf(s, 16), "0B", 11);
-		/* But not yet on project's types */
-		assertFunctionalExpression(obj -> obj.publicMethod() + 7, this, 12);/* SKIP */
-		assertFunctionalExpression(obj -> this.privateMethod() + 7, this, 13);/* SKIP */
-		assertFunctionalExpression(obj -> obj.publicMethod() + 9, this, 14);/* SKIP */
+		/* But not yet directlt on the instance */
+		assertFunctionalExpression(obj -> obj.publicMethod() + 7, this, 12);
+		assertFunctionalExpression(obj -> this.publicMethod() + 8, this, 13);
+		assertFunctionalExpression(obj -> publicMethod() + 8, this, 13);
+		assertFunctionalExpression(obj -> obj.privateMethod() + 8, this, 14);/* SKIP */
 		assertFunctionalExpression(obj -> this.privateMethod() + 9, this, 15);/* SKIP */
+		assertFunctionalExpression(obj -> privateMethod() + 9, this, 15);/* SKIP */
 
 		/* Constructor references */
 		assertFunctionalExpression(String::new, new char[] { 'a','b','c' }, "abc");
-		/* But not yet on project's types */
-		assertFunctionalExpression(FunctionalCaptureTest18::new, 42, new FunctionalCaptureTest18(42));/* SKIP */
+		assertFunctionalExpression(FunctionalCaptureTest18::new, 42, new FunctionalCaptureTest18(42));
 
 		/* END OF TESTS */
 		System.out.println("OK");
