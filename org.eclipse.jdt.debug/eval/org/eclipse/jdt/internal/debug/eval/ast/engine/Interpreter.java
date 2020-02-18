@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -121,6 +121,10 @@ public class Interpreter {
 			value.disableCollection();
 			fPermStorage.add(value);
 		} catch (CoreException e) {
+			// don't worry about GC if the VM has terminated
+			if ((e.getStatus().getException() instanceof VMDisconnectedException)) {
+				return;
+			}
 			JDIDebugPlugin.log(e);
 		}
 	}
