@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,6 +39,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.PreLaunchBreakpointTest;
 import org.eclipse.jdt.debug.tests.breakpoints.RunToLineTests;
+import org.eclipse.jdt.debug.tests.breakpoints.SpecialExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
@@ -343,6 +344,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(BreakpointWorkingSetTests.class));
 		addTest(new TestSuite(MethodBreakpointTests.class));
 		addTest(new TestSuite(ExceptionBreakpointTests.class));
+		addTest(new TestSuite(SpecialExceptionBreakpointTests.class));
 		addTest(new TestSuite(WatchpointTests.class));
 		addTest(new TestSuite(PatternBreakpointTests.class));
 		addTest(new TestSuite(TargetPatternBreakpointTests.class));
