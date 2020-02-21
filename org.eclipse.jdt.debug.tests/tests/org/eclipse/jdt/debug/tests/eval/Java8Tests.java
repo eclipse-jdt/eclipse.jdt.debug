@@ -218,14 +218,14 @@ public class Java8Tests extends AbstractDebugTest {
 			assertNotNull("should have created breakpoint", bp);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
-			
+
 			for (; i < lines.length; ++i) {
 				String line = lines[i];
-				
-				if (line.contains("/* END OF TESTS */")) break; 
+
+				if (line.contains("/* END OF TESTS */")) break;
 				if (line.trim().startsWith("/") || line.trim().isEmpty()) continue; // Comment, just skip it
 				if (line.contains("/* SKIP */")) continue;
-				
+
 				int lastSemicolon = line.lastIndexOf(';');
 				assertTrue(lastSemicolon > 1);
 				String snippet = line.substring(0,  lastSemicolon).trim();
@@ -234,7 +234,7 @@ public class Java8Tests extends AbstractDebugTest {
 				assertNotNull(result);
 				//System.out.println(">>>>>>>>>>>>>>>>>>>: " + result.getReferenceTypeName());
 			}
-			
+
 		} finally {
 			removeAllBreakpoints();
 			terminateAndRemove(thread);

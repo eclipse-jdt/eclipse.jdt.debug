@@ -112,7 +112,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Boolean preference controlling if advanced sourcelookup is enabled.
-	 * 
+	 *
 	 * @since 3.11
 	 */
 	public static final String PREF_ENABLE_ADVANCED_SOURCELOOKUP = JDIDebugPlugin
