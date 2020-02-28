@@ -23,8 +23,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 
 /**
@@ -87,6 +90,11 @@ public class LambdaUtils {
 				IStackFrame stackFrame = stackFrames[i];
 				IVariable[] stackFrameVariables = stackFrame.getVariables();
 				variables.addAll(Arrays.asList(stackFrameVariables));
+				for (IVariable frameVariable : stackFrameVariables) {
+					if (isLambdaObjectVariable(frameVariable)) {
+						variables.addAll(extractVariablesFromLambda(frameVariable));
+					}
+				}
 			}
 		}
 		return Collections.unmodifiableList(variables);
@@ -113,5 +121,28 @@ public class LambdaUtils {
 	 */
 	public static boolean isLambdaFrame(IJavaStackFrame frame) throws DebugException {
 		return frame.isSynthetic() && frame.getName().startsWith("lambda$"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns if the variable represent a variable embedded into Lambda object.
+	 *
+	 * @param variable
+	 *            the variable which needs to be evaluated
+	 * @return <code>True</code> if the variable is inside the Lambda object else return <code>False</code>
+	 * @since 3.15
+	 */
+	public static boolean isLambdaField(IVariable variable) throws DebugException {
+		return (variable instanceof IJavaFieldVariable) && ((IJavaFieldVariable) variable).getDeclaringType().getName().contains("$Lambda$"); //$NON-NLS-1$
+	}
+
+	private static boolean isLambdaObjectVariable(IVariable variable) {
+		return variable instanceof JDILambdaVariable;
+	}
+
+	private static List<IVariable> extractVariablesFromLambda(IVariable variable) throws DebugException {
+		if (variable.getValue() instanceof IJavaObject) {
+			return Arrays.asList(variable.getValue().getVariables());
+		}
+		return Collections.emptyList();
 	}
 }

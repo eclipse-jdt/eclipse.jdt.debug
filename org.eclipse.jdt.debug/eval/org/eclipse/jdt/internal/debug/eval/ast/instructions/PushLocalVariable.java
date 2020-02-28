@@ -70,6 +70,14 @@ public class PushLocalVariable extends SimpleInstruction {
 			push(variable);
 			return;
 		}
+
+		// Try search for lambda object variable
+		variable = LambdaUtils.findLambdaFrameVariable(context, ASTEvaluationEngine.ANONYMOUS_VAR_PREFIX + getName());
+		if (variable != null) {
+			push(variable);
+			return;
+		}
+
 		throw new CoreException(
 				new Status(
 						IStatus.ERROR,

@@ -330,12 +330,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			for (IVariable variable : lambdaFrameVariables) {
 				if (variable instanceof IJavaVariable && !isLambdaOrImplicitVariable(variable)) {
 					IJavaVariable javaVariable = (IJavaVariable) variable;
-					String variableName = variable.getName();
-					if (variableName != null && !variableName.contains("$")) { //$NON-NLS-1$
+					final boolean lambdaField = LambdaUtils.isLambdaField(variable);
+					String variableName = (lambdaField) ? variable.getName().substring(ANONYMOUS_VAR_PREFIX.length()) : variable.getName();
+					if (variableName != null && (!variableName.contains("$") || lambdaField)) { //$NON-NLS-1$
 						if (!isLocalType(javaVariable.getSignature()) && !names.contains(variableName)) {
 							locals[numLocals] = javaVariable;
-							names.add(variable.getName());
-							localVariablesWithNull[numLocals++] = variable.getName();
+							names.add(variableName);
+							localVariablesWithNull[numLocals++] = variableName;
 						}
 					}
 				}
@@ -355,8 +356,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			// ******
 			String[] localTypesNames = new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
-				localTypesNames[i] = Signature.toString(
-						locals[i].getGenericSignature()).replace('/', '.');
+				localTypesNames[i] = getFixedUnresolvableGenericTypes(locals[i]);
 			}
 			// Copying local variables removing the nulls in the last
 			// String[] localVariables = Arrays.clonesub(localVariablesWithNull, names.size());
@@ -390,6 +390,21 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 
 		return createExpressionFromAST(snippet, mapper, unit);
+	}
+
+	private String getFixedUnresolvableGenericTypes(IJavaVariable variable) throws DebugException {
+		/*
+		 * This actually fix variables which are type of Generic Types which cannot be resolved to a type in the current content. For example variable
+		 * type like P_OUT in java.util.stream.ReferencePipeline.filter(Predicate<? super P_OUT>)
+		 */
+
+		final String genericSignature = variable.getGenericSignature();
+		final String fqn = Signature.toString(genericSignature).replace('/', '.');
+		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE))) {
+			// resolve to the signature of the variable.
+			return Signature.toString(variable.getSignature()).replace('/', '.');
+		}
+		return fqn;
 	}
 
 	private CompilationUnit parseCompilationUnit(char[] source,
