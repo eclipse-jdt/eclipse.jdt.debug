@@ -478,6 +478,13 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 
 		}
+		// For below Java 9 EE, compiler release option should be disabled by default
+		String property = profile.getProperty(JavaCore.COMPILER_COMPLIANCE);
+		if (property != null) {
+			if (JavaCore.compareJavaVersions(property, JavaCore.VERSION_9) < 0) {
+				profile.setProperty(JavaCore.COMPILER_RELEASE, JavaCore.DISABLED);
+			}
+		}
 		return profile;
 	}
 

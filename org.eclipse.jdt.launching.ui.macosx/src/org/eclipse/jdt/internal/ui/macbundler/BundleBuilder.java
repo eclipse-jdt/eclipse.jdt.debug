@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 
 public class BundleBuilder implements BundleAttributes {
 
-	private List<Process> fProcesses= new ArrayList<Process>();
+	private List<Process> fProcesses= new ArrayList<>();
 	private BundleDescription fBundleDescription;
 
 

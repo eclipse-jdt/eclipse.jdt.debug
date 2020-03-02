@@ -3029,9 +3029,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					return true;
 				}
 				if(!orig) {
-					IStepFilter[] contributedFilters = DebugPlugin.getStepFilters(JDIDebugPlugin.getUniqueIdentifier());
-					for (int i = 0; i < contributedFilters.length; i++) {
-						if (contributedFilters[i].isFiltered(method)) {
+					for (IStepFilter contributedFilter : DebugPlugin.getStepFilters(JDIDebugPlugin.getUniqueIdentifier())) {
+						if (contributedFilter.isFiltered(method)) {
 							return true;
 						}
 					}

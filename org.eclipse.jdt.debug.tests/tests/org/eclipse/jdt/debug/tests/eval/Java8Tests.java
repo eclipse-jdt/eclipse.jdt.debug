@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Jesper S. Møller and others.
+ * Copyright (c) 2014, 2020 Jesper S. Møller and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
 package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -129,4 +130,115 @@ public class Java8Tests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
+
+	/**
+	 * Evaluates a snippet containing a lambda
+	 *
+	 * @throws Exception
+	 */
+	public void testEvalLambda() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "EvalTest18";
+			IJavaLineBreakpoint bp = createLineBreakpoint(28, type);
+			assertNotNull("should have created breakpoint", bp);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "l.stream().filter(i -> i > 2).count()";
+			IValue result = doEval(thread, snippet);
+			assertEquals("2", result.getValueString());
+		} finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+
+	/**
+	 * Evaluates a snippet containing a lambda referencing a variable in a loop
+	 *
+	 * @throws Exception
+	 */
+	public void testEvalLambdaInLoop() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "EvalTest18";
+			IJavaLineBreakpoint bp = createLineBreakpoint(31, type);
+			assertNotNull("should have created breakpoint", bp);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "l.stream().filter(j -> j > i+1).count()";
+			IValue result = doEval(thread, snippet);
+			assertEquals("2", result.getValueString());
+		} finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+
+	/**
+	 * Evaluates a snippet containing a method reference
+	 *
+	 * @throws Exception
+	 */
+	public void testEvalMethodReference() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "EvalTest18";
+			IJavaLineBreakpoint bp = createLineBreakpoint(28, type);
+			assertNotNull("should have created breakpoint", bp);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "l.stream().mapToInt(Integer::bitCount).sum()";
+			IValue result = doEval(thread, snippet);
+			assertEquals("5", result.getValueString());
+		} finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+
+	/**
+	 * Evaluates a snippet containing a method reference
+	 *
+	 * @throws Exception
+	 */
+	public void testContextEvaluations() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "FunctionalCaptureTest18";
+			ICompilationUnit cu = getType(type).getCompilationUnit();
+			String[] lines = new String(cu.getBuffer().getCharacters()).split("\n");
+
+			int i = 0;
+			for (; i < lines.length; ++i) {
+				if (lines[i].contains("/* CHECK EXPRESSIONS BELOW */")) break;
+			}
+			assertTrue("Missing source marker", i < lines.length);
+			IJavaLineBreakpoint bp = createLineBreakpoint(i, type);
+			assertNotNull("should have created breakpoint", bp);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			
+			for (; i < lines.length; ++i) {
+				String line = lines[i];
+				
+				if (line.contains("/* END OF TESTS */")) break; 
+				if (line.trim().startsWith("/") || line.trim().isEmpty()) continue; // Comment, just skip it
+				if (line.contains("/* SKIP */")) continue;
+				
+				int lastSemicolon = line.lastIndexOf(';');
+				assertTrue(lastSemicolon > 1);
+				String snippet = line.substring(0,  lastSemicolon).trim();
+				//System.out.println("*******************: " + snippet);
+				IValue result = doEval(thread, snippet);
+				assertNotNull(result);
+				//System.out.println(">>>>>>>>>>>>>>>>>>>: " + result.getReferenceTypeName());
+			}
+			
+		} finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+
 }

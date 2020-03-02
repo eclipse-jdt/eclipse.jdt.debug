@@ -175,6 +175,17 @@ public class JavaStackTraceConsoleTest extends AbstractDebugTest {
 		assertArrayEquals("Expected no hyperlinks for invalid type name", new Position[0], positions);
 	}
 
+	public void testBug489365_unicodeMatch() throws Exception {
+		consoleDocumentWithText("at com.example.Fran\u00E7ais.de\u0301butant(Fran\u00E7ais.java:101)\n" // "Latin Small Letter C with Cedilla"
+				+ "at com.example.Franc\u0327ais.de\u0301butant(Franc\u0327ais.java:101)\n" // "Latin Small Letter C" + "Combining Cedilla"
+				+ "at Exc\u00E4ption.main(Exc\u00E4ption.java:4)\n" // "Latin Small Letter A with Diaeresis"
+				+ "at Exca\u0308ption.main(Exca\u0308ption.java:4)"); // "Latin Small Letter A" + "Combining Diaeresis"
+
+		String[] matchTexts = linkTextsAtPositions(34, 88, 126, 163);
+		assertArrayEquals(allLinks(), new String[] { "Fran\u00E7ais.java:101", "Franc\u0327ais.java:101",
+				"Exc\u00E4ption.java:4", "Exca\u0308ption.java:4" }, matchTexts);
+	}
+
 	/**
 	 * Test save/restore of stack trace console content on console close/reactivation.
 	 */

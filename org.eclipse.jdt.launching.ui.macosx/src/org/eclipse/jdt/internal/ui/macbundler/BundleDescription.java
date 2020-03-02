@@ -42,14 +42,14 @@ class BundleDescription implements BundleAttributes {
 	private static final String ICON= "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Resources/GenericApp.icns"; //$NON-NLS-1$
 	private static  Set<String> RUN_MODE;
 	{
-		RUN_MODE = new HashSet<String>();
+		RUN_MODE = new HashSet<>();
 		RUN_MODE.add(ILaunchManager.RUN_MODE);
 	}
 
 	private ListenerList<IPropertyChangeListener> fListeners= new ListenerList<>();
 	private Properties fProperties= new Properties();
-	private List<ResourceInfo> fClassPath= new ArrayList<ResourceInfo>();
-	private List<ResourceInfo> fResources= new ArrayList<ResourceInfo>();
+	private List<ResourceInfo> fClassPath= new ArrayList<>();
+	private List<ResourceInfo> fResources= new ArrayList<>();
 	Properties fProperties2= new Properties();
 
 

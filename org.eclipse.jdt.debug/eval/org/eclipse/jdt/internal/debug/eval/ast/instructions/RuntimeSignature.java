@@ -247,8 +247,8 @@ public class RuntimeSignature {
 
 			// parameter names
 			if(parameterNames != null) {
-				for (int i = 0; i < parameterNames.length; i++) {
-					resultLength += parameterNames[i].length + 1;
+				for (char[] parameterName : parameterNames) {
+					resultLength += parameterName.length + 1;
 					// parameter name + space
 				}
 			}

@@ -14,7 +14,6 @@
 package org.eclipse.jdt.internal.debug.eval;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -113,8 +112,8 @@ public class EvaluationResult implements IEvaluationResult {
 	public Message[] getErrors() {
 		Message[] messages = new Message[fErrors.size()];
 		int i = 0;
-		for (Iterator<String> iter = fErrors.iterator(); iter.hasNext();) {
-			messages[i++] = new Message(iter.next(), -1);
+		for (String errMsg : fErrors) {
+			messages[i++] = new Message(errMsg, -1);
 		}
 		return messages;
 	}

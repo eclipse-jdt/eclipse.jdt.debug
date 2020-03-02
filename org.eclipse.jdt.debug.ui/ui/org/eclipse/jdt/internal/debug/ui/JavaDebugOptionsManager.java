@@ -583,6 +583,15 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	@Override
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		if (thread instanceof JDIThread && breakpoint instanceof IJavaExceptionBreakpoint) {
+			try {
+				String[] breakpointListeners = breakpoint.getBreakpointListeners();
+				if (breakpointListeners.length == 1
+						&& SuspendOnCompilationErrorListener.ID_COMPILATION_ERROR_LISTENER.equals(breakpointListeners[0])) {
+					return DONT_CARE; // not a user breakpoint
+				}
+			} catch (CoreException e1) {
+				// continue
+			}
 			if (shouldSkipSubsequentOccurrence((JDIThread) thread, (IJavaExceptionBreakpoint) breakpoint)) {
 				return DONT_SUSPEND;
 			}

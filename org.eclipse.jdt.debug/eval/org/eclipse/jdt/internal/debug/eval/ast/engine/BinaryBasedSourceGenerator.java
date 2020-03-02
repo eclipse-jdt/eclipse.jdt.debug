@@ -152,9 +152,7 @@ public class BinaryBasedSourceGenerator {
 
 		Field thisField = null;
 
-		List<Field> fields = referenceType.visibleFields();
-		for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext();) {
-			Field field = iterator.next();
+		for (Field field : referenceType.visibleFields()) {
 			if (field.name().startsWith("this$")) { //$NON-NLS-1$
 				thisField = field;
 				break;
@@ -330,39 +328,33 @@ public class BinaryBasedSourceGenerator {
 			source.append(buffer);
 		}
 
-		List<Field> fields = referenceType.fields();
-		for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext();) {
-			Field field = iterator.next();
+		for (Field field : referenceType.fields()) {
 			if (!field.name().startsWith("this$")) { //$NON-NLS-1$
 				source.append(buildFieldDeclaration(field));
 			}
 		}
 
-		List<Method> methods = referenceType.methods();
-		for (Iterator<Method> iterator = methods.iterator(); iterator.hasNext();) {
-			Method method = iterator.next();
+		for (Method method : referenceType.methods()) {
 			if (!method.isConstructor() && !method.isStaticInitializer()
-					&& !method.isBridge()) {
+				&& !method.isBridge()) {
 				source.append(buildMethodDeclaration(method));
 			}
 		}
 
 		List<ReferenceType> nestedTypes = referenceType.nestedTypes();
 		if (nestedTypeName == null) {
-			for (Iterator<ReferenceType> iterator = nestedTypes.iterator(); iterator.hasNext();) {
-				ReferenceType nestedType = iterator.next();
+			for (ReferenceType nestedType : nestedTypes) {
 				if (isADirectInnerType(typeName, nestedType.name())) {
 					source.append(buildTypeDeclaration(nestedType, null, null,
-							true));
+						true));
 				}
 			}
 		} else {
-			for (Iterator<ReferenceType> iterator = nestedTypes.iterator(); iterator.hasNext();) {
-				ReferenceType nestedType = iterator.next();
+			for (ReferenceType nestedType : nestedTypes) {
 				if (!nestedTypeName.equals(nestedType.name())
-						&& isADirectInnerType(typeName, nestedType.name())) {
+					&& isADirectInnerType(typeName, nestedType.name())) {
 					source.append(buildTypeDeclaration(nestedType, null, null,
-							true));
+						true));
 				}
 			}
 		}

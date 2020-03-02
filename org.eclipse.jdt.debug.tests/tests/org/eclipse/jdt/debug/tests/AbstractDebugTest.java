@@ -169,6 +169,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.sun.jdi.InternalException;
+import com.sun.jdi.InvocationException;
 
 import junit.framework.TestCase;
 
@@ -204,7 +205,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
-			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243", "OutSync", "OutSync2", "ConsoleOutputUmlaut" };
+			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243",
+			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence" };
 
 	/**
 	 * the default timeout
@@ -456,6 +458,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        if (!loaded18) {
 	        	jp = createProject(ONE_EIGHT_PROJECT_NAME, JavaProjectHelper.TEST_1_8_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTest18"));
+	    		cfgs.add(createLaunchConfiguration(jp, "FunctionalCaptureTest18"));
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
@@ -2845,15 +2848,26 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 			IEvaluationResult result = listener.getResult();
 			assertNotNull("The evaluation should have result: ", result);
-			assertNull("The evaluation should not have exception : " + result.getException(), result.getException());
+			assertNull("Evaluation of '" + snippet + "' should not have exception : " + findCause(result.getException()), result.getException());
 
 			String firstError = result.hasErrors() ? result.getErrorMessages()[0] : "";
-			assertFalse("The evaluation should not have errors : " + firstError, result.hasErrors());
+			assertFalse("The evaluation of '\" + snippet + \"'  should not have errors : " + firstError, result.hasErrors());
 			return listener.getResult().getValue();
 		}
 		finally {
 			engine.dispose();
 		}
+	}
+
+	private static Object findCause(DebugException problem) {
+		if (problem == null) {
+			return null;
+		}
+		Throwable cause = problem.getCause();
+		if (cause instanceof InvocationException) {
+			return ((InvocationException)cause).exception().toString();
+		}
+		return cause;
 	}
 
 	/**
