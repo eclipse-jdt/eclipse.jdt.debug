@@ -33,7 +33,7 @@ public class ClassfileTransformer {
 	public byte[] transform(byte[] classfileBuffer, final String location) {
 
 		final ClassReader r = new ClassReader(classfileBuffer, 0, classfileBuffer.length);
-		final ClassWriter w = new ClassWriter(0);
+		final ClassWriter w = new ClassWriter(r, 0);
 
 		r.accept(new ClassVisitor(ASM_API, w) {
 			@Override

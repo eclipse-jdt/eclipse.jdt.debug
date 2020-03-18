@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -399,7 +399,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private CompilationUnit parseCompilationUnit(char[] source,
 			String unitName, IJavaProject project, Map<String, String> extraCompileOptions) {
-		ASTParser parser = ASTParser.newParser(AST.JLS13);
+		ASTParser parser = ASTParser.newParser(AST.JLS14);
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);

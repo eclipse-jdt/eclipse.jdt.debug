@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -196,7 +196,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
 		String desc = executionEnvironment.getId();
-		if (desc.indexOf(JavaCore.VERSION_13) != -1) {
+		if (desc.indexOf(JavaCore.VERSION_14) != -1) {
+			return JavaCore.VERSION_14;
+		} else if (desc.indexOf(JavaCore.VERSION_13) != -1) {
 			return JavaCore.VERSION_13;
 		} else if (desc.indexOf(JavaCore.VERSION_12) != -1) {
 			return JavaCore.VERSION_12;

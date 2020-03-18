@@ -32,7 +32,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver,"//
 			+ "jdk.incubator.httpclient," //
 			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi,"//
-			+ "jdk.jfr," // intermittent
+			+ "jdk.jfr," // all but 10
 			+ "jdk.jshell,jdk.jsobject,jdk.management,"//
 			+ "jdk.management.cmm,jdk.management.jfr,jdk.management.resource," // REMOVED later
 			+ "jdk.net," //
@@ -51,12 +51,24 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 	private static final String ASSUMED_DEFAULT_MODULES_12 = "java.se," //
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
 			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," // intermittent
+			+ "jdk.jfr," // all but 10
 			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," // intermittent
+			+ "jdk.management.jfr," // all but 10
 			+ "jdk.net," //
 			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 			+ "jdk.unsupported.desktop," // NEW
+			+ "jdk.xml.dom";
+	private static final String ASSUMED_DEFAULT_MODULES_14 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.foreign," // NEW in 14
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," // NEW in 14
+			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," // since 12
 			+ "jdk.xml.dom";
 
 	public ModuleOptionsTests(String name) {
@@ -153,11 +165,25 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.accessibility,jdk.httpserver," //
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
 						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," // intermittent
+						+ "jdk.management.jfr," // all but 10
 						+ "jdk.net," //
 						+ "jdk.scripting.nashorn,jdk.sctp," //
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," // NEW
+						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_14:
+				expectedModules = "java.se," //
+						+ "jdk.accessibility,jdk.httpserver," //
+						+ "jdk.incubator.foreign," // NEW in 14
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+						+ "jdk.jsobject," //
+						+ "jdk.management.jfr," //
+						+ "jdk.net," //
+						+ "jdk.nio.mapmode," // NEW in 14
+						+ "jdk.scripting.nashorn,jdk.sctp," //
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
 				break;
 			default:

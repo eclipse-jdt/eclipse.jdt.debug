@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -232,6 +232,8 @@ public class EECompilationParticipant extends CompilationParticipant {
 		String version = vMInstall.getJavaVersion();
 		if (version == null) {
 			return null;
+		} else if (version.startsWith(JavaCore.VERSION_14)) {
+			return JavaCore.VERSION_14;
 		} else if (version.startsWith(JavaCore.VERSION_13)) {
 			return JavaCore.VERSION_13;
 		} else if (version.startsWith(JavaCore.VERSION_12)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -3333,8 +3333,11 @@ public final class JavaRuntime {
 				} else if (javaVersion.startsWith(JavaCore.VERSION_13)
 						&& (javaVersion.length() == JavaCore.VERSION_13.length() || javaVersion.charAt(JavaCore.VERSION_13.length()) == '.')) {
 					compliance = JavaCore.VERSION_13;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_14)
+						&& (javaVersion.length() == JavaCore.VERSION_14.length() || javaVersion.charAt(JavaCore.VERSION_14.length()) == '.')) {
+					compliance = JavaCore.VERSION_14;
 				} else {
-					compliance = JavaCore.VERSION_13; // use latest by default
+					compliance = JavaCore.VERSION_14; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();

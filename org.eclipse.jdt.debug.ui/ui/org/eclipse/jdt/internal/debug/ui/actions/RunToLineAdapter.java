@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -74,7 +74,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						@Override
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
-							ASTParser parser = ASTParser.newParser(AST.JLS13);
+							ASTParser parser = ASTParser.newParser(AST.JLS14);
 							parser.setSource(document.get().toCharArray());
 							Map<String, String> options = JavaCore.getOptions();
 							options.put(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
