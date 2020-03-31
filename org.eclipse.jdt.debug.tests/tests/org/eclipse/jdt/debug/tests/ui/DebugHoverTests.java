@@ -349,4 +349,41 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		return sync(() -> selection.getText());
 	}
 
+	public void testResolveIn2Lambdas() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "DebugHoverTest2Lambdas";
+		final String expectedMethod1 = "lambda$0";
+		final int framesNumber1 = 13;
+		final int bpLine1 = 31;
+
+		IJavaBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
+		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp1.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod1, framesNumber1, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String debugVarName = VAL_PREFIX + "pattern";
+			String variableName = "pattern";
+			IRegion region = new Region(1054, "pattern".length());
+			String text = selectAndReveal(part, bpLine1, region);
+			assertEquals(variableName, text);
+			Object args = sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(args);
+			JDIModificationVariable var = (JDIModificationVariable) args;
+			assertEquals(debugVarName, var.getName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 }

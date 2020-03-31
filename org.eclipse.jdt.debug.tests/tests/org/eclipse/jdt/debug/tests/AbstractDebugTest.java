@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -462,6 +462,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
+				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest2Lambdas"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug317045"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug549394"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug541110"));

@@ -414,7 +414,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			parser.setResolveBindings(true);
 			parser.setSource(type.getTypeRoot());
 			CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-			cu.accept(new LambdaASTVisitor(false, underlyingThisObject, getUnderlyingMethod()));
+			List<Location> allLineLocations;
+			try {
+				allLineLocations = getUnderlyingMethod().allLineLocations();
+				int lineNo = allLineLocations.get(0).lineNumber();
+				cu.accept(new LambdaASTVisitor(false, underlyingThisObject, getUnderlyingMethod().isStatic(), cu, lineNo));
+			} catch (AbsentInformationException e) {
+				e.printStackTrace();
+			}
 		} catch (CoreException e) {
 			logError(e);
 		}
@@ -422,16 +429,23 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	private final static class LambdaASTVisitor extends ASTVisitor {
 		private final ObjectReference underlyingThisObject;
-		private Method underlyingMethod;
+		private boolean methodIsStatic;
+		private CompilationUnit cu;
+		private int lineNo;
 
-		private LambdaASTVisitor(boolean visitDocTags, ObjectReference underlyingThisObject, Method underlyingMethod) {
+		private LambdaASTVisitor(boolean visitDocTags, ObjectReference underlyingThisObject, boolean methodIsStatic, CompilationUnit cu, int lineNo) {
 			super(visitDocTags);
 			this.underlyingThisObject = underlyingThisObject;
-			this.underlyingMethod = underlyingMethod;
+			this.methodIsStatic = methodIsStatic;
+			this.cu = cu;
+			this.lineNo = lineNo;
 		}
 
 		@Override
 		public boolean visit(LambdaExpression lambdaExpression) {
+			if (lineNo != cu.getLineNumber(lambdaExpression.getStartPosition()) + 1) {
+				return true;
+			}
 			IMethodBinding binding = lambdaExpression.resolveMethodBinding();
 			if (binding == null) {
 				return true;
@@ -443,7 +457,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			List<Field> allFields = underlyingThisObject.referenceType().fields();
 			ListIterator<Field> listIterator = allFields.listIterator();
 			int i = 0;
-			if (underlyingMethod.isStatic()) {
+			if (methodIsStatic) {
 				if (synVars.length == allFields.size()) {
 					while (listIterator.hasNext()) {
 						FieldImpl field = (FieldImpl) listIterator.next();
