@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,7 +42,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 
 		// JavaStepFilterPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader,org.eclipse.jdt.launching.internal.*"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,jrockit.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,jdk.*,jrockit.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, true);
 
 		store.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$
