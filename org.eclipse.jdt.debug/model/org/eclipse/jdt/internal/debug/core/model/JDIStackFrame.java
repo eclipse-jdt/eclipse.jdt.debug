@@ -443,7 +443,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 		@Override
 		public boolean visit(LambdaExpression lambdaExpression) {
-			if (lineNo != cu.getLineNumber(lambdaExpression.getStartPosition()) + 1) {
+			// check if the lineNo fall in lambda region, it can either be single or multiline lambda body.
+			if (lineNo < cu.getLineNumber(lambdaExpression.getStartPosition())
+					|| lineNo > cu.getLineNumber(lambdaExpression.getStartPosition() + lambdaExpression.getLength())) {
 				return true;
 			}
 			IMethodBinding binding = lambdaExpression.resolveMethodBinding();
