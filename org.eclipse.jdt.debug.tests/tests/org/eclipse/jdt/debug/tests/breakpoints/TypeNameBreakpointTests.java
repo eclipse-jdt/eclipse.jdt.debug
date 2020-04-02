@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,11 +18,17 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
@@ -501,5 +507,81 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 		ILaunch[] launches = launchManager.getLaunches();
 		assertEquals("expected exactly 1 launch but got: " + Arrays.toString(launches), 1, launches.length);
 		launchManager.removeLaunch(launches[0]);
+	}
+
+	class TestJavaBreakpointListener implements IJavaBreakpointListener {
+
+		private String breakpointTypeName;
+
+		public String getBreakpointTypeName() {
+			return breakpointTypeName;
+		}
+
+		@Override
+		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		}
+
+		@Override
+		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
+			return 0;
+		}
+
+		@Override
+		public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		}
+
+		@Override
+		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+			try {
+				breakpointTypeName = breakpoint.getTypeName();
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+			return 0;
+		}
+
+		@Override
+		public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		}
+
+		@Override
+		public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
+		}
+
+		@Override
+		public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
+		}
+	}
+
+	public void testWildCardClassPrepareBreakpoint() throws Exception {
+		JavaClassPrepareBreakpoint bp = (JavaClassPrepareBreakpoint) JDIDebugModel.createClassPrepareBreakpoint(getTestResource(), "Hit*", 1, -1, -1, true, null);
+		assertNotNull("The class prepare breakpoint should not be null", bp);
+		TestJavaBreakpointListener l = new TestJavaBreakpointListener();
+		IJavaThread thread = null;
+		try {
+			JDIDebugModel.addJavaBreakpointListener(l);
+			thread = launchToBreakpoint(getLaunchConfiguration("HitCountLooper"));
+			assertEquals(l.getBreakpointTypeName(), "HitCountLooper");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeJavaBreakpointListener(l);
+		}
+	}
+
+	public void testEqualClassPrepareBreakpoint() throws Exception {
+		JavaClassPrepareBreakpoint bp = (JavaClassPrepareBreakpoint) JDIDebugModel.createClassPrepareBreakpoint(getTestResource(), "HitCountLooper", 1, -1, -1, true, null);
+		assertNotNull("The class prepare breakpoint should not be null", bp);
+		TestJavaBreakpointListener l = new TestJavaBreakpointListener();
+		IJavaThread thread = null;
+		try {
+			JDIDebugModel.addJavaBreakpointListener(l);
+			thread = launchToBreakpoint(getLaunchConfiguration("HitCountLooper"));
+			assertEquals(l.getBreakpointTypeName(), "HitCountLooper");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeJavaBreakpointListener(l);
+		}
 	}
 }
