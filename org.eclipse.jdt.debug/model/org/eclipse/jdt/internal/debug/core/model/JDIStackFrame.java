@@ -420,7 +420,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				int lineNo = allLineLocations.get(0).lineNumber();
 				cu.accept(new LambdaASTVisitor(false, underlyingThisObject, getUnderlyingMethod().isStatic(), cu, lineNo));
 			} catch (AbsentInformationException e) {
-				e.printStackTrace();
+				// Nothing to be done
 			}
 		} catch (CoreException e) {
 			logError(e);
