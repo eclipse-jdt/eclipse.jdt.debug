@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
@@ -27,7 +29,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
-import com.ibm.icu.text.MessageFormat;
+
 
 /**
  * Java value containing an array of java objects. This value is used to hold a

@@ -13,12 +13,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdi.internal.ValueImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;

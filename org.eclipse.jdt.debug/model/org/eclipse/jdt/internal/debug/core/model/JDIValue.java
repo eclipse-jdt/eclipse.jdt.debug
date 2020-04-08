@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +27,6 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.Field;

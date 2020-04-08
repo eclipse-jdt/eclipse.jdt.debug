@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.BundleContext;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Debug flags in options file.

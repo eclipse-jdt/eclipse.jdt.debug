@@ -16,7 +16,6 @@ package org.eclipse.jdt.internal.debug.core.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.DebugElement;
@@ -25,11 +24,9 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStepFilters;
 import org.eclipse.debug.core.model.ITerminate;
-
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -24,7 +26,6 @@ import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectReference;
 
 /**

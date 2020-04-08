@@ -13,11 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;

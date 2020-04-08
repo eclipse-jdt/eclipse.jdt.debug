@@ -17,6 +17,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -95,7 +96,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.Location;

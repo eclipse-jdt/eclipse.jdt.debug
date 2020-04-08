@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.spy;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 
 public class JdwpConversation {
 	private int fId;

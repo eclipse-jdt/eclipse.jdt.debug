@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.eval;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +55,6 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 

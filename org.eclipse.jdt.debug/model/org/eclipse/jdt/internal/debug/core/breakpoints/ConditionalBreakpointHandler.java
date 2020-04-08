@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,7 +43,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VMDisconnectedException;
 
 /**

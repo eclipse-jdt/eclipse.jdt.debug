@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -52,7 +53,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
-import com.ibm.icu.text.MessageFormat;
+
 
 public class JavaLogicalStructure implements ILogicalStructureType {
 

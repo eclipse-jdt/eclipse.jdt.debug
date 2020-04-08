@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,7 +62,6 @@ import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;

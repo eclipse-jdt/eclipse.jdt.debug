@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UTFDataFormatException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The <code>VerbosePacketWriter</code> is responsible for writing out
@@ -258,8 +258,9 @@ public class VerbosePacketStream extends PrintStream {
 	private void printCommandData(JdwpCommandPacket command)
 			throws IOException, UnableToParseDataException {
 		byte[] data = command.data();
-		if (data == null)
+		if (data == null) {
 			return;
+		}
 		DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
 		int commandId = command.getCommand();
 		switch (commandId) {
@@ -564,8 +565,9 @@ public class VerbosePacketStream extends PrintStream {
 	private void printReplyData(JdwpReplyPacket reply) throws IOException,
 			UnableToParseDataException {
 		byte[] data = reply.data();
-		if (data == null)
+		if (data == null) {
 			return;
+		}
 		DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
 		JdwpCommandPacket command = TcpipSpy.getCommand(reply.getId());
 		int commandId = command.getCommand();

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Iterator;
@@ -109,7 +110,6 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorAssignmentOperato
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorOperator;
 import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The AST instruction compiler generates a sequence of instructions

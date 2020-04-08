@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,7 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Resolves an array access - the top of the stack is the position, and the

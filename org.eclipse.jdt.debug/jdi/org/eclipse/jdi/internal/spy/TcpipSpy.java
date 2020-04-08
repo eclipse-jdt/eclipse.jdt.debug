@@ -28,10 +28,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class can be used to spy all JDWP packets. It should be configured 'in
@@ -159,8 +159,9 @@ public class TcpipSpy extends Thread {
 	public static JdwpCommandPacket getCommand(int id) {
 		JdwpConversation conversation = fPackets
 				.get(Integer.valueOf(id));
-		if (conversation != null)
+		if (conversation != null) {
 			return conversation.getCommand();
+		}
 		return null;
 	}
 

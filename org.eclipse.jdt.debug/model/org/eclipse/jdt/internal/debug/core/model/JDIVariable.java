@@ -13,18 +13,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
-import org.eclipse.core.runtime.PlatformObject;
+import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
-
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 

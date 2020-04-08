@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,6 @@ import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
