@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,7 +43,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.DateFormat;
 
 /**
  * A launcher for running Java main classes.

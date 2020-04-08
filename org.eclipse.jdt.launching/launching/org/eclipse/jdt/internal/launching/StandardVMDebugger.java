@@ -18,6 +18,7 @@ package org.eclipse.jdt.internal.launching;
 import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,7 +50,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
-import com.ibm.icu.text.DateFormat;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;

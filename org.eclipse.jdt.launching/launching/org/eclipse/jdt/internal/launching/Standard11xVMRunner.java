@@ -15,6 +15,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
-import com.ibm.icu.text.DateFormat;
 
 /**
  * A 1.1.x VM runner
