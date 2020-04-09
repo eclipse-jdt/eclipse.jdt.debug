@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -130,13 +130,13 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		fVMName.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				validateVMName();
+				validateVMName(false);
 			}
 		});
 		fJRERoot.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				validateJRELocation();
+				validateJRELocation(false);
 			}
 		});
 		folders.addSelectionListener(new SelectionListener() {
@@ -178,12 +178,17 @@ public class StandardVMPage extends AbstractVMInstallPage {
 
 	/**
 	 * Validates the JRE location
+	 * @param init <code>true</code> if page is getting initialized else <code>false</code>
 	 * @return the status after validating the JRE location
 	 */
-	private void validateJRELocation() {
+	private void validateJRELocation(boolean init) {
 		String locationName = fJRERoot.getText();
 		IStatus s = null;
 		File file = null;
+		if (locationName.length() == 0 && init) {
+			return;
+		}
+
 		if (locationName.length() == 0) {
 			s = new StatusInfo(IStatus.WARNING, JREMessages.addVMDialog_enterLocation);
 		}
@@ -289,10 +294,11 @@ public class StandardVMPage extends AbstractVMInstallPage {
 
 	/**
 	 * Validates the entered name of the VM
+	 * @param init <code>true</code> if page is getting initialized else <code>false</code>
 	 * @return the status of the name validation
 	 */
-	private void validateVMName() {
-		nameChanged(fVMName.getText());
+	private void validateVMName(boolean init) {
+		nameChanged(fVMName.getText(), init);
 	}
 
 	/* (non-Javadoc)
@@ -371,7 +377,13 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	 */
 	private void initializeFields() {
 		fLibraryBlock.setSelection(fVM);
-		fVMName.setText(fVM.getName());
+		if (fVMName.getText() != null && fVMName.getText().length() == 0) {
+			if (fVM.getName().length() != 0) {
+				fVMName.setText(fVM.getName());
+			}
+		} else {
+			fVMName.setText(fVM.getName());
+		}
 		File installLocation = fVM.getInstallLocation();
 		if (installLocation != null) {
 			fJRERoot.setText(installLocation.getAbsolutePath());
@@ -380,8 +392,8 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		if (vmArgs != null) {
 			fVMArgs.setText(vmArgs);
 		}
-		validateVMName();
-		validateJRELocation();
+		validateVMName(true);
+		validateJRELocation(true);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -118,14 +118,35 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	}
 
 	/**
-	 * Updates the name status based on the new name. This method should be called
-	 * by the page each time the VM name changes.
+	 * Updates the name status based on the new name. This method should be called by the page each time the VM name changes.
 	 *
-	 * @param newName new name of VM
+	 * Use nameChanged(String newName, boolean init)
+	 *
+	 * @param newName
+	 *            new name of VM
+	 *
 	 */
+	@Deprecated
 	protected void nameChanged(String newName) {
+		nameChanged(newName, false);
+	}
+
+	/**
+	 * Updates the name status based on the new name. This method should be called by the page each time the VM name changes.
+	 *
+	 * @param newName
+	 *            new name of VM
+	 * @param init
+	 *            <code>true</code> if page is getting initialized else <code>false</code>
+	 *
+	 * @since 3.11
+	 */
+	protected void nameChanged(String newName, boolean init) {
 		fNameStatus = Status.OK_STATUS;
 		if (newName == null || newName.trim().length() == 0) {
+			if (init) {
+				return;
+			}
 			int sev = IStatus.ERROR;
 			if (fOriginalName == null || fOriginalName.length() == 0) {
 				sev = IStatus.WARNING;
