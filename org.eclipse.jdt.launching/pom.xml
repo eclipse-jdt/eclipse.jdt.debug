@@ -34,7 +34,7 @@
                 <phase>compile</phase>
                 <configuration>
                   <target>
-                    <property name="build.compiler" value="extJavac"/>
+                    <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
                     <ant antfile="customBuildCallbacks.xml" dir="." target="pre.@dot"/>
                   </target>
                 </configuration>
@@ -43,6 +43,13 @@
                 </goals>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.eclipse.jdt</groupId>
+                <artifactId>ecj</artifactId>
+                <version>${cbi-ecj-version}</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
