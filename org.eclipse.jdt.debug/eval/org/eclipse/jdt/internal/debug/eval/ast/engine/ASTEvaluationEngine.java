@@ -331,7 +331,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				if (variable instanceof IJavaVariable && !isLambdaOrImplicitVariable(variable)) {
 					IJavaVariable javaVariable = (IJavaVariable) variable;
 					final boolean lambdaField = LambdaUtils.isLambdaField(variable);
-					String variableName = (lambdaField) ? variable.getName().substring(ANONYMOUS_VAR_PREFIX.length()) : variable.getName();
+					String name = variable.getName();
+					String variableName = (lambdaField && name.startsWith(ANONYMOUS_VAR_PREFIX)) ? name.substring(ANONYMOUS_VAR_PREFIX.length()) : name;
 					if (variableName != null && (!variableName.contains("$") || lambdaField)) { //$NON-NLS-1$
 						if (!isLocalType(javaVariable.getSignature()) && !names.contains(variableName)) {
 							locals[numLocals] = javaVariable;
