@@ -93,7 +93,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
-		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_14 });
+		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_15 });
 		mappings.put(JavaSE_11, new String[] { JavaSE_10 });
 		mappings.put(JavaSE_12, new String[] { JavaSE_11 });
 		mappings.put(JavaSE_13, new String[] { JavaSE_12 });
