@@ -6,6 +6,10 @@
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -41,6 +45,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 
+	private static final String JavaSE_15 = "JavaSE-15"; //$NON-NLS-1$
 	private static final String JavaSE_14 = "JavaSE-14"; //$NON-NLS-1$
 	private static final String JavaSE_13 = "JavaSE-13"; //$NON-NLS-1$
 	private static final String JavaSE_12 = "JavaSE-12"; //$NON-NLS-1$
@@ -93,6 +98,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_12, new String[] { JavaSE_11 });
 		mappings.put(JavaSE_13, new String[] { JavaSE_12 });
 		mappings.put(JavaSE_14, new String[] { JavaSE_13 });
+		mappings.put(JavaSE_15, new String[] { JavaSE_14 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -118,7 +124,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("14")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("15")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_15);
+				} else if (javaVersion.startsWith("14")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_14);
 				} else if (javaVersion.startsWith("13")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_13);

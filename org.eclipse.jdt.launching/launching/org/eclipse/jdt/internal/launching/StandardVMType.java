@@ -6,8 +6,12 @@
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
+ * SPDX-License-Identifier: EPL-2.0
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Allman - Bug 211648, Bug 156343 - Standard VM not supported on MacOS
@@ -844,7 +848,10 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if (version.startsWith(JavaCore.VERSION_14)) {
+			if (version.startsWith(JavaCore.VERSION_15)) {
+				// Needs an update after Java 15 release
+				return new URL("https://docs.oracle.com/en/java/javase/14/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_14)) {
 				return new URL("https://docs.oracle.com/en/java/javase/14/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_13)) {
 				return new URL("https://docs.oracle.com/en/java/javase/13/docs/api/"); //$NON-NLS-1$
