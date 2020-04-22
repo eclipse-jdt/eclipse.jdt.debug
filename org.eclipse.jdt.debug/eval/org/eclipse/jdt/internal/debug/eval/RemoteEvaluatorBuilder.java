@@ -118,8 +118,12 @@ public class RemoteEvaluatorBuilder {
 				@Override
 				public void acceptProblem(IMarker problemMarker, String fragmentSource, int fragmentKind) {
 					if (problemMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) >= IMarker.SEVERITY_ERROR) {
-						errors.add(problemMarker.toString());
+						errors.add(toString(problemMarker));
 					}
+				}
+
+				private String toString(IMarker marker) {
+					return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 				}
 
 				@Override
