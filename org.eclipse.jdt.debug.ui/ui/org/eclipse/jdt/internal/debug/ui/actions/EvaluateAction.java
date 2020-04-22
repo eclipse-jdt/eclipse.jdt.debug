@@ -289,6 +289,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
         			}
         		}
         	}
+			String error = NLS.bind(ActionMessages.EvaluateAction__evaluation_failed__Reason, message);
+			Status status = new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), error, e);
+			JDIDebugUIPlugin.log(status);
             reportError(message);
         } catch (InterruptedException e) {
         }
