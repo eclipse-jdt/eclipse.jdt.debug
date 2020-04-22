@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Jesper Steen Møller and others.
+ * Copyright (c) 2019, 2020 Jesper Steen Møller and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1487,6 +1487,12 @@ public class RemoteEvaluatorBuilder {
 			return false;
 		}
 
+		private boolean needToQualify(SimpleName node) {
+			if (node.getParent() instanceof QualifiedName || node.getParent() instanceof QualifiedType) {
+				return false;
+			}
+			return true;
+		}
 		@Override
 		public boolean visit(SimpleName node) {
 			IBinding binding = node.resolveBinding();
@@ -1496,9 +1502,12 @@ public class RemoteEvaluatorBuilder {
 					// For future optimization: Check for duplicates, so same value is only bound once
 					if (vb.isField()) {
 						if (Modifier.isStatic(vb.getModifiers())) {
-							ITypeBinding declaringClass = vb.getDeclaringClass();
-							buffer.append(declaringClass.getQualifiedName());
-							buffer.append("."); //$NON-NLS-1$
+							if (needToQualify(node)) {
+								ITypeBinding declaringClass = vb.getDeclaringClass();
+								buffer.append(declaringClass.getQualifiedName());
+								buffer.append("."); //$NON-NLS-1$
+							}
+
 							buffer.append(node.getIdentifier());
 
 						} else {
