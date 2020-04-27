@@ -44,6 +44,22 @@ public class RemoteEvaluatorTests extends AbstractDebugTest {
 		assertEquals("count is not 0", "0", value.getValueString());
 	}
 
+	public void testEvaluate_InInnerScope_PrivateFieldInSameScope() throws Exception {
+		debugWithBreakpoint("RemoteEvaluator", 20);
+		IValue value = evaluate("java.util.Arrays.asList(\"a\", \"b\", \"ac\").stream().filter(v -> this.Q_EMPTY.test(v)).count()");
+
+		assertNotNull("result is null", value);
+		assertEquals("count is not 0", "0", value.getValueString());
+	}
+
+	public void testEvaluate_InInnerScope_PrivateFieldInSameScope_WithoutThis() throws Exception {
+		debugWithBreakpoint("RemoteEvaluator", 20);
+		IValue value = evaluate("java.util.Arrays.asList(\"a\", \"b\", \"ac\").stream().filter(v -> Q_EMPTY.test(v)).count()");
+
+		assertNotNull("result is null", value);
+		assertEquals("count is not 0", "0", value.getValueString());
+	}
+
 	@Override
 	protected IJavaProject getProjectContext() {
 		return get18Project();
