@@ -475,6 +475,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug560392"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug561715"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug562056"));
+				cfgs.add(createLaunchConfiguration(jp, "RemoteEvaluator"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
