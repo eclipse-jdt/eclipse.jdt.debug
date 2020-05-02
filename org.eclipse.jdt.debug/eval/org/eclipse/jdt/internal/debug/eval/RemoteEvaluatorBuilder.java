@@ -1513,7 +1513,7 @@ public class RemoteEvaluatorBuilder {
 						} else {
 							// TODO: Fix this to use same method as visit(FieldAccess)
 							ITypeBinding declaringClass = vb.getDeclaringClass();
-							String newVarName = allocateNewVariable(declaringClass, "val$this"); //$NON-NLS-1$
+							String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(declaringClass, "this"); //$NON-NLS-1$
 							binder.bindThis(declaringClass, newVarName);
 							// buffer.append("this."); //$NON-NLS-1$
 							buffer.append(newVarName);
@@ -1799,7 +1799,7 @@ public class RemoteEvaluatorBuilder {
 		public boolean visit(ThisExpression node) {
 			ITypeBinding thisType = node.resolveTypeBinding();
 
-			String newVarName = allocateNewVariable(thisType, "val$this"); //$NON-NLS-1$
+			String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(thisType, "this"); //$NON-NLS-1$
 			binder.bindThis(thisType, newVarName);
 			// buffer.append("this."); //$NON-NLS-1$
 			buffer.append(newVarName);
