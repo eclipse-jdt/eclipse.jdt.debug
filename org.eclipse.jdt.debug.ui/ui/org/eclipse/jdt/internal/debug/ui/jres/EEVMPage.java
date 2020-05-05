@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -132,7 +132,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fIgnoreCallbacks) {
-					validateVMName();
+					validateVMName(false);
 				}
 			}
 		});
@@ -228,8 +228,8 @@ public class EEVMPage extends AbstractVMInstallPage {
 	/**
 	 * Validates the entered name of the VM
 	 */
-	private void validateVMName() {
-		nameChanged(fVMName.getText());
+	private void validateVMName(boolean init) {
+		nameChanged(fVMName.getText(), init);
 	}
 
 	/* (non-Javadoc)
@@ -309,8 +309,15 @@ public class EEVMPage extends AbstractVMInstallPage {
 		try {
 			fIgnoreCallbacks = true;
 			fLibraryBlock.setSelection(fVM);
-			fVMName.setText(fVM.getName());
-			fVMName.setSelection(fVM.getName().length());
+			if (fVMName.getText() != null && fVMName.getText().length() == 0) {
+				if (fVM.getName().length() != 0) {
+					fVMName.setText(fVM.getName());
+					fVMName.setSelection(fVM.getName().length());
+				}
+			} else {
+				fVMName.setText(fVM.getName());
+				fVMName.setSelection(fVM.getName().length());
+			}
 			String eePath = fVM.getAttribute(EEVMInstall.ATTR_DEFINITION_FILE);
 			if (eePath != null) {
 				fEEFile.setText(eePath);
@@ -320,7 +327,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 			if (vmArgs != null) {
 				fVMArgs.setText(vmArgs);
 			}
-			validateVMName();
+			validateVMName(true);
 		} finally {
 			fIgnoreCallbacks = false;
 		}

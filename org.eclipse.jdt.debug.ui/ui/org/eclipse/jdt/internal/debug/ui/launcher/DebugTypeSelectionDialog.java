@@ -288,9 +288,9 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		if(fTypes != null && fTypes.length > 0) {
-			for(int i = 0; i < fTypes.length; i++) {
-				if(itemsFilter.isConsistentItem(fTypes[i])) {
-					contentProvider.add(fTypes[i], itemsFilter);
+			for (IType type : fTypes) {
+				if (itemsFilter.isConsistentItem(type)) {
+					contentProvider.add(type, itemsFilter);
 				}
 			}
 		}

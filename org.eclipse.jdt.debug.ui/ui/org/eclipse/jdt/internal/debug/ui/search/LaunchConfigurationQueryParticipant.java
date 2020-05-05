@@ -243,8 +243,8 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		}
 		IResource[] resources = config.getMappedResources();
 		if (resources != null) {
-			for (int i = 0; i < resources.length; i++) {
-				if (scope.encloses(resources[i].getFullPath().toString())) {
+			for (IResource resource : resources) {
+				if (scope.encloses(resource.getFullPath().toString())) {
 					return true;
 				}
 			}
@@ -264,13 +264,13 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 		monitor.beginTask("Searching for launch configurations", configs.length); //$NON-NLS-1$
 		try {
-			for (int i = 0; i < configs.length; ++i) {
+			for (ILaunchConfiguration config : configs) {
 				if (monitor.isCanceled()) {
 					return;
 				}
 				monitor.worked(1);
-				if (matches(scope, configs[i], pattern)) {
-					requestor.reportMatch(new Match(configs[i], 0, 0));
+				if (matches(scope, config, pattern)) {
+					requestor.reportMatch(new Match(config, 0, 0));
 				}
 			}
 		} finally {

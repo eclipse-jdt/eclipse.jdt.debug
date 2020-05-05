@@ -134,8 +134,8 @@ public class CreateStepFilterDialog extends StatusDialog {
 	}
 
 	private boolean isDuplicateFilter(String trimmedValue) {
-		for (int i=0; i<existingFilters.length; i++) {
-			if(existingFilters[i].getName().equals(trimmedValue)) {
+		for (Filter existingFilter : existingFilters) {
+			if (existingFilter.getName().equals(trimmedValue)) {
 				return true;
 			}
 		}

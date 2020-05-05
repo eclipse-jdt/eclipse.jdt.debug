@@ -74,8 +74,8 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 					}
 				}
 				setEntries(list);
-				for (int i = 0; i < wrappers.length; i++) {
-					getViewer().refresh(wrappers[i]);
+				for (IRuntimeClasspathEntry wrapper : wrappers) {
+					getViewer().refresh(wrapper);
 				}
 			}
 		}

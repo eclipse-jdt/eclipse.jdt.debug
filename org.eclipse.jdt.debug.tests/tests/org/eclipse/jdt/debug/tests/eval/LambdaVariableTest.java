@@ -30,13 +30,22 @@ public class LambdaVariableTest extends AbstractDebugTest {
 		super(name);
 	}
 
-	public void testEvaluate_LambdaFieldVariable() throws Exception {
+	public void testEvaluate_LambdaCapturedParameter() throws Exception {
 		debugWithBreakpoint("Bug560392", 9);
 		String snippet = "key";
 		IValue value = doEval(javaThread, snippet);
 
 		assertEquals("wrong type : ", "java.lang.String", value.getReferenceTypeName());
 		assertEquals("wrong result : ", "a", value.getValueString());
+	}
+
+	public void testEvaluate_LambdaCapturedField() throws Exception {
+		debugWithBreakpoint("Bug562056", 9);
+		String snippet = "handler.toString()";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "java.lang.String", value.getReferenceTypeName());
+		assertEquals("wrong result : ", "Hello bug 562056", value.getValueString());
 	}
 
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {

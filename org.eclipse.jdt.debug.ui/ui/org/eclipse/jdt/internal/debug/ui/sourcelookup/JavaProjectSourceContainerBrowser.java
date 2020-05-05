@@ -97,8 +97,8 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			Object[] selections = dialog.getResult();
 			List<IJavaProject> additions = new ArrayList<>(selections.length);
 			try {
-				for (int i = 0; i < selections.length; i++) {
-					IJavaProject jp = (IJavaProject)selections[i];
+				for (Object selection : selections) {
+					IJavaProject jp = (IJavaProject) selection;
 					if (dialog.isAddRequiredProjects()) {
 						collectRequiredProjects(jp, additions);
 					} else {
@@ -145,13 +145,11 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			projects= new IJavaProject[0];
 		}
 		List<IJavaProject> remaining = new ArrayList<>();
-		for (int i = 0; i < projects.length; i++) {
-			remaining.add(projects[i]);
+		for (IJavaProject project : projects) {
+			remaining.add(project);
 		}
 		List<IJavaProject> alreadySelected = new ArrayList<>();
-		ISourceContainer[] containers = director.getSourceContainers();
-		for (int i = 0; i < containers.length; i++) {
-			ISourceContainer container = containers[i];
+		for (ISourceContainer container : director.getSourceContainers()) {
 			if (container.getType().getId().equals(JavaProjectSourceContainer.TYPE_ID)) {
 				alreadySelected.add(((JavaProjectSourceContainer)container).getJavaProject());
 			}
@@ -175,9 +173,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 
 			IJavaModel model= proj.getJavaModel();
 
-			IClasspathEntry[] entries= proj.getRawClasspath();
-			for (int i= 0; i < entries.length; i++) {
-				IClasspathEntry curr= entries[i];
+			for (IClasspathEntry curr : proj.getRawClasspath()) {
 				if (curr.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 					IJavaProject ref= model.getJavaProject(curr.getPath().segment(0));
 					if (ref.exists()) {
@@ -197,9 +193,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 * @throws CoreException if an exception occurs
 	 */
 	protected void collectExportedEntries(IJavaProject proj, List<ISourceContainer> list) throws CoreException {
-		IClasspathEntry[] entries = proj.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
+		for (IClasspathEntry entry : proj.getRawClasspath()) {
 			ISourceContainer sourceContainer = null;
 			if (entry.isExported()) {
 				switch (entry.getEntryKind()) {

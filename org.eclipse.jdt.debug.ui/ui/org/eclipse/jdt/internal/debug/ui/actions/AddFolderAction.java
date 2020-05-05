@@ -83,10 +83,10 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			List<IResource> fAlreadySelected = getSelectedFolders();
 			@Override
 			public IStatus validate(Object[] selection) {
-				for (int i= 0; i < selection.length; i++) {
-					if (!(selection[i] instanceof IContainer)) {
+				for (Object s : selection) {
+					if (!(s instanceof IContainer)) {
 						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Selection must be a folder", null);  //$NON-NLS-1$
-					} else if (fAlreadySelected.contains(selection[i])) {
+					} else if (fAlreadySelected.contains(s)) {
 						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Classpath already includes selected folder(s).", null);  //$NON-NLS-1$
 					}
 

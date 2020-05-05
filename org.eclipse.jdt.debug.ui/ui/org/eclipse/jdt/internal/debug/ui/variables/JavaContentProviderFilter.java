@@ -49,10 +49,10 @@ public class JavaContentProviderFilter {
 
 		if (filterStatics || filterConstants) {
 			List<Object> keep = new ArrayList<>(variables.length);
-			for (int i = 0; i < variables.length; i++) {
+			for (Object variable : variables) {
 				boolean filter = false;
-				if (variables[i] instanceof IJavaVariable){
-					IJavaVariable var = (IJavaVariable)variables[i];
+				if (variable instanceof IJavaVariable) {
+					IJavaVariable var = (IJavaVariable) variable;
 					if (var.isStatic()){
 						if (var.isFinal()){
 							filter = filterConstants;
@@ -61,8 +61,8 @@ public class JavaContentProviderFilter {
 						}
 					}
 				}
-				if (!filter){
-					keep.add(variables[i]);
+				if (!filter) {
+					keep.add(variable);
 				}
 			}
 			return keep.toArray(new Object[keep.size()]);

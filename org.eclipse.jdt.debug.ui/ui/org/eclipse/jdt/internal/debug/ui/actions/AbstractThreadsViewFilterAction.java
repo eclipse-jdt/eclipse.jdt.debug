@@ -103,8 +103,7 @@ abstract class AbstractThreadsViewFilterAction extends ViewFilterAction implemen
 			// if showing all threads, no need to worry about displaying/hiding
 			return;
 		}
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			switch (event.getKind()) {
 				case DebugEvent.RESUME:
 					if (event.getDetail() == DebugEvent.CLIENT_REQUEST) {

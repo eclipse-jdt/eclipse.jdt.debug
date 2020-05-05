@@ -59,12 +59,12 @@ public class JavaThreadGroupContentProvider extends JavaElementContentProvider {
 			IJavaThread[] threads = group.getThreads();
 			Object[] kids = new Object[threadGroups.length + threads.length];
 			int index = 0;
-			for (int i = 0; i < threads.length; i++) {
-				kids[index]= threads[i];
+			for (IJavaThread thread : threads) {
+				kids[index]= thread;
 				index++;
 			}
-			for (int i = 0; i < threadGroups.length; i++) {
-				kids[index] = threadGroups[i];
+			for (IJavaThreadGroup threadGroup : threadGroups) {
+				kids[index] = threadGroup;
 				index++;
 			}
 			return kids;

@@ -14,7 +14,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -95,10 +94,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		public AttributesContentProvider(String[][] variables) {
 			fVariables= new ArrayList<>();
-			for (int i= 0; i < variables.length; i++) {
+			for (String[] v : variables) {
 				String[] variable= new String[2];
-				variable[0]= variables[i][0];
-				variable[1]= variables[i][1];
+				variable[0] = v[0];
+				variable[1] = v[1];
 				fVariables.add(variable);
 			}
 		}
@@ -154,8 +153,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		 * @param list the list
 		 */
 		public void up(List<String[]> list) {
-			for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
-				String[] variable= iter.next();
+			for (String[] variable : list) {
 				int index= fVariables.indexOf(variable);
 				fVariables.remove(variable);
 				fVariables.add(index - 1, variable);
@@ -167,8 +165,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		 * @param list the list
 		 */
 		public void down(List<String[]> list) {
-			for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
-				String[] variable= iter.next();
+			for (String[] variable : list) {
 				int index= fVariables.indexOf(variable);
 				fVariables.remove(variable);
 				fVariables.add(index + 1, variable);
@@ -442,11 +439,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		IStructuredSelection selection= (IStructuredSelection)fAttributeListViewer.getSelection();
 		if (selection.size() > 0) {
 			List<String[]> selectedElements= selection.toList();
-			Object[] elements= fAttributesContentProvider.getElements();
 			Object newSelectedElement= null;
-			for (int i= 0; i < elements.length; i++) {
-				if (!selectedElements.contains(elements[i])) {
-					newSelectedElement= elements[i];
+			for (Object element : fAttributesContentProvider.getElements()) {
+				if (!selectedElements.contains(element)) {
+					newSelectedElement = element;
 				} else {
 					break;
 				}
@@ -505,16 +501,14 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		} else if (isValue) {
 			// dispose the attribute list
 			saveAttributeValue();
-			Control[] children= fAttributesContainer.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				children[i].dispose();
+			for (Control child : fAttributesContainer.getChildren()) {
+				child.dispose();
 			}
 		}
 
 		// dispose and recreate the code snippet editor group
-		Control[] children= fCodeGroup.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].dispose();
+		for (Control child : fCodeGroup.getChildren()) {
+			child.dispose();
 		}
 		fSnippetViewer.dispose();
 		createCodeGroupWidgets(isValue);
@@ -598,8 +592,8 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			} else if (oneElementSelected && fSnippetDocument.get().trim().length() == 0) {
 				status.setError(DebugUIMessages.EditLogicalStructureDialog_21);
 			} else {
-				for (int i= 0; i < elements.length; i++) {
-					String[] variable= (String[]) elements[i];
+				for (Object element : elements) {
+					String[] variable = (String[]) element;
 					if (variable[0].trim().length() == 0) {
 						status.setError(DebugUIMessages.EditLogicalStructureDialog_22);
 						break;

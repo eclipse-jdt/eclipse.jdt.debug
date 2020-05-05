@@ -59,52 +59,51 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
      */
     private void createBreakpoints(final Object[] selection) {
     	try {
-	        for (int i = 0; i < selection.length; i++) {
-	            final IType type = (IType) selection[i];
-	            final IResource resource = BreakpointUtils.getBreakpointResource(type);
-	            final Map<String, Object> map = new HashMap<>(10);
-	            BreakpointUtils.addJavaBreakpointAttributes(map, type);
-	            int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
-	            if (!type.isClass()) {
-	                kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
-	            }
-	            IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
-	            boolean exists = false;
-	            for (int j = 0; j < breakpoints.length; j++) {
-	                IJavaBreakpoint breakpoint = (IJavaBreakpoint) breakpoints[j];
-	                if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
+			for (Object a : selection) {
+				final IType type = (IType) a;
+				final IResource resource = BreakpointUtils.getBreakpointResource(type);
+				final Map<String, Object> map = new HashMap<>(10);
+				BreakpointUtils.addJavaBreakpointAttributes(map, type);
+				int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
+				if (!type.isClass()) {
+					kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
+				}
+				boolean exists = false;
+				for (IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier())) {
+					IJavaBreakpoint breakpoint = (IJavaBreakpoint) b;
+					if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
 						String typeName = breakpoint.getTypeName();
 						if (typeName != null && typeName.equals(type.getFullyQualifiedName())) {
-	                        exists = true;
-	                        break;
-	                    }
-	                }
-	            }
-	            if (!exists) {
-	                ISourceRange range = type.getNameRange();
-	                int start = -1;
-	                int end = -1;
-	                if (range != null) {
-	                    start = range.getOffset();
-	                    end = start + range.getLength();
-	                }
-	                final int finalKind = kind;
-	                final int finalStart = start;
-	                final int finalEnd = end;
-	                new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) {
-	                    @Override
+							exists = true;
+							break;
+						}
+					}
+				}
+				if (!exists) {
+					ISourceRange range = type.getNameRange();
+					int start = -1;
+					int end = -1;
+					if (range != null) {
+						start = range.getOffset();
+						end = start + range.getLength();
+					}
+					final int finalKind = kind;
+					final int finalStart = start;
+					final int finalEnd = end;
+					new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) {
+						@Override
 						protected IStatus run(IProgressMonitor monitor) {
-	                        try {
-	                            JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), finalKind, finalStart, finalEnd, true, map);
-	                            return Status.OK_STATUS;
-	                        } catch (CoreException e) {
-	                            return e.getStatus();
-	                        }
-	                    }
+							try {
+								JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), finalKind, finalStart, finalEnd, true, map);
+								return Status.OK_STATUS;
+							} catch (CoreException e) {
+								return e.getStatus();
+							}
+						}
 
-	                }.schedule();
-	            }
-	        }
+					}.schedule();
+				}
+			}
 	    } catch(CoreException e) {
 	    	JDIDebugUIPlugin.statusDialog(e.getStatus());
 	    }

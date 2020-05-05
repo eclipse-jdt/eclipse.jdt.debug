@@ -84,8 +84,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		protected void populateImports() {
 			fImportNames= new ArrayList<>(1);
 			if (fImports != null) {
-				for (int i = 0; i < fImports.length; i++) {
-					String name = fImports[i];
+				for (String name : fImports) {
 					addImport(name);
 				}
 			}
@@ -101,8 +100,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 
 
 		protected void removeImports(Object[] imports) {
-			for (int i = 0; i < imports.length; i++) {
-				Filter imprt = (Filter)imports[i];
+			for (Object i : imports) {
+				Filter imprt = (Filter) i;
 				fImportNames.remove(imprt);
 			}
 			fViewer.remove(imports);
@@ -201,9 +200,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			IJavaProject project= fEditor.getJavaProject();
 			List<IJavaElement> projects= new ArrayList<>();
 			projects.add(project);
-			IPackageFragmentRoot[] roots= project.getAllPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				IPackageFragmentRoot root = roots[i];
+			for (IPackageFragmentRoot root : project.getAllPackageFragmentRoots()) {
 				projects.add(root.getParent());
 			}
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, projects.toArray(new IJavaProject[projects.size()]), false);
@@ -224,8 +221,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		}
 		Object[] packages= dialog.getResult();
 		if (packages != null) {
-			for (int i = 0; i < packages.length; i++) {
-				IJavaElement pkg = (IJavaElement)packages[i];
+			for (Object p : packages) {
+				IJavaElement pkg = (IJavaElement) p;
 				String filter = pkg.getElementName();
 				filter += ".*"; //$NON-NLS-1$
 				fImportContentProvider.addImport(filter);

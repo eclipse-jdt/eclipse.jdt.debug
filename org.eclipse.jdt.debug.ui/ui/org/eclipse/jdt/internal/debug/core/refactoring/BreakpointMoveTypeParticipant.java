@@ -49,8 +49,7 @@ public class BreakpointMoveTypeParticipant extends BreakpointMoveParticipant {
 	protected void gatherChanges(IMarker[] markers, List<Change> changes) throws CoreException, OperationCanceledException {
 		IType originalType = (IType) getOriginalElement();
 		IPackageFragment destPackage = (IPackageFragment) getDestination();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : markers) {
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;

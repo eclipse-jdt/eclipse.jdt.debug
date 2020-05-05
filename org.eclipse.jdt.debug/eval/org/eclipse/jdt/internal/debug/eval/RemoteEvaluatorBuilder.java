@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Jesper Steen Møller and others.
+ * Copyright (c) 2019, 2020 Jesper Steen Møller and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -118,8 +118,12 @@ public class RemoteEvaluatorBuilder {
 				@Override
 				public void acceptProblem(IMarker problemMarker, String fragmentSource, int fragmentKind) {
 					if (problemMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) >= IMarker.SEVERITY_ERROR) {
-						errors.add(problemMarker.toString());
+						errors.add(toString(problemMarker));
 					}
+				}
+
+				private String toString(IMarker marker) {
+					return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 				}
 
 				@Override
@@ -1483,6 +1487,12 @@ public class RemoteEvaluatorBuilder {
 			return false;
 		}
 
+		private boolean needToQualify(SimpleName node) {
+			if (node.getParent() instanceof QualifiedName || node.getParent() instanceof QualifiedType) {
+				return false;
+			}
+			return true;
+		}
 		@Override
 		public boolean visit(SimpleName node) {
 			IBinding binding = node.resolveBinding();
@@ -1492,15 +1502,18 @@ public class RemoteEvaluatorBuilder {
 					// For future optimization: Check for duplicates, so same value is only bound once
 					if (vb.isField()) {
 						if (Modifier.isStatic(vb.getModifiers())) {
-							ITypeBinding declaringClass = vb.getDeclaringClass();
-							buffer.append(declaringClass.getQualifiedName());
-							buffer.append("."); //$NON-NLS-1$
+							if (needToQualify(node)) {
+								ITypeBinding declaringClass = vb.getDeclaringClass();
+								buffer.append(declaringClass.getQualifiedName());
+								buffer.append("."); //$NON-NLS-1$
+							}
+
 							buffer.append(node.getIdentifier());
 
 						} else {
 							// TODO: Fix this to use same method as visit(FieldAccess)
 							ITypeBinding declaringClass = vb.getDeclaringClass();
-							String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(declaringClass, "this"); //$NON-NLS-1$
+							String newVarName = allocateNewVariable(declaringClass, LOCAL_VAR_PREFIX.concat("this")); //$NON-NLS-1$
 							binder.bindThis(declaringClass, newVarName);
 							// buffer.append("this."); //$NON-NLS-1$
 							buffer.append(newVarName);
@@ -1786,7 +1799,7 @@ public class RemoteEvaluatorBuilder {
 		public boolean visit(ThisExpression node) {
 			ITypeBinding thisType = node.resolveTypeBinding();
 
-			String newVarName = new String(LOCAL_VAR_PREFIX) + allocateNewVariable(thisType, "this"); //$NON-NLS-1$
+			String newVarName = allocateNewVariable(thisType, LOCAL_VAR_PREFIX.concat("this")); //$NON-NLS-1$
 			binder.bindThis(thisType, newVarName);
 			// buffer.append("this."); //$NON-NLS-1$
 			buffer.append(newVarName);

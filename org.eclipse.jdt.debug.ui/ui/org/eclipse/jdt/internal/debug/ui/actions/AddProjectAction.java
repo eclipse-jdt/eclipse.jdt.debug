@@ -68,8 +68,8 @@ public class AddProjectAction extends RuntimeClasspathAction {
 
 			List<IJavaProject> additions = new ArrayList<>(selections.length);
 			try {
-				for (int i = 0; i < selections.length; i++) {
-					IJavaProject jp = (IJavaProject)selections[i];
+				for (Object selection : selections) {
+					IJavaProject jp = (IJavaProject) selection;
 					if (dialog.isAddRequiredProjects()) {
 						collectRequiredProjects(jp, additions);
 					} else {
@@ -129,14 +129,13 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			projects= new IJavaProject[0];
 		}
 		List<IJavaProject> remaining = new ArrayList<>();
-		for (int i = 0; i < projects.length; i++) {
-			remaining.add(projects[i]);
+		for (IJavaProject project : projects) {
+			remaining.add(project);
 		}
 		List<IJavaProject> alreadySelected = new ArrayList<>();
-		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
-				IResource res = root.findMember(entries[i].getPath());
+		for (IRuntimeClasspathEntry entry : getViewer().getEntries()) {
+			if (entry.getType() == IRuntimeClasspathEntry.PROJECT) {
+				IResource res = root.findMember(entry.getPath());
 				IJavaProject jp = (IJavaProject)JavaCore.create(res);
 				alreadySelected.add(jp);
 			}
@@ -160,9 +159,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 
 			IJavaModel model= proj.getJavaModel();
 
-			IClasspathEntry[] entries= proj.getRawClasspath();
-			for (int i= 0; i < entries.length; i++) {
-				IClasspathEntry curr= entries[i];
+			for (IClasspathEntry curr : proj.getRawClasspath()) {
 				if (curr.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 					IJavaProject ref= model.getJavaProject(curr.getPath().segment(0));
 					if (ref.exists()) {
@@ -182,48 +179,46 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 * @throws CoreException if an exception occurs
 	 */
 	protected void collectExportedEntries(IJavaProject proj, List<IRuntimeClasspathEntry> runtimeEntries) throws CoreException {
-		IClasspathEntry[] entries = proj.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
+		for (IClasspathEntry entry : proj.getRawClasspath()) {
 			if (entry.isExported()) {
 				IRuntimeClasspathEntry rte = null;
 				switch (entry.getEntryKind()) {
-					case IClasspathEntry.CPE_CONTAINER:
-						IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), proj);
-						int kind = 0;
-						switch (container.getKind()) {
-							case IClasspathContainer.K_APPLICATION:
-								kind = IRuntimeClasspathEntry.USER_CLASSES;
-								break;
-							case IClasspathContainer.K_SYSTEM:
-								kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-								break;
-							case IClasspathContainer.K_DEFAULT_SYSTEM:
-								kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
-								break;
+				case IClasspathEntry.CPE_CONTAINER:
+					IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), proj);
+					int kind = 0;
+					switch (container.getKind()) {
+					case IClasspathContainer.K_APPLICATION:
+						kind = IRuntimeClasspathEntry.USER_CLASSES;
+						break;
+					case IClasspathContainer.K_SYSTEM:
+						kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+						break;
+					case IClasspathContainer.K_DEFAULT_SYSTEM:
+						kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
+						break;
+					}
+					rte = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), kind, proj);
+					break;
+				case IClasspathEntry.CPE_LIBRARY:
+					rte = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath());
+					rte.setSourceAttachmentPath(entry.getSourceAttachmentPath());
+					rte.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
+					break;
+				case IClasspathEntry.CPE_PROJECT:
+					String name = entry.getPath().segment(0);
+					IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+					if (p.exists()) {
+						IJavaProject jp = JavaCore.create(p);
+						if (jp.exists()) {
+							rte = JavaRuntime.newProjectRuntimeClasspathEntry(jp);
 						}
-						rte = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), kind, proj);
-						break;
-					case IClasspathEntry.CPE_LIBRARY:
-						rte = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath());
-						rte.setSourceAttachmentPath(entry.getSourceAttachmentPath());
-						rte.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
-						break;
-					case IClasspathEntry.CPE_PROJECT:
-						String name = entry.getPath().segment(0);
-						IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-						if (p.exists()) {
-							IJavaProject jp = JavaCore.create(p);
-							if (jp.exists()) {
-								rte = JavaRuntime.newProjectRuntimeClasspathEntry(jp);
-							}
-						}
-						break;
-					case IClasspathEntry.CPE_VARIABLE:
-						rte = JavaRuntime.newVariableRuntimeClasspathEntry(entry.getPath());
-						break;
-					default:
-						break;
+					}
+					break;
+				case IClasspathEntry.CPE_VARIABLE:
+					rte = JavaRuntime.newVariableRuntimeClasspathEntry(entry.getPath());
+					break;
+				default:
+					break;
 				}
 				if (rte != null) {
 					if (!runtimeEntries.contains(rte)) {

@@ -384,7 +384,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						IJavaStackFrame previousFrame = frames.get(previousIndex);
 						ObjectReference underlyingThisObject = ((JDIStackFrame) previousFrame).getUnderlyingThisObject();
 						IJavaValue closureValue = JDIValue.createValue((JDIDebugTarget) getDebugTarget(), underlyingThisObject);
-						setLambdaVariableNames(closureValue, underlyingThisObject);
+						tryToResolveLambdaVariableNames(closureValue, underlyingThisObject);
 						fVariables.add(new JDILambdaVariable(closureValue));
 					}
 				}
@@ -404,7 +404,15 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 	}
 
-	private void setLambdaVariableNames(IJavaValue value, ObjectReference underlyingThisObject) {
+	/**
+	 * Tries to resolve "real" captured variable names by inspecting corresponding Java source code (if available)
+	 */
+	protected void tryToResolveLambdaVariableNames(IJavaValue value, ObjectReference underlyingThisObject) {
+		if (!isProbablyJavaCode()) {
+			// See bug 562056: we won't parse Java code if the current frame doesn't belong to Java, because
+			// we will most likely have different source line numbers and will produce garbage or errors
+			return;
+		}
 		try {
 			IType type = JavaDebugUtils.resolveType(value.getJavaType());
 			if (type == null) {
@@ -425,6 +433,27 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (CoreException e) {
 			logError(e);
 		}
+	}
+
+	/**
+	 * @return {@code true} if the current frame relates to the class generated from Java source file (and not from some different language)
+	 */
+	protected boolean isProbablyJavaCode() {
+		try {
+			String sourceName = getSourceName();
+			// Note: JavaCore.isJavaLikeFileName(sourceName) is too generic to be used here
+			// because it allows files that aren't using Java syntax, like groovy
+			// See https://github.com/groovy/groovy-eclipse/blob/master/base/org.eclipse.jdt.groovy.core/plugin.xml
+			if (sourceName == null || sourceName.endsWith(".java")) { //$NON-NLS-1$
+				// if nothing is defined (no source attributes), assume Java
+				return true;
+			}
+		} catch (DebugException e) {
+			// If we fail, assume Java
+			return true;
+		}
+		// Underlined source code is most likely not written in Java
+		return false;
 	}
 
 	private final static class LambdaASTVisitor extends ASTVisitor {

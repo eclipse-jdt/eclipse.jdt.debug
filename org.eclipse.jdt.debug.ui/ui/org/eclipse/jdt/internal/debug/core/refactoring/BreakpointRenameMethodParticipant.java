@@ -48,15 +48,14 @@ public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipa
 	@Override
 	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destMethodName) throws CoreException, OperationCanceledException {
 		IMethod originalMethod = (IMethod) getOriginalElement();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : markers) {
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) breakpoint;
 				//ensure we only update the marker that corresponds to the method being renamed
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=280518
 				if(methodBreakpoint.getMethodName().equals(originalMethod.getElementName()) &&
-						methodBreakpoint.getMethodSignature().equals(originalMethod.getSignature())) {
+					methodBreakpoint.getMethodSignature().equals(originalMethod.getSignature())) {
 					IType breakpointType = BreakpointUtils.getType(methodBreakpoint);
 					if (breakpointType != null && originalMethod.getDeclaringType().equals(breakpointType)) {
 						IMethod destMethod = originalMethod.getDeclaringType().getMethod(destMethodName, originalMethod.getParameterTypes());

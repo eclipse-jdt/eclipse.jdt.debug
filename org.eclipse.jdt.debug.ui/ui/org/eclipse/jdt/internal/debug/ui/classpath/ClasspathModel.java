@@ -145,8 +145,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 	public void removeAll(Object[] entries) {
 
-		for (int i = 0; i < entries.length; i++) {
-			Object object = entries[i];
+		for (Object object : entries) {
 			if (object instanceof ClasspathEntry) {
 				IClasspathEntry entryParent= ((ClasspathEntry)object).getParent();
 				if (entryParent instanceof ClasspathGroup) {
@@ -165,8 +164,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			getBootstrapEntry();
 		}
 		bootstrapEntries.removeAll();
-		for (int i = 0; i < entries.length; i++) {
-			bootstrapEntries.addEntry(new ClasspathEntry(entries[i], bootstrapEntries), null);
+		for (IRuntimeClasspathEntry entry : entries) {
+			bootstrapEntries.addEntry(new ClasspathEntry(entry, bootstrapEntries), null);
 		}
 	}
 
@@ -174,8 +173,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 		ClasspathGroup group= new ClasspathGroup(name, entryParent, canBeRemoved);
 
-		for (int i = 0; i < entries.length; i++) {
-			group.addEntry(new ClasspathEntry(entries[i], group), null);
+		for (IRuntimeClasspathEntry entry : entries) {
+			group.addEntry(new ClasspathEntry(entry, group), null);
 		}
 
 		if (addEntry) {
@@ -189,8 +188,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			getUserEntry();
 		}
 		userEntries.removeAll();
-		for (int i = 0; i < entries.length; i++) {
-			userEntries.addEntry(new ClasspathEntry(entries[i], userEntries), null);
+		for (IRuntimeClasspathEntry entry : entries) {
+			userEntries.addEntry(new ClasspathEntry(entry, userEntries), null);
 		}
 	}
 

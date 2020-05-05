@@ -146,10 +146,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		cp.add(supportEntry);
 		// get bootpath entries
 		try {
-			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(javaProject);
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-					cp.add(entries[i]);
+			for (IRuntimeClasspathEntry entry : JavaRuntime.computeUnresolvedRuntimeClasspath(javaProject)) {
+				if (entry.getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+					cp.add(entry);
 				}
 			}
 			IRuntimeClasspathEntry[] classPath = cp.toArray(new IRuntimeClasspathEntry[cp.size()]);
@@ -216,8 +215,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 
 			// convert to mementos
 			List<String> classpathList= new ArrayList<>(classPath.length);
-			for (int i = 0; i < classPath.length; i++) {
-				classpathList.add(classPath[i].getMemento());
+			for (IRuntimeClasspathEntry cp : classPath) {
+				classpathList.add(cp.getMemento());
 			}
 			if(wc == null) {
 				wc = config.getWorkingCopy();
@@ -230,9 +229,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 
 			StringBuilder urlsString = new StringBuilder();
-			for (int i = 0; i < urls.length; i++) {
+			for (String url : urls) {
 				urlsString.append(' ');
-				urlsString.append(urls[i]);
+				urlsString.append(url);
 			}
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString.toString());
 			wc.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
@@ -293,8 +292,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getSource() instanceof IDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
 				cleanup((IDebugTarget)event.getSource());
 			}
@@ -506,16 +504,15 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	public void cleanupLaunchConfigurations() {
 		try {
 			ILaunchConfigurationType lcType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(lcType);
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			for (int i = 0; i < configs.length; i++) {
-				String path = configs[i].getAttribute(SCRAPBOOK_FILE_PATH, (String)null);
+			for (ILaunchConfiguration config : getLaunchManager().getLaunchConfigurations(lcType)) {
+				String path = config.getAttribute(SCRAPBOOK_FILE_PATH, (String)null);
 				if (path != null) {
 					IPath pagePath = new Path(path);
 					IResource res = root.findMember(pagePath);
 					if (res == null) {
 						// config without a page - delete it
-						configs[i].delete();
+						config.delete();
 					}
 				}
 			}

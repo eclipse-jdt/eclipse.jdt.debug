@@ -49,8 +49,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	public void run() {
 		IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(getShell(), fEntries[0].getClasspathEntry());
 		if (classpathEntry != null) {
-			for (int i = 0; i < fEntries.length; i++) {
-				IRuntimeClasspathEntry entry = fEntries[i];
+			for (IRuntimeClasspathEntry entry : fEntries) {
 				entry.setSourceAttachmentPath(classpathEntry.getSourceAttachmentPath());
 				entry.setSourceAttachmentRootPath(classpathEntry.getSourceAttachmentRootPath());
 				getViewer().refresh(entry);

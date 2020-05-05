@@ -79,9 +79,8 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 				if (fgManager == null) {
 					fgManager = new EvaluationContextManager();
 					IWorkbench workbench = PlatformUI.getWorkbench();
-					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						fgManager.windowOpened(windows[i]);
+					for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
+						fgManager.windowOpened(window);
 					}
 					workbench.addWindowListener(fgManager);
 					fgManager.fActiveWindow = workbench.getActiveWorkbenchWindow();
@@ -231,10 +230,9 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 			frame = getContext(activePage);
 		}
 		if (frame == null) {
-			IWorkbenchPage[] pages = window.getPages();
-			for (int i = 0; i < pages.length; i++) {
-				if (activePage != pages[i]) {
-					frame = getContext(pages[i]);
+			for (IWorkbenchPage page : window.getPages()) {
+				if (activePage != page) {
+					frame = getContext(page);
 					if (frame != null) {
 						return frame;
 					}
@@ -243,10 +241,9 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 
 			alreadyVisited.add(window);
 
-			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				if (!alreadyVisited.contains(windows[i])) {
-					frame = getEvaluationContext(windows[i], alreadyVisited);
+			for (IWorkbenchWindow w : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+				if (!alreadyVisited.contains(w)) {
+					frame = getEvaluationContext(w, alreadyVisited);
 					if (frame != null) {
 						return frame;
 					}
