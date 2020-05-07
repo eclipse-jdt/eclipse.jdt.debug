@@ -70,6 +70,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThisVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.core.model.LambdaUtils;
+import org.eclipse.jdt.internal.debug.core.model.SyntheticVariableUtils;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
@@ -299,7 +300,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			IJavaObject thisClass = context.getThis();
 			IVariable[] innerClassFields; // For anonymous classes, getting variables from outer class
 			if (null != thisClass) {
-				innerClassFields = thisClass.getVariables();
+				innerClassFields = extractVariables(thisClass);
 			} else {
 				innerClassFields = new IVariable[0];
 			}
@@ -391,6 +392,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 
 		return createExpressionFromAST(snippet, mapper, unit);
+	}
+
+	private IVariable[] extractVariables(IJavaObject thisClass) throws DebugException {
+		IVariable[] vars = thisClass.getVariables();
+		List<IVariable> varList = new ArrayList<>(Arrays.asList(vars));
+		varList.addAll(Arrays.asList(SyntheticVariableUtils.findSyntheticVariables(vars)));
+		return varList.toArray(new IVariable[0]);
 	}
 
 	private String getFixedUnresolvableGenericTypes(IJavaVariable variable) throws DebugException {

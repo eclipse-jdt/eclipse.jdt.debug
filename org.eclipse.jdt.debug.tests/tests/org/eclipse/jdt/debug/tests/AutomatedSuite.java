@@ -91,6 +91,7 @@ import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.eval.GeneralEvalTests;
 import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
+import org.eclipse.jdt.debug.tests.eval.SyntheticVariableTests;
 import org.eclipse.jdt.debug.tests.launching.ClasspathShortenerTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
@@ -264,6 +265,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(JavaDebugTargetTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
 		addTest(new TestSuite(EventDispatcherTest.class));
+		addTest(new TestSuite(SyntheticVariableTests.class));
 
 	// Refactoring tests
 		//TODO: project rename
