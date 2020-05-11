@@ -93,9 +93,14 @@ public class AdvancedSourceLookup {
 
 	private static void addWorkspaceLocation(Collection<File> locations, IPath workspacePath) {
 		IResource resource = root.findMember(workspacePath);
-		if (resource != null) {
-			locations.add(resource.getLocation().toFile());
+		if (resource == null) {
+			return;
 		}
+		IPath location = resource.getLocation();
+		if (location == null) {
+			return;
+		}
+		locations.add(location.toFile());
 	}
 
 	/**
