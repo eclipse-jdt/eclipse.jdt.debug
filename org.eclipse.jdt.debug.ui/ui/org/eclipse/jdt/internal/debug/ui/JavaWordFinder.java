@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
-import com.ibm.icu.text.UTF16;
 
 /**
  * Contains a static helper method to search documents for the 'word' that encloses the current
@@ -56,7 +55,7 @@ public class JavaWordFinder {
 				c= document.getChar(pos);
 				if (!Character.isJavaIdentifierPart(c)) {
 					// Check for surrogates
-					if (UTF16.isSurrogate(c)) {
+					if (Character.isSurrogate(c)) {
 						/*
 						 * XXX: Here we should create the code point and test whether it is a Java
 						 * identifier part. Currently this is not possible because
@@ -78,8 +77,9 @@ public class JavaWordFinder {
 
 			while (pos < length) {
 				c= document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c)) {
 					break;
+				}
 				++pos;
 			}
 
@@ -89,12 +89,13 @@ public class JavaWordFinder {
 		}
 
 		if (start >= -1 && end > -1) {
-			if (start == offset && end == offset)
+			if (start == offset && end == offset) {
 				return new Region(offset, 0);
-			else if (start == offset)
+			} else if (start == offset) {
 				return new Region(start, end - start);
-			else
+			} else {
 				return new Region(start + 1, end - start - 1);
+			}
 		}
 
 		return null;
