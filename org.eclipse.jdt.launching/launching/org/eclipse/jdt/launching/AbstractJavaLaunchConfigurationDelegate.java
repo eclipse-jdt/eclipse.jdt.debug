@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -322,13 +322,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry jreEntry = null;
 		while (jreEntry == null && index < entries.length) {
 			IRuntimeClasspathEntry entry = entries[index++];
-			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES
-					|| entry.getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES) {
-				if (JavaRuntime.isVMInstallReference(entry)) {
-					jreEntry = entry;
-				} else {
-					bootEntriesPrepend.add(entry);
-				}
+			if (JavaRuntime.isVMInstallReference(entry)) {
+				jreEntry = entry;
+			} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
+				bootEntriesPrepend.add(entry);
 			}
 		}
 		IRuntimeClasspathEntry[] bootEntriesPrep = JavaRuntime

@@ -232,9 +232,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ClasspathContainerTests.class));
 		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
 		addTest(new TestSuite(ClasspathProviderTests.class));
-		if (!JavaProjectHelper.isJava9Compatible()) {
-			addTest(new TestSuite(BootpathTests.class));
-		}
+		addTest(new TestSuite(BootpathTests.class));
 		addTest(new TestSuite(EEDefinitionTests.class));
 		if (JavaProjectHelper.isJava9Compatible()) {
 			addTest(new TestSuite(ModuleOptionsTests.class));
