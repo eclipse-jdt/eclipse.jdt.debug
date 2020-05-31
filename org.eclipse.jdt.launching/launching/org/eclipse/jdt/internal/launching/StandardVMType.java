@@ -480,14 +480,16 @@ public class StandardVMType extends AbstractVMInstallType {
 				IPath pathName = new Path(installLocation.getAbsolutePath()).append(LIB).append(JRT_FS_JAR);
 				// From Java 9 149 version, we see that jrt-fs.jar is moved to lib directory so we need to look at both places
 				File jrtfsJar = pathName.toFile();
-				if (!jrtfsJar.exists()) {
+				boolean exists = jrtfsJar.exists();
+				if (!exists) {
 					pathName = new Path(installLocation.getAbsolutePath()).append(JRT_FS_JAR);
+					exists = pathName.toFile().exists();
 				}
 
-				LibraryLocation libraryLocation = new LibraryLocation(pathName,
-						sourceRootPath, getDefaultPackageRootPath(),
-						getDefaultJavadocLocation(installLocation));
-				allLibs.add(libraryLocation);
+				if (exists) {
+					LibraryLocation libraryLocation = new LibraryLocation(pathName, sourceRootPath, getDefaultPackageRootPath(), getDefaultJavadocLocation(installLocation));
+					allLibs.add(libraryLocation);
+				}
 			}
 
 			// next is the boot path libraries
