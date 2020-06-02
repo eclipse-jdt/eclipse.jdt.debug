@@ -6,6 +6,10 @@
  *  which accompanies this distribution, and is available at
  *  https://www.eclipse.org/legal/epl-2.0/
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
@@ -74,7 +78,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						@Override
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
-							ASTParser parser = ASTParser.newParser(AST.JLS14);
+							ASTParser parser = ASTParser.newParser(AST.JLS15);
 							parser.setSource(document.get().toCharArray());
 							Map<String, String> options = JavaCore.getOptions();
 							options.put(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
