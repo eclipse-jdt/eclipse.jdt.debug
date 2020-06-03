@@ -259,24 +259,34 @@ public class ExpressionInputDialog extends TrayDialog {
                     char[] chars = currentValue.toCharArray();
                     for (int i = 0; i < chars.length; i++) {
                         char c = chars[i];
-                        if (c == '\b') {
-                            buffer.append("\\b"); //$NON-NLS-1$
-                        } else if (c == '\t') {
-                            buffer.append("\\t"); //$NON-NLS-1$
-                        } else if (c == '\n') {
-                            buffer.append("\\n"); //$NON-NLS-1$
-                        } else if (c == '\f') {
-                            buffer.append("\\f"); //$NON-NLS-1$
-                        } else if (c == '\r') {
-                            buffer.append("\\r"); //$NON-NLS-1$
-                        } else if (c == '"') {
-                            buffer.append("\\\""); //$NON-NLS-1$
-                        } else if (c == '\'') {
-                            buffer.append("\\\'"); //$NON-NLS-1$
-                        } else if (c == '\\') {
-                            buffer.append("\\\\"); //$NON-NLS-1$
-                        } else {
-                            buffer.append(c);
+                        switch (c) {
+                        	case '\b':
+                        		buffer.append("\\b"); //$NON-NLS-1$
+                        		break;
+                        	case '\t':
+                        		buffer.append("\\t"); //$NON-NLS-1$
+                        		break;
+                        	case '\n':
+                        		buffer.append("\\n"); //$NON-NLS-1$
+                        		break;
+                        	case '\f':
+                        		buffer.append("\\f"); //$NON-NLS-1$
+                        		break;
+                        	case '\r':
+                        		buffer.append("\\r"); //$NON-NLS-1$
+                        		break;
+                        	case '"':
+                        		buffer.append("\\\""); //$NON-NLS-1$
+                        		break;
+                        	case '\'':
+                        		buffer.append("\\\'"); //$NON-NLS-1$
+                        		break;
+                        	case '\\':
+                        		buffer.append("\\\\"); //$NON-NLS-1$
+                        		break;
+                        	default:
+                        		buffer.append(c);
+                        		break;
                         }
                     }
                     buffer.append('"'); // Surround value in quotes

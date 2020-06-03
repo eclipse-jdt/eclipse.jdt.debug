@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Cedric Chabanois and others.
+ * Copyright (c) 2018, 2020 Cedric Chabanois and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathSupport;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -82,6 +83,10 @@ public class LongModulePathTests extends AbstractDebugTest {
 	 * When JVM > 9, an argument file for the modulepath is created when modulepath is too long
 	 */
 	public void testVeryLongModulepathWithArgumentFile() throws Exception {
+		// Disabled for OS other than Win due to Bug 561967
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+			return;
+		}
 		// Given
 		javaProject = createJavaProjectClone("testVeryLongModulePath", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_9_EE_NAME, true);
 		useComplianceFromExecutionEnvironment(javaProject);
@@ -89,7 +94,8 @@ public class LongModulePathTests extends AbstractDebugTest {
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
 		int minModulePathLength = 300000;
 		setLongModulepath(javaProject, minModulePathLength);
-		waitForBuild();
+		TestUtil.waitForJobs("testVeryLongModulePath", 100, 10000);
+		TestUtil.runEventLoop();
 
 		// When
 		thread = launchAndSuspend(launchConfiguration);

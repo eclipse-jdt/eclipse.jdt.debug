@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Cedric Chabanois and others.
+ * Copyright (c) 2018, 2020 Cedric Chabanois and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -123,8 +123,12 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertArrayEquals(new String[] { JAVA_10_PATH, ENCODING_ARG, "-classpath", classpathShortener.getProcessTempFiles().get(0).getAbsolutePath(),
 				MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 		List<File> classpathJars = getClasspathJarsFromJarManifest(classpathShortener.getProcessTempFiles().get(0));
-		assertEquals(new File(userHomePath("/workspace/myProject/bin")), classpathJars.get(0).getCanonicalFile());
-		assertEquals(new File(userHomePath("/workspace/myProject/lib/lib 1.jar")), classpathJars.get(1).getCanonicalFile());
+		String filePathSuffix = new File(userHomePath("/workspace/myProject/bin")).getPath();
+		int index = classpathJars.get(0).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
+		assertTrue("First Classpath jar file location not found", index != -1);
+		filePathSuffix = new File(userHomePath("/workspace/myProject/lib/lib 1.jar")).getPath();
+		index = classpathJars.get(1).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
+		assertTrue("Second Classpath jar file location not found", index != -1);
 	}
 
 	public void testArgFileUsedForLongClasspathOnJava9() throws Exception {
@@ -205,8 +209,12 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, "-cp", classpathShortener.getProcessTempFiles().get(0).getAbsolutePath(),
 				MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 		List<File> classpathJars = getClasspathJarsFromJarManifest(classpathShortener.getProcessTempFiles().get(0));
-		assertEquals(new File(userHomePath("/workspace/myProject/bin")), classpathJars.get(0).getCanonicalFile());
-		assertEquals(new File(userHomePath("/workspace/myProject/lib/lib 1.jar")), classpathJars.get(1).getCanonicalFile());
+		String filePathSuffix = new File(userHomePath("/workspace/myProject/bin")).getPath();
+		int index = classpathJars.get(0).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
+		assertTrue("First Classpath jar file location not found", index != -1);
+		filePathSuffix = new File(userHomePath("/workspace/myProject/lib/lib 1.jar")).getPath();
+		index = classpathJars.get(1).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
+		assertTrue("Second Classpath jar file location not found", index != -1);
 	}
 
 	public void testClasspathEnvVariableUsedForLongClasspathOnJava8OnWindows() {

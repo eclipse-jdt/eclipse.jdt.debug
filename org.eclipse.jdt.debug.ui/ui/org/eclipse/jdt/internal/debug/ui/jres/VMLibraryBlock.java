@@ -342,33 +342,40 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		}
 		if(standin != null) {
 			LibraryLocation library = standin.toLibraryLocation();
-			if (type == SubElement.JAVADOC_URL) {
+			switch (type) {
+			case SubElement.JAVADOC_URL:
 				URL[] urls = BuildPathDialogAccess.configureJavadocLocation(fLibraryViewer.getControl().getShell(), library.getSystemLibraryPath().toOSString(), library.getJavadocLocation());
 				if (urls != null) {
 					fLibraryContentProvider.setJavadoc(urls[0], selection);
 				}
-			}
-			else if(type == SubElement.SOURCE_PATH){
-				IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
-				entry.setSourceAttachmentPath(library.getSystemLibrarySourcePath());
-				entry.setSourceAttachmentRootPath(library.getPackageRootPath());
-				IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(fLibraryViewer.getControl().getShell(), entry.getClasspathEntry());
-				if (classpathEntry != null) {
-					fLibraryContentProvider.setSourcePath(classpathEntry.getSourceAttachmentPath(), classpathEntry.getSourceAttachmentRootPath(), selection);
+				break;
+			case SubElement.SOURCE_PATH:
+				{
+					IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
+					entry.setSourceAttachmentPath(library.getSystemLibrarySourcePath());
+					entry.setSourceAttachmentRootPath(library.getPackageRootPath());
+					IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(fLibraryViewer.getControl().getShell(), entry.getClasspathEntry());
+					if (classpathEntry != null) {
+						fLibraryContentProvider.setSourcePath(classpathEntry.getSourceAttachmentPath(), classpathEntry.getSourceAttachmentRootPath(), selection);
+					}
+					break;
 				}
-			}
-			else if(type == SubElement.EXTERNAL_ANNOTATIONS_PATH) {
-				IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
-				entry.setExternalAnnotationsPath(library.getExternalAnnotationsPath());
-				IClasspathAttribute[] extraAttributes = entry.getClasspathEntry().getExtraAttributes();
-				String annotationPathString = findClasspathAttribute(extraAttributes, IClasspathAttribute.EXTERNAL_ANNOTATION_PATH);
-				IPath annotationPath = null == annotationPathString ? null : new Path(annotationPathString);
-
-				IPath newPath = BuildPathDialogAccess.configureExternalAnnotationsAttachment(fLibraryViewer.getControl().getShell(), annotationPath);
-				if (null == newPath) {
-					return;
+			case SubElement.EXTERNAL_ANNOTATIONS_PATH:
+				{
+					IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
+					entry.setExternalAnnotationsPath(library.getExternalAnnotationsPath());
+					IClasspathAttribute[] extraAttributes = entry.getClasspathEntry().getExtraAttributes();
+					String annotationPathString = findClasspathAttribute(extraAttributes, IClasspathAttribute.EXTERNAL_ANNOTATION_PATH);
+					IPath annotationPath = null == annotationPathString ? null : new Path(annotationPathString);
+					IPath newPath = BuildPathDialogAccess.configureExternalAnnotationsAttachment(fLibraryViewer.getControl().getShell(), annotationPath);
+					if (null == newPath) {
+						return;
+					}
+					fLibraryContentProvider.setAnnotationsPath(newPath.segmentCount() == 0 ? null : newPath, selection);
+					break;
 				}
-				fLibraryContentProvider.setAnnotationsPath(newPath.segmentCount() == 0 ? null : newPath, selection);
+			default:
+				break;
 			}
 		}
 	}

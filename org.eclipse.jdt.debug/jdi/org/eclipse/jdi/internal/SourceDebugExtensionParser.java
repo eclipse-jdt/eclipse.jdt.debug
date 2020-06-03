@@ -413,34 +413,34 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseFileInfo(Lexer lexer) throws AbsentInformationException {
 		int lexemType = lexer.lexemType();
-		if (lexemType == Lexer.NUMBER) {
-			int fileId = integerValue(lexer.lexem());
-			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException(
-						JDIMessages.SourceDebugExtensionParser_16);
-			}
-			fCurrentStratum.addFileInfo(fileId, getNonAsteriskString(lexer));
-		} else if (lexemType == Lexer.PLUS) {
-			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException(
-						JDIMessages.SourceDebugExtensionParser_17);
-			}
-			int fileId = integerValue(lexer.lexem());
-			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException(
-						JDIMessages.SourceDebugExtensionParser_16);
-			}
-			String fileName = getNonAsteriskString(lexer);
-			if (isAsteriskLexem(lexer.lexemType())) {
-				throw new AbsentInformationException(
-						JDIMessages.SourceDebugExtensionParser_19);
-			}
-			fCurrentStratum.addFileInfo(fileId, fileName,
-					getNonAsteriskString(lexer));
-		} else {
-			throw new AbsentInformationException(NLS.bind(
-					JDIMessages.SourceDebugExtensionParser_12,
-					new String[] { new String(lexer.lexem()) }));
+		switch (lexemType) {
+			case Lexer.NUMBER:
+				int fileId = integerValue(lexer.lexem());
+				if (isAsteriskLexem(lexer.nextLexem())) {
+					throw new AbsentInformationException(
+							JDIMessages.SourceDebugExtensionParser_16);
+				}
+				fCurrentStratum.addFileInfo(fileId, getNonAsteriskString(lexer));
+				break;
+			case Lexer.PLUS:
+				if (lexer.nextLexem() != Lexer.NUMBER) {
+					throw new AbsentInformationException(
+							JDIMessages.SourceDebugExtensionParser_17);
+				}
+				fileId = integerValue(lexer.lexem());
+				if (isAsteriskLexem(lexer.nextLexem())) {
+					throw new AbsentInformationException(
+							JDIMessages.SourceDebugExtensionParser_16);
+				}
+				String fileName = getNonAsteriskString(lexer);
+				if (isAsteriskLexem(lexer.lexemType())) {
+					throw new AbsentInformationException(
+							JDIMessages.SourceDebugExtensionParser_19);
+				}
+				fCurrentStratum.addFileInfo(fileId, fileName, getNonAsteriskString(lexer));
+				break;
+			default:
+				throw new AbsentInformationException(NLS.bind(JDIMessages.SourceDebugExtensionParser_12, new String[] { new String(lexer.lexem()) }));
 		}
 	}
 

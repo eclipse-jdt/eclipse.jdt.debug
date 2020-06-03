@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.contentassist;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
@@ -24,6 +27,8 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThisVariable;
+import org.eclipse.jdt.internal.debug.core.model.SyntheticVariableUtils;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 
 
 /**
@@ -63,7 +68,7 @@ public class CurrentFrameContext extends TypeContext {
 	public String[][] getLocalVariables() throws CoreException {
         IJavaStackFrame frame = getStackFrame();
         if (frame != null) {
-            IVariable[] variables = frame.getVariables();
+			IVariable[] variables = extractVariables(frame);
             int index = 0;
 			while (index < variables.length
 					&& (variables[index] instanceof JDIThisVariable || JDIPlaceholderVariable.class.isAssignableFrom(variables[index].getClass()))) {
@@ -72,7 +77,7 @@ public class CurrentFrameContext extends TypeContext {
             String[][] locals = new String[2][variables.length - index];
             for (int i = 0; i < locals[0].length; i++) {
                 IJavaVariable var = (IJavaVariable) variables[index];
-                locals[0][i] = var.getName();
+				locals[0][i] = resolveVarName(var);
                 try {
                 	locals[1][i] = var.getJavaType().getName();
                 }
@@ -86,9 +91,29 @@ public class CurrentFrameContext extends TypeContext {
         return super.getLocalVariables();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#isStatic()
-     */
+	private IVariable[] extractVariables(IJavaStackFrame frame) throws DebugException {
+		ArrayList<IVariable> vars = new ArrayList<>(Arrays.asList(frame.getVariables()));
+		for (IVariable var : vars) {
+			if (var instanceof JDIThisVariable) {
+				vars.addAll(Arrays.asList(SyntheticVariableUtils.findSyntheticVariables(var.getValue().getVariables())));
+				break;
+			}
+		}
+		return vars.toArray(new IVariable[0]);
+	}
+
+	private String resolveVarName(IJavaVariable var) throws DebugException {
+		final String name = var.getName();
+		if (name.startsWith(ASTEvaluationEngine.ANONYMOUS_VAR_PREFIX)) {
+			return name.substring(ASTEvaluationEngine.ANONYMOUS_VAR_PREFIX.length());
+		}
+		return name;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#isStatic()
+	 */
     @Override
 	public boolean isStatic() throws CoreException {
         IJavaStackFrame frame = getStackFrame();

@@ -41,13 +41,12 @@ public class JDTDebugRefactoringUtil {
 	 */
 	public static Change createChangeFromList(List<Change> changes, String changeLabel) {
 		int nbChanges= changes.size();
-		if (nbChanges == 0) {
+		switch (nbChanges) {
+		case 0:
 			return null;
-		}
-		else if (nbChanges == 1) {
+		case 1:
 			return changes.get(0);
-		}
-		else {
+		default:
 			return new CompositeChange(changeLabel, changes.toArray(new Change[changes.size()]));
 		}
 	}
