@@ -176,7 +176,9 @@ public class SyntheticVariableTests extends AbstractDebugUiTests {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		project.getProject().delete(true, null);
+		if (project != null && project.getProject() != null) {
+			project.getProject().delete(true, null);
+		}
 		project = null;
 	}
 }
