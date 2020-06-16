@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Gayan Perera - initial API and implementation
+ *     IBM Corporation - bugfixes
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.Callable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -97,6 +99,9 @@ public class SyntheticVariableTests extends AbstractDebugUiTests {
 	}
 
 	public void testCompleteMethodParameter_DeepInTwoNestedClasses() throws Exception {
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			return;
+		}
 		addClasses();
 		createBreakPoint(31);
 		try {
@@ -171,7 +176,9 @@ public class SyntheticVariableTests extends AbstractDebugUiTests {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		project.getProject().delete(true, null);
+		if (project != null && project.getProject() != null) {
+			project.getProject().delete(true, null);
+		}
 		project = null;
 	}
 }
