@@ -622,7 +622,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 						|| problemId == IProblem.NotVisibleMethod
 						|| problemId == IProblem.NotVisibleConstructor
 						|| problemId == IProblem.NotVisibleField
-						|| problemId == IProblem.NotVisibleType) {
+						|| problemId == IProblem.NotVisibleType 
+						|| problemId == IProblem.UnexpectedStaticModifierForMethod) {
 					continue;
 				}
 				if (problem.isError()) {
