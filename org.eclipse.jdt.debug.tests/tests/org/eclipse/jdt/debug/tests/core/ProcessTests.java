@@ -69,6 +69,12 @@ public class ProcessTests extends AbstractDebugTest {
 	public void testAlreadyTerminatedProcess() throws Exception {
 		Process process;
 		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			// printing env command
+			{
+				Runtime.getRuntime().exec("env");
+				Thread.sleep(500);
+
+			}
 			process = DebugPlugin.exec(new String[] { "java" }, new File("/tmp"));
 		} else {
 			process = DebugPlugin.exec(new String[] { "java" }, null);
