@@ -20,17 +20,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -47,6 +45,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	// VM arguments widgets
 	protected Text fVMArgumentsText;
 	private Button fUseStartOnFirstThread = null;
+	private Button fHelpfulExceptions = null;
 	private Button fPgrmArgVariableButton;
 
 	/**
@@ -66,27 +65,20 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		group.setText(LauncherMessages.JavaArgumentsTab_VM_ar_guments__6);
 
 		fVMArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		fVMArgumentsText.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				switch (e.detail) {
-					case SWT.TRAVERSE_ESCAPE:
-					case SWT.TRAVERSE_PAGE_NEXT:
-					case SWT.TRAVERSE_PAGE_PREVIOUS:
+		fVMArgumentsText.addTraverseListener(e -> {
+			switch (e.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+				case SWT.TRAVERSE_PAGE_NEXT:
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+					e.doit = true;
+					break;
+				case SWT.TRAVERSE_RETURN:
+				case SWT.TRAVERSE_TAB_NEXT:
+				case SWT.TRAVERSE_TAB_PREVIOUS:
+					if (((fVMArgumentsText.getStyle() & SWT.SINGLE) != 0) || (!fVMArgumentsText.isEnabled() || (e.stateMask & SWT.MODIFIER_MASK) != 0)) {
 						e.doit = true;
-						break;
-					case SWT.TRAVERSE_RETURN:
-					case SWT.TRAVERSE_TAB_NEXT:
-					case SWT.TRAVERSE_TAB_PREVIOUS:
-						if ((fVMArgumentsText.getStyle() & SWT.SINGLE) != 0) {
-							e.doit = true;
-						} else {
-							if (!fVMArgumentsText.isEnabled() || (e.stateMask & SWT.MODIFIER_MASK) != 0) {
-								e.doit = true;
-							}
-						}
-						break;
-				}
+					}
+					break;
 			}
 		});
 		gd = new GridData(GridData.FILL_BOTH);
@@ -94,12 +86,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		gd.widthHint = 100;
 		fVMArgumentsText.setLayoutData(gd);
 		fVMArgumentsText.setFont(font);
-		fVMArgumentsText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent evt) {
-				scheduleUpdateJob();
-			}
-		});
+		fVMArgumentsText.addModifyListener(evt -> scheduleUpdateJob());
 		ControlAccessibleListener.addListener(fVMArgumentsText, group.getText());
 
 		fPgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null);
@@ -126,6 +113,15 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 				}
 			});
 		}
+		fHelpfulExceptions = SWTFactory.createCheckButton(group, LauncherMessages.VMArgumentsBlock_2, null, true, 1);
+		fHelpfulExceptions.setEnabled(false);
+		fHelpfulExceptions.setToolTipText(LauncherMessages.JavaArgumentsTab_AttributeTooltip_ActivateHelpfulNullPointerExceptions);
+		fHelpfulExceptions.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				scheduleUpdateJob();
+			}
+		});
 	}
 
 	/**
@@ -135,6 +131,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true);
 	}
 
 	/**
@@ -146,6 +143,9 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
 			if(fUseStartOnFirstThread != null) {
 				fUseStartOnFirstThread.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true));
+			}
+			if (fHelpfulExceptions != null) {
+				fHelpfulExceptions.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true));
 			}
 		} catch (CoreException e) {
 			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage());
@@ -161,6 +161,27 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getAttributeValueFrom(fVMArgumentsText));
 		if(fUseStartOnFirstThread != null) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, fUseStartOnFirstThread.getSelection());
+		}
+		if (isJavaNewerThan(configuration, JavaCore.VERSION_13)) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, fHelpfulExceptions.getSelection());
+			fHelpfulExceptions.setEnabled(true);
+		} else {
+			fHelpfulExceptions.setEnabled(false);
+		}
+	}
+
+	/**
+	 *
+	 * @param configuration
+	 * @param version
+	 *            string eg. org.eclipse.jdt.core.JavaCore.VERSION_14
+	 * @return
+	 */
+	private boolean isJavaNewerThan(ILaunchConfiguration configuration, String version) {
+		try {
+			return JavaRuntime.compareJavaVersions(JavaRuntime.computeVMInstall(configuration), version) > 0;
+		} catch (CoreException e) {
+			return false;
 		}
 	}
 
