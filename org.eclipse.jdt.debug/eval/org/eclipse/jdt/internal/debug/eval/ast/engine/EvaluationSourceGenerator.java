@@ -112,7 +112,8 @@ public class EvaluationSourceGenerator {
 		int i ;
 		for (i=0; i < chars.length; i++) {
 			// copy everything before the last statement or if whitespace
-			if (i<= semicolonIndex || Character.isWhitespace(chars[i]) || chars[i] == '}'){
+			if (i<= semicolonIndex || Character.isWhitespace(chars[i]) || chars[i] == '}' 
+					|| (i > 0 && (chars[i - 1] == '}' && (chars[i] == ')' || chars[i] == ',')))) {
 				wordBuffer.append(codeSnippet.charAt(i));
 			}
 			else
@@ -131,7 +132,7 @@ public class EvaluationSourceGenerator {
 				if (needsReturn(lastSentence))
 					wordBuffer.append(returnString);
 			}
-		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+7).equals(returnString)))){
+		} else if (chars[chars.length -1] !='}' && ( (i+7 > chars.length && lastSentence.length() > 1) || (i + 7 <= chars.length && !codeSnippet.substring(i, i+7).equals(returnString)))){
 			// add return if last statement does not have return
 			if (needsReturn(lastSentence))
 				wordBuffer.append(returnString);
@@ -149,6 +150,11 @@ public class EvaluationSourceGenerator {
 			if ( j != -1 && (j!=k))
 				wordBuffer.append(';');
 		}
+		
+		if(lastSentence.length() <= 1 && needsReturn(wordBuffer.toString())) {
+			wordBuffer.insert(0, returnString).append(' ');
+		}
+		
 		return wordBuffer.toString();
 	}
 
@@ -225,8 +231,20 @@ public class EvaluationSourceGenerator {
 				else if ( (count == 3 || count == 1 ) && token == ITerminalSymbols.TokenNameIdentifier ){
 					 return false;
 				}
-				else {
-					return true;
+				else if (count == 0 && token == ITerminalSymbols.TokenNamereturn) {
+					return false;
+				} else {
+					// ignore and continue the tokens specified here, handling following types of statements
+					// {return i > 0;}, {/**/};{return true;}
+					switch (token) {
+						case ITerminalSymbols.TokenNameLBRACE:
+						case ITerminalSymbols.TokenNameRBRACE:
+						case ITerminalSymbols.TokenNameSEMICOLON:
+							token = scanner.getNextToken();
+							break;
+						default:
+							return true;
+					}
 				}
 
 			}

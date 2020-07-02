@@ -82,6 +82,11 @@ public class RemoteEvaluatorBuilder {
 		acceptFunctionalExpression(node, expectedResult);
 	}
 
+	public void acceptAnonymousClass(ClassInstanceCreation node, ITypeBinding expectedResult) {
+		acceptFunctionalExpression(node, expectedResult);
+	}
+
+
 	private void acceptFunctionalExpression(Expression node, ITypeBinding expectedResult) {
 		FunctionalEvalVisitor visitor = new FunctionalEvalVisitor();
 		node.accept(visitor);

@@ -1548,8 +1548,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-		setHasError(true);
-		addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2);
 		return false;
 	}
 
@@ -2008,9 +2006,22 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
+		String rewrittenLocalType = null;
 		if (node.getAnonymousClassDeclaration() != null) {
-			setHasError(true);
-			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_7);
+			try {
+				RemoteEvaluatorBuilder builder = makeBuilder(node);
+				builder.acceptAnonymousClass(node, node.getType().resolveBinding());
+				RemoteEvaluator remoteEvaluator = builder.build();
+				push(new RemoteOperator(builder.getSnippet(), node.getStartPosition(), remoteEvaluator));
+
+				push(new PushType(getTypeName(node.getType().resolveBinding())));
+				storeInstruction();
+				return false;
+
+			} catch (JavaModelException | DebugException e) {
+				addErrorMessage(e.getMessage());
+				setHasError(true);
+			}
 		}
 
 		IMethodBinding methodBinding = node.resolveConstructorBinding();
@@ -2026,10 +2037,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		boolean isInstanceMemberType = typeBinding.isMember()
 				&& !Modifier.isStatic(typeBinding.getModifiers());
 
-		if (isALocalType(typeBinding)) {
-			setHasError(true);
-			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8);
-		}
+		boolean isLocalType = isALocalType(typeBinding);
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
@@ -2057,12 +2065,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			paramCount++;
 		}
 
-		String signature = getMethodSignature(methodBinding,
-				enclosingTypeSignature).replace('.', '/');
+		String signature = null;
+		if(isLocalType) {
+			String methodSignature = getMethodSignature(methodBinding, null);
+			signature = methodSignature.replace(methodBinding.getReturnType().getQualifiedName(), rewrittenLocalType).replace('.', '/');
+		} else {
+			signature = getMethodSignature(methodBinding,
+					enclosingTypeSignature).replace('.', '/');
+		}
 
 		push(new Constructor(signature, paramCount, fCounter));
 
-		push(new PushType(getTypeName(typeBinding)));
+		push(new PushType(isLocalType ? rewrittenLocalType : getTypeName(typeBinding)));
 		storeInstruction();
 
 		if (isInstanceMemberType) {
