@@ -48,6 +48,22 @@ public class LambdaVariableTest extends AbstractDebugTest {
 		assertEquals("wrong result : ", "Hello bug 562056", value.getValueString());
 	}
 
+	public void testEvaluate_WithGenericTypeVariables_SuperType() throws Exception {
+		debugWithBreakpoint("Bug564801", 9);
+		String snippet = "a.compareTo(b)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("Actual value is not 1", "1", value.toString());
+	}
+
+	public void testEvaluate_WithGenericTypeVariables_ExtendsType() throws Exception {
+		debugWithBreakpoint("Bug564801", 14);
+		String snippet = "predicate.test(p)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("Actual value is not false", "false", value.toString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);

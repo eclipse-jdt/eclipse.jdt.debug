@@ -409,7 +409,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 		final String genericSignature = variable.getGenericSignature();
 		final String fqn = Signature.toString(genericSignature).replace('/', '.');
-		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE))) {
+		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE))
+				|| Signature.getTypeArguments(genericSignature).length > 0) {
 			// resolve to the signature of the variable.
 			return Signature.toString(variable.getSignature()).replace('/', '.');
 		}
