@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -107,6 +107,9 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 			JDIThread thread = (JDIThread) result.getThread();
 			if (result.hasErrors()) {
 				DebugException exception = result.getException();
+				if (exception == null) {
+					return DONT_SUSPEND;
+				}
 				Throwable wrappedException = exception.getStatus()
 						.getException();
 				if (wrappedException instanceof VMDisconnectedException) {
