@@ -116,7 +116,7 @@ public class VMTypePage extends WizardPage {
         data.widthHint = 300;
         fTypesViewer.getControl().setFont(composite.getFont());
         fTypesViewer.getControl().setLayoutData(data);
-        fTypesViewer.setContentProvider(new ArrayContentProvider());
+        fTypesViewer.setContentProvider(ArrayContentProvider.getInstance());
         fTypesViewer.setLabelProvider(new TypeLabelProvider());
 		fTypesViewer.setComparator(new ViewerComparator());
 		fTypesViewer.addDoubleClickListener(new IDoubleClickListener() {

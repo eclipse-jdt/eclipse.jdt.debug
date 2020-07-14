@@ -191,7 +191,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		table.setLayout(layout);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fProfilesViewer = new TableViewer(table);
-		fProfilesViewer.setContentProvider(new ArrayContentProvider());
+		fProfilesViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fProfilesViewer.setLabelProvider(new ExecutionEnvironmentsLabelProvider());
 		fProfilesViewer.setInput(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments());
 

@@ -19,7 +19,6 @@ import org.eclipse.osgi.util.NLS;
 public class EvaluationEngineMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.eval.ast.engine.EvaluationEngineMessages";//$NON-NLS-1$
 
-	public static String ASTInstructionCompiler_Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2;
 	public static String ASTInstructionCompiler_Assert_statement_cannot_be_used_in_an_evaluation_expression_3;
 	public static String ASTInstructionCompiler_Unrecognized_assignment_operator____4;
 

@@ -30,6 +30,7 @@ Export-Package: org.eclipse.jdt.debug.ui,
  org.eclipse.jdt.internal.debug.ui.threadgroups;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui.variables;x-internal:=true
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.21.0,4.0.0)",
  org.eclipse.jface.text;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.5.0,4.0.0)",

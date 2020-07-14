@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Bundle of most images used by the Java debug plug-in.
@@ -239,15 +237,11 @@ public class JavaDebugImages {
      *              this plugin class is found (i.e. typically the packages directory)
      */
     private final static void declareRegistryImage(String key, String path) {
-        ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
-        Bundle bundle = Platform.getBundle(JDIDebugUIPlugin.getUniqueIdentifier());
-        URL url = null;
-        if (bundle != null){
-            url = FileLocator.find(bundle, new Path(path), null);
-            if(url != null) {
-            	desc = ImageDescriptor.createFromURL(url);
-            }
-        }
-        fgImageRegistry.put(key, desc);
+		Bundle bundle = FrameworkUtil.getBundle(JavaDebugImages.class);
+		if (bundle == null) {
+			fgImageRegistry.put(key, ImageDescriptor.getMissingImageDescriptor());
+		} else {
+			fgImageRegistry.put(key, ImageDescriptor.createFromURLSupplier(true, () -> FileLocator.find(bundle, new Path(path), null)));
+		}
     }
 }

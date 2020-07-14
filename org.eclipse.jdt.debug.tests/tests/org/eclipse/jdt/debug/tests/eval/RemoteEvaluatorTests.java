@@ -60,6 +60,34 @@ public class RemoteEvaluatorTests extends AbstractDebugTest {
 		assertEquals("count is not 0", "0", value.getValueString());
 	}
 
+	public void testEvaluate_AnonymousClassInstance_WithSemicolon() throws Exception {
+		debugWithBreakpoint("AnonymousEvaluator", 6);
+		IValue value = evaluate("calculate(new IntSupplier() {\n" + 
+				"\n" + 
+				"			@Override\n" + 
+				"			public int getAsInt() {\n" + 
+				"				return 100 * 20;\n" + 
+				"			}\n" + 
+				"		});");
+
+		assertNotNull("result is null", value);
+		assertEquals("count is not 4000", "4000", value.getValueString());
+	}
+
+	public void testEvaluate_AnonymousClassInstance_WithoutSemicolon() throws Exception {
+		debugWithBreakpoint("AnonymousEvaluator", 6);
+		IValue value = evaluate("calculate(new IntSupplier() {\n" + 
+				"\n" + 
+				"			@Override\n" + 
+				"			public int getAsInt() {\n" + 
+				"				return 100 * 20;\n" + 
+				"			}\n" + 
+				"		})");
+
+		assertNotNull("result is null", value);
+		assertEquals("count is not 4000", "4000", value.getValueString());
+	}
+
 	@Override
 	protected IJavaProject getProjectContext() {
 		return get18Project();
