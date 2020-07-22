@@ -50,6 +50,6 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.jdt.core.manipulation,
  org.eclipse.core.filesystem
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jdt.debug.tests

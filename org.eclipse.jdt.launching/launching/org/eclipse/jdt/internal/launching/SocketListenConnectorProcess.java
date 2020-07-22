@@ -113,14 +113,10 @@ public class SocketListenConnectorProcess implements IProcess {
 		fStartTime = System.currentTimeMillis();
 		fAccepted = 0;
 		// If the connector does not support multiple connections, accept a single connection
-		try {
-			if (!connector.supportsMultipleConnections()) {
-				fConnectionLimit = 1;
-			}
-		}
-		catch (IOException | IllegalConnectorArgumentsException ex) {
+		if (!connector.supportsMultipleConnections()) {
 			fConnectionLimit = 1;
 		}
+
 		fLaunch.addProcess(this);
 		fWaitForConnectionJob = new WaitForConnectionJob(connector,arguments);
 		fWaitForConnectionJob.setPriority(Job.SHORT);

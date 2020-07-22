@@ -20,7 +20,6 @@ import java.io.IOException;
 import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
@@ -93,7 +92,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Locatable locatable) {
+	public int compareTo(Location locatable) {
 		if (locatable == null || !locatable.getClass().equals(this.getClass())) {
 			throw new ClassCastException(
 					JDIMessages.LocationImpl_Can__t_compare_location_to_given_object_1);
