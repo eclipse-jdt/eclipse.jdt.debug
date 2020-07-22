@@ -134,7 +134,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			}
 			//if the line info is a valid location with an invalid line number,
 			//a line breakpoint must be removed
-			if(isLineBreakpoint(marker) & line == -1) {
+			if(isLineBreakpoint(marker) && line == -1) {
 				return false;
 			}
 			MarkerUtilities.setLineNumber(marker, line);
