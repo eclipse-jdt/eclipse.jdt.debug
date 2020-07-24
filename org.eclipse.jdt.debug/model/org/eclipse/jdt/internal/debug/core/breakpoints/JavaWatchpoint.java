@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -111,26 +110,23 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 			final String fieldName, final int lineNumber, final int charStart,
 			final int charEnd, final int hitCount, final boolean add,
 			final Map<String, Object> attributes) throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				setMarker(resource.createMarker(JAVA_WATCHPOINT));
+		IWorkspaceRunnable wr = monitor -> {
+			setMarker(resource.createMarker(JAVA_WATCHPOINT));
 
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(),
-						true, lineNumber, charStart, charEnd);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-				// configure the field handle
-				addFieldName(attributes, fieldName);
-				// configure the access and modification flags to defaults
-				addDefaultAccessAndModification(attributes);
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(),
+					true, lineNumber, charStart, charEnd);
+			addTypeNameAndHitCount(attributes, typeName, hitCount);
+			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
+			// configure the field handle
+			addFieldName(attributes, fieldName);
+			// configure the access and modification flags to defaults
+			addDefaultAccessAndModification(attributes);
 
-				// set attributes
-				ensureMarker().setAttributes(attributes);
+			// set attributes
+			ensureMarker().setAttributes(attributes);
 
-				register(add);
-			}
+			register(add);
 		};
 		run(getMarkerRule(resource), wr);
 	}

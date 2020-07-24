@@ -2050,50 +2050,47 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return;
 		}
 		fIsSuspending = true;
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					fThread.suspend();
-					int timeout = Platform.getPreferencesService().getInt(
-							JDIDebugPlugin.getUniqueIdentifier(),
-							JDIDebugModel.PREF_REQUEST_TIMEOUT,
-							JDIDebugModel.DEF_REQUEST_TIMEOUT,
-							null);
-					long stop = System.currentTimeMillis() + timeout;
-					boolean suspended = isUnderlyingThreadSuspended();
-					while (System.currentTimeMillis() < stop && !suspended) {
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException e) {
-						}
-						suspended = isUnderlyingThreadSuspended();
-						if (suspended) {
-							break;
-						}
+		Thread thread = new Thread(() -> {
+			try {
+				fThread.suspend();
+				int timeout = Platform.getPreferencesService().getInt(
+						JDIDebugPlugin.getUniqueIdentifier(),
+						JDIDebugModel.PREF_REQUEST_TIMEOUT,
+						JDIDebugModel.DEF_REQUEST_TIMEOUT,
+						null);
+				long stop = System.currentTimeMillis() + timeout;
+				boolean suspended = isUnderlyingThreadSuspended();
+				while (System.currentTimeMillis() < stop && !suspended) {
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e1) {
 					}
-					if (!suspended) {
-						IStatus status = new Status(
-								IStatus.ERROR,
-								JDIDebugPlugin.getUniqueIdentifier(),
-								SUSPEND_TIMEOUT,
-								MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, Integer.valueOf(timeout).toString()),
-								null);
-						IStatusHandler handler = DebugPlugin.getDefault()
-								.getStatusHandler(status);
-						if (handler != null) {
-							try {
-								handler.handleStatus(status, JDIThread.this);
-							} catch (CoreException e) {
-							}
-						}
+					suspended = isUnderlyingThreadSuspended();
+					if (suspended) {
+						break;
 					}
-					setRunning(false);
-					fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-				} catch (RuntimeException exception) {
-				} finally {
-					fIsSuspending = false;
 				}
+				if (!suspended) {
+					IStatus status = new Status(
+							IStatus.ERROR,
+							JDIDebugPlugin.getUniqueIdentifier(),
+							SUSPEND_TIMEOUT,
+							MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, Integer.valueOf(timeout).toString()),
+							null);
+					IStatusHandler handler = DebugPlugin.getDefault()
+							.getStatusHandler(status);
+					if (handler != null) {
+						try {
+							handler.handleStatus(status, JDIThread.this);
+						} catch (CoreException e2) {
+						}
+					}
+				}
+				setRunning(false);
+				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			} catch (RuntimeException exception) {
+			} finally {
+				fIsSuspending = false;
 			}
 		});
 		thread.setDaemon(true);

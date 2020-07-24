@@ -556,18 +556,15 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		fireCreationEvent();
 		// begin handling/dispatching events after the creation event is handled
 		// by all listeners
-		plugin.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				EventDispatcher dispatcher = getEventDispatcher();
-				if (dispatcher != null) {
-					Thread t = new Thread(
-							dispatcher,
-							JDIDebugModel.getPluginIdentifier()
-									+ JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher);
-					t.setDaemon(true);
-					t.start();
-				}
+		plugin.asyncExec(() -> {
+			EventDispatcher dispatcher = getEventDispatcher();
+			if (dispatcher != null) {
+				Thread t = new Thread(
+						dispatcher,
+						JDIDebugModel.getPluginIdentifier()
+								+ JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher);
+				t.setDaemon(true);
+				t.start();
 			}
 		});
 	}

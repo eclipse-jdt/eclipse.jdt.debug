@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -91,27 +90,22 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 			final String typeName, final int memberType, final int charStart,
 			final int charEnd, final boolean add, final Map<String, Object> attributes)
 			throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(JAVA_CLASS_PREPARE_BREAKPOINT));
 
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(JAVA_CLASS_PREPARE_BREAKPOINT));
+			// add attributes
+			attributes.put(IBreakpoint.ID, getModelIdentifier());
+			attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
+			attributes.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
+			attributes.put(TYPE_NAME, typeName);
+			attributes.put(MEMBER_TYPE, Integer.valueOf(memberType));
+			attributes.put(ENABLED, Boolean.TRUE);
+			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 
-				// add attributes
-				attributes.put(IBreakpoint.ID, getModelIdentifier());
-				attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
-				attributes.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
-				attributes.put(TYPE_NAME, typeName);
-				attributes.put(MEMBER_TYPE, Integer.valueOf(memberType));
-				attributes.put(ENABLED, Boolean.TRUE);
-				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
+			ensureMarker().setAttributes(attributes);
 
-				ensureMarker().setAttributes(attributes);
-
-				register(add);
-			}
-
+			register(add);
 		};
 		run(getMarkerRule(resource), wr);
 	}

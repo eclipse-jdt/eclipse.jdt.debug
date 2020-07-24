@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -144,24 +143,21 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 			final int charEnd, final int hitCount, final boolean add,
 			final Map<String, Object> attributes, final String markerType)
 			throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
+		IWorkspaceRunnable wr = monitor -> {
 
-				// create the marker
-				setMarker(resource.createMarker(markerType));
+			// create the marker
+			setMarker(resource.createMarker(markerType));
 
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(),
-						true, lineNumber, charStart, charEnd);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				// set attributes
-				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-				ensureMarker().setAttributes(attributes);
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(),
+					true, lineNumber, charStart, charEnd);
+			addTypeNameAndHitCount(attributes, typeName, hitCount);
+			// set attributes
+			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
+			ensureMarker().setAttributes(attributes);
 
-				// add to breakpoint manager if requested
-				register(add);
-			}
+			// add to breakpoint manager if requested
+			register(add);
 		};
 		run(getMarkerRule(resource), wr);
 	}

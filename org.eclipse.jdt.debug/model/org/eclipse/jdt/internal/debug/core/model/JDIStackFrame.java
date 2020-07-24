@@ -17,7 +17,6 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -352,19 +351,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 							}
 						}
 						Collections.sort(fVariables,
-								new Comparator<IJavaVariable>() {
-									@Override
-									public int compare(IJavaVariable a, IJavaVariable b) {
-										JDIFieldVariable v1 = (JDIFieldVariable) a;
-										JDIFieldVariable v2 = (JDIFieldVariable) b;
-										try {
-											return v1.getName()
-													.compareToIgnoreCase(
-															v2.getName());
-										} catch (DebugException de) {
-											logError(de);
-											return -1;
-										}
+								(a, b) -> {
+									JDIFieldVariable v1 = (JDIFieldVariable) a;
+									JDIFieldVariable v2 = (JDIFieldVariable) b;
+									try {
+										return v1.getName()
+												.compareToIgnoreCase(
+														v2.getName());
+									} catch (DebugException de) {
+										logError(de);
+										return -1;
 									}
 								});
 					}
