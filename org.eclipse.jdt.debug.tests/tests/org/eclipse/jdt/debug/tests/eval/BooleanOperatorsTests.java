@@ -39,25 +39,25 @@ public class BooleanOperatorsTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("boolean or boolean : wrong type : ", "boolean", typeName);
 		boolean booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean or boolean : wrong result : ", xBooleanValue || xBooleanValue, booleanValue);
+		assertEquals("boolean or boolean : wrong result : ", xBooleanValue | xBooleanValue, booleanValue);
 
 		value = eval(xBoolean + orOp + yBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean or boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean or boolean : wrong result : ", xBooleanValue || yBooleanValue, booleanValue);
+		assertEquals("boolean or boolean : wrong result : ", xBooleanValue | yBooleanValue, booleanValue);
 
 		value = eval(yBoolean + orOp + xBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean or boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean or boolean : wrong result : ", yBooleanValue || xBooleanValue, booleanValue);
+		assertEquals("boolean or boolean : wrong result : ", yBooleanValue | xBooleanValue, booleanValue);
 
 		value = eval(yBoolean + orOp + yBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean or boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean or boolean : wrong result : ", yBooleanValue || yBooleanValue, booleanValue);
+		assertEquals("boolean or boolean : wrong result : ", yBooleanValue | yBooleanValue, booleanValue);
 		} finally {
 		end();
 		}
@@ -72,25 +72,25 @@ public class BooleanOperatorsTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("boolean and boolean : wrong type : ", "boolean", typeName);
 		boolean booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean and boolean : wrong result : ", xBooleanValue && xBooleanValue, booleanValue);
+		assertEquals("boolean and boolean : wrong result : ", xBooleanValue & xBooleanValue, booleanValue);
 
 		value = eval(xBoolean + andOp + yBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean and boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean and boolean : wrong result : ", xBooleanValue && yBooleanValue, booleanValue);
+		assertEquals("boolean and boolean : wrong result : ", xBooleanValue & yBooleanValue, booleanValue);
 
 		value = eval(yBoolean + andOp + xBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean and boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean and boolean : wrong result : ", yBooleanValue && xBooleanValue, booleanValue);
+		assertEquals("boolean and boolean : wrong result : ", yBooleanValue & xBooleanValue, booleanValue);
 
 		value = eval(yBoolean + andOp + yBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean and boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("boolean and boolean : wrong result : ", yBooleanValue && yBooleanValue, booleanValue);
+		assertEquals("boolean and boolean : wrong result : ", yBooleanValue & yBooleanValue, booleanValue);
 		} finally {
 		end();
 		}
