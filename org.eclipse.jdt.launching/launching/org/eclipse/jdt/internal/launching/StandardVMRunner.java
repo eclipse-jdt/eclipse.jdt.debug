@@ -440,9 +440,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 			arguments.add("--enable-preview"); //$NON-NLS-1$
 		}
 
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		// check if java 14 or greater
 		if (getJavaVersion(fVMInstance) >= 14) {
-			if (launch.getLaunchConfiguration().getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
+			if (launchConfiguration != null
+					&& launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
 				arguments.add("-XX:+ShowCodeDetailsInExceptionMessages"); //$NON-NLS-1$
 			}
 		}
@@ -471,7 +473,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			cmdLine = classpathShortener.getCmdLine();
 			envp = classpathShortener.getEnvp();
 		}
-		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
+		String[] newCmdLine = validateCommandLine(launchConfiguration, cmdLine);
 		if (newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}
