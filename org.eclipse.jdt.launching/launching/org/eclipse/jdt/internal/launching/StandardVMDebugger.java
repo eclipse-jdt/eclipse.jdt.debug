@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -203,8 +204,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 				arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
 			}
 			// check if java 14 or greater
-			if (version >= 14) {
-				if (launch.getLaunchConfiguration().getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
+			ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+			// check if java 14 or greater
+			if (getJavaVersion(fVMInstance) >= 14) {
+				if (launchConfiguration != null
+						| launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
 					arguments.add("-XX:+ShowCodeDetailsInExceptionMessages"); //$NON-NLS-1$
 				}
 			}

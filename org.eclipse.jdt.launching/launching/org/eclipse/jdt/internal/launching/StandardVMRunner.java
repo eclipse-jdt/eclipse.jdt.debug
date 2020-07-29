@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -444,7 +444,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		// check if java 14 or greater
 		if (getJavaVersion(fVMInstance) >= 14) {
 			if (launchConfiguration != null
-					&& launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
+					| launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
 				arguments.add("-XX:+ShowCodeDetailsInExceptionMessages"); //$NON-NLS-1$
 			}
 		}
