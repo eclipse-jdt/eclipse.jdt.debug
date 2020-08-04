@@ -1299,9 +1299,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		StringBuilder buff= new StringBuilder();
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
 		try {
-			typeName= var.getReferenceTypeName();
-			if (showTypes) {
-				typeName= getQualifiedName(typeName);
+			if (javaValue != null) {
+				typeName = javaValue.getReferenceTypeName();
+				if (showTypes) {
+					typeName = getQualifiedName(typeName);
+				}
 			}
 		} catch (DebugException exception) {
 		}
