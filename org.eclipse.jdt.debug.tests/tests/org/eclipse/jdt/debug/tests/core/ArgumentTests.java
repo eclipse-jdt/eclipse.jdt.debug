@@ -13,13 +13,20 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import static java.util.stream.Collectors.joining;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -42,6 +49,7 @@ import org.eclipse.jface.text.IRegion;
 public class ArgumentTests extends AbstractDebugTest {
 
     private Object fLock = new Object();
+	protected boolean fUseArgfile = false;
 
 	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {
 
@@ -343,20 +351,23 @@ public class ArgumentTests extends AbstractDebugTest {
 	 */
 	private void testOutput(String mainTypeName, String vmArgs, String programArgs, String outputValue) throws CoreException {
 		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "config1");
+
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, get14Project().getProject().getName());
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE, fUseArgfile);
 
-    Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream()
-  		.filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey()))
-  		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+		Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream().filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
 		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
 
 		IVMInstall vm = JavaRuntime.getVMInstall(get14Project());
 		assertNotNull("shold be able to get the default VM install from the 1.4 project", vm);
+		if (fUseArgfile) {
+			assertTrue("test requires a JVM >= 9", JavaRuntime.isModularJava(vm));
+		}
 		//workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(vm).toPortableString());
 
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
@@ -368,14 +379,22 @@ public class ArgumentTests extends AbstractDebugTest {
 		ConsoleLineTracker.setDelegate(retriever);
 		IProcess process = null;
 		ILaunch launch = null;
+		String commandLine = null;
 		try {
 			HashSet<String> set = new HashSet<>();
 			set.add(ILaunchManager.RUN_MODE);
 			ensurePreferredDelegate(workingCopy, set);
 			launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
 			process = launch.getProcesses()[0];
+			commandLine = process.getAttribute(IProcess.ATTR_CMDLINE);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		assertNotNull(commandLine);
+		if (!fUseArgfile) {
+			assertTrue("command line must not contain an @argfile", commandLine.indexOf(" @") == -1);
+		} else {
+			assertTrue("command line must contain an @argfile", commandLine.indexOf(" @") > -1);
 		}
 		try {
 			String output = retriever.getOutput();
@@ -383,8 +402,14 @@ public class ArgumentTests extends AbstractDebugTest {
 			if (!outputValue.equals(output)) {
 			    System.out.println();
 			    System.out.println(getName());
-				System.out.println("\tExpected: " + outputValue);
-				System.out.println("\tActual:   " + output);
+				System.out.println("\tExpected:     " + outputValue);
+				System.out.println("\tActual:       " + output);
+				System.out.println("\tCommand Line: " + commandLine);
+				if (fUseArgfile) {
+					System.out.println("\tArgfile:      "
+							+ readArgfile(commandLine).stream().collect(joining("\n\t              ")));
+					System.out.println();
+				}
 			}
 			assertEquals(outputValue, output);
 		} finally {
@@ -395,6 +420,18 @@ public class ArgumentTests extends AbstractDebugTest {
 			if (launch != null) {
 				getLaunchManager().removeLaunch(launch);
 			}
+		}
+	}
+
+	private List<String> readArgfile(String commandLine) {
+		String[] arguments = DebugPlugin.parseArguments(commandLine);
+		assertEquals("command line too long, only command @argfile expected", 2, arguments.length);
+		String argfile = arguments[1];
+		assertTrue("wrong command line, expected @argfile at index 1: " + commandLine, argfile != null && argfile.startsWith("@"));
+		try {
+			return Files.readAllLines(Path.of(argfile.substring(1)));
+		} catch (IOException e) {
+			throw new IllegalStateException("Error reading @argfile: " + argfile, e);
 		}
 	}
 

@@ -320,6 +320,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, LauncherMessages.JavaArgumentsTab_AttributeLabel_VMArguments);
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, LauncherMessages.JavaArgumentsTab_AttributeLabel_UseAtStart);
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, LauncherMessages.JavaArgumentsTab_AttributeLabel_ActivateHelpfulNullPointerExceptions);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE, LauncherMessages.JavaArgumentsTab_AttributeLabel_UseArgfile);
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, LauncherMessages.JavaArgumentsTab_AttributeLabel_WorkingDirectory);
 	}
 }
