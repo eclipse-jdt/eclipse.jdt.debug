@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,7 +42,6 @@ import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
-
 
 /**
  * A launcher for running Java main classes.
@@ -351,6 +350,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		private String[] envp;
 		private File workingDir;
 		private ClasspathShortener classpathShortener;
+		private CommandLineShortener commandLineShortener;
 		private int port;
 
 		public String[] getEnvp() {
@@ -383,6 +383,14 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		public void setClasspathShortener(ClasspathShortener classpathShortener) {
 			this.classpathShortener = classpathShortener;
+		}
+
+		public CommandLineShortener getCommandLineShortener() {
+			return commandLineShortener;
+		}
+
+		public void setCommandLineShortener(CommandLineShortener commandLineShortener) {
+			this.commandLineShortener = commandLineShortener;
 		}
 
 		public int getPort() {
@@ -477,11 +485,16 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}
+		CommandLineShortener commandLineShortener = new CommandLineShortener(fVMInstance, launch, newCmdLine, workingDir);
+		if (commandLineShortener.shouldShortenCommandLine()) {
+			cmdLine = commandLineShortener.shortenCommandLine();
+		}
 		CommandDetails cmd = new CommandDetails();
 		cmd.setCommandLine(cmdLine);
 		cmd.setEnvp(envp);
 		cmd.setWorkingDir(workingDir);
 		cmd.setClasspathShortener(classpathShortener);
+		cmd.setCommandLineShortener(commandLineShortener);
 		subMonitor.worked(1);
 		return cmd;
 	}
@@ -531,8 +544,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 			}
 			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
 		}
-		if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()) {
-			String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
+		if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()
+				|| !cmdDetails.getCommandLineShortener().getProcessTempFiles().isEmpty()) {
+			String tempFiles = Stream.concat(cmdDetails.getClasspathShortener().getProcessTempFiles().stream(), cmdDetails.getCommandLineShortener().getProcessTempFiles().stream()).map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 			process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 		}
 		subMonitor.worked(1);

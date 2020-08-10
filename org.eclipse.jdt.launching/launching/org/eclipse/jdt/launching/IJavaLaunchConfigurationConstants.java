@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -379,6 +379,15 @@ public interface IJavaLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES = LaunchingPlugin.getUniqueIdentifier()
 			+ ".ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES"; //$NON-NLS-1$
+
+	/**
+	 * Attribute key to write arguments into an file when launching allowing an unlimited number of arguments. Only valid for java > 8 see
+	 * https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8027634
+	 *
+	 * @since 3.19
+	 */
+	public static final String ATTR_USE_ARGFILE = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_ATTR_USE_ARGFILE"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying whether output folders corresponding to test sources should not be added
 	 * to the runtime classpath and test dependencies should not be added to the default classpath.

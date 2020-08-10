@@ -46,6 +46,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	protected Text fVMArgumentsText;
 	private Button fUseStartOnFirstThread = null;
 	private Button fHelpfulExceptions = null;
+	private Button fUseArgfile = null;
 	private Button fPgrmArgVariableButton;
 
 	/**
@@ -122,6 +123,15 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 				scheduleUpdateJob();
 			}
 		});
+		fUseArgfile = SWTFactory.createCheckButton(group, LauncherMessages.VMArgumentsBlock_3, null, true, 1);
+		fUseArgfile.setEnabled(false);
+		fUseArgfile.setToolTipText(LauncherMessages.JavaArgumentsTab_AttributeTooltip_UseArgfile);
+		fUseArgfile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				scheduleUpdateJob();
+			}
+		});
 	}
 
 	/**
@@ -132,6 +142,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE, false);
 	}
 
 	/**
@@ -146,6 +157,9 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			}
 			if (fHelpfulExceptions != null) {
 				fHelpfulExceptions.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true));
+			}
+			if (fUseArgfile != null) {
+				fUseArgfile.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE, false));
 			}
 		} catch (CoreException e) {
 			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage());
@@ -167,6 +181,12 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			fHelpfulExceptions.setEnabled(true);
 		} else {
 			fHelpfulExceptions.setEnabled(false);
+		}
+		if (isJavaNewerThan(configuration, JavaCore.VERSION_1_8)) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE, fUseArgfile.getSelection());
+			fUseArgfile.setEnabled(true);
+		} else {
+			fUseArgfile.setEnabled(false);
 		}
 	}
 

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -283,11 +284,17 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 		subMonitor.worked(1);
 
+		CommandLineShortener commandLineShortener = new CommandLineShortener(fVMInstance, launch, newCmdLine, workingDir);
+		if (commandLineShortener.shouldShortenCommandLine()) {
+			cmdLine = commandLineShortener.shortenCommandLine();
+		}
+
 		CommandDetails cmd = new CommandDetails();
 		cmd.setCommandLine(cmdLine);
 		cmd.setEnvp(envp);
 		cmd.setWorkingDir(workingDir);
 		cmd.setClasspathShortener(classpathShortener);
+		cmd.setCommandLineShortener(commandLineShortener);
 		cmd.setPort(port);
 		return cmd;
 
@@ -359,8 +366,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 					}
 					process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
 				}
-				if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()) {
-					String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
+				if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()
+						|| !cmdDetails.getCommandLineShortener().getProcessTempFiles().isEmpty()) {
+					String tempFiles = Stream.concat(cmdDetails.getClasspathShortener().getProcessTempFiles().stream(), cmdDetails.getCommandLineShortener().getProcessTempFiles().stream()).map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 					process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 				}
 				subMonitor.worked(1);
