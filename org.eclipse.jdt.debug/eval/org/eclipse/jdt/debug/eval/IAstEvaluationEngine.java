@@ -33,6 +33,14 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 public interface IAstEvaluationEngine extends IEvaluationEngine {
 
 	/**
+	 * Instructs the evaluation engine to disable garbage collection on the result object. The caller is then responsible to call
+	 * {@link IJavaObject#enableCollection()} on the evaluated result. Can be passed as a bit flag to the <code>evaluationDetail</code> parameter.
+	 *
+	 * @since 3.17
+	 */
+	int DISABLE_GC_ON_RESULT = 0x0100;
+
+	/**
 	 * Asynchronously evaluates the given expression in the context of the
 	 * specified stack frame, reporting the result back to the given listener.
 	 * The thread is resumed from the location at which it is currently
@@ -50,8 +58,9 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *            the listener that will receive notification when/if the
 	 *            evaluation completes
 	 * @param evaluationDetail
-	 *            one of <code>DebugEvent.EVALUATION</code> or
-	 *            <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 *            bitmask of one of <code>DebugEvent.EVALUATION</code> or
+	 *            <code>DebugEvent.EVALUATION_IMPLICIT</code> and
+	 *            optionally <code>DISABLE_GC_ON_RESULT</code>
 	 * @param hitBreakpoints
 	 *            whether or not breakpoints should be honored in the evaluation
 	 *            thread during the evaluation. If <code>false</code>,
@@ -97,8 +106,9 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *            the listener that will receive notification when/if the
 	 *            evaluation completes
 	 * @param evaluationDetail
-	 *            one of <code>DebugEvent.EVALUATION</code> or
-	 *            <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 *            bitmask of one of <code>DebugEvent.EVALUATION</code> or
+	 *            <code>DebugEvent.EVALUATION_IMPLICIT</code> and
+	 *            optionally <code>DISABLE_GC_ON_RESULT</code>
 	 * @param hitBreakpoints
 	 *            whether or not breakpoints should be honored in the evaluation
 	 *            thread during the evaluation. If <code>false</code>,

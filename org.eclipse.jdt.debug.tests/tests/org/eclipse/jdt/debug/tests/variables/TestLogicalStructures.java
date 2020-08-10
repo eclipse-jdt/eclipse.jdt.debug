@@ -46,7 +46,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 	 */
 	public void testListLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
-		createLineBreakpoint(36, typeName);
+		createLineBreakpoint(34, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -66,6 +66,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 			assertEquals("Should be one logical structure type", 1, types.length);
 
 			IJavaObject logicalValue = (IJavaObject) types[0].getLogicalStructure(value);
+			Thread.sleep(200); // run a few GC cycles
 			assertEquals("Logical value should be an array", "java.lang.Object[]", logicalValue.getJavaType().getName());
 
 			IJavaArray array = (IJavaArray) logicalValue;
@@ -84,7 +85,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 	 */
 	public void testMapLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
-		createLineBreakpoint(33, typeName);
+		createLineBreakpoint(34, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -104,6 +105,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 			assertEquals("Should be one logical structure type", 1, types.length);
 
 			IJavaObject logicalValue = (IJavaObject) types[0].getLogicalStructure(value);
+			Thread.sleep(200); // run a few GC cycles
 			assertEquals("Logical value should be an array", "java.lang.Object[]", logicalValue.getJavaType().getName());
 
 			IJavaArray array = (IJavaArray) logicalValue;
@@ -122,7 +124,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 	 */
 	public void testEntryLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
-		createLineBreakpoint(36, typeName);
+		createLineBreakpoint(34, typeName);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -142,6 +144,7 @@ public class TestLogicalStructures extends AbstractDebugTest {
 			assertEquals("Should be one logical structure type", 1, types.length);
 
 			IJavaObject logicalValue = (IJavaObject) types[0].getLogicalStructure(value);
+			Thread.sleep(200); // run a few GC cycles
 			IVariable[] children = logicalValue.getVariables();
 			assertEquals("Should be two elements in the structure", 2, children.length);
 			assertEquals("First entry should be key", "key", children[0].getName());

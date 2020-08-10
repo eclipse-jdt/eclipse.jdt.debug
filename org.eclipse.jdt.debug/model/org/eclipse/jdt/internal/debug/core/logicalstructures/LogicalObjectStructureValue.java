@@ -16,13 +16,13 @@ package org.eclipse.jdt.internal.debug.core.logicalstructures;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
  * A proxy to an object representing the logical structure of that object.
@@ -30,7 +30,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 public class LogicalObjectStructureValue implements IJavaObject {
 
 	private IJavaObject fObject;
-	private IJavaVariable[] fVariables;
+	private JDIPlaceholderVariable[] fVariables;
 
 	/**
 	 * Constructs a proxy to the given object, with the given variables as
@@ -42,7 +42,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 *            java variables to add as children to this object
 	 */
 	public LogicalObjectStructureValue(IJavaObject object,
-			IJavaVariable[] variables) {
+			JDIPlaceholderVariable[] variables) {
 		fObject = object;
 		fVariables = variables;
 	}
@@ -269,6 +269,13 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	@Override
 	public void enableCollection() throws DebugException {
 		fObject.enableCollection();
+
+		for (JDIPlaceholderVariable variable : fVariables) {
+			IValue variableValue = variable.getValue();
+			if (variableValue instanceof IJavaObject) {
+				((IJavaObject) variableValue).enableCollection();
+			}
+		}
 	}
 
 	/*
