@@ -518,14 +518,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 			event.request().putProperty(HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit
-				try {
-					// make a note that we auto-disabled the breakpoint
-					// order is important here...see methodEntryChanged
-					setExpired(true);
-					setEnabled(false);
-				} catch (CoreException e) {
-					JDIDebugPlugin.log(e);
-				}
+				expireHitCount(event);
+				disableTriggerPoint(event);
 				return false;
 			}
 			// count still > 0, keep running

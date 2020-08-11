@@ -16,6 +16,8 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -23,6 +25,8 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
@@ -433,6 +437,44 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			getBreakpointManager().setEnabled(true);
+		}
+	}
+
+	/**
+	 * Tests that a method entry breakpoint with a hit count works also without line information.
+	 */
+	public void testHitCountEntryBreakpointNoLocationsBug565982() throws Exception {
+		IJavaProject project = getProjectContext();
+		boolean inheritJavaCoreOptions = true;
+		String compilerLineNumberAttribute = project.getOption(JavaCore.COMPILER_LINE_NUMBER_ATTR, inheritJavaCoreOptions);
+		boolean isAddingLineNumbers = compilerLineNumberAttribute == null || JavaCore.GENERATE.equals(compilerLineNumberAttribute);
+		try {
+			if (isAddingLineNumbers) {
+				project.setOption(JavaCore.COMPILER_LINE_NUMBER_ATTR, JavaCore.DO_NOT_GENERATE);
+				project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+			}
+			String typeName = "Bug565982";
+			IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "breakpointMethod", "()V", true, false);
+			bp.setHitCount(1);
+
+			IJavaThread thread = null;
+			try {
+				assertTrue("Expected hit count method entry breakpoint to be enabled before debugging snippet", bp.isEnabled());
+				thread = launchToBreakpoint(typeName);
+				assertFalse("Expected hit count method entry breakpoint to be disabled after breakpoint hit", bp.isEnabled());
+				assertNotNull("Method entry breakpoint not hit within timeout period", thread);
+
+				resumeAndExit(thread);
+				assertTrue("Expected hit count method entry breakpoint to be enabled after debug launch exits", bp.isEnabled());
+			} finally {
+				terminateAndRemove(thread);
+				removeAllBreakpoints();
+			}
+		} finally {
+			if (isAddingLineNumbers) {
+				project.setOption(JavaCore.COMPILER_LINE_NUMBER_ATTR, compilerLineNumberAttribute);
+				project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+			}
 		}
 	}
 }
