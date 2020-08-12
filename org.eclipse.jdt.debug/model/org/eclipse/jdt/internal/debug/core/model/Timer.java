@@ -51,23 +51,20 @@ public class Timer {
 	 */
 	public Timer() {
 		setTimeout(Integer.MAX_VALUE);
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				while (isAlive()) {
-					boolean interrupted = false;
-					try {
-						Thread.sleep(getTimeout());
-					} catch (InterruptedException e) {
-						interrupted = true;
-					}
-					if (!interrupted) {
-						if (getListener() != null) {
-							setStarted(false);
-							setTimeout(Integer.MAX_VALUE);
-							getListener().timeout();
-							setListener(null);
-						}
+		Runnable r = () -> {
+			while (isAlive()) {
+				boolean interrupted = false;
+				try {
+					Thread.sleep(getTimeout());
+				} catch (InterruptedException e) {
+					interrupted = true;
+				}
+				if (!interrupted) {
+					if (getListener() != null) {
+						setStarted(false);
+						setTimeout(Integer.MAX_VALUE);
+						getListener().timeout();
+						setListener(null);
 					}
 				}
 			}

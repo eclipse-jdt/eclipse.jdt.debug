@@ -33,12 +33,8 @@ import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -119,27 +115,20 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		group.setText(controlName);
 
 		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		fPrgmArgumentsText.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				switch (e.detail) {
-					case SWT.TRAVERSE_ESCAPE:
-					case SWT.TRAVERSE_PAGE_NEXT:
-					case SWT.TRAVERSE_PAGE_PREVIOUS:
+		fPrgmArgumentsText.addTraverseListener(e -> {
+			switch (e.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+				case SWT.TRAVERSE_PAGE_NEXT:
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+					e.doit = true;
+					break;
+				case SWT.TRAVERSE_RETURN:
+				case SWT.TRAVERSE_TAB_NEXT:
+				case SWT.TRAVERSE_TAB_PREVIOUS:
+					if (((fPrgmArgumentsText.getStyle() & SWT.SINGLE) != 0) || (!fPrgmArgumentsText.isEnabled() || (e.stateMask & SWT.MODIFIER_MASK) != 0)) {
 						e.doit = true;
-						break;
-					case SWT.TRAVERSE_RETURN:
-					case SWT.TRAVERSE_TAB_NEXT:
-					case SWT.TRAVERSE_TAB_PREVIOUS:
-						if ((fPrgmArgumentsText.getStyle() & SWT.SINGLE) != 0) {
-							e.doit = true;
-						} else {
-							if (!fPrgmArgumentsText.isEnabled() || (e.stateMask & SWT.MODIFIER_MASK) != 0) {
-								e.doit = true;
-							}
-						}
-						break;
-				}
+					}
+					break;
 			}
 		});
 		gd = new GridData(GridData.FILL_BOTH);
@@ -147,12 +136,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.setFont(font);
-		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent evt) {
-				scheduleUpdateJob();
-			}
-		});
+		fPrgmArgumentsText.addModifyListener(evt -> scheduleUpdateJob());
 		ControlAccessibleListener.addListener(fPrgmArgumentsText, group.getText());
 
 		String buttonLabel = LauncherMessages.JavaArgumentsTab_5;
@@ -335,6 +319,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, LauncherMessages.JavaArgumentsTab_AttributeLabel_ProgramArguments);
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, LauncherMessages.JavaArgumentsTab_AttributeLabel_VMArguments);
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, LauncherMessages.JavaArgumentsTab_AttributeLabel_UseAtStart);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, LauncherMessages.JavaArgumentsTab_AttributeLabel_ActivateHelpfulNullPointerExceptions);
 		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, LauncherMessages.JavaArgumentsTab_AttributeLabel_WorkingDirectory);
 	}
 }

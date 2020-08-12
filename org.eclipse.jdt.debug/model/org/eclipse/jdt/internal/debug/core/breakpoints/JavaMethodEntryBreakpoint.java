@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
@@ -77,25 +76,21 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 			final String methodSignature, final int lineNumber,
 			final int charStart, final int charEnd, final int hitCount,
 			final boolean register, final Map<String, Object> attributes) throws CoreException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT));
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT));
 
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(),
-						true, lineNumber, charStart, charEnd);
-				addMethodNameAndSignature(attributes, methodName,
-						methodSignature);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				// set attributes
-				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-				ensureMarker().setAttributes(attributes);
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(),
+					true, lineNumber, charStart, charEnd);
+			addMethodNameAndSignature(attributes, methodName,
+					methodSignature);
+			addTypeNameAndHitCount(attributes, typeName, hitCount);
+			// set attributes
+			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
+			ensureMarker().setAttributes(attributes);
 
-				register(register);
-			}
-
+			register(register);
 		};
 		run(getMarkerRule(resource), wr);
 	}

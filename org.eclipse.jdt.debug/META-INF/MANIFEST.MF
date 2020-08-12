@@ -2,19 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.debug; singleton:=true
-Bundle-Version: 3.15.200.qualifier
-Bundle-ClassPath: jdi.jar,
- jdimodel.jar,
+Bundle-Version: 3.16.0.qualifier
+Bundle-ClassPath: jdimodel.jar,
  tools.jar
 Bundle-Activator: org.eclipse.jdt.internal.debug.core.JDIDebugPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: com.sun.jdi;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching",
- com.sun.jdi.connect;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching",
- com.sun.jdi.connect.spi;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching",
- com.sun.jdi.event;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching",
- com.sun.jdi.request;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching",
- org.eclipse.jdi,
+Export-Package: org.eclipse.jdi,
  org.eclipse.jdi.hcr,
  org.eclipse.jdi.internal;x-friends:="org.eclipse.jdt.debug.ui",
  org.eclipse.jdi.internal.connect;x-friends:="org.eclipse.jdt.debug.ui",
@@ -38,6 +32,6 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.11.0,4.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jdt.debug

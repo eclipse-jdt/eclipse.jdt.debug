@@ -22,7 +22,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,7 +44,6 @@ import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
@@ -113,9 +111,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		public void run() {
 			try {
 				fVirtualMachine = fConnector.accept(fConnectionMap);
-			} catch (IOException e) {
-				fException = e;
-			} catch (IllegalConnectorArgumentsException e) {
+			} catch (IOException | IllegalConnectorArgumentsException e) {
 				fException = e;
 			}
 		}
@@ -192,14 +188,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		if (fVMInstance instanceof StandardVM && ((StandardVM)fVMInstance).getDebugArgs() != null){
 			String debugArgString = ((StandardVM)fVMInstance).getDebugArgs().replaceAll("\\Q" + StandardVM.VAR_PORT + "\\E", Integer.toString(port));  //$NON-NLS-1$ //$NON-NLS-2$
-			String[] debugArgs = DebugPlugin.parseArguments(debugArgString);
-			for (int i = 0; i < debugArgs.length; i++) {
-				arguments.add(debugArgs[i]);
-			}
+			arguments.addAll(Arrays.asList(DebugPlugin.parseArguments(debugArgString)));
 		} else {
 			// VM arguments are the first thing after the java program so that users can specify
 			// options like '-client' & '-server' which are required to be the first options
-			double version = getJavaVersion();
+			double version = getJavaVersion(fVMInstance);
 			if (version < 1.5) {
 				arguments.add("-Xdebug"); //$NON-NLS-1$
 				arguments.add("-Xnoagent"); //$NON-NLS-1$
@@ -208,6 +201,12 @@ public class StandardVMDebugger extends StandardVMRunner {
 			//check if java 1.4 or greater
 			if (version < 1.4) {
 				arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
+			}
+			// check if java 14 or greater
+			if (version >= 14) {
+				if (launch.getLaunchConfiguration().getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
+					arguments.add("-XX:+ShowCodeDetailsInExceptionMessages"); //$NON-NLS-1$
+				}
 			}
 			if (version < 1.5) {
 				arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
@@ -241,11 +240,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		String dependencies = config.getOverrideDependencies();
 		if (dependencies != null && dependencies.length() > 0) {
-			String[] parseArguments = DebugPlugin.parseArguments(dependencies);
-			for (String string : parseArguments) {
-				arguments.add(string);
-			}
-
+			arguments.addAll(Arrays.asList(DebugPlugin.parseArguments(dependencies)));
 		}
 
 		if (isModular(config, fVMInstance)) {
@@ -365,7 +360,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 					process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
 				}
 				if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()) {
-					String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(file -> file.getAbsolutePath()).collect(Collectors.joining(File.pathSeparator));
+					String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 					process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 				}
 				subMonitor.worked(1);
@@ -439,7 +434,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 						}
 						Object result = handler.handleStatus(status, this);
 						if (result instanceof Boolean) {
-							retry = ((Boolean)result).booleanValue();
+							retry = ((Boolean)result);
 						}
 						if (!retry && retryCount < 5) {
 							retry = true;
@@ -501,16 +496,14 @@ public class StandardVMDebugger extends StandardVMRunner {
 				if(env == null){
 					Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
 					env = new String[map.size()];
-					String var = null;
 					int index = 0;
-					for(Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
-						var = iter.next();
+					for (String var : map.keySet()) {
 						String value = map.get(var);
 						if (value == null) {
 							value = ""; //$NON-NLS-1$
 						}
 						if (var.equalsIgnoreCase("path")) { //$NON-NLS-1$
-							if(value.indexOf(jrestr) == -1) {
+							if (!value.contains(jrestr)) {
 								value = jrestr+';'+value;
 							}
 						}
@@ -551,38 +544,6 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 */
 	protected IDebugTarget createDebugTarget(VMRunnerConfiguration config, ILaunch launch, int port, IProcess process, VirtualMachine vm) {
 		return JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false, config.isResumeOnStartup());
-	}
-
-	/**
-	 * Returns the version of the current VM in use
-	 * @return the VM version
-	 */
-	private double getJavaVersion() {
-		String version = null;
-		if (fVMInstance instanceof IVMInstall2) {
-			version = ((IVMInstall2)fVMInstance).getJavaVersion();
-		} else {
-			LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
-			if (libInfo == null) {
-			    return 0D;
-			}
-			version = libInfo.getVersion();
-		}
-		if (version == null) {
-			// unknown version
-			return 0D;
-		}
-		int index = version.indexOf("."); //$NON-NLS-1$
-		int nextIndex = version.indexOf(".", index+1); //$NON-NLS-1$
-		try {
-			if (index > 0 && nextIndex>index) {
-				return Double.parseDouble(version.substring(0,nextIndex));
-			}
-			return Double.parseDouble(version);
-		} catch (NumberFormatException e) {
-			return 0D;
-		}
-
 	}
 
 	/**
@@ -630,9 +591,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 */
 	@SuppressWarnings("nls")
 	protected ListeningConnector getConnector() {
-		List<ListeningConnector> connectors= Bootstrap.virtualMachineManager().listeningConnectors();
-		for (int i= 0; i < connectors.size(); i++) {
-			ListeningConnector c= connectors.get(i);
+		for (ListeningConnector c : Bootstrap.virtualMachineManager().listeningConnectors()) {
 			if ("com.sun.jdi.SocketListen".equals(c.name())) {
 				return c;
 			}

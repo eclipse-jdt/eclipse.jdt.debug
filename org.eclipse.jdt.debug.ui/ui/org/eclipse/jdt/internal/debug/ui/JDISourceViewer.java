@@ -170,18 +170,12 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 				? null
 				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
 			styledText.setForeground(color);
-			if (getForegroundColor() != null) {
-				getForegroundColor().dispose();
-			}
 			setForegroundColor(color);
 
 			color= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
 				? null
 				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
 			styledText.setBackground(color);
-			if (getBackgroundColor() != null) {
-				getBackgroundColor().dispose();
-			}
 			setBackgroundColor(color);
 		}
 	}
@@ -285,11 +279,9 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			setFont(null);
 		}
 		if (getBackgroundColor() != null) {
-			getBackgroundColor().dispose();
 			setBackgroundColor(null);
 		}
 		if (getForegroundColor() != null) {
-			getForegroundColor().dispose();
 			setForegroundColor(null);
 		}
 		if (fStore != null) {

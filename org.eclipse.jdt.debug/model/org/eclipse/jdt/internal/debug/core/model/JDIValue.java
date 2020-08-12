@@ -16,7 +16,6 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -283,12 +282,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 							(JDIDebugTarget) getDebugTarget(), field, object,
 							fLogicalParent));
 				}
-				Collections.sort(fVariables, new Comparator<IJavaVariable>() {
-					@Override
-					public int compare(IJavaVariable a, IJavaVariable b) {
-						return sortChildren(a, b);
-					}
-				});
+				Collections.sort(fVariables, (a, b) -> sortChildren(a, b));
 			}
 
 			return fVariables;

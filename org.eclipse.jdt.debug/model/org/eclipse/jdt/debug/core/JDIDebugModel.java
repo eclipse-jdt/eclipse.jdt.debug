@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -228,13 +227,8 @@ public class JDIDebugModel {
 			final boolean allowTerminate, final boolean allowDisconnect,
 			final boolean resume) {
 		final IJavaDebugTarget[] target = new IJavaDebugTarget[1];
-		IWorkspaceRunnable r = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor m) {
-				target[0] = new JDIDebugTarget(launch, vm, name,
-						allowTerminate, allowDisconnect, process, resume);
-			}
-		};
+		IWorkspaceRunnable r = m -> target[0] = new JDIDebugTarget(launch, vm, name,
+				allowTerminate, allowDisconnect, process, resume);
 		try {
 			ResourcesPlugin.getWorkspace().run(r, null, 0, null);
 		} catch (CoreException e) {

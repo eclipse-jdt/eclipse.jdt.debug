@@ -139,18 +139,6 @@ public class SimpleDetailPane implements IDetailPane {
 	 */
 	@Override
 	public void dispose() {
-		if (colorPrivate != null) {
-			colorPrivate.dispose();
-		}
-		if (colorProtected != null) {
-			colorProtected.dispose();
-		}
-		if (colorPublic != null) {
-			colorPublic.dispose();
-		}
-		if (colorOther != null) {
-			colorOther.dispose();
-		}
 	}
 
 	/* (non-Javadoc)

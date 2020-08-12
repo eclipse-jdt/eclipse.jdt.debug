@@ -109,9 +109,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (args == null) {
 			return;
 		}
-		for (int i= 0; i < args.length; i++) {
-			v.add(args[i]);
-		}
+		v.addAll(Arrays.asList(args));
 	}
 
 	/**
@@ -133,7 +131,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		catch(CoreException ce) {
 			LaunchingPlugin.log(ce);
 		}
-		return cmdLine;
+		return null;
 	}
 
 	/**
@@ -147,8 +145,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 */
 	private String[] wrap(ILaunchConfiguration config, String[] cmdLine) throws CoreException {
 		if(config != null && Platform.OS_MACOSX.equals(Platform.getOS())) {
-			for (int i= 0; i < cmdLine.length; i++) {
-				if ("-ws".equals(cmdLine[i]) || cmdLine[i].indexOf("swt.jar") > -1 || cmdLine[i].indexOf("org.eclipse.swt") > -1) {   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			for (String element : cmdLine) {
+				if ("-ws".equals(element) || element.contains("swt.jar") || element.contains("org.eclipse.swt")) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 					return createSWTlauncher(cmdLine,
 							cmdLine[0],
 							config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true));
@@ -172,11 +170,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 			// not started via java_swt -> now we require that the VM supports the "-XstartOnFirstThread" option
 			boolean found = false;
 			ArrayList<String> args = new ArrayList<>();
-			for (int i = 0; i < cmdLine.length; i++) {
-				if(XSTART_ON_FIRST_THREAD.equals(cmdLine[i])) {
+			for (String element : cmdLine) {
+				if(XSTART_ON_FIRST_THREAD.equals(element)) {
 					found = true;
 				}
-				args.add(cmdLine[i]);
+				args.add(element);
 			}
 			//newer VMs and non-MacOSX VMs don't like "-XstartOnFirstThread"
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=211625
@@ -191,9 +189,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			Process process= Runtime.getRuntime().exec(new String[] { "/bin/cp", java_swt, "/tmp" }); //$NON-NLS-1$ //$NON-NLS-2$
 			process.waitFor();
 			java_swt= "/tmp/java_swt"; //$NON-NLS-1$
-		} catch (IOException e) {
-			// ignore and run java_swt in place
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			// ignore and run java_swt in place
 		}
 		String[] newCmdLine= new String[cmdLine.length+1];
@@ -310,11 +306,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (cp.length == 0) {
 			return "";    //$NON-NLS-1$
 		}
-		for (int i= 0; i < cp.length; i++) {
+		for (String element : cp) {
 			if (pathCount > 0) {
 				buf.append(File.pathSeparator);
 			}
-			buf.append(cp[i]);
+			buf.append(element);
 			pathCount++;
 		}
 		return buf.toString();
@@ -332,8 +328,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 */
 	protected String[] ensureEncoding(ILaunch launch, String[] vmargs) {
 		boolean foundencoding = false;
-		for(int i = 0; i < vmargs.length; i++) {
-			if(vmargs[i].startsWith("-Dfile.encoding=")) { //$NON-NLS-1$
+		for (String vmarg : vmargs) {
+			if(vmarg.startsWith("-Dfile.encoding=")) { //$NON-NLS-1$
 				foundencoding = true;
 			}
 		}
@@ -444,13 +440,18 @@ public class StandardVMRunner extends AbstractVMRunner {
 			arguments.add("--enable-preview"); //$NON-NLS-1$
 		}
 
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+		// check if java 14 or greater
+		if (getJavaVersion(fVMInstance) >= 14) {
+			if (launchConfiguration != null
+					&& launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES, true)) {
+				arguments.add("-XX:+ShowCodeDetailsInExceptionMessages"); //$NON-NLS-1$
+			}
+		}
+
 		String dependencies = config.getOverrideDependencies();
 		if (dependencies != null && dependencies.length() > 0) {
-			String[] parseArguments = DebugPlugin.parseArguments(dependencies);
-			for (String string : parseArguments) {
-				arguments.add(string);
-			}
-
+			arguments.addAll(Arrays.asList(DebugPlugin.parseArguments(dependencies)));
 		}
 		if (isModular(config, fVMInstance)) {
 			arguments.add("-m"); //$NON-NLS-1$
@@ -472,7 +473,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			cmdLine = classpathShortener.getCmdLine();
 			envp = classpathShortener.getEnvp();
 		}
-		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
+		String[] newCmdLine = validateCommandLine(launchConfiguration, cmdLine);
 		if (newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}
@@ -531,7 +532,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
 		}
 		if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()) {
-			String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(file -> file.getAbsolutePath()).collect(Collectors.joining(File.pathSeparator));
+			String tempFiles = cmdDetails.getClasspathShortener().getProcessTempFiles().stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 			process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 		}
 		subMonitor.worked(1);
@@ -644,6 +645,38 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (appendBootCP != null) {
 			arguments.add("-Xbootclasspath/a:" + convertClassPath(appendBootCP)); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * Returns the version of the current VM in use
+	 * @return the VM version
+	 */
+	protected double getJavaVersion(IVMInstall fVMInstance) {
+		String version = null;
+		if (fVMInstance instanceof IVMInstall2) {
+			version = ((IVMInstall2)fVMInstance).getJavaVersion();
+		} else {
+			LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
+			if (libInfo == null) {
+			    return 0D;
+			}
+			version = libInfo.getVersion();
+		}
+		if (version == null) {
+			// unknown version
+			return 0D;
+		}
+		int index = version.indexOf("."); //$NON-NLS-1$
+		int nextIndex = version.indexOf(".", index+1); //$NON-NLS-1$
+		try {
+			if (index > 0 && nextIndex>index) {
+				return Double.parseDouble(version.substring(0,nextIndex));
+			}
+			return Double.parseDouble(version);
+		} catch (NumberFormatException e) {
+			return 0D;
+		}
+
 	}
 
 }

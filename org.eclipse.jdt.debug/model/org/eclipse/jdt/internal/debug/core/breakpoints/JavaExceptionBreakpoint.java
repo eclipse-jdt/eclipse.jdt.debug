@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -169,27 +168,22 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			final String exceptionName, final boolean caught,
 			final boolean uncaught, final boolean checked, final boolean add,
 			final Map<String, Object> attributes) throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
 
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
+			// add attributes
+			attributes.put(IBreakpoint.ID, getModelIdentifier());
+			attributes.put(TYPE_NAME, exceptionName);
+			attributes.put(ENABLED, Boolean.TRUE);
+			attributes.put(CAUGHT, Boolean.valueOf(caught));
+			attributes.put(UNCAUGHT, Boolean.valueOf(uncaught));
+			attributes.put(CHECKED, Boolean.valueOf(checked));
+			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 
-				// add attributes
-				attributes.put(IBreakpoint.ID, getModelIdentifier());
-				attributes.put(TYPE_NAME, exceptionName);
-				attributes.put(ENABLED, Boolean.TRUE);
-				attributes.put(CAUGHT, Boolean.valueOf(caught));
-				attributes.put(UNCAUGHT, Boolean.valueOf(uncaught));
-				attributes.put(CHECKED, Boolean.valueOf(checked));
-				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
+			ensureMarker().setAttributes(attributes);
 
-				ensureMarker().setAttributes(attributes);
-
-				register(add);
-			}
-
+			register(add);
 		};
 		run(getMarkerRule(resource), wr);
 	}

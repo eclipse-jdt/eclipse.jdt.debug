@@ -359,7 +359,7 @@ public class BinaryBasedSourceGenerator {
 			}
 		}
 
-		if (isAnonymousType & hasEnclosingInstance) {
+		if (isAnonymousType && hasEnclosingInstance) {
 			source.append("};\n"); //$NON-NLS-1$
 		}
 

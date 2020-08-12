@@ -314,22 +314,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		final List<JDIDebugTarget> hotSwapTargets = getHotSwapTargets();
 		final List<JDIDebugTarget> noHotSwapTargets = getNoHotSwapTargets();
 		if (!hotSwapTargets.isEmpty()) {
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					doHotCodeReplace(hotSwapTargets, resources, qualifiedNames);
-				}
-			};
+			Runnable runnable = () -> doHotCodeReplace(hotSwapTargets, resources, qualifiedNames);
 			DebugPlugin.getDefault().asyncExec(runnable);
 		}
 		if (!noHotSwapTargets.isEmpty()) {
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					notifyUnsupportedHCR(noHotSwapTargets, resources,
-							qualifiedNames);
-				}
-			};
+			Runnable runnable = () -> notifyUnsupportedHCR(noHotSwapTargets, resources,
+					qualifiedNames);
 			DebugPlugin.getDefault().asyncExec(runnable);
 		}
 	}

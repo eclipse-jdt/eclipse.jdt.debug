@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -141,30 +140,27 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 			final int lineNumber, final int charStart, final int charEnd,
 			final int hitCount, final boolean register, final Map<String, Object> attributes,
 			final String markerType) throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
+		IWorkspaceRunnable wr = monitor -> {
 
-				// create the marker
-				setMarker(resource.createMarker(markerType));
+			// create the marker
+			setMarker(resource.createMarker(markerType));
 
-				// modify pattern
-				String pattern = classNamePattern;
-				if (pattern != null && pattern.length() == 0) {
-					pattern = null;
-				}
-
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(),
-						true, lineNumber, charStart, charEnd);
-				addStratumPatternAndHitCount(attributes, stratum, sourceName,
-						sourcePath, pattern, hitCount);
-				// set attributes
-				attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-				ensureMarker().setAttributes(attributes);
-
-				register(register);
+			// modify pattern
+			String pattern = classNamePattern;
+			if (pattern != null && pattern.length() == 0) {
+				pattern = null;
 			}
+
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(),
+					true, lineNumber, charStart, charEnd);
+			addStratumPatternAndHitCount(attributes, stratum, sourceName,
+					sourcePath, pattern, hitCount);
+			// set attributes
+			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
+			ensureMarker().setAttributes(attributes);
+
+			register(register);
 		};
 		run(getMarkerRule(resource), wr);
 	}

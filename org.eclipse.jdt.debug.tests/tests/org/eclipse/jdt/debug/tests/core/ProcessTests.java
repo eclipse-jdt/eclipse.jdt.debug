@@ -14,6 +14,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
+import java.io.OutputStream;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
@@ -71,8 +72,10 @@ public class ProcessTests extends AbstractDebugTest {
 		if (Platform.getOS().equals(Platform.OS_LINUX)) {
 			// printing env command
 			{
-				Runtime.getRuntime().exec("env");
+				Process p = Runtime.getRuntime().exec("env");
+				OutputStream processOut = p.getOutputStream();
 				Thread.sleep(500);
+				processOut.flush();
 
 			}
 			process = DebugPlugin.exec(new String[] { "java" }, new File("/tmp"));
