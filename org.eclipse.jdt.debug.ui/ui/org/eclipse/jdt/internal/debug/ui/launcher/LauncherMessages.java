@@ -31,8 +31,6 @@ public class LauncherMessages extends NLS {
 	public static String JavaArgumentsTab_AttributeLabel_UseAtStart;
 	public static String JavaArgumentsTab_AttributeLabel_ActivateHelpfulNullPointerExceptions;
 	public static String JavaArgumentsTab_AttributeTooltip_ActivateHelpfulNullPointerExceptions;
-	public static String JavaArgumentsTab_AttributeLabel_UseArgfile;
-	public static String JavaArgumentsTab_AttributeTooltip_UseArgfile;
 
 	public static String JavaArgumentsTab_AttributeLabel_WorkingDirectory;
 
@@ -57,7 +55,6 @@ public class LauncherMessages extends NLS {
 	public static String VMArgumentsBlock_0;
 	public static String VMArgumentsBlock_1;
 	public static String VMArgumentsBlock_2;
-	public static String VMArgumentsBlock_3;
 
 	public static String VMArgumentsBlock_VM_Arguments;
 	public static String VMArgumentsBlock_4;

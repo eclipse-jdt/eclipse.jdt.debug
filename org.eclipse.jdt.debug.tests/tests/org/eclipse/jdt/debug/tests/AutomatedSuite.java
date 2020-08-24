@@ -55,7 +55,6 @@ import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
 import org.eclipse.jdt.debug.tests.console.JavaStackTraceConsoleTest;
 import org.eclipse.jdt.debug.tests.core.AlternateStratumTests;
 import org.eclipse.jdt.debug.tests.core.ArgumentTests;
-import org.eclipse.jdt.debug.tests.core.ArgumentTestsWithArgfile;
 import org.eclipse.jdt.debug.tests.core.ArrayTests;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathContainerTests;
@@ -245,7 +244,6 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(EnvironmentTests.class));
 		addTest(new TestSuite(ExecutionEnvironmentTests.class));
 		addTest(new TestSuite(ArgumentTests.class));
-		addTest(new TestSuite(ArgumentTestsWithArgfile.class));
 
 	//Console tests
 		addTest(new TestSuite(ConsoleTests.class));
