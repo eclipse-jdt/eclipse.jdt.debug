@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathSupport;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -94,8 +93,7 @@ public class LongModulePathTests extends AbstractDebugTest {
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
 		int minModulePathLength = 300000;
 		setLongModulepath(javaProject, minModulePathLength);
-		TestUtil.waitForJobs("testVeryLongModulePath", 100, 10000);
-		TestUtil.runEventLoop();
+		waitForBuild();
 
 		// When
 		thread = launchAndSuspend(launchConfiguration);
