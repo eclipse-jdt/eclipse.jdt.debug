@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,11 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
  */
 public class JavaBreakpointImportParticipant implements
 		IBreakpointImportParticipant {
+
+	// keep the last resource/timestamp with CU for optimization
+	IResource lastResourceVerified = null;
+	long lastResourceVerifiedTimeStamp = -1;
+	CompilationUnit lastCompilationUnit = null;
 
 	class BreakpointVerifier extends ASTVisitor {
 		final int TYPE = 0;
@@ -537,17 +542,25 @@ public class JavaBreakpointImportParticipant implements
 		IResource resource = breakpoint.getMarker().getResource();
 		CompilationUnit unit = null;
 		if (resource != null && resource.getType() == IResource.FILE) {
-			ICompilationUnit cunit = JavaCore
-					.createCompilationUnitFrom((IFile) resource);
-			if (cunit != null) {
-				ASTParser parser = ASTParser.newParser(AST.JLS4);
-				parser.setSource(cunit);
-				parser.setResolveBindings(true);
-				unit = (CompilationUnit) parser
-						.createAST(new NullProgressMonitor());
+			if (resource.equals(lastResourceVerified)) {
+				if (resource.getModificationStamp() == lastResourceVerifiedTimeStamp) {
+					unit = lastCompilationUnit;
+				}
+			}
+			if (unit == null) {
+				ICompilationUnit cunit = JavaCore.createCompilationUnitFrom((IFile) resource);
+				if (cunit != null) {
+					ASTParser parser = ASTParser.newParser(AST.JLS4);
+					parser.setSource(cunit);
+					parser.setResolveBindings(true);
+					unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
+				}
 			}
 		}
 		if (unit != null) {
+			lastResourceVerified = resource;
+			lastCompilationUnit = unit;
+			lastResourceVerifiedTimeStamp = lastResourceVerified.getModificationStamp();
 			if (breakpoint instanceof JavaClassPrepareBreakpoint
 					|| breakpoint instanceof JavaWatchpoint
 					|| breakpoint instanceof JavaMethodEntryBreakpoint
