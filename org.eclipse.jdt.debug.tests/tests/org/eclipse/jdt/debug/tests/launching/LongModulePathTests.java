@@ -81,8 +81,8 @@ public class LongModulePathTests extends AbstractDebugTest {
 	/*
 	 * When JVM > 9, an argument file for the modulepath is created when modulepath is too long
 	 */
+
 	public void testVeryLongModulepathWithArgumentFile() throws Exception {
-		// Disabled for OS other than Win due to Bug 561967
 		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
 			return;
 		}
