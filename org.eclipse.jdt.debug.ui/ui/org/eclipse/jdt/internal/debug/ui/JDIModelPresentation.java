@@ -1295,20 +1295,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			javaValue = (IJavaValue) var.getValue();
 		} catch (DebugException e1) {
 		}
-		boolean showTypes= isShowVariableTypeNames();
 		StringBuilder buff= new StringBuilder();
-		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
-		try {
-			typeName= var.getReferenceTypeName();
-			if (showTypes) {
-				typeName= getQualifiedName(typeName);
-			}
-		} catch (DebugException exception) {
-		}
-		if (showTypes) {
-			buff.append(typeName);
-			buff.append(' ');
-		}
+		appendTypeName(javaValue, buff);
 		buff.append(varLabel);
 
 		// add declaring type name if required
@@ -1331,6 +1319,22 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			buff.append(valueString);
 		}
 		return buff.toString();
+	}
+
+	private void appendTypeName(IJavaValue javaValue, StringBuilder buff) {
+		if (!isShowVariableTypeNames()) {
+			return;
+		}
+
+		String typeName = DebugUIMessages.JDIModelPresentation_unknown_type__2;
+		try {
+			if (javaValue != null) {
+				typeName = getQualifiedName(javaValue.getReferenceTypeName());
+			}
+		} catch (DebugException exception) {
+		}
+		buff.append(typeName);
+		buff.append(' ');
 	}
 
 	/**

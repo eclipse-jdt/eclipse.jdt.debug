@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui.presentation;
 
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 
@@ -133,6 +139,35 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			assertEquals("The value text should be 'MyClass My Array'", val, "MyClass My Array");
 		}
 		finally {
+			pres.dispose();
+		}
+	}
+
+	/**
+	 * Tests displayVariableTypeNames option
+	 */
+	public void testShowTypeTest() throws Exception {
+		String typeName = "ModelPresentationTests";
+		IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
+		JDIModelPresentation pres = new JDIModelPresentation();
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			IJavaVariable stringArrayVariable = findVariable(frame, "stringArray");
+			long id = ((IJavaObject) stringArrayVariable.getValue()).getUniqueId();
+
+			assertEquals("stringArray= String[0]  (id=" + id + ")", pres.getText(stringArrayVariable));
+
+			pres.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, Boolean.TRUE);
+
+			assertEquals("String[] stringArray= String[0]  (id=" + id + ")", pres.getText(stringArrayVariable));
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
 			pres.dispose();
 		}
 	}

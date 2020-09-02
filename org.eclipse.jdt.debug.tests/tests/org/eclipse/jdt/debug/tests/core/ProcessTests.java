@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import java.io.File;
-import java.io.OutputStream;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -68,20 +65,10 @@ public class ProcessTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testAlreadyTerminatedProcess() throws Exception {
-		Process process;
 		if (Platform.getOS().equals(Platform.OS_LINUX)) {
-			// printing env command
-			{
-				Process p = Runtime.getRuntime().exec("env");
-				OutputStream processOut = p.getOutputStream();
-				Thread.sleep(500);
-				processOut.flush();
-
-			}
-			process = DebugPlugin.exec(new String[] { "java" }, new File("/tmp"));
-		} else {
-			process = DebugPlugin.exec(new String[] { "java" }, null);
+			return;
 		}
+		Process process = DebugPlugin.exec(new String[]{"java"}, null);
 
 		boolean terminated = false;
 		int value = -1;
