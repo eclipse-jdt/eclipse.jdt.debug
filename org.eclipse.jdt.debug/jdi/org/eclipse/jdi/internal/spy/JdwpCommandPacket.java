@@ -227,7 +227,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	protected void readSpecificHeaderFields(DataInputStream dataInStream)
 			throws IOException {
 		byte commandSet = dataInStream.readByte();
-		fCommand = dataInStream.readByte() + (commandSet << 8);
+		fCommand = (dataInStream.readByte() & 0xff) + (commandSet << 8);
 	}
 
 	/**
@@ -255,8 +255,9 @@ public class JdwpCommandPacket extends JdwpPacket {
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
-					|| (field.getModifiers() & Modifier.FINAL) == 0)
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();

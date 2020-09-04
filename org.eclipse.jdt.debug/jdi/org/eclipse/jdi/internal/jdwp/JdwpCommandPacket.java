@@ -234,7 +234,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	@Override
 	protected int readSpecificHeaderFields(byte[] bytes, int index) {
 		byte commandSet = bytes[index];
-		fCommand = bytes[index + 1] + (commandSet << 8);
+		fCommand = (bytes[index + 1] & 0xff) + (commandSet << 8);
 		return 2;
 	}
 
@@ -264,8 +264,9 @@ public class JdwpCommandPacket extends JdwpPacket {
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
-					|| (field.getModifiers() & Modifier.FINAL) == 0)
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();
