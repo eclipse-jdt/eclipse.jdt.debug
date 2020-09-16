@@ -196,7 +196,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
 		String desc = executionEnvironment.getId();
-		if (desc.indexOf(JavaCore.VERSION_14) != -1) {
+		if (desc.indexOf(JavaCore.VERSION_15) != -1) {
+			return JavaCore.VERSION_15;
+		} else if (desc.indexOf(JavaCore.VERSION_14) != -1) {
 			return JavaCore.VERSION_14;
 		} else if (desc.indexOf(JavaCore.VERSION_13) != -1) {
 			return JavaCore.VERSION_13;

@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.debug" version="2">
     <resource path="eval/org/eclipse/jdt/internal/debug/eval/ast/engine/ASTInstructionCompiler.java" type="org.eclipse.jdt.internal.debug.eval.ast.engine.ASTInstructionCompiler">
-        <filter comment="For Java 13" id="640712815">
-            <message_arguments>
-                <message_argument value="SwitchCase"/>
-                <message_argument value="ASTInstructionCompiler"/>
-                <message_argument value="expressions()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="preview related API" id="640712815">
-            <message_arguments>
-                <message_argument value="TextBlock"/>
-                <message_argument value="ASTInstructionCompiler"/>
-                <message_argument value="getLiteralValue()"/>
-            </message_arguments>
-        </filter>
         <filter comment="For Java 13" id="642777099">
             <message_arguments>
                 <message_argument value="ASTVisitor"/>
@@ -43,77 +29,6 @@
                 <message_argument value="ASTVisitor"/>
                 <message_argument value="SourceBasedSourceGenerator"/>
                 <message_argument value="visit(TextBlock)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="jdi/org/eclipse/jdi/Bootstrap.java" type="org.eclipse.jdi.Bootstrap">
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643842064">
-            <message_arguments>
-                <message_argument value="VirtualMachineManager"/>
-                <message_argument value="Bootstrap"/>
-                <message_argument value="virtualMachineManager()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="jdi/org/eclipse/jdi/hcr/EventRequestManager.java" type="org.eclipse.jdi.hcr.EventRequestManager">
-        <filter id="576720909">
-            <message_arguments>
-                <message_argument value="Mirror"/>
-                <message_argument value="EventRequestManager"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
-            <message_arguments>
-                <message_argument value="ThreadReference"/>
-                <message_argument value="EventRequestManager"/>
-                <message_argument value="createReenterStepRequest(ThreadReference)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="jdi/org/eclipse/jdi/hcr/ReenterStepRequest.java" type="org.eclipse.jdi.hcr.ReenterStepRequest">
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="576720909">
-            <message_arguments>
-                <message_argument value="StepRequest"/>
-                <message_argument value="ReenterStepRequest"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643842064">
-            <message_arguments>
-                <message_argument value="ThreadReference"/>
-                <message_argument value="ReenterStepRequest"/>
-                <message_argument value="thread()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
-            <message_arguments>
-                <message_argument value="ReferenceType"/>
-                <message_argument value="ReenterStepRequest"/>
-                <message_argument value="addClassFilter(ReferenceType)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="jdi/org/eclipse/jdi/hcr/ThreadReference.java" type="org.eclipse.jdi.hcr.ThreadReference">
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
-            <message_arguments>
-                <message_argument value="Value"/>
-                <message_argument value="ThreadReference"/>
-                <message_argument value="doReturn(Value, boolean)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="model/org/eclipse/jdt/debug/core/JDIDebugModel.java" type="org.eclipse.jdt.debug.core.JDIDebugModel">
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
-            <message_arguments>
-                <message_argument value="VirtualMachine"/>
-                <message_argument value="JDIDebugModel"/>
-                <message_argument value="newDebugTarget(ILaunch, VirtualMachine, String, IProcess, boolean, boolean)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
-            <message_arguments>
-                <message_argument value="VirtualMachine"/>
-                <message_argument value="JDIDebugModel"/>
-                <message_argument value="newDebugTarget(ILaunch, VirtualMachine, String, IProcess, boolean, boolean, boolean)"/>
             </message_arguments>
         </filter>
     </resource>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 GK Software SE and others.
+ * Copyright (c) 2019, 2020 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Stephan Herrmann - initial API and implementation
+ *     IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
@@ -70,6 +71,19 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 			+ "jdk.unsupported.desktop," // since 12
 			+ "jdk.xml.dom";
+	private static final String ASSUMED_DEFAULT_MODULES_15 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.foreign," //
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," // jdk.scripting.nashorn removed in 15
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+
 
 	public ModuleOptionsTests(String name) {
 		super(name);
@@ -182,6 +196,22 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.net," //
 						+ "jdk.nio.mapmode," // NEW in 14
 						+ "jdk.scripting.nashorn,jdk.sctp," //
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.unsupported.desktop," //
+						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_15:
+				expectedModules = "java.se," //
+						+ "jdk.accessibility," //
+						+ "jdk.dynalink," // New in 15
+						+ "jdk.httpserver," //
+						+ "jdk.incubator.foreign," //
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+						+ "jdk.jsobject," //
+						+ "jdk.management.jfr," //
+						+ "jdk.net," //
+						+ "jdk.nio.mapmode," //
+						+ "jdk.sctp," // Removed jdk.scripting.nashorn in 15
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
