@@ -143,6 +143,13 @@ public class JDIDebugModel {
 	public static final String PREF_SUSPEND_ON_RECURRENCE_STRATEGY = getPluginIdentifier() + ".PREF_SUSPEND_ON_RECURRENCE_STRATEGY"; //$NON-NLS-1$
 
 	/**
+	 * Launch attribute, use ILaunch.setAttribute to set it to "true", to disable hot code replace for an individual launch.
+	 *
+	 * @since 3.17
+	 */
+	public static final String DISABLE_HCR_LAUNCH_ATTRIBUTE = getPluginIdentifier() + ".disable.hcr"; //$NON-NLS-1$
+
+	/**
 	 * Not to be instantiated.
 	 */
 	private JDIDebugModel() {

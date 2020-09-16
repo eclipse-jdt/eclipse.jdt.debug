@@ -425,6 +425,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				deregisterTarget(target);
 				continue;
 			}
+			if (!isHCREnabled(target)) {
+				continue;
+			}
 			// Make a local copy of the resources/names to swap so we can filter
 			// unloaded types on a per-target basis.
 			List<IResource> resourcesToReplace = new ArrayList<>(resources);
@@ -506,6 +509,15 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			JDIDebugPlugin.log(ms);
 		}
 		fDeltaCache.clear();
+	}
+
+	private boolean isHCREnabled(JDIDebugTarget target) {
+		ILaunch l = target.getLaunch();
+		if (l != null) {
+			boolean disabledByLaunch = "true".equals(l.getAttribute(JDIDebugModel.DISABLE_HCR_LAUNCH_ATTRIBUTE)); //$NON-NLS-1$
+			return !disabledByLaunch;
+		}
+		return false;
 	}
 
 	/**
