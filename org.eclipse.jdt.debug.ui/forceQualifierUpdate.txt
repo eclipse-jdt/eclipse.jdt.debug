@@ -2,3 +2,4 @@
 Bug 522092 - Comparator errors from I20170909-0920
 Bug 530709 - Comparator errors in jdt debug and jdt ui in I20180204-2000
 Bug 566471 - I20200828-0150 - Comparator Errors Found
+Bug 567095 - Comparator errors in I20200917-1800
