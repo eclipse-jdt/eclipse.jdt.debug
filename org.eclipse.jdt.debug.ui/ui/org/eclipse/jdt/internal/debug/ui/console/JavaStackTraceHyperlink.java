@@ -314,8 +314,11 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 
             int linkEnd = line.indexOf(')', regionOffsetInLine);
             int linkStart = line.lastIndexOf(' ', regionOffsetInLine);
+			if (linkStart == -1) {
+				linkStart = line.lastIndexOf('\t', regionOffsetInLine);
+			}
 
-            return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
+            return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1).trim();
 		} catch (BadLocationException e) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e);
 			throw new CoreException(status);
