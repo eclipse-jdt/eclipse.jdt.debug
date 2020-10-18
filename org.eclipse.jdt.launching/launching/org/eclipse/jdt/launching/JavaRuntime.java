@@ -3124,14 +3124,7 @@ public final class JavaRuntime {
 	 * @since 3.1
 	 */
 	public static IClasspathAttribute newLibraryPathsAttribute(String[] paths) {
-		StringBuilder value = new StringBuilder();
-		for (int i = 0; i < paths.length; i++) {
-			value.append(paths[i]);
-			if (i < (paths.length - 1)) {
-				value.append("|"); //$NON-NLS-1$
-			}
-		}
-		return JavaCore.newClasspathAttribute(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, value.toString());
+		return JavaCore.newClasspathAttribute(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, String.join("|", paths)); //$NON-NLS-1$
 	}
 
 	/**
