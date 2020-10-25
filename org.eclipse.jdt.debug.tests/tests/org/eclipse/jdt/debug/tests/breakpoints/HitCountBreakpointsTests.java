@@ -53,18 +53,18 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '2', but was " + iValue, iValue == 2);
+			assertEquals("value of 'i' should be '2', but was " + iValue, 2, iValue);
 
 			bp.setHitCount(2);
 			IJavaThread thread2 = resumeToLineBreakpoint(thread, bp);
-			assertTrue("second suspended thread not the same as first", thread == thread2);
+			assertSame("second suspended thread not the same as first", thread, thread2);
 
 			frame = (IJavaStackFrame)thread2.getTopStackFrame();
 			var = findVariable(frame, "i");
 			value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '4', but was " + iValue, iValue == 4);
+			assertEquals("value of 'i' should be '4', but was " + iValue, 4, iValue);
 
 			resumeAndExit(thread2);
 
@@ -96,7 +96,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '2', but was " + iValue, iValue == 2);
+			assertEquals("value of 'i' should be '2', but was " + iValue, 2, iValue);
 
 			resumeAndExit(thread);
 

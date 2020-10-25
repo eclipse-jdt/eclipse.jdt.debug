@@ -43,7 +43,7 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 			assertTrue("Should have monitor frame info", fVM.canGetMonitorFrameInfo());
 		}
 		else {
-			assertTrue("Should not have monitor frame info", !fVM.canGetMonitorFrameInfo());
+			assertFalse("Should not have monitor frame info", fVM.canGetMonitorFrameInfo());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 			ThreadReference tref = bpe.thread();
 			List<?> list = tref.ownedMonitorsAndFrames();
 			assertNotNull("list cannot be null", list);
-			assertTrue("there should be one monitor", list.size() == 1);
+			assertEquals("there should be one monitor", 1, list.size());
 			fEventReader.removeEventListener(waiter);
 			tref.resume();
 		} catch (InterruptedException e) {

@@ -14,6 +14,8 @@
 
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jdi.IntegerValue;
 
 /**
@@ -56,16 +58,16 @@ public class IntegerValueTest extends AbstractJDITest {
 	 */
 	public void testJDIEquality() {
 		assertTrue("1", fValue.equals(fVM.mirrorOf(12345)));
-		assertTrue("2", !fValue.equals(fVM.mirrorOf(54321)));
-		assertTrue("3", !fValue.equals(new Object()));
-		assertTrue("4", !fValue.equals(null));
+		assertFalse("2", fValue.equals(fVM.mirrorOf(54321)));
+		assertFalse("3", fValue.equals(new Object()));
+		assertFalse("4", fValue.equals(null));
 		assertEquals("5", fValue.hashCode(), fVM.mirrorOf(12345).hashCode());
-		assertTrue("6", fValue.hashCode() != fVM.mirrorOf(54321).hashCode());
+		assertNotEquals("6", fValue.hashCode(), fVM.mirrorOf(54321).hashCode());
 	}
 	/**
 	 * Test JDI value().
 	 */
 	public void testJDIValue() {
-		assertTrue("1", 12345 == fValue.value());
+		assertEquals("1", 12345, fValue.value());
 	}
 }

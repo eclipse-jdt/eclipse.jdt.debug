@@ -123,8 +123,8 @@ public class ConsoleTests extends AbstractDebugTest {
 	    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 	    consoleManager.addConsoles(new IConsole[]{console});
 	    consoleManager.removeConsoles(new IConsole[]{console});
-	    assertTrue("Console was initialized", !console.fInit);
-	    assertTrue("Console was disposed", !console.fDispose);
+		assertFalse("Console was initialized", console.fInit);
+		assertFalse("Console was disposed", console.fDispose);
 	    console.dispose();
 	}
 

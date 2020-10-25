@@ -121,11 +121,11 @@ public class LocatableTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			Locatable locatable = (Locatable) iterator.next();
 			Location location = locatable.location();
-			assertTrue("1." + locatable, location != null);
+			assertNotNull("1." + locatable, location);
 			assertTrue(
 				"2." + locatable,
 				(location.codeIndex()) >= 0 || (location.codeIndex() == -1));
-			assertTrue("3." + locatable, location.declaringType() != null);
+			assertNotNull("3." + locatable, location.declaringType());
 			assertTrue(
 				"4." + locatable,
 				(location.lineNumber() > 0) || (location.lineNumber() == -1));
@@ -133,7 +133,7 @@ public class LocatableTest extends AbstractJDITest {
 			try {
 				location.sourceName();
 			} catch (AbsentInformationException e) {
-				assertTrue("7", false);
+				fail("7");
 			}
 		}
 	}

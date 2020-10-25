@@ -14,6 +14,8 @@
 
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jdi.BooleanValue;
 
 /**
@@ -56,16 +58,16 @@ public class BooleanValueTest extends AbstractJDITest {
 	 */
 	public void testJDIEquality() {
 		assertTrue("1", fValue.equals(fVM.mirrorOf(true)));
-		assertTrue("2", !fValue.equals(fVM.mirrorOf(false)));
-		assertTrue("3", !fValue.equals(new Object()));
-		assertTrue("4", !fValue.equals(null));
+		assertFalse("2", fValue.equals(fVM.mirrorOf(false)));
+		assertFalse("3", fValue.equals(new Object()));
+		assertFalse("4", fValue.equals(null));
 		assertEquals("5", fValue.hashCode(), fVM.mirrorOf(true).hashCode());
-		assertTrue("6", fValue.hashCode() != fVM.mirrorOf(false).hashCode());
+		assertNotEquals("6", fValue.hashCode(), fVM.mirrorOf(false).hashCode());
 	}
 	/**
 	 * Test JDI value().
 	 */
 	public void testJDIValue() {
-		assertTrue("1", true == fValue.value());
+		assertTrue("1", fValue.value());
 	}
 }

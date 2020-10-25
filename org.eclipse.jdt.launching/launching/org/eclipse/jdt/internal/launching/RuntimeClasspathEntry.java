@@ -284,8 +284,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		Document doc = DebugPlugin.newDocument();
 		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
 		doc.appendChild(node);
-		node.setAttribute("type", (Integer.valueOf(getType())).toString()); //$NON-NLS-1$
-		node.setAttribute("path", (Integer.valueOf(getClasspathProperty())).toString()); //$NON-NLS-1$
+		node.setAttribute("type", Integer.toString(getType())); //$NON-NLS-1$
+		node.setAttribute("path", Integer.toString(getClasspathProperty())); //$NON-NLS-1$
 		switch (getType()) {
 			case PROJECT :
 				node.setAttribute("projectName", getPath().lastSegment()); //$NON-NLS-1$

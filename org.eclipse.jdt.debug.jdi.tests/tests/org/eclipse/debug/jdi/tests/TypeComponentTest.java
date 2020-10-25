@@ -70,15 +70,15 @@ public class TypeComponentTest extends AbstractJDITest {
 	 * Test JDI isFinal().
 	 */
 	public void testJDIIsFinal() {
-		assertTrue("1", !fField.isFinal());
-		assertTrue("2", !fMethod.isFinal());
+		assertFalse("1", fField.isFinal());
+		assertFalse("2", fMethod.isFinal());
 	}
 	/**
 	 * Test JDI isStatic().
 	 */
 	public void testJDIIsStatic() {
 		assertTrue("1", fField.isStatic());
-		assertTrue("2", !fMethod.isStatic());
+		assertFalse("2", fMethod.isStatic());
 	}
 	/**
 	 * Test JDI isSynthetic().
@@ -88,8 +88,8 @@ public class TypeComponentTest extends AbstractJDITest {
 			return;
 		}
 
-		assertTrue("1", !fField.isSynthetic());
-		assertTrue("2", !fMethod.isSynthetic());
+		assertFalse("1", fField.isSynthetic());
+		assertFalse("2", fMethod.isSynthetic());
 	}
 	/**
 	 * Test JDI name().

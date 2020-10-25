@@ -59,7 +59,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			breakpoints.add(createLineBreakpoint(24, typeName));
 			breakpoints.add(createExceptionBreakpoint("Exception", true, false));
 			breakpoints.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
-			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
+			assertEquals("manager does not contain 6 breakpoints for exporting", 6, getBreakpointManager().getBreakpoints().length);
 			Path path = new Path("exbkptA.bkpt");
 			assertNotNull("Invalid path", path);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
@@ -99,7 +99,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			breakpoints.add(createLineBreakpoint(24, typeName));
 			breakpoints.add(createExceptionBreakpoint("Exception", true, false));
 			breakpoints.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
-			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
+			assertEquals("manager does not contain 6 breakpoints for exporting", 6, getBreakpointManager().getBreakpoints().length);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(breakpoints.toArray(new IBreakpoint[breakpoints.size()]));
 			op.run(new NullProgressMonitor());
 			StringBuffer buffer = op.getBuffer();
@@ -128,7 +128,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			breakpoints.add(createLineBreakpoint(24, typeName));
 			breakpoints.add(createExceptionBreakpoint("Exception", true, false));
 			breakpoints.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
-			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
+			assertEquals("manager does not contain 6 breakpoints for exporting", 6, getBreakpointManager().getBreakpoints().length);
 			Path path = new Path("exbkptB.bkpt");
 			assertNotNull("Invalid path", path);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
@@ -160,7 +160,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 				assertEquals("should be no breakpoints", 0, getBreakpointManager().getBreakpoints().length);
 				return;
 			}
-			assertTrue("Import should have failed with exception", false);
+			fail("Import should have failed with exception");
 		}
 		finally {
 			removeAllBreakpoints();
@@ -190,7 +190,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			bporg.addBreakpoint(createExceptionBreakpoint("Exception", true, false), category);
 			bporg.addBreakpoint(createMethodBreakpoint(typeName, "method4", "()V", true, false), category);
 			assertEquals("workingset does not have 6 elements", 6, set.getElements().length);
-			assertEquals("manager does not have 6 breakpoints", getBreakpointManager().getBreakpoints().length, 6);
+			assertEquals("manager does not have 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			Path path = new Path("exbkptC.bkpt");
 			assertNotNull("Invalid path", path);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(getBreakpointManager().getBreakpoints(), path.toOSString());
@@ -262,7 +262,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			bporg.addBreakpoint(createExceptionBreakpoint("Exception", true, false), category);
 			bporg.addBreakpoint(createMethodBreakpoint(typeName, "method4", "()V", true, false), category);
 			assertEquals("workingset does not have 6 elements", 6, set.getElements().length);
-			assertEquals("manager does not have 6 breakpoints", getBreakpointManager().getBreakpoints().length, 6);
+			assertEquals("manager does not have 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			Path path = new Path("exbkptC.bkpt");
 			assertNotNull("Invalid path", path);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(getBreakpointManager().getBreakpoints(), path.toOSString());

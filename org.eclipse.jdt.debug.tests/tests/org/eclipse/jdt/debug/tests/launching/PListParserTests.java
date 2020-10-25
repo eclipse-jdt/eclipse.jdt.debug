@@ -87,7 +87,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("JVMVersion", "1.5.0_24");
 			assertEquals("Incorrect values parsed", map, jres[2]);
 		} else {
-			assertTrue("Top level object should be an array", false);
+			fail("Top level object should be an array");
 		}
 	}
 
@@ -107,7 +107,7 @@ public class PListParserTests extends AbstractDebugTest {
 			assertEquals("Should be 8 entries in the array", 8, jres.length);
 
 		} else {
-			assertTrue("Top level object should be an array", false);
+			fail("Top level object should be an array");
 		}
 	}
 
@@ -127,7 +127,7 @@ public class PListParserTests extends AbstractDebugTest {
 			assertEquals("Should be 2 entries in the array", 2, jres.length);
 
 		} else {
-			assertTrue("Top level object should be an array", false);
+			fail("Top level object should be an array");
 		}
 	}
 

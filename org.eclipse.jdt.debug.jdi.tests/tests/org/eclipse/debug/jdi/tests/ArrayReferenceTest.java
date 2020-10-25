@@ -86,9 +86,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fDoubleArray.setValue(0, piValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("testJDIGetSetDoubleValue.3.1", false);
+			fail("testJDIGetSetDoubleValue.3.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("testJDIGetSetDoubleValue.3.2", false);
+			fail("testJDIGetSetDoubleValue.3.2");
 		}
 		DoubleValue value = (DoubleValue) fDoubleArray.getValue(0);
 		assertEquals("testJDIGetSetDoubleValue.4.1", value, piValue);
@@ -116,9 +116,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fDoubleArray.setValues(newValues);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("testJDIGetSetDoubleValue.7.1", false);
+			fail("testJDIGetSetDoubleValue.7.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("testJDIGetSetDoubleValue.7.2", false);
+			fail("testJDIGetSetDoubleValue.7.2");
 		}
 		values = fDoubleArray.getValues();
 		assertEquals("testJDIGetSetDoubleValue.8", values, newValues);
@@ -145,9 +145,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fDoubleArray.setValues(0, newValues, 0, 2);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("testJDIGetSetDoubleValue.11.1", false);
+			fail("testJDIGetSetDoubleValue.11.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("testJDIGetSetDoubleValue.11.2", false);
+			fail("testJDIGetSetDoubleValue.11.2");
 		}
 		values = fDoubleArray.getValues(0, 2);
 		assertEquals("testJDIGetSetDoubleValue.12", values, newValues);
@@ -168,9 +168,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fArray.setValue(0, newValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("2.1", false);
+			fail("2.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("2.2", false);
+			fail("2.2");
 		}
 		StringReference value = (StringReference) fArray.getValue(0);
 		assertEquals("3", value, newValue);
@@ -198,9 +198,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fArray.setValues(newValues);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("5.1", false);
+			fail("5.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("6.2", false);
+			fail("6.2");
 		}
 		values = fArray.getValues();
 		assertEquals("7", values, newValues);
@@ -228,9 +228,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fArray.setValues(0, newValues, 0, 2);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("9.1", false);
+			fail("9.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("9.2", false);
+			fail("9.2");
 		}
 		values = fArray.getValues(0, 2);
 		assertEquals("10", values, newValues);
@@ -240,12 +240,12 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		try {
 			fArray.setValues(0, newValues, 0, 2);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("11.1", false);
+			fail("11.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("11.2", false);
+			fail("11.2");
 		}
 		values = fArray.getValues(0, 2);
-		assertEquals("12", values.get(0), null);
+		assertNull("12", values.get(0));
 	}
 	/**
 	 * Test JDI length() and JDWP 'Array - Get length'.

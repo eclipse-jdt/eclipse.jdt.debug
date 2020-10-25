@@ -94,8 +94,9 @@ public class ClassTypeTest extends AbstractJDITest {
 		while (interfaces.hasNext()) {
 			InterfaceType next = (InterfaceType) interfaces.next();
 			assertTrue(next.name(), all.contains(next));
-			if (next.name().equals("java.lang.Comparable"))
+			if (next.name().equals("java.lang.Comparable")) {
 				found = true;
+			}
 		}
 		assertTrue("1", found);
 	}
@@ -118,9 +119,9 @@ public class ClassTypeTest extends AbstractJDITest {
 	 */
 	public void testJDIConcreteMethodByName() {
 		Method method = fType.concreteMethodByName("run", "()V");
-		assertTrue("1", method != null);
+		assertNotNull("1", method);
 		assertEquals("2", fType, method.declaringType());
-		assertTrue("3", fType.concreteMethodByName("xxx", "(I)Z") == null);
+		assertNull("3", fType.concreteMethodByName("xxx", "(I)Z"));
 	}
 	/**
 	 * Test JDI interfaces().
@@ -136,13 +137,15 @@ public class ClassTypeTest extends AbstractJDITest {
 			Object next = iterator.next();
 			assertTrue("2." + i++, next instanceof InterfaceType);
 			InterfaceType ift = (InterfaceType) next;
-			if (ift.name().equals("java.lang.Runnable"))
+			if (ift.name().equals("java.lang.Runnable")) {
 				found = true;
-			if (ift.name().equals("java.lang.Comparable"))
+			}
+			if (ift.name().equals("java.lang.Comparable")) {
 				extra = true;
+			}
 		}
 		assertTrue("1", found);
-		assertTrue("2", !extra);
+		assertFalse("2", extra);
 	}
 	/**
 	 * Test JDI invokeMethod(ThreadReference, Method, Value[]).
@@ -174,8 +177,8 @@ public class ClassTypeTest extends AbstractJDITest {
 		} catch (Exception exc) {
 			oops = exc;
 		}
-		assertTrue("1", oops == null);
-		assertEquals("2", val == null ? null : ((StringReference) val).value(), "41");
+		assertNull("1", oops);
+		assertEquals("2", "41", val == null ? null : ((StringReference) val).value());
 	}
 	/**
 	 * Test JDI invokeMethod - failure.
@@ -203,8 +206,8 @@ public class ClassTypeTest extends AbstractJDITest {
 		} catch (Exception exc) {
 			oops = exc;
 		}
-		assertTrue("1", oops == null);
-		assertTrue("2", good != null);
+		assertNull("1", oops);
+		assertNotNull("2", good);
 	}
 	/**
 	 * Test JDI locationsOfLine(int).
@@ -215,7 +218,7 @@ public class ClassTypeTest extends AbstractJDITest {
 		try {
 			locations = fType.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 1, locations.size());
 	}
@@ -223,13 +226,13 @@ public class ClassTypeTest extends AbstractJDITest {
 	 * Test JDI methodByName
 	 */
 	public void testJDIMethodByName() {
-		assertTrue("1", fType.methodsByName("main").size() == 1);
+		assertEquals("1", 1, fType.methodsByName("main").size());
 	}
 	/**
 	 * Test JDI methodByNameAndSignature
 	 */
 	public void testJDIMethodByNameAndSignature() {
-		assertTrue("1", fType.methodsByName("printAndSignal", "()V").size() == 1);
+		assertEquals("1", 1, fType.methodsByName("printAndSignal", "()V").size());
 	}
 	/**
 	 * Test JDI methods().
@@ -239,8 +242,9 @@ public class ClassTypeTest extends AbstractJDITest {
 		Iterator<?> it = fType.methods().iterator();
 		while (it.hasNext()) {
 			Method mth = (Method) it.next();
-			if (mth.name().equals("printAndSignal"))
+			if (mth.name().equals("printAndSignal")) {
 				found = true;
+			}
 		}
 		assertTrue("1", found);
 	}
@@ -273,15 +277,15 @@ public class ClassTypeTest extends AbstractJDITest {
 		try {
 			result = fType.newInstance(thread, constructor, arguments, 0);
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("1", false);
+			fail("1");
 		} catch (InvalidTypeException e) {
-			assertTrue("2", false);
+			fail("2");
 		} catch (ClassNotLoadedException e) {
-			assertTrue("3", false);
+			fail("3");
 		} catch (InvocationException e) {
-			assertTrue("4", false);
+			fail("4");
 		}
-		assertTrue("5", result != null);
+		assertNotNull("5", result);
 		assertTrue("6", result.referenceType().equals(fType));
 		waitUntilReady();
 	}
@@ -292,7 +296,7 @@ public class ClassTypeTest extends AbstractJDITest {
 
 		// Get static field "fInt"
 		Field field = fType.fieldByName("fInt");
-		assertTrue("1", field != null);
+		assertNotNull("1", field);
 		assertTrue("2", field.isStatic());
 
 		// Remember old value
@@ -303,9 +307,9 @@ public class ClassTypeTest extends AbstractJDITest {
 		try {
 			fType.setValue(field, newValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("3.1", false);
+			fail("3.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("3.2", false);
+			fail("3.2");
 		}
 
 		// Ensure the value as been set
@@ -315,14 +319,14 @@ public class ClassTypeTest extends AbstractJDITest {
 		try {
 			fType.setValue(field, oldValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("5.1", false);
+			fail("5.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("5.2", false);
+			fail("5.2");
 		}
 
 		// Get static field "fString" to test if it can be set to null.
 		field = fType.fieldByName("fString");
-		assertTrue("6", field != null);
+		assertNotNull("6", field);
 		assertTrue("7", field.isStatic());
 
 		// Remember old value
@@ -333,9 +337,9 @@ public class ClassTypeTest extends AbstractJDITest {
 		try {
 			fType.setValue(field, newValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("8.1", false);
+			fail("8.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("8.2", false);
+			fail("8.2");
 		}
 
 		// Ensure the value as been set
@@ -345,9 +349,9 @@ public class ClassTypeTest extends AbstractJDITest {
 		try {
 			fType.setValue(field, oldValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("10.1", false);
+			fail("10.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("10.2", false);
+			fail("10.2");
 		}
 	}
 	/**

@@ -53,7 +53,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 				return;
 			}
 		}
-		assertTrue("Failed to locate package fragment root", false);
+		fail("Failed to locate package fragment root");
 	}
 
 	/**

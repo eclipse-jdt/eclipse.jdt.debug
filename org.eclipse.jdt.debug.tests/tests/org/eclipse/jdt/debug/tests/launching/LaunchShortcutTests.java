@@ -57,7 +57,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 		LaunchShortcutExtension ext = getLaunchShortcutExtension(JAVA_LAUNCH_SHORTCUT_ID);
 		assertNotNull("java app shortcut not found", ext); //$NON-NLS-1$
 		String typeid = "org.eclipse.jdt.launching.foo"; //$NON-NLS-1$
-		assertTrue("local java app shortcut should not support foo", !ext.getAssociatedConfigurationTypes().contains(typeid)); //$NON-NLS-1$
+		assertFalse("local java app shortcut should not support foo", ext.getAssociatedConfigurationTypes().contains(typeid)); //$NON-NLS-1$
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	public void testAssociatedPerspectiveNotSupported() {
 		LaunchShortcutExtension ext = getLaunchShortcutExtension(TEST_LAUNCH_SHORTCUT);
 		assertNotNull("test shortcut not found", ext); //$NON-NLS-1$
-		assertTrue("java app shortcut should not support foo perspective", !ext.getPerspectives().contains("org.eclipse.debug.ui.FooPerspective")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("java app shortcut should not support foo perspective", ext.getPerspectives().contains("org.eclipse.debug.ui.FooPerspective")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	public void testGetLaunchShortcutPerspectiveCategory() {
 		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
 		assertNotNull("launch configuration manager cannot be null", lcm); //$NON-NLS-1$
-		assertTrue("there should be one shortcut for the debug perspective and testing category", lcm.getLaunchShortcuts("org.eclipse.debug.ui.DebugPerspective", TESTING).size() == 1); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("there should be one shortcut for the debug perspective and testing category", 1, lcm.getLaunchShortcuts("org.eclipse.debug.ui.DebugPerspective", TESTING).size()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	public void testGetLaunchShortcutCategory() {
 		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
 		assertNotNull("launch configuration manager cannot be null", lcm); //$NON-NLS-1$
-		assertTrue("there should be one shortcut for the testing category", lcm.getLaunchShortcuts(TESTING).size() == 1); //$NON-NLS-1$
+		assertEquals("there should be one shortcut for the testing category", 1, lcm.getLaunchShortcuts(TESTING).size()); //$NON-NLS-1$
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 		LaunchShortcutExtension ext = list.get(0);
 		String descr = ext.getShortcutDescription("debug"); //$NON-NLS-1$
 		assertNotNull("The description should not be null for debug mode", descr); //$NON-NLS-1$
-		assertTrue("The description should match the general one: General Description", descr.equals("General Description")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("The description should match the general one: General Description", "General Description", descr); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 		LaunchShortcutExtension ext = list.get(0);
 		String descr = ext.getShortcutDescription("run"); //$NON-NLS-1$
 		assertNotNull("The description should not be null for run mode", descr); //$NON-NLS-1$
-		assertTrue("The description should match the specific run one: Run Description", descr.equals("Run Description")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("The description should match the specific run one: Run Description", "Run Description", descr); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

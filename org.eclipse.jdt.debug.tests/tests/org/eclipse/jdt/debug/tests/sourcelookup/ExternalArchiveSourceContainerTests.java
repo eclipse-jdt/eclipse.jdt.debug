@@ -60,7 +60,7 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 				return container;
 			}
 		}
-		assertTrue("Did not find JRE source archive. This failure is expected if you are running the tests with a JRE that does not contain source.", false);
+		fail("Did not find JRE source archive. This failure is expected if you are running the tests with a JRE that does not contain source.");
 		return null;
 	}
 

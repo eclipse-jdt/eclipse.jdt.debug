@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import static org.junit.Assert.assertNotEquals;
+
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -125,9 +127,9 @@ public class ArrayTests extends AbstractDebugTest {
 			for (int i = 0; i < values.length; i++) {
 				byte byteValue = ((IJavaPrimitiveValue)values[i]).getByteValue();
 				if (i < 2500) {
-					assertFalse((byte)-1 == byteValue);
+					assertNotEquals((byte) -1, byteValue);
 				} else if (i >= 7500) {
-					assertFalse((byte)-1 == byteValue);
+					assertNotEquals((byte) -1, byteValue);
 				} else {
 					assertEquals((byte)-1, byteValue);
 				}

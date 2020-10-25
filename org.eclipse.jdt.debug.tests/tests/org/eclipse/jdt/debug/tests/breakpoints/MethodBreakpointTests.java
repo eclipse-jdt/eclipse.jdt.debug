@@ -226,7 +226,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'sum' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'sum' should be '3', but was " + iValue, iValue == 3);
+			assertEquals("value of 'sum' should be '3', but was " + iValue, 3, iValue);
 
 			bp.delete();
 		} finally {
@@ -256,7 +256,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'sum' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'sum' should be '6', but was " + iValue, iValue == 6);
+			assertEquals("value of 'sum' should be '6', but was " + iValue, 6, iValue);
 
 			bp.delete();
 		} finally {

@@ -48,7 +48,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 				return;
 			}
 		}
-		assertTrue("Did not find environment J2SE-1.4", false);
+		fail("Did not find environment J2SE-1.4");
 	}
 
 	public void testAnalyze() throws Exception {
@@ -65,7 +65,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 				return;
 			}
 		}
-		assertTrue("vm should be J2SE-1.4 compliant", false);
+		fail("vm should be J2SE-1.4 compliant");
 	}
 
 	private int compareJavaVersions(IVMInstall vm, String ver) {

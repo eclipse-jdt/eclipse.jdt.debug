@@ -40,7 +40,7 @@ public class SourceNameFilterTests extends AbstractJDITest {
 			assertTrue("Should have source name filter capabilities", (fVM.canUseSourceNameFilters() ? true : true));
 		}
 		else {
-			assertTrue("Should not have source name filter capabilities", !fVM.canUseSourceNameFilters());
+			assertFalse("Should not have source name filter capabilities", fVM.canUseSourceNameFilters());
 		}
 	}
 
@@ -58,7 +58,7 @@ public class SourceNameFilterTests extends AbstractJDITest {
 		request.addSourceNameFilter("*.java");
 		ClassPrepareEvent event = (ClassPrepareEvent) triggerAndWait(request, "ClassPrepareEvent1", true, 5000);
 		assertNotNull("event should not be null", event);
-		assertEquals(event.referenceType().name(), "org.eclipse.debug.jdi.tests.program.TestClass1");
+		assertEquals("org.eclipse.debug.jdi.tests.program.TestClass1", event.referenceType().name());
 		rm.deleteEventRequest(request);
 
 		//filter is *Test3.java
@@ -66,7 +66,7 @@ public class SourceNameFilterTests extends AbstractJDITest {
 		request.addSourceNameFilter("*TestClass3.java");
 		event = (ClassPrepareEvent) triggerAndWait(request, "ClassPrepareEvent3", true, 5000);
 		assertNotNull("event should not be null", event);
-		assertEquals(event.referenceType().name(), "org.eclipse.debug.jdi.tests.program.TestClass3");
+		assertEquals("org.eclipse.debug.jdi.tests.program.TestClass3", event.referenceType().name());
 		rm.deleteEventRequest(request);
 
 		//filter is *TestClazz6.java

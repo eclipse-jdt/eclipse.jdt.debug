@@ -51,17 +51,17 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			assertNotNull(value);
 			IJavaVariable pubStr = value.getField("pubStr", false);
 			assertNotNull(pubStr);
-			assertEquals("value should be 'redefined public'", pubStr.getValue().getValueString(), "redefined public");
+			assertEquals("value should be 'redefined public'", "redefined public", pubStr.getValue().getValueString());
 
 			// retrieve an instance var in superclass
 			IJavaVariable privStr = value.getField("privStr", false);
 			assertNotNull(privStr);
-			assertEquals("value should be 'private'", privStr.getValue().getValueString(), "private");
+			assertEquals("value should be 'private'", "private", privStr.getValue().getValueString());
 
 			// retrieve an instance var in super class with same name
 			pubStr = value.getField("pubStr", true);
 			assertNotNull(pubStr);
-			assertEquals("value should be 'public'", pubStr.getValue().getValueString(), "public");
+			assertEquals("value should be 'public'", "public", pubStr.getValue().getValueString());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

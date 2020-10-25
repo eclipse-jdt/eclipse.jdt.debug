@@ -63,7 +63,7 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 		try{
 			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate()); //$NON-NLS-1$ //$NON-NLS-2$
 			config.migrate();
-			assertTrue("LC: "+config.getName()+" should not be a candidate for migration", !config.isMigrationCandidate()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertFalse("LC: " + config.getName() + " should not be a candidate for migration", config.isMigrationCandidate()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		finally {
 			config = null;

@@ -65,11 +65,11 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, getDefaultEncoding());
 			System.setProperty("file.encoding", "UTF-16BE");
 			ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
-			assertTrue("the configuration could not be found", config != null);
-			assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null) == null);
+			assertNotNull("the configuration could not be found", config);
+			assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null) == null);
 			String encoding = getLaunchManager().getEncoding(config);
-			assertTrue("The configuration encoding should not be null", encoding != null);
-			assertTrue("The configuration encoding should match the file system encoding", encoding.equals(System.getProperty("file.encoding")));
+			assertNotNull("The configuration encoding should not be null", encoding);
+			assertEquals("The configuration encoding should match the file system encoding", encoding, System.getProperty("file.encoding"));
 		}
 		finally {
 			//ensure old encoding is restored
@@ -87,11 +87,11 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 		try {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, "UTF-16");
 			ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
-			assertTrue("the configuration could not be found", config != null);
-			assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null) == null);
+			assertNotNull("the configuration could not be found", config);
+			assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null) == null);
 			String encoding = getLaunchManager().getEncoding(config);
-			assertTrue("The configuration encoding should not be null", encoding != null);
-			assertTrue("The configuration encoding should match the workbench preference system encoding", encoding.equals("UTF-16"));
+			assertNotNull("The configuration encoding should not be null", encoding);
+			assertEquals("The configuration encoding should match the workbench preference system encoding", "UTF-16", encoding);
 		}
 		finally {
 			//ensure old encoding is restored
@@ -105,17 +105,17 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 	public void testGetSpecificConfigurationEncoding() throws CoreException {
 		String oldencoding = ResourcesPlugin.getEncoding();
 		ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
-		assertTrue("the configuration could not be found", config != null);
+		assertNotNull("the configuration could not be found", config);
 		IResource[] oldmapped = config.getMappedResources();
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		try {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, getDefaultEncoding());
 			copy.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, "UTF-16");
 			copy.doSave();
-			assertTrue("there should be an encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null) != null);
+			assertTrue("there should be an encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null) != null);
 			String encoding = getLaunchManager().getEncoding(config);
-			assertTrue("The configuration encoding should not be null", encoding != null);
-			assertTrue("The configuration encoding should match the file system encoding", encoding.equals("UTF-16"));
+			assertNotNull("The configuration encoding should not be null", encoding);
+			assertEquals("The configuration encoding should match the file system encoding", "UTF-16", encoding);
 			copy.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
 			copy.setMappedResources(null);
 			copy.doSave();
@@ -136,20 +136,20 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 	public void testGetSpecificResourceEncoding() throws CoreException {
 		String oldencoding = ResourcesPlugin.getEncoding();
 		ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
-		assertTrue("the configuration could not be found", config != null);
-		assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null) == null);
+		assertNotNull("the configuration could not be found", config);
+		assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null) == null);
 		IResource[] oldmapped = config.getMappedResources();
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		try {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, "UTF-16LE");
 			IFile res = (IFile) getResource("MigrationTests.java");
-			assertTrue("the resource MigrationTests.java should not be null", res != null);
+			assertNotNull("the resource MigrationTests.java should not be null", res);
 			copy.setMappedResources(new IResource[] {res});
 			copy.doSave();
 			res.setCharset("UTF-8", null);
 			String encoding = getLaunchManager().getEncoding(config);
-			assertTrue("The configuration encoding should not be null", encoding != null);
-			assertTrue("The configuration encoding should match the file system encoding", encoding.equals(res.getCharset()));
+			assertNotNull("The configuration encoding should not be null", encoding);
+			assertEquals("The configuration encoding should match the file system encoding", encoding, res.getCharset());
 		}
 		finally {
 			//ensure old encoding is restored
@@ -171,21 +171,21 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 		String resCharset = res.getCharset();
 		String res2Charset = res2.getCharset();
 		ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
-		assertTrue("the configuration could not be found", config != null);
-		assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null) == null);
+		assertNotNull("the configuration could not be found", config);
+		assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null) == null);
 		IResource[] oldmapped = config.getMappedResources();
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		try {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, "UTF-16LE");
-			assertTrue("the resource MigrationTests.java should not be null", res != null);
-			assertTrue("the resource MigrationTests2.java should not be null", res2 != null);
+			assertNotNull("the resource MigrationTests.java should not be null", res);
+			assertNotNull("the resource MigrationTests2.java should not be null", res2);
 			copy.setMappedResources(new IResource[] {res, res2});
 			copy.doSave();
 			res.setCharset("UTF-16BE", null);
 			res2.setCharset("UTF-8", null);
 			String encoding = getLaunchManager().getEncoding(config);
-			assertTrue("The configuration encoding should not be null", encoding != null);
-			assertTrue("The configuration encoding should match the file system encoding", encoding.equals(res.getCharset()));
+			assertNotNull("The configuration encoding should not be null", encoding);
+			assertEquals("The configuration encoding should match the file system encoding", encoding, res.getCharset());
 			copy.setMappedResources(null);
 			copy.doSave();
 		}

@@ -70,7 +70,7 @@ public class TypeTests extends AbstractDebugTest {
 
 				index++;
 				int stackLine = frame.getLineNumber();
-				assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+				assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
 				bps.remove(breakpoint);
 				breakpoint.delete();
 				if (!bps.isEmpty()) {
@@ -113,7 +113,7 @@ public class TypeTests extends AbstractDebugTest {
 
                 index++;
                 int stackLine = frame.getLineNumber();
-                assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+				assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
                 bps.remove(breakpoint);
                 breakpoint.delete();
                 if (!bps.isEmpty()) {

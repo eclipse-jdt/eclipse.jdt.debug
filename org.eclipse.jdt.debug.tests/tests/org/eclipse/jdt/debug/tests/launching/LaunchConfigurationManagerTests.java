@@ -134,7 +134,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	public void testGetLaunchShortcutsForCategory() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		List<LaunchShortcutExtension> list = fLCM.getLaunchShortcuts("testing");
-		assertTrue("there should be the testing shortcut", list.size() == 1);
+		assertEquals("there should be the testing shortcut", 1, list.size());
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchGroup group = fLCM.getDefaultLaunchGroup("run");
 		assertNotNull("the default launch group cannot be null", group);
-		assertTrue("the default launch group for run mode should be the debug contribution", group.getIdentifier().equals("org.eclipse.debug.ui.launchGroup.run"));
+		assertEquals("the default launch group for run mode should be the debug contribution", "org.eclipse.debug.ui.launchGroup.run", group.getIdentifier());
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchGroup group = fLCM.getDefaultLaunchGroup("debug");
 		assertNotNull("the default launch group cannot be null", group);
-		assertTrue("the default launch group for debug mode should be the debug contribution", group.getIdentifier().equals("org.eclipse.debug.ui.launchGroup.debug"));
+		assertEquals("the default launch group for debug mode should be the debug contribution", "org.eclipse.debug.ui.launchGroup.debug", group.getIdentifier());
 	}
 
 	/**

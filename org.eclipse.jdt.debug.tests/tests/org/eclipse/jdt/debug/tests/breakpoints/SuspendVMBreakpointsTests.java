@@ -138,7 +138,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			assertNotNull("No breakpoint", hit);
 
 			// should be modification
-			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			assertFalse("First hit should be modification", wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
 			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 

@@ -84,7 +84,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 			typeName = typeName.replaceAll("\\$", ".");
 		}
         if (lineNumber == -1) {
-            assertEquals("Wrong type name", null, typeName);
+			assertNull("Wrong type name", typeName);
         } else {
             assertEquals("Wrong type name", expectedTypeName, typeName);
         }

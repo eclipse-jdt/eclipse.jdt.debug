@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ReferenceType;
 
@@ -39,7 +41,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 			assertTrue("Should have classfile version info", fVM.canGetClassFileVersion());
 		}
 		else {
-			assertTrue("Should not have classfile version info", !fVM.canGetClassFileVersion());
+			assertFalse("Should not have classfile version info", fVM.canGetClassFileVersion());
 		}
 	}
 
@@ -69,13 +71,13 @@ public class ConstantPoolTests extends AbstractJDITest {
 				fClass.majorVersion();
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fClass.majorVersion();
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}
@@ -92,7 +94,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		ArrayType type = getArrayType();
 		assertNotNull("type should not be null", type);
 		int ver = type.majorVersion();
-		assertTrue("major verison should be 0", ver == 0);
+		assertEquals("major verison should be 0", 0, ver);
 	}
 
 	/**
@@ -107,7 +109,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass);
 		int ver = fClass.majorVersion();
-		assertTrue("version cannot be equal to -1", ver != -1);
+		assertNotEquals("version cannot be equal to -1", -1, ver);
 	}
 
 	/**
@@ -123,13 +125,13 @@ public class ConstantPoolTests extends AbstractJDITest {
 				fClass.minorVersion();
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fClass.minorVersion();
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}
@@ -147,7 +149,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass);
 		int ver = fClass.minorVersion();
-		assertTrue("version cannot be equal to -1", ver != -1);
+		assertNotEquals("version cannot be equal to -1", -1, ver);
 	}
 
 	/**
@@ -163,13 +165,13 @@ public class ConstantPoolTests extends AbstractJDITest {
 				fClass.constantPoolCount();
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fClass.constantPoolCount();
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}
@@ -204,13 +206,13 @@ public class ConstantPoolTests extends AbstractJDITest {
 				fClass.constantPool();
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fClass.constantPool();
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}

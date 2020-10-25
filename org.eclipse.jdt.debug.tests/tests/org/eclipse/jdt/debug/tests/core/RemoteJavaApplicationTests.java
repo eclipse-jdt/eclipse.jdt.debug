@@ -116,7 +116,7 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 			ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 			int lineNumber = breakpoint.getLineNumber();
 			int stackLine = thread.getTopStackFrame().getLineNumber();
-			assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+			assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
 			breakpoint.delete();
 		} finally {
 			terminateAndRemove(thread);
@@ -224,7 +224,7 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 			ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 			int lineNumber = breakpoint.getLineNumber();
 			int stackLine = thread.getTopStackFrame().getLineNumber();
-			assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+			assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
 			breakpoint.delete();
 
 

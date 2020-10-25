@@ -191,6 +191,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		HashSet<String> modes = new HashSet<>();
 		modes.add("alternate2"); //$NON-NLS-1$
 		modes.add("foo"); //$NON-NLS-1$
-		assertTrue("Should not support modes: "+modes.toString(), !type.supportsModeCombination(modes)); //$NON-NLS-1$
+		assertFalse("Should not support modes: " + modes.toString(), type.supportsModeCombination(modes)); //$NON-NLS-1$
 	}
 }

@@ -53,7 +53,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 	IBreakpoint[] generateBreakpoints(int count) throws Exception {
 		IType type = getType(fgTypeName);
 		assertNotNull("the type "+fgTypeName+" should exist", type);
-		assertTrue("The type "+fgTypeName+" must be a file", type.getResource().getType() == IResource.FILE);
+		assertEquals("The type " + fgTypeName + " must be a file", IResource.FILE, type.getResource().getType());
 		IEditorPart editor = openEditor((IFile)type.getResource());
 		assertNotNull("the editor for "+fgTypeName+" should have been created", editor);
 		ArrayList<IBreakpoint> bps = new ArrayList<>(count);
@@ -84,7 +84,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 		tagAsSummary("Start Breakpoint Manager - 200 BPs", Dimension.ELAPSED_PROCESS);
 		try {
 			IBreakpoint[] bps = generateBreakpoints(200);
-			assertTrue("There should be 200 breakpoints", bps.length == 200);
+			assertEquals("There should be 200 breakpoints", 200, bps.length);
 			BreakpointManager mgr = (BreakpointManager) getBreakpointManager();
 			//clean it up before starting
 			mgr.shutdown();
@@ -114,7 +114,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 		tagAsSummary("Start Breakpoint Manager - 50 BPs", Dimension.ELAPSED_PROCESS);
 		try {
 			IBreakpoint[] bps = generateBreakpoints(50);
-			assertTrue("There should be 50 breakpoints", bps.length == 50);
+			assertEquals("There should be 50 breakpoints", 50, bps.length);
 			BreakpointManager mgr = (BreakpointManager) getBreakpointManager();
 			//clean it up before starting
 			mgr.shutdown();
@@ -144,7 +144,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 		tagAsSummary("Start Breakpoint Manager - 100 BPs", Dimension.ELAPSED_PROCESS);
 		try {
 			IBreakpoint[] bps = generateBreakpoints(100);
-			assertTrue("There should be 100 breakpoints", bps.length == 100);
+			assertEquals("There should be 100 breakpoints", 100, bps.length);
 			BreakpointManager mgr = (BreakpointManager) getBreakpointManager();
 			//clean it up before starting
 			mgr.shutdown();

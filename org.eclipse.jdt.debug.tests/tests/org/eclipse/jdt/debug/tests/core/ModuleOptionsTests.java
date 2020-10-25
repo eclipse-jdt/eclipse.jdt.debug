@@ -220,9 +220,8 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 				fail("Unknown set of default modules " + String.join(",", defaultModules));
 				return;
 		}
-		if (!defaultModules.remove("jdk.javadoc")) { // requires java.compiler and jdk.compiler but is required by no default module
-			fail("expected module was not in defaultModules");
-		}
+		assertTrue("expected module was not in defaultModules", defaultModules.remove("jdk.javadoc")); // requires java.compiler and jdk.compiler but
+																										// is required by no default module
 		try {
 			IClasspathAttribute[] attributes = {
 					JavaCore.newClasspathAttribute(IClasspathAttribute.LIMIT_MODULES, String.join(",", defaultModules)) };

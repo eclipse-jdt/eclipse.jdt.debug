@@ -70,18 +70,18 @@ public class StackFrameTest extends AbstractJDITest {
 		StackFrame otherFrame = getFrame(0);
 
 		// Not identical
-		assertTrue("1", fFrame != sameFrame);
+		assertNotSame("1", fFrame, sameFrame);
 		// But equal
-		assertTrue("2", fFrame.equals(sameFrame));
-		assertTrue("3", fFrame.hashCode() == sameFrame.hashCode());
+		assertEquals("2", fFrame, sameFrame);
+		assertEquals("3", fFrame.hashCode(), sameFrame.hashCode());
 
-		assertTrue("4", fFrame.equals(fFrame));
-		assertTrue("5", fFrame.hashCode() == fFrame.hashCode());
+		assertEquals("4", fFrame, fFrame);
+		assertEquals("5", fFrame.hashCode(), fFrame.hashCode());
 
-		assertTrue("6", !fFrame.equals(otherFrame));
+		assertFalse("6", fFrame.equals(otherFrame));
 
-		assertTrue("7", !fFrame.equals(new Object()));
-		assertTrue("8", !fFrame.equals(null));
+		assertFalse("7", fFrame.equals(new Object()));
+		assertFalse("8", fFrame.equals(null));
 	}
 	/**
 	 * Test JDI location().
@@ -100,9 +100,9 @@ public class StackFrameTest extends AbstractJDITest {
 		try {
 			fFrame.setValue(var, thread);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("1.1", false);
+			fail("1.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("1.2", false);
+			fail("1.2");
 		}
 
 		// getValue(LocalVariable)
@@ -122,13 +122,13 @@ public class StackFrameTest extends AbstractJDITest {
 		try {
 			fFrame.setValue(var, null);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("4.1", false);
+			fail("4.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("4.2", false);
+			fail("4.2");
 		}
 
 		value = (ThreadReference) fFrame.getValue(getLocalVariable());
-		assertEquals("5", null, value);
+		assertNull("5", value);
 
 	}
 	/**
@@ -154,15 +154,15 @@ public class StackFrameTest extends AbstractJDITest {
 		try {
 			var = fFrame.visibleVariableByName("t");
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", getLocalVariable(), var);
 		try {
 			var = fFrame.visibleVariableByName("bogus");
 		} catch (AbsentInformationException e) {
-			assertTrue("3", false);
+			fail("3");
 		}
-		assertTrue("4", null == var);
+		assertNull("4", var);
 	}
 	/**
 	 * Test JDI visibleVariables().
@@ -172,7 +172,7 @@ public class StackFrameTest extends AbstractJDITest {
 		try {
 			vars = fFrame.visibleVariables();
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 2, vars.size());
 

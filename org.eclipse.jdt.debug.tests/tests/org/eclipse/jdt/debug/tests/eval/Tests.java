@@ -462,7 +462,7 @@ public abstract class Tests extends AbstractDebugTest {
 			} else {
 				message= exception.getStatus().getMessage();
 			}
-			assertTrue(message, false);
+			fail(message);
 		}
 		return result.getValue();
 	}

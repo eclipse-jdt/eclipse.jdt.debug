@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,8 +91,9 @@ public class ReferenceTypeTest extends AbstractJDITest {
 			ReferenceType type = iterator.next();
 			Iterator<?> all = type.allFields().iterator();
 			int i = 0;
-			while (all.hasNext())
+			while (all.hasNext()) {
 				assertTrue("1." + type.name() + "." + i++, all.next() instanceof Field);
+			}
 		}
 	}
 	/**
@@ -102,8 +105,9 @@ public class ReferenceTypeTest extends AbstractJDITest {
 			ReferenceType type = iterator.next();
 			Iterator<?> all = type.allMethods().iterator();
 			int i = 0;
-			while (all.hasNext())
+			while (all.hasNext()) {
 				assertTrue("1." + type.name() + "." + i++, all.next() instanceof Method);
+			}
 		}
 	}
 	/**
@@ -113,7 +117,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		for (int i = 0; i < fTypes.size(); ++i) {
 			ReferenceType type = fTypes.get(i);
 			ObjectReference classLoader = type.classLoader();
-			assertTrue("1." + i, (classLoader == null) == fSystemClassLoader[i]);
+			assertEquals("1." + i, (classLoader == null), fSystemClassLoader[i]);
 		}
 	}
 	/**
@@ -123,7 +127,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = iterator.next();
-			assertTrue(type.name(), type.classObject() != null);
+			assertNotNull(type.name(), type.classObject());
 		}
 	}
 	/**
@@ -136,11 +140,11 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			ReferenceType type = iterator.next();
 			assertTrue("1." + type.name() + ".1", type.equals(type));
-			assertTrue("1." + type.name() + ".2", !type.equals(other));
-			assertTrue("1." + type.name() + ".3", !type.equals(fVM));
-			assertTrue("1." + type.name() + ".4", !type.equals(new Object()));
-			assertTrue("1." + type.name() + ".5", !type.equals(null));
-			assertTrue("1." + type.name() + ".6", type.hashCode() != other.hashCode());
+			assertFalse("1." + type.name() + ".2", type.equals(other));
+			assertFalse("1." + type.name() + ".3", type.equals(fVM));
+			assertFalse("1." + type.name() + ".4", type.equals(new Object()));
+			assertFalse("1." + type.name() + ".5", type.equals(null));
+			assertNotEquals("1." + type.name() + ".6", type.hashCode(), other.hashCode());
 		}
 	}
 	/**
@@ -150,7 +154,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = iterator.next();
-			assertTrue("1." + type.name(), !type.failedToInitialize());
+			assertFalse("1." + type.name(), type.failedToInitialize());
 		}
 	}
 	/**
@@ -160,7 +164,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		// NB: This tests the class type only, it should test the others too
 		ReferenceType type = fTypes.get(fMainClassIndex);
 		Field field = type.fieldByName("fObject");
-		assertTrue("1." + type.name(), field != null);
+		assertNotNull("1." + type.name(), field);
 	}
 	/**
 	 * Test JDI fields() and JDWP 'Type - Get Fields'.
@@ -171,8 +175,9 @@ public class ReferenceTypeTest extends AbstractJDITest {
 			ReferenceType type = iterator.next();
 			Iterator<?> fields = type.fields().iterator();
 			int i = 0;
-			while (fields.hasNext())
+			while (fields.hasNext()) {
 				assertTrue("1." + i++ +"." + type.name(), fields.next() instanceof Field);
+			}
 		}
 	}
 	/**
@@ -182,7 +187,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		// NB: This tests the class type only, it should test the others too
 		ReferenceType type = fTypes.get(fMainClassIndex);
 		Field field = type.fieldByName("fInt");
-		assertTrue("1." + type.name(), field != null);
+		assertNotNull("1." + type.name(), field);
 		assertTrue("2." + type.name(), type.getValue(field) instanceof IntegerValue);
 	}
 	/**
@@ -198,8 +203,9 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		List<Field> staticFields = new LinkedList<>();
 		while (iterator.hasNext()) {
 			Field field = (Field) iterator.next();
-			if (field.isStatic())
+			if (field.isStatic()) {
 				staticFields.add(field);
+			}
 		}
 		Map<?, ?> values = type.getValues(staticFields);
 		assertEquals("1." + type.name(), 24, values.size());
@@ -207,8 +213,9 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		// Get value of field fInt in MainClass
 		Field field = staticFields.get(0);
 		int i = 0;
-		while (!field.name().equals("fInt"))
+		while (!field.name().equals("fInt")) {
 			field = staticFields.get(++i);
+		}
 
 		// Ensure it is an integer value
 		assertTrue("2." + type.name(), values.get(field) instanceof IntegerValue);
@@ -220,10 +227,11 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = iterator.next();
-			if (type.name().equals("org.eclipse.debug.jdi.tests.program.Printable"))
+			if (type.name().equals("org.eclipse.debug.jdi.tests.program.Printable")) {
 				assertTrue("1." + type.name(), type.isAbstract());
-			else
-				assertTrue("2." + type.name(), !type.isAbstract());
+			} else {
+				assertFalse("2." + type.name(), type.isAbstract());
+			}
 		}
 	}
 	/**
@@ -232,7 +240,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	public void testJDIIsFinal() {
 		for (int i = 0; i < fTypes.size(); ++i) {
 			ReferenceType type = fTypes.get(i);
-			assertTrue("1." + i, type.isFinal() == fIsFinal[i]);
+			assertEquals("1." + i, type.isFinal(), fIsFinal[i]);
 		}
 	}
 	/**
@@ -262,7 +270,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = iterator.next();
-			assertTrue("1." + type.name(), !type.isStatic());
+			assertFalse("1." + type.name(), type.isStatic());
 		}
 	}
 	/**
@@ -283,7 +291,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		for (int i = 0; i < fTypes.size(); ++i) {
 			ReferenceType type = fTypes.get(i);
 			List<?> methods = type.methods();
-			assertTrue("" + i, (!methods.isEmpty()) == fHasMethods[i]);
+			assertNotEquals("" + i, methods.isEmpty(), fHasMethods[i]);
 		}
 	}
 	/**
@@ -296,14 +304,16 @@ public class ReferenceTypeTest extends AbstractJDITest {
 
 			// methodsByName(String)
 			Iterator<?> methods = type.methodsByName("run").iterator();
-			while (methods.hasNext())
+			while (methods.hasNext()) {
 				assertTrue("1." + type.name(), methods.next() instanceof Method);
+			}
 			assertEquals("2", 0, type.methodsByName("fraz").size());
 
 			// methodsByName(String, String)
 			methods = type.methodsByName("run", "()V").iterator();
-			while (methods.hasNext())
+			while (methods.hasNext()) {
 				assertTrue("3." + type.name(), methods.next() instanceof Method);
+			}
 			assertEquals("4", 0, type.methodsByName("fraz", "()Z").size());
 		}
 	}
@@ -316,10 +326,10 @@ public class ReferenceTypeTest extends AbstractJDITest {
 			ReferenceType type = fTypes.get(i);
 			if (i != 2) {
 				// i == 2 corresponds to an ArrayType, isAbstract() is undefined
-				assertTrue("1." + i, type.isAbstract() == fIsAbstract[i]);
+				assertEquals("1." + i, type.isAbstract(), fIsAbstract[i]);
 			}
-			assertTrue("2." + i, type.isFinal() == fIsFinal[i]);
-			assertTrue("3." + i, type.isStatic() == fIsStatic[i]);
+			assertEquals("2." + i, type.isFinal(), fIsFinal[i]);
+			assertEquals("3." + i, type.isStatic(), fIsStatic[i]);
 		}
 	}
 	/**
@@ -337,7 +347,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	public void testJDINestedTypes() {
 		// NB: This tests the class type only, it should test the others too
 		ReferenceType type = getClass("org.eclipse.debug.jdi.tests.program.OtherClass");
-		assertTrue("1." + type.name(), type != null);
+		assertNotNull("1." + type.name(), type);
 		List<?> nestedTypes = type.nestedTypes();
 		assertEquals("2." + type.name(), 1, nestedTypes.size());
 		assertTrue("3." + type.name(), nestedTypes.get(0) instanceof ReferenceType);

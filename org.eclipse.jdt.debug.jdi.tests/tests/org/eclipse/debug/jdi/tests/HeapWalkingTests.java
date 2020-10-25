@@ -50,7 +50,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 			assertTrue("Should have instance info", fVM.canGetInstanceInfo());
 		}
 		else {
-			assertTrue("Should not have instance info", !fVM.canGetInstanceInfo());
+			assertFalse("Should not have instance info", fVM.canGetInstanceInfo());
 		}
 	}
 
@@ -64,7 +64,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		}
 		try {
 			fVM.instanceCounts(null);
-			assertTrue("No excpetion thrown", false);
+			fail("No excpetion thrown");
 		}
 		catch (NullPointerException npe) {}
 	}
@@ -78,13 +78,13 @@ public class HeapWalkingTests extends AbstractJDITest {
 				fVM.instanceCounts(new ArrayList<ReferenceType>());
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fVM.instanceCounts(new ArrayList<ReferenceType>());
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}
@@ -108,9 +108,9 @@ public class HeapWalkingTests extends AbstractJDITest {
 		list.add(fClass1);
 		long[] counts = fVM.instanceCounts(list);
 		assertNotNull("counts should not be null", counts);
-		assertTrue("counts should have two entires", counts.length == 2);
-		assertTrue("count for RefClass1 should be 2", counts[0] == 2);
-		assertTrue("count for RefClass2 should be 1", counts[1] == 1);
+		assertEquals("counts should have two entires", 2, counts.length);
+		assertEquals("count for RefClass1 should be 2", 2, counts[0]);
+		assertEquals("count for RefClass2 should be 1", 1, counts[1]);
 	}
 
 	/**
@@ -124,13 +124,13 @@ public class HeapWalkingTests extends AbstractJDITest {
 				fClass.instances(20);
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fClass.instances(20);
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}
@@ -148,7 +148,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("classs should not be null", fClass);
 		try {
 			fClass.instances(-1);
-			assertTrue("No excpetion thrown", false);
+			fail("No excpetion thrown");
 		}
 		catch (IllegalArgumentException iae) {}
 	}
@@ -169,7 +169,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("RefClass1 should not be null", fClass1);
 		List<?> list = fClass1.instances(10);
 		assertNotNull("list should not be null", list);
-		assertTrue("list should have two enrtries", list.size() == 2);
+		assertEquals("list should have two enrtries", 2, list.size());
 	}
 
 	/**
@@ -185,13 +185,13 @@ public class HeapWalkingTests extends AbstractJDITest {
 				fObject.referringObjects(100);
 			}
 			catch(UnsupportedOperationException uoe) {
-				assertTrue("Threw unsupported exception in 1.6 VM", false);
+				fail("Threw unsupported exception in 1.6 VM");
 			}
 		}
 		else {
 			try {
 				fObject.referringObjects(10);
-				assertTrue("No exception for non 1.6 VM", false);
+				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}
 		}
@@ -210,10 +210,9 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("String obj ref should not be null", fObject);
 		try {
 			fObject.referringObjects(-1);
-			assertTrue("No excpetion thrown", false);
+			fail("No excpetion thrown");
 		}
 		catch (IllegalArgumentException iae) {
-			assertTrue("Threw exception", true);
 		}
 	}
 
@@ -234,7 +233,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("String obj ref should not be null", fObject);
 		List<?> list = fObject.referringObjects(100);
 		assertNotNull("referring objects list should not be null", list);
-		assertTrue("list size should be 4", list.size() == 4);
+		assertEquals("list size should be 4", 4, list.size());
 		assertTrue("list should contain the main class", list.contains(fClass.classObject()));
 		assertTrue("list should contain the main class thread", list.contains(getThread()));
 	}

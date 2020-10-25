@@ -71,7 +71,7 @@ public class ExceptionEventTest extends AbstractJDITest {
 	 */
 	public void testJDICatchLocation() {
 		// Uncaught exception
-		assertTrue("1", fEvent.catchLocation() == null);
+		assertNull("1", fEvent.catchLocation());
 
 		// TO DO: Caught exception
 	}

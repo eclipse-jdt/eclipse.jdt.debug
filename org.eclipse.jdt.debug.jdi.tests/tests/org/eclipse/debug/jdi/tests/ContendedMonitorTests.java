@@ -46,7 +46,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 			assertTrue("Should have ability to request monitor events info", fVM.canRequestMonitorEvents());
 		}
 		else {
-			assertTrue("Should not have ability to request monitor events info", !fVM.canRequestMonitorEvents());
+			assertFalse("Should not have ability to request monitor events info", fVM.canRequestMonitorEvents());
 		}
 	}
 
@@ -62,7 +62,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		req.enable();
 		List<?> list = erm.monitorContendedEnterRequests();
 		assertNotNull("list should not be null", list);
-		assertTrue("list should be of size 1", list.size() == 1);
+		assertEquals("list should be of size 1", 1, list.size());
 		assertTrue("req should be enabled", ((MonitorContendedEnterRequest)list.get(0)).isEnabled());
 	}
 
@@ -78,7 +78,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		req.enable();
 		List<?> list = erm.monitorContendedEnteredRequests();
 		assertNotNull("list should not be null", list);
-		assertTrue("list should be of size 1", list.size() == 1);
+		assertEquals("list should be of size 1", 1, list.size());
 		assertTrue("req should be enabled", ((MonitorContendedEnteredRequest)list.get(0)).isEnabled());
 	}
 
@@ -94,7 +94,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		req.enable();
 		List<?> list = erm.monitorWaitRequests();
 		assertNotNull("list should not be null", list);
-		assertTrue("list should be of size 1", list.size() == 1);
+		assertEquals("list should be of size 1", 1, list.size());
 		assertTrue("req should be enabled", ((MonitorWaitRequest)list.get(0)).isEnabled());
 	}
 
@@ -110,7 +110,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		req.enable();
 		List<?> list = erm.monitorWaitedRequests();
 		assertNotNull("list should not be null", list);
-		assertTrue("list should be of size 1", list.size() == 1);
+		assertEquals("list should be of size 1", 1, list.size());
 		assertTrue("req should be enabled", ((MonitorWaitedRequest)list.get(0)).isEnabled());
 	}
 

@@ -140,12 +140,12 @@ public class SourceLocationTests extends AbstractDebugTest {
 		Object source = location.findSourceElement("Breakpoints");
 		assertTrue("Did not find source for 'Breakpoints'", source instanceof ICompilationUnit);
 		ICompilationUnit cu = (ICompilationUnit)source;
-		assertEquals("Did not find source for 'Breakpoints'", cu.getElementName(), "Breakpoints.java");
+		assertEquals("Did not find source for 'Breakpoints'", "Breakpoints.java", cu.getElementName());
 
 		source = location.findSourceElement("org.eclipse.debug.tests.targets.InfiniteLoop");
 		assertTrue("Did not find source for 'InfiniteLoop'", source instanceof ICompilationUnit);
 		cu = (ICompilationUnit)source;
-		assertEquals("Did not find source for 'Breakpoints'", cu.getElementName(), "InfiniteLoop.java");
+		assertEquals("Did not find source for 'Breakpoints'", "InfiniteLoop.java", cu.getElementName());
 	}
 
 	public void testNegativeSourceFolderSourceLocation() throws Exception {

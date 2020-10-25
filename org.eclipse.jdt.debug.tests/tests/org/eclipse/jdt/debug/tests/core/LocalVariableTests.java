@@ -55,7 +55,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 			IValue value = var.getValue();
 			assertTrue("The value should be an array", value instanceof JDIArrayValue);
 			JDIArrayValue aval = (JDIArrayValue) value;
-			assertTrue("there should be two values in the array", aval.getSize() == 2);
+			assertEquals("there should be two values in the array", 2, aval.getSize());
 			assertEquals("The array kind should be integer", "int[]", aval.getReferenceTypeName());
 		} finally {
 			terminateAndRemove(thread);

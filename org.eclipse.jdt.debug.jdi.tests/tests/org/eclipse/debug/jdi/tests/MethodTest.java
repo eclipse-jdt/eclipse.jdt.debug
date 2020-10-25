@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.List;
 
 import com.sun.jdi.AbsentInformationException;
@@ -70,7 +72,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			arguments = fMethod1.arguments();
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 2, arguments.size());
 		assertEquals("3", "t", ((LocalVariable) arguments.get(0)).name());
@@ -96,7 +98,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			types = fMethod1.argumentTypes();
 		} catch (ClassNotLoadedException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 2, types.size());
 		assertEquals("3", fVM.classesByName("java.lang.Thread").get(0), types.get(0));
@@ -109,8 +111,9 @@ public class MethodTest extends AbstractJDITest {
 	 * Test JDI bytecodes().
 	 */
 	public void testJDIBytecodes() {
-		if (!fVM.canGetBytecodes())
+		if (!fVM.canGetBytecodes()) {
 			return;
+		}
 
 		byte[] bytecodes = fMethod1.bytecodes();
 		assertEquals("1", 27, bytecodes.length);
@@ -121,40 +124,40 @@ public class MethodTest extends AbstractJDITest {
 	public void testJDIEquality() {
 		assertTrue("1", fMethod1.equals(fMethod1));
 		Method other = getMethod("run", "()V");
-		assertTrue("2", !fMethod1.equals(other));
-		assertTrue("3", !fMethod1.equals(new Object()));
-		assertTrue("4", !fMethod1.equals(null));
-		assertTrue("5", fMethod1.hashCode() != other.hashCode());
+		assertFalse("2", fMethod1.equals(other));
+		assertFalse("3", fMethod1.equals(new Object()));
+		assertFalse("4", fMethod1.equals(null));
+		assertNotEquals("5", fMethod1.hashCode(), other.hashCode());
 	}
 	/**
 	 * Test JDI isAbstract().
 	 */
 	public void testJDIIsAbstract() {
-		assertTrue("1", !fMethod1.isAbstract());
+		assertFalse("1", fMethod1.isAbstract());
 	}
 	/**
 	 * Test JDI isConstructor().
 	 */
 	public void testJDIIsConstructor() {
-		assertTrue("1", !fMethod1.isConstructor());
+		assertFalse("1", fMethod1.isConstructor());
 	}
 	/**
 	 * Test JDI isNative().
 	 */
 	public void testJDIIsNative() {
-		assertTrue("1", !fMethod1.isNative());
+		assertFalse("1", fMethod1.isNative());
 	}
 	/**
 	 * Test JDI isStaticInitializer().
 	 */
 	public void testJDIIsStaticInitializer() {
-		assertTrue("1", !fMethod1.isStaticInitializer());
+		assertFalse("1", fMethod1.isStaticInitializer());
 	}
 	/**
 	 * Test JDI isSynchronized().
 	 */
 	public void testJDIIsSynchronized() {
-		assertTrue("1", !fMethod1.isSynchronized());
+		assertFalse("1", fMethod1.isSynchronized());
 	}
 	/**
 	 * Test JDI locationOfCodeIndex(long).
@@ -173,7 +176,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			locations = fMethod1.locationsOfLine(expected);
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 1, locations.size());
 		assertEquals("3", expected, ((Location) locations.get(0)).lineNumber());
@@ -185,7 +188,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			assertTrue("1", fMethod1.returnType() instanceof VoidType);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("2", false);
+			fail("2");
 		}
 	}
 	/**
@@ -202,7 +205,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			variables = fMethod1.variables();
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 2, variables.size());
 		assertEquals("3", "t", ((LocalVariable) variables.get(0)).name());
@@ -223,10 +226,10 @@ public class MethodTest extends AbstractJDITest {
 			assertFalse("1", "1.3".equals(fVM.version()));
 			return;
 		} catch (NativeMethodException nme) {
-			assertTrue("1", "1.3".equals(fVM.version()));
+			assertEquals("1", "1.3", fVM.version());
 			return;
 		}
-		assertTrue("Should have thrown native method exception", false);
+		fail("Should have thrown native method exception");
 	}
 
 	/**
@@ -240,7 +243,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			variables = method.variables();
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("1", 1, variables.size());
 	}
@@ -254,7 +257,7 @@ public class MethodTest extends AbstractJDITest {
 		try {
 			variables = fMethod1.variablesByName(varName);
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", 1, variables.size());
 		assertEquals("3", varName, ((LocalVariable) variables.get(0)).name());

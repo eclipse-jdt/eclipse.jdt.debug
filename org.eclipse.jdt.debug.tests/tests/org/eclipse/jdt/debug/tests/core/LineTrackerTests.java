@@ -229,7 +229,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 					}
 				}
 			}
-			assertTrue("NPE breakpoint should not exist yet", foundBreakpoint == null);
+			assertNull("NPE breakpoint should not exist yet", foundBreakpoint);
 			IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);
 			ex.setEnabled(false);
 			JavaExceptionHyperLink exLink = (JavaExceptionHyperLink) hyperlinks[0];
@@ -246,9 +246,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 					}
 				}
 			}
-			assertTrue("NPE breakpoint not found", foundBreakpoint != null);
+			assertNotNull("NPE breakpoint not found", foundBreakpoint);
 			assertTrue("NPE breakpoint not enabled", foundBreakpoint.isEnabled());
-			assertTrue("NPE breakpoint cancel enablement value not false", foundBreakpoint.getMarker().getAttribute(JavaBreakpointPage.ATTR_ENABLED_SETTING_ON_CANCEL, "").equals("false"));
+			assertEquals("NPE breakpoint cancel enablement value not false", "false", foundBreakpoint.getMarker().getAttribute(JavaBreakpointPage.ATTR_ENABLED_SETTING_ON_CANCEL, ""));
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, suspendOnException);

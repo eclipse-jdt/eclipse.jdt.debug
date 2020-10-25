@@ -55,7 +55,7 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '1', but was " + iValue, iValue == 1);
+			assertEquals("value of 'i' should be '1', but was " + iValue, 1, iValue);
 
 			var = findVariable(frame, "j");
 			assertNotNull("Could not find variable 'j'", var);
@@ -63,7 +63,7 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 			value = (IJavaPrimitiveValue) var.getValue();
 			assertNotNull("variable 'j' has no value", value);
 			int jValue = value.getIntValue();
-			assertTrue("value of 'j' should be '1', but was " + jValue, jValue == 1);
+			assertEquals("value of 'j' should be '1', but was " + jValue, 1, jValue);
 
 			bp1.delete();
 			bp2.delete();

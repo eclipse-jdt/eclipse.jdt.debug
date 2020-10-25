@@ -58,21 +58,21 @@ public class FieldTest extends AbstractJDITest {
 	public void testJDIEquality() {
 		assertTrue("1", fField.equals(fField));
 		Field other = getField("fString");
-		assertTrue("2", !fField.equals(other));
-		assertTrue("3", !fField.equals(new Object()));
-		assertTrue("4", !fField.equals(null));
+		assertFalse("2", fField.equals(other));
+		assertFalse("3", fField.equals(new Object()));
+		assertFalse("4", fField.equals(null));
 	}
 	/**
 	 * Test JDI isTransient().
 	 */
 	public void testJDIIsTransient() {
-		assertTrue("1", !fField.isTransient());
+		assertFalse("1", fField.isTransient());
 	}
 	/**
 	 * Test JDI isVolatile().
 	 */
 	public void testJDIIsVolatile() {
-		assertTrue("1", !fField.isVolatile());
+		assertFalse("1", fField.isVolatile());
 	}
 	/**
 	 * Test JDI type().
@@ -81,7 +81,7 @@ public class FieldTest extends AbstractJDITest {
 		try {
 			assertEquals("1", getMainClass(), fField.type());
 		} catch (ClassNotLoadedException e) {
-			assertTrue("2", false);
+			fail("2");
 		}
 	}
 	/**

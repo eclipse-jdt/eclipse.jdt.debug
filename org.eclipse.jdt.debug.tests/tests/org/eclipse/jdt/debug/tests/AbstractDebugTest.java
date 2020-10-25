@@ -1384,12 +1384,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaThread thread = (IJavaThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
 		assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
-		assertTrue("hit un-registered breakpoint", bp.equals(hit)); //$NON-NLS-1$
+		assertEquals("hit un-registered breakpoint", bp, hit); //$NON-NLS-1$
 		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
-		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
+		assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine); //$NON-NLS-1$
 
 		return thread;
 	}
@@ -1471,12 +1471,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaThread thread = (IJavaThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
 		assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
-		assertTrue("hit un-registered breakpoint", bp.equals(hit)); //$NON-NLS-1$
+		assertEquals("hit un-registered breakpoint", bp, hit); //$NON-NLS-1$
 		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
-		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
+		assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine); //$NON-NLS-1$
 
 		return (IJavaThread)suspendee;
 	}

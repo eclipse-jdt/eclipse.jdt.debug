@@ -67,20 +67,20 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	 */
 	public void testGetUserPreferredDetailPane() {
 		String id = fManager.getUserPreferredDetailPane(new HashSet<String>());
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 
 		Set<String> detailPanes = new HashSet<>();
 		detailPanes.add("NewPane1");
 		id = fManager.getUserPreferredDetailPane(detailPanes);
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 
 		detailPanes.add("NewPane2");
 		id = fManager.getUserPreferredDetailPane(detailPanes);
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 
 		detailPanes.add(DefaultDetailPane.ID);
 		id = fManager.getUserPreferredDetailPane(detailPanes);
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 
 		detailPanes.clear();
 		detailPanes.add(DefaultDetailPane.ID);
@@ -95,11 +95,11 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	public void testSetPreferredDetailPane() {
 		fManager.setPreferredDetailPane(null, null);
 		String id = fManager.getUserPreferredDetailPane(null);
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 
 		fManager.setPreferredDetailPane(null, "Example");
 		id = fManager.getUserPreferredDetailPane(null);
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 
 		Set<String> detailPanes = new HashSet<>();
 		detailPanes.add("Example1");
@@ -114,7 +114,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 
 		detailPanes.add(DefaultDetailPane.ID);
 		id = fManager.getUserPreferredDetailPane(detailPanes);
-		assertEquals("Incorrect pane ID", null, id);
+		assertNull("Incorrect pane ID", id);
 		fManager.setPreferredDetailPane(detailPanes, "Example2");
 		id = fManager.getUserPreferredDetailPane(detailPanes);
 		assertEquals("Incorrect pane ID", "Example2", id);
@@ -212,10 +212,10 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	 */
 	public void testGetNameFromID() {
 		String name = fManager.getNameFromID(null);
-		assertEquals("Incorrect name returned",null,name);
+		assertNull("Incorrect name returned", name);
 
 		name = fManager.getNameFromID("ThisPaneDoesNotExist");
-		assertEquals("Incorrect name returned",null,name);
+		assertNull("Incorrect name returned", name);
 
 		name = fManager.getNameFromID(DefaultDetailPane.ID);
 		assertEquals("Incorrect name returned",DefaultDetailPane.NAME,name);
@@ -231,10 +231,10 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	 */
 	public void testGetDescriptionFromID() {
 		String description = fManager.getDescriptionFromID(null);
-		assertEquals("Incorrect name returned",null,description);
+		assertNull("Incorrect name returned", description);
 
 		description = fManager.getDescriptionFromID("ThisPaneDoesNotExist");
-		assertEquals("Incorrect name returned",null,description);
+		assertNull("Incorrect name returned", description);
 
 		description = fManager.getDescriptionFromID(DefaultDetailPane.ID);
 		assertEquals("Incorrect name returned",DefaultDetailPane.DESCRIPTION,description);

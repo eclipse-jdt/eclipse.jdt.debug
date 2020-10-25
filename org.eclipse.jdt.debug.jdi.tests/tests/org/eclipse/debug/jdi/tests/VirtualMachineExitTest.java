@@ -64,14 +64,14 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 		try {
 			fVM.exit(0);
 		} catch (VMDisconnectedException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 
 		try {
 			Thread.sleep(200);
-			assertTrue("2", !vmIsRunning());
+			assertFalse("2", vmIsRunning());
 			fVM.allThreads();
-			assertTrue("3", false);
+			fail("3");
 		} catch (VMDisconnectedException e) {
 		} catch (InterruptedException e) {
 		}

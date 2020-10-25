@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,8 +22,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
-
-import junit.framework.Test;
 
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
@@ -37,6 +37,8 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.ThreadStartEvent;
+
+import junit.framework.Test;
 
 /**
  * Tests for JDI com.sun.jdi.ObjectReference
@@ -105,7 +107,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	 * Test JDI disableCollection(). enableCollection() and isCollected().
 	 */
 	public void testJDIDisableEnableCollection() {
-		assertTrue("1", !fObject.isCollected());
+		assertFalse("1", fObject.isCollected());
 		fObject.disableCollection();
 		fObject.enableCollection();
 	}
@@ -121,7 +123,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 			try {
 				assertEquals("1", 1, fObject.entryCount());
 			} catch (IncompatibleThreadStateException e) {
-				assertTrue("2", false);
+				fail("2");
 			}
 		}
 	}
@@ -131,10 +133,10 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	public void testJDIEquality() {
 		assertTrue("1", fObject.equals(fObject));
 		ObjectReference other = getThread();
-		assertTrue("2", !fObject.equals(other));
-		assertTrue("3", !fObject.equals(new Object()));
-		assertTrue("4", !fObject.equals(null));
-		assertTrue("5", fObject.hashCode() != other.hashCode());
+		assertFalse("2", fObject.equals(other));
+		assertFalse("3", fObject.equals(new Object()));
+		assertFalse("4", fObject.equals(null));
+		assertNotEquals("5", fObject.hashCode(), other.hashCode());
 	}
 	/**
 	 * Test JDI getValue(Field), getValues(List) and setValue(Field,Value)
@@ -148,15 +150,16 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		List<Field> instanceFields = new LinkedList<>();
 		while (iterator.hasNext()) {
 			Field field = (Field) iterator.next();
-			if (!field.isStatic())
+			if (!field.isStatic()) {
 				instanceFields.add(field);
+			}
 		}
 		Field field = instanceFields.get(4);
 		assertEquals("1", "fChar", field.name());
 
 		// getValues(List)
 		Map<?, ?> values = fObject.getValues(instanceFields);
-		assertTrue("2", values.size() == 7);
+		assertEquals("2", 7, values.size());
 		Value value = (Value) values.get(field);
 		assertEquals("3", value, fVM.mirrorOf('a'));
 
@@ -165,9 +168,9 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		try {
 			fObject.setValue(field, newValue);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("4.1", false);
+			fail("4.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("4.2", false);
+			fail("4.2");
 		}
 
 		// getValue(Field)
@@ -180,13 +183,13 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		try {
 			fObject.setValue(field, null);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("7.1", false);
+			fail("7.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("7.2", false);
+			fail("7.2");
 		}
 
 		// getValue(Field)
-		assertEquals("8", fObject.getValue(field), null);
+		assertNull("8", fObject.getValue(field));
 
 		// test get final value.
 		field = instanceFields.get(6);
@@ -232,8 +235,9 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		} catch (InvocationException exc) {
 			oops = exc;
 		}
-		assertTrue("1", oops == null);
-		assertEquals("2", val == null ? 0 : ((IntegerValue) val).value(), 888);
+		assertNull("1", oops);
+		assertNotNull("2", val);
+		assertEquals("2", 888, ((IntegerValue) val).value());
 	}
 	/**
 	 * Test JDI invokeMethod - failure.
@@ -266,8 +270,8 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		} catch (InvocationException exc) {
 			good = exc;
 		}
-		assertTrue("1", oops == null);
-		assertTrue("2", good != null);
+		assertNull("1", oops);
+		assertNotNull("2", good);
 	}
 	/**
 	 * Test JDI owningThread().
@@ -281,7 +285,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 			try {
 				assertEquals("1", getThread(), fObject.owningThread());
 			} catch (IncompatibleThreadStateException e) {
-				assertTrue("2", false);
+				fail("2");
 			}
 		}
 	}
@@ -290,7 +294,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	 */
 	public void testJDIReferenceType() {
 		ReferenceType type = fObject.referenceType();
-		assertEquals("1", type.name(), "org.eclipse.debug.jdi.tests.program.MainClass");
+		assertEquals("1", "org.eclipse.debug.jdi.tests.program.MainClass", type.name());
 	}
 	/**
 	 * Test JDI uniqueID().
@@ -306,7 +310,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 			try {
 				assertEquals("1", 0, fObject.waitingThreads().size());
 			} catch (IncompatibleThreadStateException e) {
-				assertTrue("2", false);
+				fail("2");
 			}
 		}
 	}

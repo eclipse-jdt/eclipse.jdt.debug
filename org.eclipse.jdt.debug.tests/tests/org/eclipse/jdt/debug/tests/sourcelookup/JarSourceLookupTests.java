@@ -100,10 +100,8 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 				break;
 			}
 		}
-		if (!foundJar) {
-			fail("The .classpath from project " + jarRefProject + " is unexpected and does not have an entry for " + SAMPLE_JAR_PATH + ": "
-					+ new String(Files.readAllBytes(path)));
-		}
+		assertTrue("The .classpath from project " + jarRefProject + " is unexpected and does not have an entry for " + SAMPLE_JAR_PATH + ": "
+				+ new String(Files.readAllBytes(path)), foundJar);
 		waitForBuild();
 	}
 
@@ -232,7 +230,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			 Object source = lookupSource(frame);
 			assertNotNull("We should have found source for the main class testJar.RunJar", source);
 			 assertTrue("The found source should be an IFile", source instanceof IFile);
-			 assertEquals("We should have found a file named RunJar.java", ((IFile)source).getName(), "RunJar.java");
+				assertEquals("We should have found a file named RunJar.java", "RunJar.java", ((IFile) source).getName());
 
 			 stepInto((IJavaStackFrame)frame);
 			 frame = thread.getTopStackFrame();
@@ -241,7 +239,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			 source = lookupSource(frame);
 			 assertNotNull("We should have found source for the jar class a.JarClass", source);
 			 assertTrue("The found source should be a ClassFile", source instanceof ClassFile);
-			 assertEquals("we should have found a file named a.JarClass.class", ((ClassFile)source).getElementName(), "JarClass.class");
+				assertEquals("we should have found a file named a.JarClass.class", "JarClass.class", ((ClassFile) source).getElementName());
 		}
 		finally {
 			terminateAndRemove(thread);

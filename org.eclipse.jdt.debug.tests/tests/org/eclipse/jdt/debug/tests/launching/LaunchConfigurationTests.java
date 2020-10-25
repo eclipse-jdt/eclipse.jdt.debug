@@ -89,9 +89,9 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testSetName() throws Exception {
-		assertEquals("The default name should be: 'Test'", config.getName(), "Test");
+		assertEquals("The default name should be: 'Test'", "Test", config.getName());
 		config.setNameProxy("newname");
-		assertEquals("The new name should be: 'newname'", config.getName(), "newname");
+		assertEquals("The new name should be: 'newname'", "newname", config.getName());
 		//reset the name
 		config.setNameProxy("Test");
 	}

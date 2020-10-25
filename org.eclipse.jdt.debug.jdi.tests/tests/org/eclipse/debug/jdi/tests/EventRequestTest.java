@@ -38,14 +38,16 @@ public class EventRequestTest extends AbstractJDITest {
 	@Override
 	public void localSetUp() {
 		// Get all kinds of request
-		if (fVM.canWatchFieldAccess())
+		if (fVM.canWatchFieldAccess()) {
 			fRequests.add(getAccessWatchpointRequest());
+		}
 		fRequests.add(getBreakpointRequest());
 		fRequests.add(fVM.eventRequestManager().createClassPrepareRequest());
 		fRequests.add(fVM.eventRequestManager().createClassUnloadRequest());
 		fRequests.add(getExceptionRequest());
-		if (fVM.canWatchFieldModification())
+		if (fVM.canWatchFieldModification()) {
 			fRequests.add(getModificationWatchpointRequest());
+		}
 		fRequests.add(
 			fVM.eventRequestManager().createStepRequest(
 				getThread(),
@@ -83,15 +85,15 @@ public class EventRequestTest extends AbstractJDITest {
 	public void testJDIEnable() {
 		for (int i = 0; i < fRequests.size(); i++) {
 			EventRequest request = fRequests.get(i);
-			assertTrue("1." + i, !request.isEnabled());
+			assertFalse("1." + i, request.isEnabled());
 			request.setEnabled(true);
 			assertTrue("2." + i, request.isEnabled());
 			request.setEnabled(false);
-			assertTrue("3." + i, !request.isEnabled());
+			assertFalse("3." + i, request.isEnabled());
 			request.enable();
 			assertTrue("4." + i, request.isEnabled());
 			request.disable();
-			assertTrue("5." + i, !request.isEnabled());
+			assertFalse("5." + i, request.isEnabled());
 		}
 	}
 	/**
@@ -105,7 +107,7 @@ public class EventRequestTest extends AbstractJDITest {
 		}
 		for (int i = 0; i < fRequests.size(); i++) {
 			EventRequest request = fRequests.get(i);
-			assertTrue(String.valueOf(i), request.suspendPolicy() == policy);
+			assertEquals(String.valueOf(i), request.suspendPolicy(), policy);
 		}
 	}
 	/**
@@ -115,28 +117,28 @@ public class EventRequestTest extends AbstractJDITest {
 		EventRequest request = fRequests.get(0);
 		request.putProperty(Integer.valueOf(0), "prop1");
 		String prop = (String) request.getProperty(Integer.valueOf(0));
-		assertTrue("1", prop.equals("prop1"));
+		assertEquals("1", "prop1", prop);
 
 		request.putProperty(Integer.valueOf(0), null);
 		prop = (String) request.getProperty(Integer.valueOf(0));
-		assertTrue("2", prop == null);
+		assertNull("2", prop);
 
 		request.putProperty(Integer.valueOf(0), "prop2");
 		request.putProperty(Integer.valueOf(0), "prop3");
 		prop = (String) request.getProperty(Integer.valueOf(0));
-		assertTrue("3", prop.equals("prop3"));
+		assertEquals("3", "prop3", prop);
 
 		request.putProperty(Integer.valueOf(0), null);
 		prop = (String) request.getProperty(Integer.valueOf(0));
-		assertTrue("4", prop == null);
+		assertNull("4", prop);
 
 		request.putProperty(Integer.valueOf(1), null);
 		prop = (String) request.getProperty(Integer.valueOf(1));
-		assertTrue("5", prop == null);
+		assertNull("5", prop);
 
 		request.putProperty(Integer.valueOf(1), "prop1");
 		prop = (String) request.getProperty(Integer.valueOf(1));
-		assertTrue("6", prop.equals("prop1"));
+		assertEquals("6", "prop1", prop);
 
 	}
 }

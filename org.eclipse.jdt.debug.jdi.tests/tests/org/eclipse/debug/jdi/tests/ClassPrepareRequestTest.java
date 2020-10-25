@@ -64,7 +64,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent1",
 				true,
 				5000);
-		assertTrue("1", event != null);
+		assertNotNull("1", event);
 		assertEquals(
 			"2",
 			"org.eclipse.debug.jdi.tests.program.TestClass1",
@@ -79,7 +79,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent2",
 				true,
 				5000);
-		assertTrue("3", event == null);
+		assertNull("3", event);
 		requestManager.deleteEventRequest(request);
 
 		// Filter is "*.TestClass3" and loads org.eclipse.debug.jdi.tests.program.TestClass3
@@ -90,7 +90,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent3",
 				true,
 				5000);
-		assertTrue("4", event != null);
+		assertNotNull("4", event);
 		assertEquals(
 			"5",
 			"org.eclipse.debug.jdi.tests.program.TestClass3",
@@ -105,7 +105,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent4",
 				true,
 				5000);
-		assertTrue("6", event == null);
+		assertNull("6", event);
 		requestManager.deleteEventRequest(request);
 
 		// Filter is "*.eclipse.debug.jdi.tests.program.*" and loads org.eclipse.debug.jdi.tests.program.TestClass5
@@ -116,7 +116,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent5",
 				true,
 				5000);
-		assertTrue("7", event == null);
+		assertNull("7", event);
 		requestManager.deleteEventRequest(request);
 
 		// Filter is "org.eclipse.debug.jdi.tests.program.TestClass6" and loads org.eclipse.debug.jdi.tests.program.TestClass6
@@ -128,7 +128,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent6",
 				true,
 				5000);
-		assertTrue("8", event != null);
+		assertNotNull("8", event);
 		assertEquals(
 			"9",
 			"org.eclipse.debug.jdi.tests.program.TestClass6",
@@ -151,7 +151,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent7",
 				true,
 				5000);
-		assertTrue("1", event != null);
+		assertNotNull("1", event);
 		assertEquals(
 			"2",
 			"org.eclipse.debug.jdi.tests.program.TestClazz8",
@@ -167,7 +167,7 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 				"ClassPrepareEvent8",
 				true,
 				5000);
-		assertTrue("3", event != null);
+		assertNotNull("3", event);
 		assertEquals(
 			"4",
 			"org.eclipse.debug.jdi.tests.program.TestClazz10",

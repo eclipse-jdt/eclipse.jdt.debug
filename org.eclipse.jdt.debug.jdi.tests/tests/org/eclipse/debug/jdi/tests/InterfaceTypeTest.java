@@ -75,7 +75,7 @@ public class InterfaceTypeTest extends AbstractJDITest {
 				found = true;
 			}
 		}
-		assertTrue("1", fType.allMethods().size() == 1);
+		assertEquals("1", 1, fType.allMethods().size());
 		assertTrue("2", found);
 	}
 	/**

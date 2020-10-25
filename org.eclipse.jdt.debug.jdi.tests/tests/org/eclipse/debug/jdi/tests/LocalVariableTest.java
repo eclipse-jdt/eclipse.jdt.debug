@@ -14,6 +14,8 @@
 
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.LocalVariable;
@@ -65,18 +67,18 @@ public class LocalVariableTest extends AbstractJDITest {
 		try {
 			other = getFrame(RUN_FRAME_OFFSET).visibleVariableByName("o");
 		} catch (AbsentInformationException e) {
-			assertTrue("2", false);
+			fail("2");
 		}
-		assertTrue("3", !fVar.equals(other));
-		assertTrue("4", !fVar.equals(new Object()));
-		assertTrue("5", !fVar.equals(null));
-		assertTrue("6", fVar.hashCode() != other.hashCode());
+		assertFalse("3", fVar.equals(other));
+		assertFalse("4", fVar.equals(new Object()));
+		assertFalse("5", fVar.equals(null));
+		assertNotEquals("6", fVar.hashCode(), other.hashCode());
 	}
 	/**
 	 * Test JDI isArgument().
 	 */
 	public void testJDIIsArgument() {
-		assertTrue("1", !fVar.isArgument());
+		assertFalse("1", fVar.isArgument());
 	}
 	/**
 	 * Test JDI isVisible(StackFrame).
@@ -114,7 +116,7 @@ public class LocalVariableTest extends AbstractJDITest {
 				fVM.classesByName("java.lang.Thread").get(0),
 				fVar.type());
 		} catch (ClassNotLoadedException e) {
-			assertTrue("2", false);
+			fail("2");
 		}
 	}
 	/**

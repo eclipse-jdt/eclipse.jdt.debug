@@ -39,21 +39,21 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 	 */
 	public void testRemovingMappedResources1() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");
-		assertTrue("the configuration cannot be null", config != null);
+		assertNotNull("the configuration cannot be null", config);
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		IResource[] mapped = copy.getMappedResources();
 		try {
 			if(mapped == null) {
 				//map some
 				IResource res = getResource("MigrationTests.java");
-				assertTrue("the resource MigrationTests.java should not be null", res != null);
+				assertNotNull("the resource MigrationTests.java should not be null", res);
 				copy.setMappedResources(new IResource[] {res});
 				copy.doSave();
-				assertTrue("a resource mapping should have been added", copy.getMappedResources() != null);
+				assertNotNull("a resource mapping should have been added", copy.getMappedResources());
 			}
 			copy.setMappedResources(null);
 			copy.doSave();
-			assertTrue("the mapped resources should have been removed", copy.getMappedResources() == null);
+			assertNull("the mapped resources should have been removed", copy.getMappedResources());
 		}
 		finally {
 			//put back any mappings that might have been there
@@ -68,21 +68,21 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 	 */
 	public void testRemovingMappedResources2() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");
-		assertTrue("the configuration cannot be null", config != null);
+		assertNotNull("the configuration cannot be null", config);
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		IResource[] mapped = copy.getMappedResources();
 		try {
 			if(mapped == null) {
 				//map some
 				IResource res = getResource("MigrationTests.java");
-				assertTrue("the resource MigrationTests.java should not be null", res != null);
+				assertNotNull("the resource MigrationTests.java should not be null", res);
 				copy.setMappedResources(new IResource[] {res});
 				copy.doSave();
-				assertTrue("a resource mapping should have been added", copy.getMappedResources() != null);
+				assertNotNull("a resource mapping should have been added", copy.getMappedResources());
 			}
 			copy.setMappedResources(new IResource[0]);
 			copy.doSave();
-			assertTrue("the mapped resources should have been removed", copy.getMappedResources() == null);
+			assertNull("the mapped resources should have been removed", copy.getMappedResources());
 		}
 		finally {
 			//put back any mappings that might have been there
@@ -96,16 +96,16 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 	 */
 	public void testSetMappedResource() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");
-		assertTrue("the configuration cannot be null", config != null);
+		assertNotNull("the configuration cannot be null", config);
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		IResource res = getResource("MigrationTests.java");
-		assertTrue("the resource MigrationTests.java should not be null", res != null);
+		assertNotNull("the resource MigrationTests.java should not be null", res);
 		IResource[] oldmapped = copy.getMappedResources();
 		try {
 			copy.setMappedResources(new IResource[] {res});
 			copy.doSave();
 			IResource[] mapped = copy.getMappedResources();
-			assertTrue("there should only be one resource mapped", mapped.length == 1);
+			assertEquals("there should only be one resource mapped", 1, mapped.length);
 			assertTrue("the one resource should be MigrationTests.java", mapped[0].equals(res));
 		}
 		finally {
@@ -121,18 +121,18 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 	 */
 	public void testSetMappedResources() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");
-		assertTrue("the configuration cannot be null", config != null);
+		assertNotNull("the configuration cannot be null", config);
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		IResource res = getResource("MigrationTests.java"),
 				res2 = getResource("MigrationTests2.java");
-		assertTrue("the resource MigrationTests.java should not be null", res != null);
-		assertTrue("the resource MigrationTests2.java should not be null", res2 != null);
+		assertNotNull("the resource MigrationTests.java should not be null", res);
+		assertNotNull("the resource MigrationTests2.java should not be null", res2);
 		IResource[] oldmapped = copy.getMappedResources();
 		try {
 			copy.setMappedResources(new IResource[] {res, res2});
 			copy.doSave();
 			IResource[] mapped = copy.getMappedResources();
-			assertTrue("there should be two resources mapped", mapped.length == 2);
+			assertEquals("there should be two resources mapped", 2, mapped.length);
 			assertTrue("the first resource should be MigrationTests.java", mapped[0].equals(res));
 			assertTrue("the second resource should be MigrationTests2.java", mapped[1].equals(res2));
 		}

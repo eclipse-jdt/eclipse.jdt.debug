@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
-import junit.framework.Test;
-
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ByteValue;
 import com.sun.jdi.CharValue;
@@ -32,6 +30,8 @@ import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
+
+import junit.framework.Test;
 
 /**
  * Tests for JDI com.sun.jdi.VirtualMachine
@@ -184,7 +184,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 	public void testJDIMirrorOfBoolean() {
 		boolean value = true;
 		BooleanValue mirror = fVM.mirrorOf(value);
-		assertTrue("1", value == mirror.value());
+		assertEquals("1", value, mirror.value());
 	}
 	/**
 	 * Test JDI mirrorOf(byte).
@@ -268,7 +268,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 */
 	public void testJDIVersion() {
 		String version = fVM.version();
-		assertTrue("1", version != null);
+		assertNotNull("1", version);
 	}
 	/**
 	 * Test JDI allClasses() and JDWP 'VM - Get all classes'
@@ -278,8 +278,9 @@ public class VirtualMachineTest extends AbstractJDITest {
 		List<?> classes = fVM.allClasses();
 		Iterator<?> iterator = classes.listIterator();
 		int i = 0;
-		while (iterator.hasNext())
+		while (iterator.hasNext()) {
 			assertTrue(Integer.toString(i++), iterator.next() instanceof ReferenceType);
+		}
 	}
 	/**
 	 * Test JDI allThreads() and JDWP 'VM - Get all threads'
@@ -289,8 +290,9 @@ public class VirtualMachineTest extends AbstractJDITest {
 		List<?> threads = fVM.allThreads();
 		Iterator<?> iterator = threads.listIterator();
 		int i = 0;
-		while (iterator.hasNext())
+		while (iterator.hasNext()) {
 			assertTrue(Integer.toString(i++), iterator.next() instanceof ThreadReference);
+		}
 	}
 	/**
 	 * Test JDI classesByName() while the test program has not been started.
@@ -307,7 +309,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 
 		// The test program has started, the number of classes is != 0
 		List<?> classes = fVM.allClasses();
-		assertTrue("1", !classes.isEmpty());
+		assertFalse("1", classes.isEmpty());
 
 		// Collect names of received classes
 		String[] names = new String[classes.size()];
@@ -344,7 +346,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 
 		// The test program has started, the number of threads is != 0
 		List<?> threads = fVM.allThreads();
-		assertTrue("1", !threads.isEmpty());
+		assertFalse("1", threads.isEmpty());
 
 		// Collect names of received threads
 		String[] names = new String[threads.size()];
@@ -375,7 +377,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 
 		// The test program has started, the number of java.lang.Object is 1
 		List<?> classes = fVM.classesByName("java.lang.Object");
-		assertEquals("1", classes.size(), 1);
+		assertEquals("1", 1, classes.size());
 
 		// Collect names of received classes
 		String[] names = new String[classes.size()];

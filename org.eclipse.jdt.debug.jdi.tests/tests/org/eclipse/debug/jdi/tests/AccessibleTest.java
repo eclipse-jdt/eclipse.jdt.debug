@@ -63,18 +63,18 @@ public class AccessibleTest extends AbstractJDITest {
 	 * Test JDI isPackagePrivate().
 	 */
 	public void testJDIIsPackagePrivate() {
-		assertTrue("1", !fArrayType.isPackagePrivate());
-		assertTrue("2", !fClassType.isPackagePrivate());
-		assertTrue("3", !fInterfaceType.isPackagePrivate());
-		assertTrue("4", !fField.isPackagePrivate());
-		assertTrue("5", !fMethod.isPackagePrivate());
+		assertFalse("1", fArrayType.isPackagePrivate());
+		assertFalse("2", fClassType.isPackagePrivate());
+		assertFalse("3", fInterfaceType.isPackagePrivate());
+		assertFalse("4", fField.isPackagePrivate());
+		assertFalse("5", fMethod.isPackagePrivate());
 	}
 	/**
 	 * Test JDI isPrivate().
 	 */
 	public void testJDIIsPrivate() {
-		assertTrue("1", !fField.isPrivate());
-		assertTrue("2", !fMethod.isPrivate());
+		assertFalse("1", fField.isPrivate());
+		assertFalse("2", fMethod.isPrivate());
 
 		// NB: isPrivate() is undefined for a type
 	}
@@ -82,8 +82,8 @@ public class AccessibleTest extends AbstractJDITest {
 	 * Test JDI isProtected().
 	 */
 	public void testJDIIsProtected() {
-		assertTrue("1", !fField.isProtected());
-		assertTrue("2", !fMethod.isProtected());
+		assertFalse("1", fField.isProtected());
+		assertFalse("2", fMethod.isProtected());
 
 		// NB: isProtected() is undefined for a type
 	}

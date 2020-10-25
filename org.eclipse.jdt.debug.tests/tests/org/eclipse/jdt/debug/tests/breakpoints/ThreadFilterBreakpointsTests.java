@@ -70,7 +70,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			bp2.setThreadFilter(thread);
 
 			thread = resumeToLineBreakpoint(thread, bp2);
-			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
+			assertEquals("Suspended thread should have been '1stThread'", "1stThread", thread.getName());
 
 			bp1.delete();
 			bp2.delete();
@@ -82,6 +82,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a thread works for specific exception breakpoint
+	 *
 	 * @throws Exception
 	 */
 	public void testExceptionThreadFilterBreakpoint() throws Exception {
@@ -95,7 +96,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			ex1.setThreadFilter(thread);
 
 			thread = resume(thread);
-			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
+			assertEquals("Suspended thread should have been '1stThread'", "1stThread", thread.getName());
 
 			bp1.delete();
 		} finally {
@@ -119,7 +120,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			wp.setThreadFilter(thread);
 
 			thread = resume(thread);
-			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
+			assertEquals("Suspended thread should have been '1stThread'", "1stThread", thread.getName());
 
 			bp1.delete();
 			wp.delete();
@@ -144,7 +145,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			wp.setThreadFilter(thread);
 
 			thread = resume(thread);
-			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
+			assertEquals("Suspended thread should have been '1stThread'", "1stThread", thread.getName());
 
 			bp1.delete();
 			wp.delete();

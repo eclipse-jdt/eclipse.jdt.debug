@@ -1062,9 +1062,9 @@ public abstract class AbstractJDITest extends TestCase {
 		try {
 			getObjectReference().setValue(field, value);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("resetField.2", false);
+			fail("resetField.2");
 		} catch (InvalidTypeException e) {
-			assertTrue("resetField.3", false);
+			fail("resetField.3");
 		}
 	}
 	/**
@@ -1077,9 +1077,9 @@ public abstract class AbstractJDITest extends TestCase {
 		try {
 			getMainClass().setValue(field, value);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("resetField.1", false);
+			fail("resetField.1");
 		} catch (InvalidTypeException e) {
-			assertTrue("resetField.2", false);
+			fail("resetField.2");
 		}
 	}
 	/**
@@ -1425,16 +1425,16 @@ public abstract class AbstractJDITest extends TestCase {
 		// Set the "fEventType" field to the given eventType
 		ClassType type = getMainClass();
 		Field field = type.fieldByName("fEventType");
-		assertTrue("1", field != null);
+		assertNotNull("1", field);
 
 		Value value = null;
 		value = fVM.mirrorOf(eventType);
 		try {
 			type.setValue(field, value);
 		} catch (ClassNotLoadedException e) {
-			assertTrue("2", false);
+			fail("2");
 		} catch (InvalidTypeException e) {
-			assertTrue("3", false);
+			fail("3");
 		}
 
 		// Resume the test thread

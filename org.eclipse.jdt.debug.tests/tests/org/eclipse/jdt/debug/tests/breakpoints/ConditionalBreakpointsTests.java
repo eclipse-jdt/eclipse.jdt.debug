@@ -56,7 +56,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '3', but was " + iValue, iValue == 3);
+			assertEquals("value of 'i' should be '3', but was " + iValue, 3, iValue);
 
 			bp.delete();
 		} finally {
@@ -84,7 +84,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '4', but was " + iValue, iValue == 4);
+			assertEquals("value of 'i' should be '4', but was " + iValue, 4, iValue);
 
 			bp.delete();
 		} finally {

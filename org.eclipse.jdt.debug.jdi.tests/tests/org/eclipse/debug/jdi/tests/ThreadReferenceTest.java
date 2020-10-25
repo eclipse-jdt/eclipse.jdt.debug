@@ -70,9 +70,9 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	public void testJDICurrentContendedMonitor() {
 		if (fVM.canGetCurrentContendedMonitor()) {
 			try {
-				assertTrue("1", fThread.currentContendedMonitor() == null);
+				assertNull("1", fThread.currentContendedMonitor());
 			} catch (IncompatibleThreadStateException e) {
-				assertTrue("2", false);
+				fail("2");
 			}
 		}
 	}
@@ -84,7 +84,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 			StackFrame frame = fThread.frame(0);
 			assertTrue("1", fThread.frames().contains(frame));
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("2", false);
+			fail("2");
 		}
 	}
 	/**
@@ -95,7 +95,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 			int count = fThread.frameCount();
 			assertTrue("1", count <= 4);
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("2", false);
+			fail("2");
 		}
 	}
 	/**
@@ -106,7 +106,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 		try {
 			frames = fThread.frames();
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertTrue("2", frames.size() > 0);
 	}
@@ -122,7 +122,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	 * Test JDI isAtBreakpoint().
 	 */
 	public void testJDIIsAtBreakpoint() {
-		assertTrue("1", !fThread.isAtBreakpoint());
+		assertFalse("1", fThread.isAtBreakpoint());
 	}
 	/**
 	 * Test JDI isSuspended().
@@ -145,7 +145,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 			try {
 				assertEquals("1", 1, fThread.ownedMonitors().size());
 			} catch (IncompatibleThreadStateException e) {
-				assertTrue("2", false);
+				fail("2");
 			}
 		}
 	}
@@ -180,7 +180,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 
 		// Create a java.lang.Throwable instance in
 		List<ReferenceType> classes = fVM.classesByName("java.lang.Throwable");
-		assertTrue("1", !classes.isEmpty());
+		assertFalse("1", classes.isEmpty());
 		ClassType threadDeathClass = (ClassType) classes.get(0);
 		Method constructor =
 			threadDeathClass.concreteMethodByName("<init>", "()V");
@@ -195,20 +195,20 @@ public class ThreadReferenceTest extends AbstractJDITest {
 			threadDeath.disableCollection();
 			// This object is going to be used for the lifetime of the VM.
 		} catch (ClassNotLoadedException e) {
-			assertTrue("2", false);
+			fail("2");
 		} catch (InvalidTypeException e) {
-			assertTrue("3", false);
+			fail("3");
 		} catch (InvocationException e) {
-			assertTrue("4", false);
+			fail("4");
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("5", false);
+			fail("5");
 		}
 
 		// Stop the thread
 		try {
 			thread.stop(threadDeath);
 		} catch (InvalidTypeException e) {
-			assertTrue("6", false);
+			fail("6");
 		}
 
 		waitUntilReady();
@@ -221,7 +221,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	public void testJDISuspendResume() {
 		assertEquals("1", 1, fThread.suspendCount());
 		fThread.resume();
-		assertTrue("2", !fThread.isSuspended());
+		assertFalse("2", fThread.isSuspended());
 		fThread.suspend();
 		assertTrue("3", fThread.isSuspended());
 

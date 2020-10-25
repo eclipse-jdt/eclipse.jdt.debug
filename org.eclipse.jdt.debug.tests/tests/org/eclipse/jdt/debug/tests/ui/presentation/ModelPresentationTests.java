@@ -51,7 +51,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			TestIJavaValue value = new TestIJavaValue(type, "<unknown>", null, "<unknown>", null);
 			String val = pres.getValueText(value);
 			assertNotNull("the value should have been computed", val);
-			assertEquals("The value text should be '<unknown>'", val, "<unknown>");
+			assertEquals("The value text should be '<unknown>'", "<unknown>", val);
 		}
 		finally {
 			pres.dispose();
@@ -93,7 +93,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			TestIJavaValue value = new TestIJavaValue(type, sig, null, "org.test.MyClass", "test Java value");
 			String val = pres.getValueText(value);
 			assertNotNull("the value should have been computed", val);
-			assertEquals("The value text should be '\"MyClass test Java value\"'", val, "MyClass test Java value");
+			assertEquals("The value text should be '\"MyClass test Java value\"'", "MyClass test Java value", val);
 		}
 		finally {
 			pres.dispose();
@@ -113,7 +113,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			TestIJavaValue value = new TestIJavaValue(type, sig, null, "org.test.MyClass", "test Java value");
 			String val = pres.getValueText(value);
 			assertNotNull("the value should have been computed", val);
-			assertEquals("The value text should be '\"MyClass test Java value\"'", val, "MyClass test Java value");
+			assertEquals("The value text should be '\"MyClass test Java value\"'", "MyClass test Java value", val);
 		}
 		finally {
 			pres.dispose();
@@ -136,7 +136,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			});
 			String val = pres.getValueText(value);
 			assertNotNull("the value should have been computed", val);
-			assertEquals("The value text should be 'MyClass My Array'", val, "MyClass My Array");
+			assertEquals("The value text should be 'MyClass My Array'", "MyClass My Array", val);
 		}
 		finally {
 			pres.dispose();

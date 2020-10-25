@@ -169,9 +169,7 @@ public class SpecialExceptionBreakpointTests extends AbstractDebugTest {
 
 	private void assertExceptionBreakpointHit(IJavaThread thread, IJavaExceptionBreakpoint ex) throws DebugException {
 		IMarker problem = JavaDebugOptionsManager.getDefault().getProblem((IJavaStackFrame) thread.getTopStackFrame());
-		if (problem != null) {
-			fail("unexpected problem marker "+problem);
-		}
+		assertNull("unexpected problem marker " + problem, problem);
 		IBreakpoint hit = getBreakpoint(thread);
 		assertNotNull("suspended, but not by breakpoint", hit);
 		assertEquals("suspended, but not by expected exception", ex.getExceptionTypeName(), ((IJavaExceptionBreakpoint) hit).getExceptionTypeName());

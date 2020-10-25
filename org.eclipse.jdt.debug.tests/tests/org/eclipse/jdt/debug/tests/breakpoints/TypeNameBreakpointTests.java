@@ -561,7 +561,7 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 		try {
 			JDIDebugModel.addJavaBreakpointListener(l);
 			thread = launchToBreakpoint(getLaunchConfiguration("HitCountLooper"));
-			assertEquals(l.getBreakpointTypeName(), "HitCountLooper");
+			assertEquals("HitCountLooper", l.getBreakpointTypeName());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -577,7 +577,7 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 		try {
 			JDIDebugModel.addJavaBreakpointListener(l);
 			thread = launchToBreakpoint(getLaunchConfiguration("HitCountLooper"));
-			assertEquals(l.getBreakpointTypeName(), "HitCountLooper");
+			assertEquals("HitCountLooper", l.getBreakpointTypeName());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

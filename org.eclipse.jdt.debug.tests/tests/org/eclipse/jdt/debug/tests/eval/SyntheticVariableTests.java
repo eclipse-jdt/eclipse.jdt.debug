@@ -111,7 +111,7 @@ public class SyntheticVariableTests extends AbstractDebugUiTests {
 			List<ICompletionProposal> proposals = computeCompletionProposals(" ", 0);
 
 			assertNotNull("proposals are null : ", proposals);
-			assertTrue("proposals are empty : ", !proposals.isEmpty());
+			assertFalse("proposals are empty : ", proposals.isEmpty());
 			System.out.println(proposals);
 			assertTrue("expected variable is not in proposals :", proposals.stream().anyMatch(p -> p.getDisplayString().equals("predicate : Predicate")));
 		} finally {

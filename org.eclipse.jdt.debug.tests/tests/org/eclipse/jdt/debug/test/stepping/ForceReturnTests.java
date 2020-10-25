@@ -307,7 +307,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 					assertTrue("Should be invalid type exception", e.getStatus().getException() instanceof InvalidTypeException);
 					return;
 				}
-				assertTrue("Should have caused incompatible return type exception", false);
+				fail("Should have caused incompatible return type exception");
 			}
 		} finally {
 			terminateAndRemove(thread);
@@ -339,7 +339,7 @@ public class ForceReturnTests extends AbstractDebugTest {
 					assertTrue("Should be invalid type exception", e.getStatus().getException() instanceof InvalidTypeException);
 					return;
 				}
-				assertTrue("Should have caused incompatible return type exception", false);
+				fail("Should have caused incompatible return type exception");
 			}
 		} finally {
 			terminateAndRemove(thread);

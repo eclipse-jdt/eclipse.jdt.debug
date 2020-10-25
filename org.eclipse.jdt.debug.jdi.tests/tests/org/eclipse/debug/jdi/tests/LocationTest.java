@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -79,10 +81,10 @@ public class LocationTest extends AbstractJDITest {
 	public void testJDIEquality() {
 		assertTrue("1", fLocation.equals(fLocation));
 		Location other = getFrame(0).location();
-		assertTrue("2", !fLocation.equals(other));
-		assertTrue("3", !fLocation.equals(new Object()));
-		assertTrue("4", !fLocation.equals(null));
-		assertTrue("5", fLocation.hashCode() != other.hashCode());
+		assertFalse("2", fLocation.equals(other));
+		assertFalse("3", fLocation.equals(new Object()));
+		assertFalse("4", fLocation.equals(null));
+		assertNotEquals("5", fLocation.hashCode(), other.hashCode());
 	}
 	/**
 	 * Test JDI lineNumber().
@@ -105,7 +107,7 @@ public class LocationTest extends AbstractJDITest {
 		try {
 			sourceName = fLocation.sourceName();
 		} catch (AbsentInformationException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", "MainClass.java", sourceName);
 	}

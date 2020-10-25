@@ -509,9 +509,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         			IEditorInput editorInput = editor.getEditorInput();
         	        // If there is no annotation model, there's nothing more to do
         	        IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
-        	        if (annModel == null) {
-        	            fail("Could not get the annotation model");
-        	        }
+					assertNotNull("Could not get the annotation model", annModel);
         	        annModel.addAnnotationModelListener(getAnnotationListener());
         	        fAnnotationModelsWithListeners.add(annModel);
         		} else {
@@ -568,9 +566,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
     			IEditorInput editorInput = editor.getEditorInput();
     	        // If there is no annotation model, there's nothing more to do
     	        IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
-    	        if (annModel == null) {
-    	            fail("Could not get the annotation model");
-    	        }
+				assertNotNull("Could not get the annotation model", annModel);
     	        annModel.addAnnotationModelListener(getAnnotationListener());
     	        fAnnotationModelsWithListeners.add(annModel);
     		} else {

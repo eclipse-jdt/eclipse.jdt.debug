@@ -798,7 +798,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 				IVariable variable = variables[i];
 				if (variable.getName().equals("value")) {
 					IValue iValue = variable.getValue();
-					assertTrue("Should be an int", iValue.getReferenceTypeName().equals("int"));
+					assertEquals("Should be an int", "int", iValue.getReferenceTypeName());
 					assertTrue("Should be a primitive", iValue instanceof IJavaPrimitiveValue);
 					int intValue = ((IJavaPrimitiveValue)iValue).getIntValue();
 					assertEquals("Wrong value", 0, intValue);
@@ -876,7 +876,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 				IVariable variable = variables[i];
 				if (variable.getName().equals("value")) {
 					IValue iValue = variable.getValue();
-					assertTrue("Should be an int", iValue.getReferenceTypeName().equals("int"));
+					assertEquals("Should be an int", "int", iValue.getReferenceTypeName());
 					assertTrue("Should be a primitive", iValue instanceof IJavaPrimitiveValue);
 					int intValue = ((IJavaPrimitiveValue)iValue).getIntValue();
 					assertEquals("Wrong value", 0, intValue);
@@ -931,7 +931,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 				IVariable variable = variables[i];
 				if (variable.getName().equals("value")) {
 					IValue iValue = variable.getValue();
-					assertTrue("Should be an int", iValue.getReferenceTypeName().equals("int"));
+					assertEquals("Should be an int", "int", iValue.getReferenceTypeName());
 					assertTrue("Should be a primitive", iValue instanceof IJavaPrimitiveValue);
 					int intValue = ((IJavaPrimitiveValue)iValue).getIntValue();
 					assertEquals("Wrong value", 0, intValue);

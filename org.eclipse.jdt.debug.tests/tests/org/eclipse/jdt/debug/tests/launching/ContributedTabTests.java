@@ -95,7 +95,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		assertTrue("Alternate tab should be the last tab in the group", tabs[tabs.length-1].getClass().equals(JavaAlernateModeTab.class)); //$NON-NLS-1$
+		assertEquals("Alternate tab should be the last tab in the group", tabs[tabs.length - 1].getClass(), JavaAlernateModeTab.class); //$NON-NLS-1$
 	}
 
 	/**

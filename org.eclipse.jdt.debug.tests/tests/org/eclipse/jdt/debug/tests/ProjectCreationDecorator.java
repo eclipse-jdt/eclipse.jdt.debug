@@ -85,7 +85,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         IResource resource = root.findMember(outputLocation);
         assertNotNull("Project output location is null", resource);
         assertTrue("Project output location does not exist", resource.exists());
-        assertTrue("Project output is not a folder", (resource.getType() == IResource.FOLDER));
+		assertEquals("Project output is not a folder", IResource.FOLDER, resource.getType());
         IFolder folder = (IFolder) resource;
         IResource[] children = folder.members();
         assertTrue("output folder is empty", children.length > 0);
@@ -107,7 +107,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
                 errors++;
             }
     	}
-        assertTrue("Unexpected compile errors in project. Expected 0 found " + markers.length, errors == 0);
+		assertEquals("Unexpected compile errors in project. Expected 0 found " + markers.length, 0, errors);
     }
 
     /**

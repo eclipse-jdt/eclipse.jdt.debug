@@ -63,6 +63,6 @@ public class ExceptionRequestTest extends AbstractJDITest {
 	 * Test JDI exception().
 	 */
 	public void testJDIException() {
-		assertTrue("1", fRequest.exception() == null);
+		assertNull("1", fRequest.exception());
 	}
 }

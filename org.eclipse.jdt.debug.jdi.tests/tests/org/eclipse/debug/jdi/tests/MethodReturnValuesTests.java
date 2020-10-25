@@ -103,12 +103,12 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				assertEquals(req, event.request());
 				val = event.returnValue();
 				assertNotNull("value should not be null", val);
-				assertTrue("return value must be void", val.equals(val.virtualMachine().mirrorOfVoid()));
+				assertEquals("return value must be void", val, val.virtualMachine().mirrorOfVoid());
 				erm.deleteEventRequest(req);
 			}
 		}
 		catch (InterruptedException e) {
-			assertTrue("thrown exception mean failure", false);
+			fail("thrown exception mean failure");
 		}
 	}
 
@@ -150,7 +150,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			}
 		}
 		catch (InterruptedException e) {
-			assertTrue("thrown exception mean failure", false);
+			fail("thrown exception mean failure");
 		}
 	}
 
@@ -192,7 +192,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			}
 		}
 		catch (InterruptedException e) {
-			assertTrue("thrown exception mean failure", false);
+			fail("thrown exception mean failure");
 		}
 	}
 
@@ -234,7 +234,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			}
 		}
 		catch (InterruptedException e) {
-			assertTrue("thrown exception mean failure", false);
+			fail("thrown exception mean failure");
 		}
 	}
 
@@ -276,7 +276,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			}
 		}
 		catch (InterruptedException e) {
-			assertTrue("thrown exception mean failure", false);
+			fail("thrown exception mean failure");
 		}
 	}
 }

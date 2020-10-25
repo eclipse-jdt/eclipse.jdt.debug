@@ -46,7 +46,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		try {
 			stackSize = thread.frames().size();
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("dropTopFrame.1", false);
+			fail("dropTopFrame.1");
 		}
 
 		// Create and install step out request
@@ -64,11 +64,11 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 
 		// Do return
 		boolean finallyBlocksSkipped = hcrThread.doReturn(null, true);
-		assertTrue("dropTopFrame.2", !finallyBlocksSkipped);
+		assertFalse("dropTopFrame.2", finallyBlocksSkipped);
 
 		// Wait for the event to come in
 		Event event = waitForEvent(waiter, 10000); // Wait 10s max
-		assertTrue("dropTopFrame.3", event != null);
+		assertNotNull("dropTopFrame.3", event);
 		fEventReader.removeEventListener(waiter);
 		fVM.eventRequestManager().deleteEventRequest(request);
 
@@ -78,7 +78,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		try {
 			newStackSize = thread.frames().size();
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("dropTopFrame.5", false);
+			fail("dropTopFrame.5");
 		}
 		assertEquals("dropTopFrame.6", stackSize - 1, newStackSize);
 	}
@@ -112,7 +112,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 			StackFrame frame = thread.frames(0, 1).get(0);
 			location = frame.location();
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("reenterOnExit.1", false);
+			fail("reenterOnExit.1");
 		}
 
 		// Create and install reenter step request
@@ -132,7 +132,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 
 		// Wait for the step event to come in
 		StepEvent event = (StepEvent) waitForEvent(waiter, 10000); // Wait 10s max
-		assertTrue("reenterOnExit.2", event != null);
+		assertNotNull("reenterOnExit.2", event);
 		fEventReader.removeEventListener(waiter);
 		fVM.eventRequestManager().deleteEventRequest(request);
 
@@ -142,9 +142,9 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 			StackFrame frame = thread.frames(0, 1).get(0);
 			newLocation = frame.location();
 		} catch (IncompatibleThreadStateException e) {
-			assertTrue("reenterOnExit.3", false);
+			fail("reenterOnExit.3");
 		}
-		assertTrue("reenterOnExit.4", !newLocation.equals(location));
+		assertFalse("reenterOnExit.4", newLocation.equals(location));
 		assertTrue("reenterOnExit.5", newLocation.codeIndex() <= location.codeIndex());
 
 	}
@@ -182,7 +182,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		ClassUnloadEvent unloadEvent =
 			(ClassUnloadEvent) waitForEvent(unloadEventWaiter, 10000);
 		// Wait 10s max
-		assertTrue("reloadClasses.2", unloadEvent != null);
+		assertNotNull("reloadClasses.2", unloadEvent);
 		fEventReader.removeEventListener(unloadEventWaiter);
 		fVM.eventRequestManager().deleteEventRequest(unloadRequest);
 		assertEquals(
@@ -194,7 +194,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		ClassPrepareEvent loadEvent =
 			(ClassPrepareEvent) waitForEvent(loadEventWaiter, 10000);
 		// Wait 10s max
-		assertTrue("reloadClasses.4", loadEvent != null);
+		assertNotNull("reloadClasses.4", loadEvent);
 		fEventReader.removeEventListener(loadEventWaiter);
 		fVM.eventRequestManager().deleteEventRequest(loadRequest);
 		ReferenceType newType = loadEvent.referenceType();
@@ -202,7 +202,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 			"reloadClasses.5",
 			"org.eclipse.debug.jdi.tests.program.MainClass",
 			newType.name());
-		assertTrue("reloadClasses.6", !oldType.equals(newType));
+		assertFalse("reloadClasses.6", oldType.equals(newType));
 	}
 	/**
 	 * Use case 1:
@@ -238,12 +238,14 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		}
 
 		// Reload classes
-		if (vm.canReloadClasses())
+		if (vm.canReloadClasses()) {
 			reloadClasses();
+		}
 
 		// Reenter on exit
-		if (vm.canReenterOnExit())
+		if (vm.canReenterOnExit()) {
 			reenterOnExit(thread);
+		}
 	}
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.

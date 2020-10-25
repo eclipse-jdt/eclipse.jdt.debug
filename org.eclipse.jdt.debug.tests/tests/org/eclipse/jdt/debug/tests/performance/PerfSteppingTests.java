@@ -76,12 +76,12 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 				try {
 					fThread.stepOver();
 				} catch (DebugException e) {
-					assertTrue(e.getMessage(), false);
+					fail(e.getMessage());
 				}
 				try {
 					fLock.wait();
 				} catch (InterruptedException e) {
-					assertTrue(e.getMessage(), false);
+					fail(e.getMessage());
 				}
 			}
 

@@ -14,6 +14,7 @@
 package org.eclipse.jdt.debug.tests.launching;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -125,10 +126,10 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		List<File> classpathJars = getClasspathJarsFromJarManifest(classpathShortener.getProcessTempFiles().get(0));
 		String filePathSuffix = new File(userHomePath("/workspace/myProject/bin")).getPath();
 		int index = classpathJars.get(0).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
-		assertTrue("First Classpath jar file location not found", index != -1);
+		assertNotEquals("First Classpath jar file location not found", -1, index);
 		filePathSuffix = new File(userHomePath("/workspace/myProject/lib/lib 1.jar")).getPath();
 		index = classpathJars.get(1).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
-		assertTrue("Second Classpath jar file location not found", index != -1);
+		assertNotEquals("Second Classpath jar file location not found", -1, index);
 	}
 
 	public void testArgFileUsedForLongClasspathOnJava9() throws Exception {
@@ -211,10 +212,10 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		List<File> classpathJars = getClasspathJarsFromJarManifest(classpathShortener.getProcessTempFiles().get(0));
 		String filePathSuffix = new File(userHomePath("/workspace/myProject/bin")).getPath();
 		int index = classpathJars.get(0).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
-		assertTrue("First Classpath jar file location not found", index != -1);
+		assertNotEquals("First Classpath jar file location not found", -1, index);
 		filePathSuffix = new File(userHomePath("/workspace/myProject/lib/lib 1.jar")).getPath();
 		index = classpathJars.get(1).getCanonicalFile().getPath().lastIndexOf(filePathSuffix);
-		assertTrue("Second Classpath jar file location not found", index != -1);
+		assertNotEquals("Second Classpath jar file location not found", -1, index);
 	}
 
 	public void testClasspathEnvVariableUsedForLongClasspathOnJava8OnWindows() {

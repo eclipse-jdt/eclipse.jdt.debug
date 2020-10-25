@@ -51,7 +51,7 @@ public class ProcessTests extends AbstractDebugTest {
 				assertEquals("Exit value not normal", 0, exitValue);
 				return;
 			}
-			assertTrue("Should not be able to get exit value - process not terminated", false);
+			fail("Should not be able to get exit value - process not terminated");
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

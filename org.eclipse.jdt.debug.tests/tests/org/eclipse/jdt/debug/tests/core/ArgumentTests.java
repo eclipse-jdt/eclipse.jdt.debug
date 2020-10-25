@@ -392,7 +392,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		}
 		assertNotNull(commandLine);
 		if (!fUseArgfile) {
-			assertTrue("command line must not contain an @argfile", commandLine.indexOf(" @") == -1);
+			assertEquals("command line must not contain an @argfile", -1, commandLine.indexOf(" @"));
 		} else {
 			assertTrue("command line must contain an @argfile", commandLine.indexOf(" @") > -1);
 		}

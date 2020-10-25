@@ -75,6 +75,6 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	 * Test that we received the event.
 	 */
 	public void testJDIVMDeath() {
-		assertTrue("1", fVMDisconnectEvent != null);
+		assertNotNull("1", fVMDisconnectEvent);
 	}
 }

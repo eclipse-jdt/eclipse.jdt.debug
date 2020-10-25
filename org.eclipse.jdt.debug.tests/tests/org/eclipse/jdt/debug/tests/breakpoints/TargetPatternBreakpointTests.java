@@ -130,7 +130,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 				try {
 					bp.setPattern(target,"Breakp");
 				} catch (CoreException e) {
-					assertTrue("Failed to set pattern", false);
+					fail("Failed to set pattern");
 				}
 			}
 	}

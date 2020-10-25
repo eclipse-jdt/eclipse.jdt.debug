@@ -47,7 +47,7 @@ public class EventSetTests extends AbstractDebugTest {
 				DebugEvent[] set = getEventSet();
 				assertTrue("Should be two events", set!= null && set.length == 2);
 				for (int i = 0; i < set.length; i++) {
-					assertTrue("should be a breakpoint event", set[i].getDetail() == DebugEvent.BREAKPOINT);
+					assertEquals("should be a breakpoint event", DebugEvent.BREAKPOINT, set[i].getDetail());
 				}
 				IBreakpoint[] hits = thread.getBreakpoints();
 				assertTrue("should be two breakpoints", hits != null && hits.length == 2);

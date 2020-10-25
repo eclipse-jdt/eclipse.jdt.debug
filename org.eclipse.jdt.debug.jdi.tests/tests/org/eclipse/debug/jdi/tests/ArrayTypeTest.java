@@ -73,7 +73,7 @@ public class ArrayTypeTest extends AbstractJDITest {
 		try {
 			type = fType.componentType();
 		} catch (ClassNotLoadedException e) {
-			assertTrue("1", false);
+			fail("1");
 		}
 		assertEquals("2", expected, type);
 	}
@@ -89,9 +89,9 @@ public class ArrayTypeTest extends AbstractJDITest {
 	 */
 	public void testJDINewInstance() {
 		ArrayReference instance = fType.newInstance(1);
-		assertTrue("1", instance.type().equals(fType));
+		assertEquals("1", instance.type(), fType);
 		assertEquals("2", 1, instance.length());
-		assertTrue("3", null == instance.getValue(0));
+		assertNull("3", instance.getValue(0));
 
 		ArrayReference instance2 = fType.newInstance(5);
 		try {
@@ -99,10 +99,7 @@ public class ArrayTypeTest extends AbstractJDITest {
 		} catch (InvalidTypeException exc) {
 		} catch (ClassNotLoadedException exc) {
 		}
-		assertTrue("4", instance2.getValue(2) == null);
-		assertEquals(
-			"5",
-			((StringReference) (instance2.getValue(3))).value(),
-			"Yo");
+		assertNull("4", instance2.getValue(2));
+		assertEquals("5", "Yo", ((StringReference) (instance2.getValue(3))).value());
 	}
 }

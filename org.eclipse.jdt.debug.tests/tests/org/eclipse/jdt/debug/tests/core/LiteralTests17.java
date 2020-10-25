@@ -58,7 +58,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 			thread = launchToLineBreakpoint(LITERAL_TYPE_NAME, bp);
 			IEvaluationResult result = evaluate(snippet, thread);
 			assertNotNull("There must be an evaluation result", result);
-			assertTrue("There must be no errors in the result", !result.hasErrors());
+			assertFalse("There must be no errors in the result", result.hasErrors());
 			return result.getValue();
 		}
 		finally {
@@ -84,10 +84,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 			thread = launchToLineBreakpoint(LITERAL_TYPE_NAME, bp);
 			IEvaluationResult result = evaluate(snippet, thread);
 			assertNotNull("There must be an evaluation result", result);
-			assertTrue("There must be no errors in the result", !result.hasErrors());
+			assertFalse("There must be no errors in the result", result.hasErrors());
 			result = evaluate(snippet2, thread);
 			assertNotNull("There must be an evaluation result", result);
-			assertTrue("There must be no errors in the result", !result.hasErrors());
+			assertFalse("There must be no errors in the result", result.hasErrors());
 			return result.getValue();
 		}
 		finally {
@@ -106,7 +106,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 11", val.getIntValue() == 11);
+		assertEquals("The new integer value should be 11", 11, val.getIntValue());
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 12", val.getIntValue() == 12);
+		assertEquals("The new integer value should be 12", 12, val.getIntValue());
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new short value should be 11", val.getShortValue() == 11);
+		assertEquals("The new short value should be 11", 11, val.getShortValue());
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new short value should be 12", val.getShortValue() == 12);
+		assertEquals("The new short value should be 12", 12, val.getShortValue());
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new byte value should be 9", val.getByteValue() == 9);
+		assertEquals("The new byte value should be 9", 9, val.getByteValue());
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new byte value should be 12", val.getByteValue() == 12);
+		assertEquals("The new byte value should be 12", 12, val.getByteValue());
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new long value should be 11", val.getLongValue() == 11);
+		assertEquals("The new long value should be 11", 11, val.getLongValue());
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new long value should be 12", val.getLongValue() == 12);
+		assertEquals("The new long value should be 12", 12, val.getLongValue());
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new float value should be 4.1415", val.getFloatValue() == 4.1415F);
+		assertEquals("The new float value should be 4.1415", 4.1415F, val.getFloatValue(), .0F);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new float value should be 7.1415", val.getFloatValue() == 7.1415F);
+		assertEquals("The new float value should be 7.1415", 7.1415F, val.getFloatValue(), .0F);
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new double value should be 11.556", val.getDoubleValue() == 11.556D);
+		assertEquals("The new double value should be 11.556", 11.556D, val.getDoubleValue(), .0);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new double value should be 16.556", val.getDoubleValue() == 16.555999999999997D);
+		assertEquals("The new double value should be 16.556", 16.555999999999997D, val.getDoubleValue(), .0);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 9", val.getIntValue() == 9);
+		assertEquals("The new integer value should be 9", 9, val.getIntValue());
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 17", val.getIntValue() == 17);
+		assertEquals("The new integer value should be 17", 17, val.getIntValue());
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 17", val.getIntValue() == 17);
+		assertEquals("The new integer value should be 17", 17, val.getIntValue());
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 257", val.getIntValue() == 257);
+		assertEquals("The new integer value should be 257", 257, val.getIntValue());
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 9", val.getIntValue() == 9);
+		assertEquals("The new integer value should be 9", 9, val.getIntValue());
 	}
 
 	/**
@@ -327,6 +327,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 		assertNotNull("The value should not be null", value);
 		assertTrue("The underlying value must be a primitive value", value instanceof JDIPrimitiveValue);
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
-		assertTrue("The new integer value should be 65", val.getIntValue() == 65);
+		assertEquals("The new integer value should be 65", 65, val.getIntValue());
 	}
 }

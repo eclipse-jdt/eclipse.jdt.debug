@@ -310,7 +310,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			String expression = "something ${var_A} else";
 			try {
 				doSubs(expression);
-				assertTrue("Expected cycle to cause exception", false);
+				fail("Expected cycle to cause exception");
 			} catch (CoreException ce){
 				IStatus status = ce.getStatus();
 				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
@@ -337,7 +337,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			String expression = "something ${var_A} else";
 			try {
 				doSubs(expression);
-				assertTrue("Expected cycle to cause exception", false);
+				fail("Expected cycle to cause exception");
 			} catch (CoreException ce){
 				IStatus status = ce.getStatus();
 				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
@@ -370,7 +370,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			String expression = "${var_A}${var_B}";
 			try {
 				doSubs(expression);
-				assertTrue("Expected cycle to cause exception", false);
+				fail("Expected cycle to cause exception");
 			} catch (CoreException ce){
 				IStatus status = ce.getStatus();
 				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
@@ -848,6 +848,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			// should cause an exception when no selection
 			return;
 		}
-		assertFalse("Empty selection should throw an exception", true);
+		fail("Empty selection should throw an exception");
 	}
 }

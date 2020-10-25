@@ -57,7 +57,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			assertNotNull("No breakpoint", hit);
 
 			// should be modification
-			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			assertFalse("First hit should be modification", wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 30
 			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
@@ -104,7 +104,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			assertNotNull("No breakpoint", hit);
 
 			// should be modification
-			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			assertFalse("First hit should be modification", wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 30
 			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
@@ -240,7 +240,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull(value);
 			int varValue = value.getIntValue();
-			assertTrue("'value' should be 7", varValue == 7);
+			assertEquals("'value' should be 7", 7, varValue);
 
 			wp.setHitCount(0);
 
@@ -287,7 +287,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			assertNotNull("No breakpoint", hit);
 
 			// should be modification
-			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			assertFalse("First hit should be modification", wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
 			assertEquals("Should be on line 30", 30, frame.getLineNumber());
 
@@ -321,7 +321,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			assertNotNull("No watchpoint", hit);
 
 			// should be modification
-			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			assertFalse("First hit should be modification", wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
 			assertEquals("Should be on line 18", 18, frame.getLineNumber());
 

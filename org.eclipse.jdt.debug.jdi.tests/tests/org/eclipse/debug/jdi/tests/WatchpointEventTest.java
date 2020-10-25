@@ -48,7 +48,7 @@ public class WatchpointEventTest extends AbstractJDITest {
 			(AccessWatchpointEvent) triggerAndWait(getAccessWatchpointRequest(),
 				"AccessWatchpointEvent",
 				true);
-		assertTrue("Got access watchpoint event", fAccessWatchpointEvent != null);
+		assertNotNull("Got access watchpoint event", fAccessWatchpointEvent);
 
 		// Trigger a static access watchpoint event
 		fStaticAccessWatchpointEvent =
@@ -56,9 +56,7 @@ public class WatchpointEventTest extends AbstractJDITest {
 				getStaticAccessWatchpointRequest(),
 				"StaticAccessWatchpointEvent",
 				true);
-		assertTrue(
-			"Got static access watchpoint event",
-			fStaticAccessWatchpointEvent != null);
+		assertNotNull("Got static access watchpoint event", fStaticAccessWatchpointEvent);
 
 		// Trigger a modification watchpoint event
 		fModificationWatchpointEvent =
@@ -67,9 +65,7 @@ public class WatchpointEventTest extends AbstractJDITest {
 				"ModificationWatchpointEvent",
 				false);
 		// Interrupt the VM so that we can test valueCurrent()
-		assertTrue(
-			"Got modification watchpoint event",
-			fModificationWatchpointEvent != null);
+		assertNotNull("Got modification watchpoint event", fModificationWatchpointEvent);
 
 	}
 	/**
@@ -128,7 +124,7 @@ public class WatchpointEventTest extends AbstractJDITest {
 			"1",
 			getObjectReference(),
 			fAccessWatchpointEvent.object());
-		assertTrue("2", fStaticAccessWatchpointEvent.object() == null);
+		assertNull("2", fStaticAccessWatchpointEvent.object());
 		assertEquals(
 			"3",
 			getObjectReference(),
@@ -138,10 +134,7 @@ public class WatchpointEventTest extends AbstractJDITest {
 	 * Test JDI valueCurrent().
 	 */
 	public void testJDIValueCurrent() {
-		assertTrue(
-			"1",
-			false
-				== ((BooleanValue) fAccessWatchpointEvent.valueCurrent()).value());
+		assertFalse("1", ((BooleanValue) fAccessWatchpointEvent.valueCurrent()).value());
 
 		assertEquals(
 			"2",
@@ -149,10 +142,7 @@ public class WatchpointEventTest extends AbstractJDITest {
 			((StringReference) fStaticAccessWatchpointEvent.valueCurrent())
 				.value());
 
-		assertTrue(
-			"3",
-			false
-				== ((BooleanValue) fModificationWatchpointEvent.valueCurrent())
-					.value());
+		assertFalse("3", ((BooleanValue) fModificationWatchpointEvent.valueCurrent())
+			.value());
 	}
 }

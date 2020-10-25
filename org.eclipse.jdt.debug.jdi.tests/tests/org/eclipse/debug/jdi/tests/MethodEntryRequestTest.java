@@ -93,7 +93,7 @@ public class MethodEntryRequestTest extends AbstractJDITest {
 		MethodEntryEvent event = (MethodEntryEvent) e;
 		Method m = event.method();
 		ReferenceType r = m.location().declaringType();
-		assertTrue("1", !r.name().startsWith("org.eclipse.debug.jdi.tests.program."));
+		assertFalse("1", r.name().startsWith("org.eclipse.debug.jdi.tests.program."));
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 

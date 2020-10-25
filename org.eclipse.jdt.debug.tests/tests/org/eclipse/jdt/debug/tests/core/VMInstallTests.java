@@ -17,13 +17,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
-import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -221,7 +221,7 @@ public class VMInstallTests extends AbstractDebugTest {
 				assertTrue("There should be a source path ending in test_resolver_src.zip on the ext lib [" + locpath + "]",
 						locs[i].getSystemLibrarySourcePath().toString().indexOf("test_resolver_src.zip") > -1);
 				IPath root = locs[i].getPackageRootPath();
-				assertTrue("The source root path should be 'src' for ext lib ["+locpath+"]", root.toString().equals("src"));
+				assertEquals("The source root path should be 'src' for ext lib [" + locpath + "]", "src", root.toString());
 				URL url = locs[i].getJavadocLocation();
 				assertNotNull("There should be a Javadoc URL set for ext lib ["+locpath+"]", url);
 				assertTrue("There should be a javadoc path of test_resolver_javadoc.zip on the ext lib ["+locpath+"]",

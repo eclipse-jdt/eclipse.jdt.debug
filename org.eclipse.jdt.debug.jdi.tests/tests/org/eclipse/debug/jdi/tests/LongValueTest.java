@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jdi.LongValue;
 
 /**
@@ -55,19 +57,19 @@ public class LongValueTest extends AbstractJDITest {
 	 */
 	public void testJDIEquality() {
 		assertTrue("1", fValue.equals(fVM.mirrorOf(123456789l)));
-		assertTrue("2", !fValue.equals(fVM.mirrorOf(987654321l)));
-		assertTrue("3", !fValue.equals(new Object()));
-		assertTrue("4", !fValue.equals(null));
+		assertFalse("2", fValue.equals(fVM.mirrorOf(987654321l)));
+		assertFalse("3", fValue.equals(new Object()));
+		assertFalse("4", fValue.equals(null));
 		assertEquals(
 			"5",
 			fValue.hashCode(),
 			fVM.mirrorOf(123456789l).hashCode());
-		assertTrue("6", fValue.hashCode() != fVM.mirrorOf(987654321l).hashCode());
+		assertNotEquals("6", fValue.hashCode(), fVM.mirrorOf(987654321l).hashCode());
 	}
 	/**
 	 * Test JDI value().
 	 */
 	public void testJDIValue() {
-		assertTrue("1", 123456789l == fValue.value());
+		assertEquals("1", 123456789l, fValue.value());
 	}
 }

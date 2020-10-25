@@ -53,7 +53,7 @@ public class VMDisposeTest extends AbstractJDITest {
 		fVM.dispose();
 		try {
 			fVM.allThreads();
-			assertTrue("1", false);
+			fail("1");
 		} catch (VMDisconnectedException e) {
 		}
 
@@ -62,7 +62,7 @@ public class VMDisposeTest extends AbstractJDITest {
 			connectToVM();
 			fVM.allThreads();
 		} catch (VMDisconnectedException e) {
-			assertTrue("3", false);
+			fail("3");
 		}
 	}
 }

@@ -98,9 +98,7 @@ public class StepEventTest extends AbstractJDITest {
 			event = triggerStepAndWait(getThread(), request, 1000);
 		} catch (Error e) {
 		}
-		if (event != null) {
-			assertTrue("1", false);
-		}
+		assertNull("1", event);
 		waitUntilReady();
 		fVM.eventRequestManager().deleteEventRequest(request);
 
@@ -112,9 +110,7 @@ public class StepEventTest extends AbstractJDITest {
 			event = triggerStepAndWait(getThread(), request, 1000);
 		} catch (Error e) {
 		}
-		if (event != null) {
-			assertTrue("1", false);
-		}
+		assertNull("1", event);
 		waitUntilReady();
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
@@ -133,9 +129,7 @@ public class StepEventTest extends AbstractJDITest {
 			event = triggerStepAndWait(getThread(), request, 1000);
 		} catch (Error e) {
 		}
-		if (event != null) {
-			assertTrue("1", false);
-		}
+		assertNull("1", event);
 		waitUntilReady();
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
@@ -154,9 +148,7 @@ public class StepEventTest extends AbstractJDITest {
 			event = triggerStepAndWait(getThread(), request, 1000);
 		} catch (Error e) {
 		}
-		if (event != null) {
-			assertTrue("1", false);
-		}
+		assertNull("1", event);
 		waitUntilReady();
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
@@ -176,7 +168,7 @@ public class StepEventTest extends AbstractJDITest {
 		}
 		if (event != null) {
 			System.out.println(event.location().declaringType());
-			assertTrue("1", false);
+			fail("1");
 		}
 		waitUntilReady();
 		fVM.eventRequestManager().deleteEventRequest(request);

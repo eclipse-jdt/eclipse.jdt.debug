@@ -107,8 +107,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
 		finally {
@@ -145,8 +144,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
 		finally {
@@ -181,8 +179,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
 		finally {
@@ -217,8 +214,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
 		finally {
@@ -253,8 +249,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 			assertTrue("The returned value from (true && true || !(false&&true) || !(true==true||true!=true&&true)) should be true",
 					Boolean.parseBoolean(fListener.result));
@@ -291,8 +286,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 			assertFalse("The returned value from !true should be false", Boolean.parseBoolean(fListener.result));
 		}
@@ -328,8 +322,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap",
-					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
+			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 			assertFalse("The returned value from !(true==true||true!=true&&true) should be false", Boolean.parseBoolean(fListener.result));
 		}
