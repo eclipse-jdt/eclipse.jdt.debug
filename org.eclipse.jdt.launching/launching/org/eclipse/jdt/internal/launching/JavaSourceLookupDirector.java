@@ -14,6 +14,7 @@
 package org.eclipse.jdt.internal.launching;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
@@ -21,6 +22,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
+import org.eclipse.jdt.internal.core.AbstractClassFile;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
 
 /**
@@ -40,18 +42,25 @@ public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 		fFilteredTypes.add("org.eclipse.debug.ui.containerType.workingSet"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
-	 */
 	@Override
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[] {new JavaSourceLookupParticipant()});
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
-	 */
+
 	@Override
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return !fFilteredTypes.contains(type.getId());
+	}
+
+	@Override
+	public boolean equalSourceElements(Object o1, Object o2) {
+		if (o1 instanceof AbstractClassFile && o2 instanceof AbstractClassFile) {
+			AbstractClassFile c1 = (AbstractClassFile) o1;
+			AbstractClassFile c2 = (AbstractClassFile) o2;
+			String pathIdentifier1 = c1.getPathIdentifier();
+			String pathIdentifier2 = c2.getPathIdentifier();
+			return Objects.equals(pathIdentifier1, pathIdentifier2);
+		}
+		return super.equalSourceElements(o1, o2);
 	}
 }

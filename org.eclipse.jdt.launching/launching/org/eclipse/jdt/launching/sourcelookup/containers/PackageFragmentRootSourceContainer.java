@@ -144,4 +144,20 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	public IPath getPath() {
 		return getPackageFragmentRoot().getPath();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("["); //$NON-NLS-1$
+		if (fRoot != null) {
+			builder.append(fRoot.getElementName());
+			builder.append(", parent="); //$NON-NLS-1$
+			builder.append(fRoot.getParent().getElementName());
+			builder.append(", path="); //$NON-NLS-1$
+			builder.append(getPath());
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }
