@@ -162,7 +162,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 			while (iterator.hasNext()){
 
 				Object selection = iterator.next();
-				if (selection != null && selection instanceof IVariable){
+				if (selection instanceof IVariable){
 
 					IValue val = null;
 					try {

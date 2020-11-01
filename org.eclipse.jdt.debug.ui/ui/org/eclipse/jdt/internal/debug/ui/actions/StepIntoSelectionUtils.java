@@ -83,7 +83,7 @@ public class StepIntoSelectionUtils {
      * @throws JavaModelException
      */
     public static IMethod getMethod(ITextSelection selection, IJavaElement element) throws JavaModelException {
-    	if(element != null && element instanceof ICodeAssist) {
+    	if(element instanceof ICodeAssist) {
     		return resolveMethod(selection.getOffset(), selection.getLength(), (ICodeAssist)element);
     	}
     	return null;

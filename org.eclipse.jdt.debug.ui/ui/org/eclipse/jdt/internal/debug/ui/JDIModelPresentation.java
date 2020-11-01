@@ -714,7 +714,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (item instanceof IMarker) {
 				IBreakpoint bp = getBreakpoint((IMarker)item);
-				if (bp != null && bp instanceof IJavaBreakpoint) {
+				if (bp instanceof IJavaBreakpoint) {
 					return getBreakpointImage((IJavaBreakpoint)bp);
 				}
 			}

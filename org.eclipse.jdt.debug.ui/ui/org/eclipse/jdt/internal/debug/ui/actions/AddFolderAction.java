@@ -130,7 +130,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			IRuntimeClasspathEntry entry = iter.next();
 			if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
 				IResource res = entry.getResource();
-				if (res != null && res instanceof IContainer) {
+				if (res instanceof IContainer) {
 					folders.add(res);
 				}
 			}

@@ -68,7 +68,7 @@ public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 						IWorkbenchPage page = window.getActivePage();
 						if (page != null) {
 							IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-							if (part != null && part instanceof IConsoleView) {
+							if (part instanceof IConsoleView) {
 								view = (ConsoleView) part;
 								break;
 							}

@@ -45,7 +45,7 @@ public class PackageFragmentRootSourceContainerTypeDelegate extends AbstractSour
 					abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_6, null);
 				}
 				IJavaElement root = JavaCore.create(string);
-				if (root != null && root instanceof IPackageFragmentRoot) {
+				if (root instanceof IPackageFragmentRoot) {
 					return new PackageFragmentRootSourceContainer((IPackageFragmentRoot)root);
 				}
 				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_7, null);
