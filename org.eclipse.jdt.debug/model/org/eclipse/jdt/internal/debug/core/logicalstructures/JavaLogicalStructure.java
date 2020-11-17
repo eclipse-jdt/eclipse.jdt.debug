@@ -53,6 +53,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
+import com.sun.jdi.VMDisconnectedException;
 
 
 public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStructureTypeDelegate3 {
@@ -340,7 +341,10 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 			try {
 				((IJavaObject) value).enableCollection();
 			} catch (DebugException e) {
-				JDIDebugPlugin.log(e);
+				if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {
+					// don't worry about GC if the VM has terminated
+					JDIDebugPlugin.log(e);
+				}
 			}
 		}
 	}
