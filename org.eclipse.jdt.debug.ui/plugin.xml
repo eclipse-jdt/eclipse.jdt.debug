@@ -152,8 +152,8 @@
          <action
                definitionId="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint"
                label="%ToggleTracepointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.png"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/read_obj.png"
+               disabledIcon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/read_obj_disabled.png"
                helpContextId="toggle_tracepoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.RetargetToggleTracepointAction"
                menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
@@ -972,6 +972,15 @@
                 menubarPath="debug">
          </action>
          <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.RulerToggleTracepointActionDelegate"
+               helpContextId="manage_breakpoint_action_context"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/read_obj.png"
+               id="org.eclipse.jdt.debug.ui.actions.RulerToggleTracepointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint"
+               label="%AddTracepoint.label"
+               menubarPath="debug">
+         </action>
+         <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
                class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
@@ -1005,6 +1014,15 @@
                 helpContextId="run_to_line_action_context"
                 label="%RunToLineRuler.label"
                 menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.RulerToggleTracepointActionDelegate"
+               helpContextId="toggle_tracepoint_action_context"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/read_obj.png"
+               id="org.eclipse.jdt.debug.ui.actions.RulerToggleTracepointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint"
+               label="%AddTracepoint.label"
+               menubarPath="debug">
          </action>
          <action
                label="%EnableBreakpoint.label"
