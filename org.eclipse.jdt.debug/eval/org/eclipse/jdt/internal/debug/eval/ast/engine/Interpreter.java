@@ -60,7 +60,7 @@ public class Interpreter {
 		fInternalVariables = new HashMap<>();
 	}
 
-	public void execute() throws CoreException {
+	public void execute(boolean disableGcOnResult) throws CoreException {
 		try {
 			reset();
 			while (fInstructionCounter < fInstructions.length && !fStopped) {
@@ -75,7 +75,7 @@ public class Interpreter {
 			throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugModel.getPluginIdentifier(), e.getMessage(), e));
 		} finally {
-			releaseObjects();
+			releaseObjects(disableGcOnResult);
 		}
 	}
 
@@ -132,13 +132,16 @@ public class Interpreter {
 	/**
 	 * Re-enable garbage collection if interim results.
 	 */
-	private void releaseObjects() {
+	private void releaseObjects(boolean disableGcOnResult) {
 		if (fPermStorage != null) {
+			IJavaValue result = getResult();
 			Iterator<IJavaObject> iterator = fPermStorage.iterator();
 			while (iterator.hasNext()) {
 				IJavaObject object = iterator.next();
 				try {
-					object.enableCollection();
+					if (!disableGcOnResult || object != result) {
+						object.enableCollection();
+					}
 				} catch (CoreException e) {
 					// don't worry about GC if the VM has terminated
 					if ((e.getStatus().getException() instanceof VMDisconnectedException)) {

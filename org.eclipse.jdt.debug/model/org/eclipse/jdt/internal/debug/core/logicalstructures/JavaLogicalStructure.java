@@ -30,6 +30,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate3;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
@@ -43,7 +44,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
@@ -53,9 +53,10 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
+import com.sun.jdi.VMDisconnectedException;
 
 
-public class JavaLogicalStructure implements ILogicalStructureType {
+public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStructureTypeDelegate3 {
 
 	private static IStatusHandler fgStackFrameProvider;
 
@@ -151,7 +152,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			fResult = null;
 			fEvaluationEngine.evaluateExpression(compiledExpression,
 					fEvaluationValue, fThread, this,
-					DebugEvent.EVALUATION_IMPLICIT, false);
+					DebugEvent.EVALUATION_IMPLICIT | IAstEvaluationEngine.DISABLE_GC_ON_RESULT, false);
 			synchronized (this) {
 				if (fResult == null) {
 					try {
@@ -310,7 +311,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 					evaluationEngine);
 			if (fValue == null) {
 				// evaluate each variable
-				IJavaVariable[] variables = new IJavaVariable[fVariables.length];
+				JDIPlaceholderVariable[] variables = new JDIPlaceholderVariable[fVariables.length];
 				for (int i = 0; i < fVariables.length; i++) {
 					variables[i] = new JDIPlaceholderVariable(fVariables[i][0],
 							evaluationBlock.evaluate(fVariables[i][1]),
@@ -332,6 +333,20 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			JDIDebugPlugin.log(e);
 		}
 		return value;
+	}
+
+	@Override
+	public void releaseValue(IValue value) {
+		if (value instanceof IJavaObject) {
+			try {
+				((IJavaObject) value).enableCollection();
+			} catch (DebugException e) {
+				if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {
+					// don't worry about GC if the VM has terminated
+					JDIDebugPlugin.log(e);
+				}
+			}
+		}
 	}
 
 	/**

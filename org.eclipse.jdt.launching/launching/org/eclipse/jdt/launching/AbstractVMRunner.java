@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -130,12 +130,18 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @return a single space-delimited string
 	 */
 	protected String getCmdLineAsString(String[] cmdLine) {
-		StringBuilder buff= new StringBuilder();
-		for (int i = 0, numStrings= cmdLine.length; i < numStrings; i++) {
+		StringBuilder buff = new StringBuilder();
+		for (int i = 0; i < cmdLine.length; i++) {
 			buff.append(cmdLine[i]);
-			buff.append(' ');
+			if (i != cmdLine.length - 1) {
+				if (cmdLine[i + 1].startsWith("-")) { //$NON-NLS-1$
+					buff.append("\n"); //$NON-NLS-1$
+				} else {
+					buff.append(' ');
+				}
+			}
 		}
-		return buff.toString().trim();
+		return buff.toString();
 	}
 
 	/**

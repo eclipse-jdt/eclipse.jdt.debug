@@ -79,6 +79,7 @@ import com.sun.jdi.ObjectReference;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	public static final String ANONYMOUS_VAR_PREFIX = "val$"; //$NON-NLS-1$
+	private static final int EVALUATION_DETAIL_BITMASK = DebugEvent.EVALUATION | DebugEvent.EVALUATION_IMPLICIT;
 	private IJavaProject fProject;
 
 	private IJavaDebugTarget fDebugTarget;
@@ -699,6 +700,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 		private IEvaluationListener fListener;
 
+		private boolean fDisableGcOnResult;
+
 		public EvalRunnable(InstructionSequence expression, IJavaThread thread,
 				IRuntimeContext context, IEvaluationListener listener,
 				int evaluationDetail, boolean hitBreakpoints) {
@@ -706,8 +709,9 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			fThread = thread;
 			fContext = context;
 			fListener = listener;
-			fEvaluationDetail = evaluationDetail;
+			fEvaluationDetail = (evaluationDetail & EVALUATION_DETAIL_BITMASK);
 			fHitBreakpoints = hitBreakpoints;
+			fDisableGcOnResult = (evaluationDetail & IAstEvaluationEngine.DISABLE_GC_ON_RESULT) != 0;
 		}
 
 		@Override
@@ -774,7 +778,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					EventFilter filter = new EventFilter();
 					try {
 						DebugPlugin.getDefault().addDebugEventFilter(filter);
-						interpreter.execute();
+						interpreter.execute(fDisableGcOnResult);
 					} catch (CoreException exception) {
 						fException = exception;
 						if (fEvaluationDetail == DebugEvent.EVALUATION

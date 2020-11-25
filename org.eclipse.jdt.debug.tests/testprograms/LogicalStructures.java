@@ -12,11 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -25,15 +21,30 @@ import java.util.Map.Entry;
 public class LogicalStructures {
 	
 	public static void main(String[] args) {
-		Map map = new HashMap();
-		map.put("one", new Integer(1));
-		map.put("two", new Integer(2));
-		List list = new ArrayList();
+		generateGarbage();
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("one", 1);
+		map.put("two", 2);
+		List<String> list = new ArrayList<>();
 		list.add("three");
 		list.add("four");
-		Set set = map.entrySet();
-		Entry entry = (Entry) set.iterator().next();
+		Set<Entry<String, Integer>> set = map.entrySet();
+		Map.Entry<String, Integer> entry = set.iterator().next();
 		entry.getKey();
+	}
+	
+	private static void generateGarbage() {
+		// generate garbage repeatedly to verify that logical values don't get GCed
+		Timer timer = new Timer(true);
+		timer.scheduleAtFixedRate(new TimerTask() {
+			private List<String> garbage;
+			@Override
+			public void run() {
+				System.gc();
+				garbage = Arrays.asList(new String("a"), new String("b"), new String("c"));
+			}
+		}, 50, 20);
 	}
 
 }
