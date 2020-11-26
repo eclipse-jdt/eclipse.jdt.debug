@@ -44,7 +44,7 @@ public class LogicalStructures {
 				System.gc();
 				garbage = Arrays.asList(new String("a"), new String("b"), new String("c"));
 			}
-		}, 50, 20);
+		}, 200, 20);
 	}
 
 }
