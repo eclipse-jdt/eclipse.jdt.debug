@@ -59,6 +59,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.SourceRange;
+import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -86,7 +87,7 @@ import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -309,8 +310,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		IResource resource = BreakpointUtils.getBreakpointResource(member);
 		String qualifiedName = getQualifiedName(type);
 		IJavaMethodBreakpoint methodBreakpoint = JDIDebugModel.createMethodBreakpoint(resource, qualifiedName, mname, signature, true, false, false, -1, start, end, 0, true, attributes);
-		if (BreakpointToggleUtils.isToggleTracepoints() && finalSelection instanceof ITextSelection && part instanceof CompilationUnitEditor) {
-			String pattern = getCodeTemplate((ITextSelection) finalSelection, (CompilationUnitEditor) part);
+		if (BreakpointToggleUtils.isToggleTracepoints() && finalSelection instanceof ITextSelection && part instanceof JavaEditor) {
+			String pattern = getCodeTemplate((ITextSelection) finalSelection, (JavaEditor) part);
 			if (pattern != null) {
 				pattern = pattern.trim();
 				pattern = pattern.replaceAll("\\\t", ""); //$NON-NLS-1$//$NON-NLS-2$
@@ -409,8 +410,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			}
 			BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
 			IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
-			if (BreakpointToggleUtils.isToggleTracepoints() && selection instanceof ITextSelection && part instanceof CompilationUnitEditor) {
-				String pattern = getCodeTemplate((ITextSelection) selection, (CompilationUnitEditor) part);
+			if (BreakpointToggleUtils.isToggleTracepoints() && selection instanceof ITextSelection && part instanceof JavaEditor) {
+				String pattern = getCodeTemplate((ITextSelection) selection, (JavaEditor) part);
 				if (pattern != null) {
 					pattern = pattern.trim();
 					pattern = pattern.replaceAll("\\\t", ""); //$NON-NLS-1$//$NON-NLS-2$
@@ -1585,7 +1586,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * @return the type root or <code>null</code> if one cannot be derived
 	 * @since 3.8
 	 */
-	private static String getCodeTemplate(ITextSelection textSelection, CompilationUnitEditor part) {
+	private static String getCodeTemplate(ITextSelection textSelection, JavaEditor part) {
 		ITextViewer viewer = part.getViewer();
 		if (viewer == null) {
 			return null;
@@ -1596,22 +1597,21 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		return templateBuffer.get();
 	}
 
-	private static void doGetCodeTemplate(ITextSelection textSelection, CompilationUnitEditor part, ITextViewer viewer, TemplateContextType contextType, AtomicReference<String> templateBuffer) {
+	private static void doGetCodeTemplate(ITextSelection textSelection, JavaEditor part, ITextViewer viewer, TemplateContextType contextType, AtomicReference<String> templateBuffer) {
 		ITextEditor editor = getTextEditor(part);
 		if (editor == null) {
 			return;
 		}
-		TemplateEngine statementEngine = new TemplateEngine(contextType);
-		statementEngine.reset();
-		IJavaElement element = getJavaElement(editor.getEditorInput());
-		ICompilationUnit cunit = null;
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IFile file = root.getFile(element.getPath());
-		cunit = JavaCore.createCompilationUnitFrom(file);
 		IDocumentProvider documentProvider = editor.getDocumentProvider();
 		if (documentProvider == null) {
 			return;
 		}
+		ICompilationUnit cunit = getCompilationUnit(editor);
+		if (cunit == null) {
+			return;
+		}
+		TemplateEngine statementEngine = new TemplateEngine(contextType);
+		statementEngine.reset();
 		IDocument document = documentProvider.getDocument(editor.getEditorInput());
 		try {
 			IRegion line = document.getLineInformation(textSelection.getStartLine() + 1);
@@ -1634,6 +1634,24 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		} catch (BadLocationException | TemplateException e) {
 			// ignore
 		}
+	}
+
+	private static ICompilationUnit getCompilationUnit(ITextEditor editor) {
+		IJavaElement element = getJavaElement(editor.getEditorInput());
+		if (element == null) {
+			return null;
+		}
+		if (element instanceof IOrdinaryClassFile) {
+			try {
+				return ((IOrdinaryClassFile) element).getWorkingCopy(new WorkingCopyOwner() {}, null);
+			} catch (JavaModelException e) {
+				// ignore
+				return null;
+			}
+		}
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IFile file = root.getFile(element.getPath());
+		return JavaCore.createCompilationUnitFrom(file);
 	}
 
 }
