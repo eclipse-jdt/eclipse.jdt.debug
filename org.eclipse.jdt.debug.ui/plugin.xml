@@ -1258,10 +1258,7 @@
             id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
          <visibility>
             <and>
-	            	   <not>
-	                  <objectState name="MemberActionFilter" value="isAbstract"/>
-	               </not>
-	               <not>
+	            <not>
    	               <objectState name="MemberActionFilter" value="isInterface"/>
    	            </not>
                 <not>
