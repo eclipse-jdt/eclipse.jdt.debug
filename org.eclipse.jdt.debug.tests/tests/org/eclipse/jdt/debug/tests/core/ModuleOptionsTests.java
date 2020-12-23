@@ -83,6 +83,18 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," // jdk.scripting.nashorn removed in 15
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
+	private static final String ASSUMED_DEFAULT_MODULES_16 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.foreign,jdk.incubator.vector," // jdk.incubator.vector added in 16
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,"
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
 
 
 	public ModuleOptionsTests(String name) {
@@ -212,6 +224,22 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.net," //
 						+ "jdk.nio.mapmode," //
 						+ "jdk.sctp," // Removed jdk.scripting.nashorn in 15
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.unsupported.desktop," //
+						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_16:
+				expectedModules = "java.se," //
+						+ "jdk.accessibility," //
+						+ "jdk.dynalink," 
+						+ "jdk.httpserver," //
+						+ "jdk.incubator.foreign,jdk.incubator.vector," // jdk.incubator.vector added in 16
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+						+ "jdk.jsobject," //
+						+ "jdk.management.jfr," //
+						+ "jdk.net," //
+						+ "jdk.nio.mapmode," //
+						+ "jdk.sctp,"
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
