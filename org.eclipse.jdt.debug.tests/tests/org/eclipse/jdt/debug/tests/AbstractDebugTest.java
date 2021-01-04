@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -318,6 +318,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        	node.putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
 	        	node.flush();
 	        }
+
+			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("org.eclipse.urischeme");
+			if (prefs != null) {
+				prefs.putBoolean("skipAutoRegistration", true);
+			}
 	        loadedPrefs = true;
 		}
     }
