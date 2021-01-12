@@ -535,14 +535,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (cmdDetails.getEnvp() != null) {
 			String[] envp = cmdDetails.getEnvp();
 			Arrays.sort(envp);
-			StringBuilder buff = new StringBuilder();
-			for (int i = 0; i < envp.length; i++) {
-				buff.append(envp[i]);
-				if(i < envp.length-1) {
-					buff.append('\n');
-				}
-			}
-			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
+			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, String.join(String.valueOf('\n'), envp));
 		}
 		if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()
 				|| !cmdDetails.getCommandLineShortener().getProcessTempFiles().isEmpty()) {

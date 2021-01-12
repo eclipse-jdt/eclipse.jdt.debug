@@ -86,14 +86,7 @@ public class VMDetailsDialog extends Dialog {
 		} else {
 			String[] args = fVM.getVMArguments();
 			if (args != null) {
-				StringBuilder buf = new StringBuilder();
-				for (int i = 0; i < args.length; i++) {
-					buf.append(args[i]);
-					if (i < (args.length - 1)) {
-						buf.append(" "); //$NON-NLS-1$
-					}
-				}
-				text = buf.toString();
+				text = String.join(" ", args); //$NON-NLS-1$
 			}
 		}
 		if (text == null) {

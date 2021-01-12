@@ -41,12 +41,6 @@ public class MemberActionFilter implements IActionFilter {
 		if (name.equals("MemberActionFilter")) { //$NON-NLS-1$
 			if (target instanceof IMember) {
 				IMember member = (IMember) target;
-				if (value.equals("isAbstract")) { //$NON-NLS-1$
-					try {
-						return Flags.isAbstract(member.getFlags());
-					} catch (JavaModelException e) {
-					}
-				}
 				if (value.equals("isRemote")) { //$NON-NLS-1$
 					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 					if(window != null) {

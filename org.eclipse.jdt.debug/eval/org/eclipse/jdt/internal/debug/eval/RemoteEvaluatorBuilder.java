@@ -157,14 +157,7 @@ public class RemoteEvaluatorBuilder {
 	}
 
 	private static String makeClassName(String[] names) {
-		StringBuilder sb = new StringBuilder();
-		for (int j = 0; j < names.length; j++) {
-			if (j > 0) {
-				sb.append('/');
-			}
-			sb.append(names[j]);
-		}
-		return sb.toString();
+		return String.join(String.valueOf('/'), names);
 	}
 
 	public List<String> getVariableTypeNames() {

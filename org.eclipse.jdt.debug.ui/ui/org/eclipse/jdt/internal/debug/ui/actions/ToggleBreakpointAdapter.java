@@ -1615,10 +1615,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		IDocument document = documentProvider.getDocument(editor.getEditorInput());
 		try {
 			IRegion line = document.getLineInformation(textSelection.getStartLine() + 1);
-			Point selectedRange = viewer.getSelectedRange();
-			viewer.setSelectedRange(selectedRange.x, 0);
+			Point selectedRange = new Point(textSelection.getOffset(), textSelection.getLength());
 			statementEngine.complete(viewer, selectedRange, line.getOffset(), cunit);
-			viewer.setSelectedRange(selectedRange.x, selectedRange.y);
 			TemplateProposal[] templateProposals = statementEngine.getResults();
 			for (TemplateProposal templateProposal : templateProposals) {
 				Template template = templateProposal.getTemplate();

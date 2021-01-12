@@ -13,28 +13,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class RulerToggleTracepointActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
 
-	private static final String TOGGLE_TRACEPOINT_COMMAND = "org.eclipse.jdt.debug.ui.commands.ToggleTracepoint"; //$NON-NLS-1$
 	private IEditorPart currentEditor;
 	private IAction dummyAction;
 
@@ -64,19 +61,47 @@ public class RulerToggleTracepointActionDelegate extends AbstractRulerActionDele
 
 	@Override
 	public void runWithEvent(IAction action, Event event) {
-		if (currentEditor == null) {
+		if (!(currentEditor instanceof ITextEditor)) {
 			return;
 		}
-		IWorkbenchPartSite partSite = currentEditor.getSite();
-		IHandlerService hservice = partSite.getService(IHandlerService.class);
-		ICommandService cservice = partSite.getService(ICommandService.class);
+		IVerticalRulerInfo rulerInfo = currentEditor.getAdapter(IVerticalRulerInfo.class);
+		if (rulerInfo == null) {
+			return;
+		}
+		int lineOfLastMouseButtonActivity = rulerInfo.getLineOfLastMouseButtonActivity();
+		if (lineOfLastMouseButtonActivity < 0) {
+			return;
+		}
+		IDocument document = getDocument((ITextEditor) currentEditor);
+		if (document == null) {
+			return;
+		}
+		ToggleBreakpointAdapter toggle = new ToggleBreakpointAdapter();
 		try {
-			Command command = cservice.getCommand(TOGGLE_TRACEPOINT_COMMAND);
-			ExecutionEvent exevent = hservice.createExecutionEvent(command, event);
-			command.executeWithChecks(exevent);
-		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+			ITextSelection selection = getTextSelection(document, lineOfLastMouseButtonActivity);
+			if (toggle.canToggleLineBreakpoints(currentEditor, selection)) {
+				BreakpointToggleUtils.setUnsetTracepoints(true);
+				toggle.toggleBreakpoints(currentEditor, selection);
+			}
+		} catch (BadLocationException | CoreException e) {
 			DebugUIPlugin.log(e);
 		}
 	}
 
+	private static IDocument getDocument(ITextEditor editor) {
+		IDocumentProvider provider = editor.getDocumentProvider();
+		if (provider != null) {
+			return provider.getDocument(editor.getEditorInput());
+		}
+		IDocument doc = editor.getAdapter(IDocument.class);
+		if (doc != null) {
+			return doc;
+		}
+		return null;
+	}
+
+	private static ITextSelection getTextSelection(IDocument document, int line) throws BadLocationException {
+		IRegion region = document.getLineInformation(line);
+		return new TextSelection(document, region.getOffset(), 0);
+	}
 }
