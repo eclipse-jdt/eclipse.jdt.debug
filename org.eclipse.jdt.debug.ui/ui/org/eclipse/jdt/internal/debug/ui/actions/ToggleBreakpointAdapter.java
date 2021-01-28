@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1282,6 +1282,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			IJavaElement e = root.getElementAt(offset);
 			if (e instanceof IMember) {
 				m = (IMember) e;
+			}
+			if (m != null && m.getParent() instanceof IType && ((IType) m.getParent()).isRecord()) {
+				m = (IMember) m.getParent();
 			}
 		}
 		if (m != null) {
