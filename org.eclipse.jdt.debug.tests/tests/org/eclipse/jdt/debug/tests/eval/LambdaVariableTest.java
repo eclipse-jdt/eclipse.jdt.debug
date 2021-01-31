@@ -64,6 +64,87 @@ public class LambdaVariableTest extends AbstractDebugTest {
 		assertEquals("Actual value is not false", "false", value.toString());
 	}
 
+	public void testEvaluate_Bug567801_VariableWithTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "numbers.stream().anyMatch(a -> a >= 10)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithNestedTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "listOfNumberList.stream().filter(l -> l.size() > 0).flatMap(l -> l.stream()).anyMatch(a -> a >= 10)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithUpperBoundTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "extendsList.stream().anyMatch(a -> a.intValue() >= 10)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithLowerBoundTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "superList.stream().anyMatch(a -> ((Integer)a).intValue() >= 10)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithWildCardTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "wildList.stream().anyMatch(a -> ((Integer)a).intValue() >= 10)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithIntersectionTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "intersectionList.stream().anyMatch(a -> a instanceof java.io.Closeable)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not false", "false", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithPrimitiveArrayTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "parrayList.stream().anyMatch(a -> a.length > 0)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_VariableWithArrayTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "arrayList.stream().anyMatch(a -> a.length > 0)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug567801_PrimitiveTypeArgument_MustEvaluationWithCorrectType() throws Exception {
+		debugWithBreakpoint("Bug567801", 29);
+		String snippet = "stream.anyMatch(a -> a > 0)";
+		IValue value = doEval(javaThread, snippet);
+
+		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
+		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);

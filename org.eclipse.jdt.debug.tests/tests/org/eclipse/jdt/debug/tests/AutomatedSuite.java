@@ -92,6 +92,7 @@ import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.eval.GeneralEvalTests;
 import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
+import org.eclipse.jdt.debug.tests.eval.LambdaVariableTest;
 import org.eclipse.jdt.debug.tests.eval.SyntheticVariableTests;
 import org.eclipse.jdt.debug.tests.launching.ClasspathShortenerTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
@@ -327,6 +328,9 @@ public class AutomatedSuite extends DebugSuite {
 
 	//add the complete eval suite
 		addTest(new TestSuite(GeneralEvalTests.class));
+		if (JavaProjectHelper.isJava8Compatible()) {
+			addTest(new TestSuite(LambdaVariableTest.class));
+		}
 		//addTest(EvalTestSuite.suite());
 
 		// long classpath tests

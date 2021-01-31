@@ -249,6 +249,18 @@ public class RemoteEvaluatorBuilder {
 			return localBindings.containsKey(binding);
 		}
 
+		private boolean isParentInLocalBinding(ASTNode parent) {
+			if (parent instanceof Name) {
+				// this will avoid unwanted upward traversals
+				if (isLocalBinding(((Name) parent).resolveBinding())) {
+					return true;
+				}
+				// traverse upstream to see if a parent is already handled
+				return isParentInLocalBinding(parent.getParent());
+			}
+			return false;
+		}
+
 		void addLocalBinding(IBinding binding, String name) {
 			localBindings.put(binding, name);
 		}
@@ -1494,7 +1506,10 @@ public class RemoteEvaluatorBuilder {
 		@Override
 		public boolean visit(SimpleName node) {
 			IBinding binding = node.resolveBinding();
-			if (!isLocalBinding(binding)) {
+			// when having code like arr.length the length is identified as a field variable. But since the arr is
+			// already pushed as a variable we don't need to handle length here. So if we have chained field access like
+			// obj.f1.f2 we will only push the obj as a variable.
+			if (!isLocalBinding(binding) && isParentInLocalBinding(node.getParent())) {
 				if (binding instanceof IVariableBinding) {
 					IVariableBinding vb = ((IVariableBinding) binding);
 					// For future optimization: Check for duplicates, so same value is only bound once
