@@ -605,9 +605,9 @@ public class RemoteEvaluatorBuilder {
 
 		@Override
 		public boolean visit(CastExpression node) {
-			//buffer.append("(");//$NON-NLS-1$
+			buffer.append("(");//$NON-NLS-1$
 			node.getType().accept(this);
-			//buffer.append(")");//$NON-NLS-1$
+			buffer.append(")");//$NON-NLS-1$
 			node.getExpression().accept(this);
 			return false;
 		}
