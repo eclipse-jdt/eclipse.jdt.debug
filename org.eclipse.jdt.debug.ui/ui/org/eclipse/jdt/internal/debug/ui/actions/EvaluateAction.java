@@ -245,7 +245,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
                         IEvaluationEngine engine = null;
                         try {
                             Object selection= getSelectedObject();
-                            if (!(selection instanceof String)) {
+							if (!(selection instanceof String) || ((String) selection).isEmpty()) {
                                 return;
                             }
                             String expression= (String)selection;

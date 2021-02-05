@@ -20,6 +20,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -71,6 +72,8 @@ public class PopupInspectAction extends InspectAction {
         		return returnValue;
         	}
         };
-        displayPopup.open();
+		// Make sure the popup is shown after the BusyIndicator has focused the previous focus owner. This was a issue
+		// in MacOS which is reported under https://bugs.eclipse.org/bugs/show_bug.cgi?id=569600
+		Display.getDefault().asyncExec(displayPopup::open);
     }
 }
