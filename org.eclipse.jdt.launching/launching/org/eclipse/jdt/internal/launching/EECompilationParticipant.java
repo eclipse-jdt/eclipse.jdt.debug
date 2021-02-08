@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.launching;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -308,17 +309,11 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 */
 	private void createJREContainerProblem(IJavaProject javaProject, String message, int severity) {
 		try {
-			IMarker marker = javaProject.getProject().createMarker(JavaRuntime.JRE_CONTAINER_MARKER);
-			marker.setAttributes(
-				new String[] {
-						IMarker.MESSAGE,
-						IMarker.SEVERITY,
-						IMarker.LOCATION},
-					new Object[] {
-						message,
-						Integer.valueOf(severity),
-						LaunchingMessages.LaunchingPlugin_37
-					});
+			Map<String, Object> attributes = Map.of(IMarker.MESSAGE, message, //
+					IMarker.SEVERITY, Integer.valueOf(severity), //
+					IMarker.LOCATION, LaunchingMessages.LaunchingPlugin_37);
+
+			javaProject.getProject().createMarker(JavaRuntime.JRE_CONTAINER_MARKER, attributes);
 		} catch (CoreException e) {
 			return;
 		}
