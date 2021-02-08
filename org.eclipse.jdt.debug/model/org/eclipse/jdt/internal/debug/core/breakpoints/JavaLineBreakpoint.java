@@ -145,16 +145,14 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 			throws DebugException {
 		IWorkspaceRunnable wr = monitor -> {
 
-			// create the marker
-			setMarker(resource.createMarker(markerType));
-
 			// add attributes
 			addLineBreakpointAttributes(attributes, getModelIdentifier(),
 					true, lineNumber, charStart, charEnd);
 			addTypeNameAndHitCount(attributes, typeName, hitCount);
 			// set attributes
 			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-			ensureMarker().setAttributes(attributes);
+			// create the marker
+			setMarker(resource.createMarker(markerType, attributes));
 
 			// add to breakpoint manager if requested
 			register(add);
