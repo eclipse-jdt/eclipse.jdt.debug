@@ -22,6 +22,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
@@ -79,7 +80,7 @@ public class CurrentFrameContext extends TypeContext {
                 IJavaVariable var = (IJavaVariable) variables[index];
 				locals[0][i] = resolveVarName(var);
                 try {
-                	locals[1][i] = var.getJavaType().getName();
+					locals[1][i] = Signature.toString(var.getGenericSignature()).replace('/', '.');
                 }
                 catch(DebugException de) {
                 	locals[1][i] = var.getReferenceTypeName();
@@ -110,7 +111,7 @@ public class CurrentFrameContext extends TypeContext {
 		return name;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#isStatic()
 	 */
