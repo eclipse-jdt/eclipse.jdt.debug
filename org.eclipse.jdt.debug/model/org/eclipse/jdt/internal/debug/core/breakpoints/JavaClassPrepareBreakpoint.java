@@ -91,9 +91,6 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 			final int charEnd, final boolean add, final Map<String, Object> attributes)
 			throws DebugException {
 		IWorkspaceRunnable wr = monitor -> {
-			// create the marker
-			setMarker(resource.createMarker(JAVA_CLASS_PREPARE_BREAKPOINT));
-
 			// add attributes
 			attributes.put(IBreakpoint.ID, getModelIdentifier());
 			attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
@@ -103,7 +100,8 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 			attributes.put(ENABLED, Boolean.TRUE);
 			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 
-			ensureMarker().setAttributes(attributes);
+			// create the marker
+			setMarker(resource.createMarker(JAVA_CLASS_PREPARE_BREAKPOINT, attributes));
 
 			register(add);
 		};

@@ -142,9 +142,6 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 			final String markerType) throws DebugException {
 		IWorkspaceRunnable wr = monitor -> {
 
-			// create the marker
-			setMarker(resource.createMarker(markerType));
-
 			// modify pattern
 			String pattern = classNamePattern;
 			if (pattern != null && pattern.length() == 0) {
@@ -158,7 +155,8 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 					sourcePath, pattern, hitCount);
 			// set attributes
 			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-			ensureMarker().setAttributes(attributes);
+			// create the marker
+			setMarker(resource.createMarker(markerType, attributes));
 
 			register(register);
 		};
@@ -263,14 +261,17 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 				if (fSuffix[i].length() == 0) {
 					return true;
 				}
-				if (typeName.endsWith(fSuffix[i]))
+				if (typeName.endsWith(fSuffix[i])) {
 					return true;
+				}
 			} else if (fPrefix[i] != null) {
-				if (typeName.startsWith(fPrefix[i]))
+				if (typeName.startsWith(fPrefix[i])) {
 					return true;
+				}
 			} else {
-				if (typeName.startsWith(patterns[i]))
+				if (typeName.startsWith(patterns[i])) {
 					return true;
+				}
 			}
 		}
 
@@ -436,8 +437,9 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	public synchronized String[] getTypeNamePatterns() throws CoreException {
-		if (fTypeNamePatterns != null)
+		if (fTypeNamePatterns != null) {
 			return fTypeNamePatterns;
+		}
 
 		String patterns = getPattern();
 

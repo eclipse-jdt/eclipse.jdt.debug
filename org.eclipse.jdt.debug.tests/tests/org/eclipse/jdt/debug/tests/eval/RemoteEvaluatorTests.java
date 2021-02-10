@@ -88,6 +88,22 @@ public class RemoteEvaluatorTests extends AbstractDebugTest {
 		assertEquals("count is not 4000", "4000", value.getValueString());
 	}
 
+	public void testEvaluate_PrimitiveCastInLamndaExpr_ShouldEvaluatedWithCastType() throws Exception {
+		debugWithBreakpoint("RemoteEvaluator", 20);
+		IValue value = evaluate("java.util.stream.IntStream.of(1,2,3).anyMatch(i -> ((short) i) > (short)2)");
+
+		assertNotNull("result is null", value);
+		assertEquals("value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_TypeCastInLamndaExpr_ShouldEvaluatedWithCastType() throws Exception {
+		debugWithBreakpoint("RemoteEvaluator", 20);
+		IValue value = evaluate("java.util.stream.Stream.<java.util.List<Object>>of(new java.util.ArrayList<>()).anyMatch(l -> ((java.util.ArrayList<Object>)l).size() > 1)");
+
+		assertNotNull("result is null", value);
+		assertEquals("value is not false", "false", value.getValueString());
+	}
+
 	@Override
 	protected IJavaProject getProjectContext() {
 		return get18Project();

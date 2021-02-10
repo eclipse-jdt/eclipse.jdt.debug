@@ -433,6 +433,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        	jp = createProject(ONE_SEVEN_PROJECT_NAME, JavaProjectHelper.TEST_1_7_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, false);
 	    		cfgs.add(createLaunchConfiguration(jp, LiteralTests17.LITERAL_TYPE_NAME));
 				cfgs.add(createLaunchConfiguration(jp, "ThreadNameChange"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug567801"));
 	    		loaded17 = true;
 	    		waitForBuild();
 	        }
@@ -484,6 +485,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "AnonymousEvaluator"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug564486"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug564801"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug567801"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
