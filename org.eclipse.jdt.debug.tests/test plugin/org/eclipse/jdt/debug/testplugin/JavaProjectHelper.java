@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
+ *
+ *  This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -63,6 +67,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_1_7_EE_NAME = "JavaSE-1.7";
 	public static final String JAVA_SE_1_8_EE_NAME = "JavaSE-1.8";
 	public static final String JAVA_SE_9_EE_NAME = "JavaSE-9";
+	public static final String JAVA_SE_16_EE_NAME = "JavaSE-16";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -85,6 +90,10 @@ public class JavaProjectHelper {
 	 * path to the 9 test source
 	 */
 	public static final IPath TEST_9_SRC_DIR = new Path("java9");
+	/**
+	 * path to the 16 test source
+	 */
+	public static final IPath TEST_16_SRC_DIR = new Path("java16_");
 
 	/**
 	 * path to the compiler error java file
@@ -136,6 +145,15 @@ public class JavaProjectHelper {
 	 */
 	public static boolean isJava5Compatible() {
 		return isCompatible(5);
+	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 16
+	 *
+	 * @return <code>true</code> if a Java 16 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava16_Compatible() {
+		return isCompatible(16);
 	}
 
 	/**
