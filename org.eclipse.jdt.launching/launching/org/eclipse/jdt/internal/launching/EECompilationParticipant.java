@@ -14,6 +14,7 @@
 package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -331,17 +332,12 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 */
 	private void createProblemMarker(IJavaProject javaProject, String message, int severity, String problemId, String location) {
 		try {
-			IMarker marker = javaProject.getProject().createMarker(problemId);
-			marker.setAttributes(
-					new String[] {
-							IMarker.MESSAGE,
-							IMarker.SEVERITY,
-							IMarker.LOCATION },
-						new Object[] {
-								message,
-								Integer.valueOf(severity),
-								location
-						});
+			Map<String, Object> attributes = new HashMap<>();
+			attributes.put(IMarker.MESSAGE, message);
+			attributes.put(IMarker.SEVERITY, Integer.valueOf(severity));
+			attributes.put(IMarker.LOCATION, location);
+
+			javaProject.getProject().createMarker(problemId, attributes);
 		} catch (CoreException e) {
 			return;
 		}
