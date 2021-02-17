@@ -124,8 +124,12 @@ public class EvaluationSourceGenerator {
 		String returnString = "return "; //$NON-NLS-1$
 		int index = codeSnippet.lastIndexOf(returnString);
 		if (index == -1){
-			if (needsReturn(lastSentence))
+			// empty lastSentence means we have statement block above which requires a empty return
+			if (needsReturn(lastSentence)) {
 				wordBuffer.append(returnString);
+			} else if (lastSentence.isBlank()) {
+				wordBuffer.append(returnString + ';');
+			}
 		}
 		else if (index > i){
 			if (!Character.isWhitespace(chars[index-1]) || !(Character.isWhitespace(chars[index+6]) || chars[index+6] == '}')){
@@ -147,11 +151,12 @@ public class EvaluationSourceGenerator {
 		else if (chars[chars.length -1] !=';' && chars[chars.length -1] =='}'){
 			int j = lastSentence.lastIndexOf('=') ;
 			int k = lastSentence.lastIndexOf("==") ; //$NON-NLS-1$
-			if ( j != -1 && (j!=k))
+			if (j != -1 && (j != k))
 				wordBuffer.append(';');
 		}
 		
-		if(lastSentence.length() <= 1 && needsReturn(wordBuffer.toString())) {
+		// make sure last char is not at end of a block before treating this as a statement
+		if (lastSentence.length() <= 1 && needsReturn(wordBuffer.toString())) {
 			wordBuffer.insert(0, returnString).append(' ');
 		}
 		
@@ -192,7 +197,9 @@ public class EvaluationSourceGenerator {
 				else if (count == 0 && (token == ITerminalSymbols.TokenNamethrow)){
 					return false;
 				}
-				else if ( count == 0 && (token == ITerminalSymbols.TokenNameif || token == ITerminalSymbols.TokenNamewhile || token == ITerminalSymbols.TokenNamedo)) {
+				else if (count == 0 && (token == ITerminalSymbols.TokenNameif || token == ITerminalSymbols.TokenNamewhile
+						|| token == ITerminalSymbols.TokenNamedo || token == ITerminalSymbols.TokenNamefor || token == ITerminalSymbols.TokenNametry
+						|| token == ITerminalSymbols.TokenNameswitch)) {
 					return false;
 				}
 				else if (count ==1 && (token == ITerminalSymbols.TokenNameLBRACE || token == ITerminalSymbols.TokenNameEQUAL)){
