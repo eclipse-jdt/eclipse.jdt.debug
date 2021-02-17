@@ -516,7 +516,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testConditionBreakpointReturnNonBooleanObject() throws Exception {
 		String typeName = "HitCountLooper";
-		createConditionalLineBreakpoint(16, typeName, "return new Integer(1)", true);
+		createConditionalLineBreakpoint(16, typeName, "return Integer.valueOf(1)", true);
 		IJavaLineBreakpoint bp1 = createConditionalLineBreakpoint(17, typeName, "return true", true);
 
 		IJavaThread thread = null;

@@ -30,7 +30,7 @@ public class Watchpoint {
 		list = new ArrayList(10);
 		int value = 10;
 		while (value > 0) {
-			list.add(new Integer(value));
+			list.add(Integer.valueOf(value));
 			value--;
 		}
 		

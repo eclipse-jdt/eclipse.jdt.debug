@@ -45,7 +45,7 @@ public class MultiThreadedList {
 	
 	private void listLoop() {
 		while (i < 20) {
-			list.add(new Integer(i++));
+			list.add(Integer.valueOf(i++));
 			System.out.println("Size = " + list.size());
 			try {
 				Thread.sleep(100);

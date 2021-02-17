@@ -37,7 +37,7 @@ public class WatchItemTests {
 	public void fillVector() {
 		fVector = new Vector();
 		for (int i = 0; i < 100; i++) {
-			fVector.add(new Integer(i));
+			fVector.add(Integer.valueOf(i));
 		}
 	}
 	
