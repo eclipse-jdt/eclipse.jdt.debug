@@ -18,13 +18,13 @@
 
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.launching.javaagent</artifactId>
-  <version>3.9.400-SNAPSHOT</version>
+  <version>3.9.500-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.0</version>
+      <version>9.1</version>
     </dependency>
   </dependencies>
 
