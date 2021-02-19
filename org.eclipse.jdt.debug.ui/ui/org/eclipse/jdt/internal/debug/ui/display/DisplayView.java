@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -421,19 +421,20 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	@Override
 	public <T> T getAdapter(Class<T> required) {
 
-		if (ITextOperationTarget.class.equals(required)) {
-			return (T) fSourceViewer.getTextOperationTarget();
-		}
-
-		if (IFindReplaceTarget.class.equals(required)) {
-			return (T) fSourceViewer.getFindReplaceTarget();
-		}
-
-		if (IDataDisplay.class.equals(required)) {
+		if (fDataDisplay != null && IDataDisplay.class.equals(required)) {
 			return (T) fDataDisplay;
 		}
-		if (ITextViewer.class.equals(required)) {
-			return (T) fSourceViewer;
+		if (fSourceViewer != null) {
+			if (ITextOperationTarget.class.equals(required)) {
+				return (T) fSourceViewer.getTextOperationTarget();
+			}
+
+			if (IFindReplaceTarget.class.equals(required)) {
+				return (T) fSourceViewer.getFindReplaceTarget();
+			}
+			if (ITextViewer.class.equals(required)) {
+				return (T) fSourceViewer;
+			}
 		}
 
 		return super.getAdapter(required);

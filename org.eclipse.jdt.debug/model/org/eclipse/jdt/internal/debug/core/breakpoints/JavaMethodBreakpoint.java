@@ -147,9 +147,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 			final int charStart, final int charEnd, final int hitCount,
 			final boolean register, final Map<String, Object> attributes) throws CoreException {
 		IWorkspaceRunnable wr = monitor -> {
-			// create the marker
-			setMarker(resource.createMarker(JAVA_METHOD_BREAKPOINT));
-
 			// add attributes
 			addLineBreakpointAttributes(attributes, getModelIdentifier(),
 					true, lineNumber, charStart, charEnd);
@@ -160,8 +157,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 			attributes.put(EXIT, Boolean.valueOf(exit));
 			attributes.put(NATIVE, Boolean.valueOf(nativeOnly));
 			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
-			// set attributes
-			ensureMarker().setAttributes(attributes);
+			// create the marker
+			setMarker(resource.createMarker(JAVA_METHOD_BREAKPOINT, attributes));
 			register(register);
 		};
 		run(getMarkerRule(resource), wr);

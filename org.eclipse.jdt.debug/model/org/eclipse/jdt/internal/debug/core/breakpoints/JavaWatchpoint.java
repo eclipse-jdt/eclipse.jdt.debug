@@ -111,8 +111,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 			final int charEnd, final int hitCount, final boolean add,
 			final Map<String, Object> attributes) throws DebugException {
 		IWorkspaceRunnable wr = monitor -> {
-			setMarker(resource.createMarker(JAVA_WATCHPOINT));
-
 			// add attributes
 			addLineBreakpointAttributes(attributes, getModelIdentifier(),
 					true, lineNumber, charStart, charEnd);
@@ -123,8 +121,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 			// configure the access and modification flags to defaults
 			addDefaultAccessAndModification(attributes);
 
-			// set attributes
-			ensureMarker().setAttributes(attributes);
+			setMarker(resource.createMarker(JAVA_WATCHPOINT, attributes));
 
 			register(add);
 		};

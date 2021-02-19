@@ -169,9 +169,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			final boolean uncaught, final boolean checked, final boolean add,
 			final Map<String, Object> attributes) throws DebugException {
 		IWorkspaceRunnable wr = monitor -> {
-			// create the marker
-			setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
-
 			// add attributes
 			attributes.put(IBreakpoint.ID, getModelIdentifier());
 			attributes.put(TYPE_NAME, exceptionName);
@@ -181,7 +178,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			attributes.put(CHECKED, Boolean.valueOf(checked));
 			attributes.put(SUSPEND_POLICY, Integer.valueOf(getDefaultSuspendPolicy()));
 
-			ensureMarker().setAttributes(attributes);
+			// create the marker
+			setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT, attributes));
 
 			register(add);
 		};

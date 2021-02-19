@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
@@ -56,7 +55,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 
@@ -457,12 +455,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			if (input instanceof IVariable) {
 				fVariable = (IVariable) input;
 		        fViewer.setInput(new TreeRoot());
-				// Workaround for empty hover popup dialog due to changed Mac API behaviour
-				if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-					fTree.setItemCount(1);
-					TreeItem item = fTree.getItem(0);
-					item.getText();
-				}
 			}
 		}
 
