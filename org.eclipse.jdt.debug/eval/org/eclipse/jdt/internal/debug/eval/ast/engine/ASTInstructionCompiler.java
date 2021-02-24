@@ -121,7 +121,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * Represent a break or a continue instruction. These instructions needs are
 	 * stored and managed later by their related statement.
 	 */
-	class CompleteInstruction {
+	static class CompleteInstruction {
 		Jump fInstruction;
 		String fLabel;
 		boolean fIsBreak;
@@ -4070,7 +4070,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return false;
 	}
 
-	class slot {
+	static class slot {
 		ArrayList<ConditionalJump> jumps = new ArrayList<>();
 		ArrayList<Statement> stmts = null;
 	}
