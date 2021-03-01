@@ -90,6 +90,7 @@ import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
+import org.eclipse.jdt.debug.tests.eval.BlockStatementEvaluationTests;
 import org.eclipse.jdt.debug.tests.eval.GeneralEvalTests;
 import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
 import org.eclipse.jdt.debug.tests.eval.LambdaVariableTest;
@@ -328,6 +329,7 @@ public class AutomatedSuite extends DebugSuite {
 
 	//add the complete eval suite
 		addTest(new TestSuite(GeneralEvalTests.class));
+		addTest(new TestSuite(BlockStatementEvaluationTests.class));
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(LambdaVariableTest.class));
 		}
