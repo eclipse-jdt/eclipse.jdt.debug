@@ -18,7 +18,7 @@
 
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.launching.javaagent</artifactId>
-  <version>3.9.500-SNAPSHOT</version>
+  <version>3.9.600-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
