@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2020 GK Software SE and others.
+ * Copyright (c) 2019, 2021 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,6 +48,17 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.jshell,jdk.jsobject,jdk.management," //
 			+ "jdk.net," //
 			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.xml.dom";
+	private static final String ASSUMED_DEFAULT_MODULES_11 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.naming.ldap," //
+			+ "jdk.net," //
+			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
 	private static final String ASSUMED_DEFAULT_MODULES_12 = "java.se," //
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
@@ -172,6 +183,16 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.net," //
 						+ "jdk.scripting.nashorn,jdk.sctp," //
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_11:
+				expectedModules = "java.se," //
+						+ "jdk.accessibility,jdk.httpserver," //
+						+ "jdk.jartool,jdk.jconsole," //
+						+ "jdk.jshell,jdk.jsobject,jdk.management.jfr,jdk.naming.ldap," //
+						+ "jdk.net,jdk.scripting.nashorn,jdk.sctp," //
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
 				break;
 			case ASSUMED_DEFAULT_MODULES_12:
