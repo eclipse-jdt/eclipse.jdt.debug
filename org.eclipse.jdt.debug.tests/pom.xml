@@ -5,6 +5,11 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
+  
+  This is an implementation of an early-draft specification developed under the Java
+  Community Process (JCP) and is made available for testing and evaluation purposes
+  only. The code is not compatible with any specification of the JCP.
+ 
  
   Contributors:
      Igor Fedorenko - initial implementation
@@ -18,7 +23,7 @@
   </parent>
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.debug.tests</artifactId>
-  <version>3.11.1200-SNAPSHOT</version>
+  <version>3.11.1250-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
