@@ -187,6 +187,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
 	public static final String ONE_EIGHT_PROJECT_NAME = "OneEight";
 	public static final String NINE_PROJECT_NAME = "Nine";
+	public static final String ONESIX_PROJECT_NAME = "One_Six";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -239,6 +240,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded17 = false;
 	private static boolean loaded18 = false;
 	private static boolean loaded9 = false;
+	private static boolean loaded16_ = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -270,6 +272,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		loaded18 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(NINE_PROJECT_NAME);
 		loaded9 = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONESIX_PROJECT_NAME);
+		loaded16_ = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_JRE_PROJECT_NAME);
 		loadedJRE = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_EE_PROJECT_NAME);
@@ -537,6 +541,34 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
+	 * Creates the Java 16 compliant project
+	 */
+	synchronized void assert16_Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded16_) {
+				jp = createProject(ONESIX_PROJECT_NAME, JavaProjectHelper.TEST_16_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_16_EE_NAME, false);
+				cfgs.add(createLaunchConfiguration(jp, "RecordTests"));
+				loaded16_ = true;
+				waitForBuild();
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, ONESIX_PROJECT_NAME, jp);
+		}
+	}
+
+	/**
 	 * Creates the 'BoundJRE' project used for the JRE testing
 	 */
 	synchronized void assertBoundJreProject() {
@@ -753,6 +785,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaProject getProjectContext() {
 		return get14Project();
+	}
+
+	/**
+	 * Returns the 'DebugTests' project.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get16_Project() {
+		assert16_Project();
+		return getJavaProject(ONESIX_PROJECT_NAME);
 	}
 
 	/**
