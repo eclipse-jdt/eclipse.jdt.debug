@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,6 +37,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	public static final int ADD= 1;
 	public static final int REMOVE= 2;
 	public static final int MOVE= 3;
+	public static final int COPY = 4;
 
 	private IClasspathViewer fViewer;
 	private Button fButton;
