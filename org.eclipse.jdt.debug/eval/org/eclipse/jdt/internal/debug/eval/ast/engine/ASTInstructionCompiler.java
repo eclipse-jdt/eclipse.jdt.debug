@@ -3282,13 +3282,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		token = removePrefixZerosAndUnderscores(token, false);
 		switch (getBase(token)) {
 		case 8:
-			return Integer.valueOf(token.substring(1), 8).intValue();
+			return Integer.parseInt(token.substring(1), 8);
 		case 16:
-			return Integer.valueOf(token.substring(2), 16).intValue();
+			return Integer.parseInt(token.substring(2), 16);
 		case 2:
-			return Integer.valueOf(token.substring(2), 2).intValue();
+			return Integer.parseInt(token.substring(2), 2);
 		default:
-			return Integer.valueOf(token, 10).intValue();
+			return Integer.parseInt(token, 10);
 		}
 	}
 
@@ -3304,13 +3304,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		token = removePrefixZerosAndUnderscores(token, false);
 		switch (getBase(token)) {
 		case 8:
-			return Short.valueOf(token.substring(1), 8).shortValue();
+			return Short.parseShort(token.substring(1), 8);
 		case 16:
-			return Short.valueOf(token.substring(2), 16).shortValue();
+			return Short.parseShort(token.substring(2), 16);
 		case 2:
-			return Short.valueOf(token.substring(2), 2).shortValue();
+			return Short.parseShort(token.substring(2), 2);
 		default:
-			return Short.valueOf(token, 10).shortValue();
+			return Short.parseShort(token, 10);
 		}
 	}
 
@@ -3326,13 +3326,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		token = removePrefixZerosAndUnderscores(token, false);
 		switch (getBase(token)) {
 		case 8:
-			return Byte.valueOf(token.substring(1), 8).byteValue();
+			return Byte.parseByte(token.substring(1), 8);
 		case 16:
-			return Byte.valueOf(token.substring(2), 16).byteValue();
+			return Byte.parseByte(token.substring(2), 16);
 		case 2:
-			return Byte.valueOf(token.substring(2), 2).byteValue();
+			return Byte.parseByte(token.substring(2), 2);
 		default:
-			return Byte.valueOf(token, 10).byteValue();
+			return Byte.parseByte(token, 10);
 		}
 	}
 
@@ -3348,13 +3348,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		token = removePrefixZerosAndUnderscores(token, true);
 		switch (getBase(token)) {
 		case 8:
-			return Long.valueOf(token.substring(1), 8).longValue();
+			return Long.parseLong(token.substring(1), 8);
 		case 16:
-			return Long.valueOf(token.substring(2), 16).longValue();
+			return Long.parseLong(token.substring(2), 16);
 		case 2:
-			return Long.valueOf(token.substring(2), 2).longValue();
+			return Long.parseLong(token.substring(2), 2);
 		default:
-			return Long.valueOf(token, 10).longValue();
+			return Long.parseLong(token, 10);
 		}
 	}
 

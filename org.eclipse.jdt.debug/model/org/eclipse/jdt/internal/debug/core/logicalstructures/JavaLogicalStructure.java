@@ -224,8 +224,7 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 					JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.ERROR,
 					LogicalStructuresMessages.JavaLogicalStructures_0, null));
 		}
-		fSubtypes = Boolean.valueOf(
-				configurationElement.getAttribute("subtypes")).booleanValue(); //$NON-NLS-1$
+		fSubtypes = Boolean.parseBoolean(configurationElement.getAttribute("subtypes")); //$NON-NLS-1$
 		fValue = configurationElement.getAttribute("value"); //$NON-NLS-1$
 		fDescription = configurationElement.getAttribute("description"); //$NON-NLS-1$
 		if (fDescription == null) {

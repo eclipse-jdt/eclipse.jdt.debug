@@ -91,7 +91,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		setJavaProject(project);
 		name = memento.getAttribute("exportedEntriesOnly"); //$NON-NLS-1$
 		if (name != null) {
-			fExportedEntriesOnly = Boolean.valueOf(name).booleanValue();
+			fExportedEntriesOnly = Boolean.parseBoolean(name);
 		}
 	}
 	/* (non-Javadoc)

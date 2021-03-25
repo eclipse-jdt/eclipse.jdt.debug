@@ -241,7 +241,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 						editor.getPreferenceStore().setValue(key, value);
 					}
 					else if (arg instanceof Connector.BooleanArgument) {
-						editor.getPreferenceStore().setValue(key, Boolean.valueOf(value).booleanValue());
+						editor.getPreferenceStore().setValue(key, Boolean.parseBoolean(value));
 					}
 					else if (arg instanceof Connector.IntegerArgument) {
 						editor.getPreferenceStore().setValue(key, Integer.parseInt(value));

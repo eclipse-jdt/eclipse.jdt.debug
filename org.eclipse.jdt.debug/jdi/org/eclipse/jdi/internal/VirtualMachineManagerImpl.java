@@ -120,8 +120,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 			PropertyResourceBundle prefs = new PropertyResourceBundle(stream);
 
 			try {
-				fVerbose = Boolean
-						.valueOf(prefs.getString("User.verbose")).booleanValue(); //$NON-NLS-1$
+				fVerbose = Boolean.parseBoolean(prefs.getString("User.verbose")); //$NON-NLS-1$
 			} catch (MissingResourceException e) {
 			}
 
