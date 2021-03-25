@@ -111,7 +111,7 @@ public abstract class ConnectorImpl implements Connector {
 	/**
 	 * Argument class for arguments that are used to establish a connection.
 	 */
-	public abstract class ArgumentImpl implements
+	public abstract static class ArgumentImpl implements
 			com.sun.jdi.connect.Connector.Argument {
 		/**
 		 * Serial version id.
@@ -185,7 +185,7 @@ public abstract class ConnectorImpl implements Connector {
 		public abstract String toString();
 	}
 
-	public class StringArgumentImpl extends ArgumentImpl implements StringArgument {
+	public static class StringArgumentImpl extends ArgumentImpl implements StringArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 
 		private String fValue;
@@ -217,7 +217,7 @@ public abstract class ConnectorImpl implements Connector {
 
 	}
 
-	public class IntegerArgumentImpl extends ArgumentImpl implements IntegerArgument {
+	public static class IntegerArgumentImpl extends ArgumentImpl implements IntegerArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 		private Integer fValue;
 		private int fMin;
@@ -305,7 +305,7 @@ public abstract class ConnectorImpl implements Connector {
 		}
 	}
 
-	public class BooleanArgumentImpl extends ArgumentImpl implements BooleanArgument {
+	public static class BooleanArgumentImpl extends ArgumentImpl implements BooleanArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 		private Boolean fValue;
 

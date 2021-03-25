@@ -31,7 +31,7 @@ import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager;
  */
 public class DetailFormatterTests extends AbstractDebugTest {
 
-	class TestListener implements IValueDetailListener {
+	static class TestListener implements IValueDetailListener {
 		IValue value;
 		String result;
 

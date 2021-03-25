@@ -72,7 +72,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Used to test breakpoint install/suspend voting.
 	 */
-	class SuspendVoter implements IJavaBreakpointListener {
+	static class SuspendVoter implements IJavaBreakpointListener {
 
 		int fVote;
 		IJavaBreakpoint fTheBreakpoint;

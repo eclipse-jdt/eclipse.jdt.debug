@@ -53,7 +53,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 * @since 3.2
 	 *
 	 */
-	class FileFilter extends ViewerFilter {
+	static class FileFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if(element instanceof IProject) {

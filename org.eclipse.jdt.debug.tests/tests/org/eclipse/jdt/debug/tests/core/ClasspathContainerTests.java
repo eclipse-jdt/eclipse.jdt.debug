@@ -41,7 +41,7 @@ import org.eclipse.jdt.launching.VMStandin;
  */
 public class ClasspathContainerTests extends AbstractDebugTest {
 
-	class FakeContainer implements IClasspathContainer {
+	static class FakeContainer implements IClasspathContainer {
 
 		IClasspathEntry[] entries = new IClasspathEntry[0];
 		/**

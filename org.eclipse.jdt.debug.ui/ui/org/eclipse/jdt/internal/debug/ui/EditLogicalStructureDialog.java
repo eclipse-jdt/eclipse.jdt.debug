@@ -174,7 +174,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	}
 
-	public class AttributesLabelProvider extends LabelProvider {
+	public static class AttributesLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((String[])element)[0];
