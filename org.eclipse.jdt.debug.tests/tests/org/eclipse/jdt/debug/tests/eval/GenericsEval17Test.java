@@ -15,6 +15,7 @@ package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -37,6 +38,35 @@ public class GenericsEval17Test extends AbstractDebugTest {
 
 		assertNotNull("value is null", value);
 		assertEquals("value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug572782_RecursiveGeneric_ExpectedEvalVarValue() throws Exception {
+		debugWithBreakpoint("Bug572782", 9);
+		String snippet = "this";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertTrue("No a IJavaObjectValue", value instanceof IJavaObject);
+		assertEquals("value don't has the correct generic signature", "<T:LBug572782$Generic<LBug572782$ExtendedGeneric<TT;>;>;>Ljava/lang/Object;",
+				((IJavaObject) value).getGenericSignature());
+	}
+
+	public void testEvaluate_Bug572782_RecursiveGeneric_ExpectedEvalExpressionValue() throws Exception {
+		debugWithBreakpoint("Bug572782", 9);
+		String snippet = "1 + 2";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not 3", "3", value.getValueString());
+	}
+
+	public void testEvaluate_Bug572782_RecursiveGenericSimple_ExpectedEvalExpressionValue() throws Exception {
+		debugWithBreakpoint("Bug572782", 16);
+		String snippet = "1 + 2";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not 3", "3", value.getValueString());
 	}
 
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
