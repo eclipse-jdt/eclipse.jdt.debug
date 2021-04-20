@@ -15,8 +15,14 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
@@ -27,6 +33,7 @@ import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IInitializer;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ITypeRoot;
@@ -35,9 +42,11 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
@@ -49,6 +58,9 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
@@ -284,20 +296,23 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		        return resolveLocalVariable(frame, textViewer, hoverRegion);
 		    }
 
-            IJavaElement[] resolve = null;
-            try {
-                resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
-            } catch (JavaModelException e1) {
-                resolve = new IJavaElement[0];
-            }
-            try {
-            	for (int i = 0; i < resolve.length; i++) {
-            		IJavaElement javaElement = resolve[i];
-            		if (javaElement instanceof IField) {
-            		    IField field = (IField)javaElement;
-            		    IJavaVariable variable = null;
-            		    IJavaDebugTarget debugTarget = (IJavaDebugTarget)frame.getDebugTarget();
-            		    if (Flags.isStatic(field.getFlags())) {
+			IJavaElement[] resolve = resolveElement(hoverRegion.getOffset(), codeAssist);
+			try {
+				boolean onArrayLegnth = false;
+				if (resolve.length == 0 && isOverNameLength(hoverRegion, document)) {
+					// lets check if this is part of an array variable by jumping 2 chars backward from offset.
+					resolve = resolveElement(hoverRegion.getOffset() - 2, codeAssist);
+					onArrayLegnth = (resolve.length == 1) && (resolve[0] instanceof IField)
+							&& ((IField) resolve[0]).getTypeSignature().startsWith("["); //$NON-NLS-1$
+				}
+
+				for (int i = 0; i < resolve.length; i++) {
+					IJavaElement javaElement = resolve[i];
+					if (javaElement instanceof IField) {
+						IField field = (IField) javaElement;
+						IJavaVariable variable = null;
+						IJavaDebugTarget debugTarget = (IJavaDebugTarget) frame.getDebugTarget();
+						if (Flags.isStatic(field.getFlags()) && !onArrayLegnth) {
 							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
             		    	if (javaTypes != null) {
 	            		    	for (int j = 0; j < javaTypes.length; j++) {
@@ -364,18 +379,15 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 								StructuralPropertyDescriptor locationInParent = node.getLocationInParent();
 								if (locationInParent == FieldAccess.NAME_PROPERTY) {
 									FieldAccess fieldAccess = (FieldAccess) node.getParent();
-									if (!(fieldAccess.getExpression() instanceof ThisExpression)) {
-										return null;
+									if (fieldAccess.getExpression() instanceof ThisExpression) {
+										variable = evaluateField(frame, field);
+									} else if(onArrayLegnth) {
+										variable = evaluateQualifiedNode(fieldAccess, frame, typeRoot.getJavaProject());
 									}
 								} else if (locationInParent == QualifiedName.NAME_PROPERTY) {
-									return null;
-								}
-
-            		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
-            		    		typeSignature = typeSignature.replace('.', '/');
-								IJavaObject ths = frame.getThis();
-								if (ths != null) {
-									variable = ths.getField(field.getElementName(), typeSignature);
+									variable = evaluateQualifiedNode(node.getParent(), frame, typeRoot.getJavaProject());
+								} else {
+									variable = evaluateField(frame, field);
 								}
             		    	}
             		    }
@@ -454,6 +466,94 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             }
 	    }
 	    return null;
+	}
+
+	private boolean isOverNameLength(IRegion hoverRegion, IDocument document) {
+		try {
+			return "length".equals(document.get(hoverRegion.getOffset(), hoverRegion.getLength())); //$NON-NLS-1$
+		} catch (BadLocationException e) {
+			return false;
+		}
+	}
+
+	private IJavaElement[] resolveElement(int offset, ICodeAssist codeAssist) {
+		IJavaElement[] resolve;
+		try {
+			resolve = codeAssist.codeSelect(offset, 0);
+		} catch (JavaModelException e1) {
+			resolve = new IJavaElement[0];
+		}
+		return resolve;
+	}
+
+	private IJavaVariable evaluateField(IJavaStackFrame frame, IField field) throws DebugException {
+		IJavaObject ths = frame.getThis();
+		if (ths != null) {
+			String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
+			typeSignature = typeSignature.replace('.', '/');
+			return ths.getField(field.getElementName(), typeSignature);
+		}
+		return null;
+	}
+
+	private IJavaVariable evaluateQualifiedNode(ASTNode node, IJavaStackFrame frame, IJavaProject project) {
+		StringBuilder snippetBuilder = new StringBuilder();
+		if (node instanceof QualifiedName) {
+			snippetBuilder.append(((QualifiedName) node).getFullyQualifiedName());
+		} else if (node instanceof FieldAccess) {
+			StringJoiner segments = new StringJoiner("."); //$NON-NLS-1$
+			node.accept(new ASTVisitor() {
+				@Override
+				public boolean visit(SimpleName node) {
+					segments.add(node.getFullyQualifiedName());
+					return true;
+				}
+
+				@Override
+				public boolean visit(ThisExpression node) {
+					segments.add("this"); //$NON-NLS-1$
+					return true;
+				}
+
+			});
+			snippetBuilder.append(segments.toString());
+		} else {
+			return null;
+		}
+
+		final String snippet = snippetBuilder.toString();
+		class Evaluator implements IEvaluationListener {
+			private CompletableFuture<IEvaluationResult> result = new CompletableFuture<>();
+
+			@Override
+			public void evaluationComplete(IEvaluationResult result) {
+				this.result.complete(result);
+			}
+
+			public void run() throws DebugException {
+				IAstEvaluationEngine engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) frame.getDebugTarget());
+				engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION, false);
+			}
+
+			public Optional<IEvaluationResult> getResult() {
+				try {
+					return Optional.ofNullable(result.get());
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				} catch (ExecutionException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+				return Optional.empty();
+			}
+		}
+		Evaluator evaluator = new Evaluator();
+		try {
+			evaluator.run();
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return evaluator.getResult().flatMap(r -> Optional.ofNullable(r.getValue()))
+				.map(r -> new JDIPlaceholderVariable(snippet, r)).orElse(null);
 	}
 
 	public IInformationControlCreator getInformationPresenterControlCreator() {
