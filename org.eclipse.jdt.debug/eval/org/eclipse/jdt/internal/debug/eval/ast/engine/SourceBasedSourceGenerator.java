@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
@@ -1625,16 +1624,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			while (iterator.hasNext()) {
 				TypeParameter typeParameter = iterator.next();
 				String boundName = typeParameter.getName().getIdentifier();
-				String tpString = typeParameter.toString();
-
-				// check if the current parameter contains the current type declaration as a recursive type bound.
-				boolean recursiveTypeBound = Optional.ofNullable(typeParameter.getParent()).filter(TypeDeclaration.class::isInstance)
-					.map(td -> ((TypeDeclaration) td).getName().getIdentifier())
-						.map(tn -> tpString.matches(String.format(".*%s\\<\s*%s\s*\\>.*", tn, boundName))).orElse(false); //$NON-NLS-1$
-
-				if (!recursiveTypeBound) {
-					newTypeParameters.put(boundName, tpString);
-				}
+				newTypeParameters.put(boundName, typeParameter.toString());
 			}
 			fTypeParameterStack.push(newTypeParameters); // Push the new "scope"
 		} else {
