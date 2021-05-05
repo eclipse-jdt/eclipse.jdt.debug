@@ -1,3 +1,5 @@
+import java.util.stream.Stream;
+
 /*******************************************************************************
  * Copyright (c) 2021 Gayan Perera and others.
  *
@@ -33,7 +35,19 @@ public class Bug572629 {
 		return this.payload == other.payload && this.payloads.length == other.payloads.length;
 	}
 	
+	public void hoverOverLocal(String[] names) {
+		char[] name = new char[] {'n', 'a', 'm', 'e'};
+		Bug572629 object = new Bug572629("p");
+
+		System.out.println(name.length);
+		System.out.println(object.payload);
+		System.out.println(names.length);
+		Stream.of(name).forEach(a -> {
+			 System.out.println(a.length);			 
+		});
+	}
 	public static void main(String[] args) {
 		new Bug572629("p").equals(new Bug572629("r"));
+		new Bug572629("p").hoverOverLocal(new String[] {"name"});
 	}
 }

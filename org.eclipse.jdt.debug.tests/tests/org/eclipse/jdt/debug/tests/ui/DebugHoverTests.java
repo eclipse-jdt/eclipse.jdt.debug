@@ -290,7 +290,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String typeName = "Bug572629";
 		final String expectedMethod = "equals";
 		final int frameNumber = 2;
-		final int bpLine = 33;
+		final int bpLine = 35;
 
 		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
@@ -327,7 +327,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String typeName = "Bug572629";
 		final String expectedMethod = "equals";
 		final int frameNumber = 2;
-		final int bpLine = 33;
+		final int bpLine = 35;
 
 		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
@@ -364,7 +364,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String typeName = "Bug572629";
 		final String expectedMethod = "equals";
 		final int frameNumber = 2;
-		final int bpLine = 33;
+		final int bpLine = 35;
 
 		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
@@ -401,7 +401,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String typeName = "Bug572629";
 		final String expectedMethod = "equals";
 		final int frameNumber = 2;
-		final int bpLine = 33;
+		final int bpLine = 35;
 
 		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
@@ -437,7 +437,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String typeName = "Bug572629";
 		final String expectedMethod = "equals";
 		final int frameNumber = 2;
-		final int bpLine = 33;
+		final int bpLine = 35;
 
 		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
@@ -474,7 +474,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final String typeName = "Bug572629";
 		final String expectedMethod = "equals";
 		final int frameNumber = 2;
-		final int bpLine = 32;
+		final int bpLine = 34;
 
 		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
@@ -499,6 +499,154 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			assertNotNull(info);
 			assertEquals("PAYLOADS.length", info.getName());
 			assertEquals("1", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug572629_LocalVariableHover_ArrayLength_ExpectValue() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "hoverOverLocal";
+		final int frameNumber = 2;
+		final int bpLine = 42;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().indexOf("name.length") + "name.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("name.length", info.getName());
+			assertEquals("4", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug572629_ParameterVariableHover_ArrayLength_ExpectValue() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "hoverOverLocal";
+		final int frameNumber = 2;
+		final int bpLine = 44;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().indexOf("names.length") + "names.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("names.length", info.getName());
+			assertEquals("1", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug572629_ChainedLocalVariableHover_ExpectValue() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "hoverOverLocal";
+		final int frameNumber = 2;
+		final int bpLine = 43;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "payload";
+			int offset = part.getViewer().getDocument().get().indexOf("object.payload") + "object.".length();
+			IRegion region = new Region(offset, "payload".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("object.payload", info.getName());
+			assertEquals("p", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug572629_LocalArrayVariableLengthHoverInSideLambda_ExpectValue() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 46;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().indexOf("a.length") + "a.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("a.length", info.getName());
+			assertEquals("4", info.getValue().getValueString());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

@@ -298,12 +298,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 
 			IJavaElement[] resolve = resolveElement(hoverRegion.getOffset(), codeAssist);
 			try {
-				boolean onArrayLegnth = false;
+				boolean onArrayLength = false;
 				if (resolve.length == 0 && isOverNameLength(hoverRegion, document)) {
 					// lets check if this is part of an array variable by jumping 2 chars backward from offset.
 					resolve = resolveElement(hoverRegion.getOffset() - 2, codeAssist);
-					onArrayLegnth = (resolve.length == 1) && (resolve[0] instanceof IField)
-							&& ((IField) resolve[0]).getTypeSignature().startsWith("["); //$NON-NLS-1$
+					onArrayLength = (resolve.length == 1) && isLocalOrMemberVariable(resolve[0])
+							&& isArrayTypeVariable(resolve[0]);
 				}
 
 				for (int i = 0; i < resolve.length; i++) {
@@ -312,7 +312,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 						IField field = (IField) javaElement;
 						IJavaVariable variable = null;
 						IJavaDebugTarget debugTarget = (IJavaDebugTarget) frame.getDebugTarget();
-						if (Flags.isStatic(field.getFlags()) && !onArrayLegnth) {
+						if (Flags.isStatic(field.getFlags()) && !onArrayLength) {
 							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
             		    	if (javaTypes != null) {
 	            		    	for (int j = 0; j < javaTypes.length; j++) {
@@ -361,19 +361,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    } else {
 							if (!frame.isStatic() && !frame.isNative()) {
             		    		// ensure that we only resolve a field access on 'this':
-            		    		if (!(codeAssist instanceof ITypeRoot)) {
+								if (!(codeAssist instanceof ITypeRoot)) {
 									return null;
 								}
-            		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
-								ASTNode root = SharedASTProviderCore.getAST(typeRoot, SharedASTProviderCore.WAIT_NO, null);
-            		    		if (root == null) {
-									ASTParser parser = ASTParser.newParser(AST.JLS15);
-	            		    		parser.setSource(typeRoot);
-	            		    		parser.setFocalPosition(hoverRegion.getOffset());
-									root = parser.createAST(null);
-            		    		}
-            		    		ASTNode node = NodeFinder.perform(root, hoverRegion.getOffset(), hoverRegion.getLength());
-            		    		if (node == null) {
+								ITypeRoot typeRoot = (ITypeRoot) codeAssist;
+								ASTNode node = findNodeAtRegion(typeRoot, hoverRegion);
+								if (node == null) {
 									return null;
 								}
 								StructuralPropertyDescriptor locationInParent = node.getLocationInParent();
@@ -381,7 +374,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 									FieldAccess fieldAccess = (FieldAccess) node.getParent();
 									if (fieldAccess.getExpression() instanceof ThisExpression) {
 										variable = evaluateField(frame, field);
-									} else if(onArrayLegnth) {
+									} else if (onArrayLength) {
 										variable = evaluateQualifiedNode(fieldAccess, frame, typeRoot.getJavaProject());
 									}
 								} else if (locationInParent == QualifiedName.NAME_PROPERTY) {
@@ -397,6 +390,19 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             			break;
             		}
             		if (javaElement instanceof ILocalVariable) {
+						// if we are on a array, regardless where we are send it to evaluation engine
+						if (onArrayLength) {
+							if (!(codeAssist instanceof ITypeRoot)) {
+								return null;
+							}
+							ITypeRoot typeRoot = (ITypeRoot) codeAssist;
+							ASTNode node = findNodeAtRegion(typeRoot, hoverRegion);
+							if (node == null) {
+								return null;
+							}
+							return evaluateQualifiedNode(node.getParent(), frame, typeRoot.getJavaProject());
+						}
+
             		    ILocalVariable var = (ILocalVariable)javaElement;
             		    IJavaElement parent = var.getParent();
 						while (!(parent instanceof IMethod) && !(parent instanceof IInitializer) && parent != null) {
@@ -466,6 +472,33 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             }
 	    }
 	    return null;
+	}
+
+	private ASTNode findNodeAtRegion(ITypeRoot typeRoot, IRegion hoverRegion) {
+		ASTNode root = SharedASTProviderCore.getAST(typeRoot, SharedASTProviderCore.WAIT_NO, null);
+		if (root == null) {
+			ASTParser parser = ASTParser.newParser(AST.JLS15);
+			parser.setSource(typeRoot);
+			parser.setFocalPosition(hoverRegion.getOffset());
+			root = parser.createAST(null);
+		}
+		return NodeFinder.perform(root, hoverRegion.getOffset(), hoverRegion.getLength());
+	}
+
+	private boolean isArrayTypeVariable(IJavaElement element) throws JavaModelException {
+		String signature;
+		if (element instanceof IField) {
+			signature = ((IField) element).getTypeSignature();
+		} else if (element instanceof ILocalVariable) {
+			signature = ((ILocalVariable) element).getTypeSignature();
+		} else {
+			signature = ""; //$NON-NLS-1$
+		}
+		return signature.startsWith("["); //$NON-NLS-1$
+	}
+
+	private boolean isLocalOrMemberVariable(IJavaElement element) {
+		return (element instanceof IField) || (element instanceof ILocalVariable);
 	}
 
 	private boolean isOverNameLength(IRegion hoverRegion, IDocument document) {
