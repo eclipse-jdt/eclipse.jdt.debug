@@ -15,8 +15,10 @@ package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -199,6 +201,11 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 *                if unable to expand the classpath
 	 */
 	public static void expandProject(IClasspathEntry projectEntry, List<Object> expandedPath, List<IClasspathEntry> expanding, boolean excludeTestCode, boolean exportedEntriesOnly, IJavaProject rootProject, boolean isModularJVM) throws CoreException {
+		final Set<Object> visitedEntries = new HashSet<>();
+		expandProjectInternal(projectEntry, expandedPath, visitedEntries, expanding, excludeTestCode, exportedEntriesOnly, rootProject, isModularJVM);
+	}
+
+	public static void expandProjectInternal(IClasspathEntry projectEntry, List<Object> expandedPath, Set<Object> visitedEntries, List<IClasspathEntry> expanding, boolean excludeTestCode, boolean exportedEntriesOnly, IJavaProject rootProject, boolean isModularJVM) throws CoreException {
 		expanding.add(projectEntry);
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
@@ -250,7 +257,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 				switch (entry.getEntryKind()) {
 					case IClasspathEntry.CPE_PROJECT:
 						if (!expanding.contains(entry)) {
-							expandProject(entry, expandedPath, expanding, excludeTestCode, exportedEntriesOnly, rootProject, isModularJVM);
+							expandProjectInternal(entry, expandedPath, visitedEntries, expanding, excludeTestCode, exportedEntriesOnly, rootProject, isModularJVM);
 						}
 						break;
 					case IClasspathEntry.CPE_CONTAINER:
@@ -338,17 +345,20 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 						if (!expandedPath.contains(entry)) {
 							// resolve project relative paths - @see bug 57732 & bug 248466
 							if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
-								IPackageFragmentRoot[] roots = project.findPackageFragmentRoots(entry);
-								for (int i = 0; i < roots.length; i++) {
-									IPackageFragmentRoot root = roots[i];
-									r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath(), entry.getSourceAttachmentPath(), entry.getSourceAttachmentRootPath(), entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
-									if (isModularJVM) {
-										adjustClasspathProperty(r, entry);
-									}
-									r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
-									r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
-									if (!expandedPath.contains(r)) {
-										expandedPath.add(r);
+								if (!visitedEntries.contains(entry)) {
+									visitedEntries.add(entry);
+									IPackageFragmentRoot[] roots = project.findPackageFragmentRoots(entry);
+									for (int i = 0; i < roots.length; i++) {
+										IPackageFragmentRoot root = roots[i];
+										r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath(), entry.getSourceAttachmentPath(), entry.getSourceAttachmentRootPath(), entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
+										if (isModularJVM) {
+											adjustClasspathProperty(r, entry);
+										}
+										r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
+										r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
+										if (!expandedPath.contains(r)) {
+											expandedPath.add(r);
+										}
 									}
 								}
 							} else {
