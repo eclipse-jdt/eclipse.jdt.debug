@@ -2861,7 +2861,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction();
 
 			// store the no-op
-			storeInstruction();
+			// since we add no-op for number of operators (there will be more than one when we have extendedOperands),
+			// we need to store them as well to make sure the next expression such as PrefixExpressions can properly
+			// store the instruction in correct place.
+			for (int i = 0; i < operatorNumber; i++) {
+				storeInstruction();
+			}
 
 		} else { // other operators
 
