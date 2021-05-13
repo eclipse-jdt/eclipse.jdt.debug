@@ -6,6 +6,11 @@
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -3340,8 +3345,11 @@ public final class JavaRuntime {
 				} else if (javaVersion.startsWith(JavaCore.VERSION_16)
 						&& (javaVersion.length() == JavaCore.VERSION_16.length() || javaVersion.charAt(JavaCore.VERSION_16.length()) == '.')) {
 					compliance = JavaCore.VERSION_16;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_17)
+						&& (javaVersion.length() == JavaCore.VERSION_17.length() || javaVersion.charAt(JavaCore.VERSION_17.length()) == '.')) {
+					compliance = JavaCore.VERSION_17;
 				} else {
-					compliance = JavaCore.VERSION_16; // use latest by default
+					compliance = JavaCore.VERSION_17; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();

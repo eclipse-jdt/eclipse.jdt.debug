@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *
@@ -41,6 +45,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 
+	private static final String JavaSE_17 = "JavaSE-17"; //$NON-NLS-1$
 	private static final String JavaSE_16 = "JavaSE-16"; //$NON-NLS-1$
 	private static final String JavaSE_15 = "JavaSE-15"; //$NON-NLS-1$
 	private static final String JavaSE_14 = "JavaSE-14"; //$NON-NLS-1$
@@ -90,13 +95,14 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
-		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_16 });
+		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_17 });
 		mappings.put(JavaSE_11, new String[] { JavaSE_10 });
 		mappings.put(JavaSE_12, new String[] { JavaSE_11 });
 		mappings.put(JavaSE_13, new String[] { JavaSE_12 });
 		mappings.put(JavaSE_14, new String[] { JavaSE_13 });
 		mappings.put(JavaSE_15, new String[] { JavaSE_14 });
 		mappings.put(JavaSE_16, new String[] { JavaSE_15 });
+		mappings.put(JavaSE_17, new String[] { JavaSE_16 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -122,7 +128,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("16")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("17")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_17);
+				} else if (javaVersion.startsWith("16")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_16);
 				} else if (javaVersion.startsWith("15")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_15);
