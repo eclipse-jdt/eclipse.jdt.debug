@@ -19,6 +19,8 @@ public class Bug572629 {
 	private String[] payloads;
 
 	private static String[] PAYLOADS = new String[] {"1"};
+	
+	private Parent parent = new Parent();
 
 	public Bug572629(String payload) {
 		this.payload = payload;
@@ -46,8 +48,28 @@ public class Bug572629 {
 			 System.out.println(a.length);			 
 		});
 	}
+
+	private void hoverOnThis() {
+		System.out.println(this.parent.child.age);
+		System.out.println(this.parent.child.name);
+		System.out.println(parent.child.age);
+		System.out.println(parent.child.name);
+	}
+	
 	public static void main(String[] args) {
 		new Bug572629("p").equals(new Bug572629("r"));
 		new Bug572629("p").hoverOverLocal(new String[] {"name"});
+		new Bug572629("p").hoverOnThis();
 	}
+
+	public static class Parent {
+		public Child child = new Child();
+	}
+
+	public static class Child {
+		public int age = 5;
+		
+		public String name = "name";
+	}
+	
 }

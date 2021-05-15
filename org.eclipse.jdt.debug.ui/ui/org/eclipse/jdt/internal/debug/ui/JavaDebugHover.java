@@ -374,7 +374,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 									FieldAccess fieldAccess = (FieldAccess) node.getParent();
 									if (fieldAccess.getExpression() instanceof ThisExpression) {
 										variable = evaluateField(frame, field);
-									} else if (onArrayLength) {
+									} else {
 										variable = evaluateQualifiedNode(fieldAccess, frame, typeRoot.getJavaProject());
 									}
 								} else if (locationInParent == QualifiedName.NAME_PROPERTY) {
