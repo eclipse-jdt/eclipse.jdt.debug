@@ -1283,8 +1283,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			if (e instanceof IMember) {
 				m = (IMember) e;
 			}
+			// Class breakpoint should be created if the offset was at the record component in the record definition
 			if (m != null && m.getParent() instanceof IType && ((IType) m.getParent()).isRecord()) {
-				m = (IMember) m.getParent();
+				if (m instanceof IField) {
+					IField field = (IField)m;
+					if (field.isRecordComponent()) {
+						m = (IMember) field.getParent();
+					}
+				}
 			}
 		}
 		if (m != null) {
