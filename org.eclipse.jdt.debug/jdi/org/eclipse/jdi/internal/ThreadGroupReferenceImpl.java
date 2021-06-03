@@ -140,7 +140,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/**
 	 * Inner class used to return children info.
 	 */
-	private class ChildrenInfo {
+	private static class ChildrenInfo {
 		List<ThreadReference> childThreads;
 		List<ThreadGroupReference> childThreadGroups;
 	}

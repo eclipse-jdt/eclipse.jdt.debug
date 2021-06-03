@@ -125,7 +125,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/**
 	 * Inner class used to return monitor info.
 	 */
-	private class MonitorInfo {
+	private static class MonitorInfo {
 		ThreadReferenceImpl owner;
 		int entryCount;
 		ArrayList<ThreadReference> waiters;

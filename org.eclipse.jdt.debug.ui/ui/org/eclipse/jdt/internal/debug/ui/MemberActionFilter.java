@@ -95,7 +95,7 @@ public class MemberActionFilter implements IActionFilter {
 					IAdaptable adapt = DebugUITools.getDebugContext();
 					if(adapt != null) {
 						IDebugTarget adapter = adapt.getAdapter(IDebugTarget.class);
-						if(adapter != null && adapter instanceof IJavaDebugTarget) {
+						if(adapter instanceof IJavaDebugTarget) {
 							IJavaDebugTarget dtarget = (IJavaDebugTarget) adapter;
 							return dtarget.supportsInstanceRetrieval();
 						}

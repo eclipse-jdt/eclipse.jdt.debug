@@ -81,7 +81,7 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
         assertPerformance();
     }
 
-    private class BogusAction extends Action {
+    private static class BogusAction extends Action {
     }
 
     private class PerfTestContextualLaunchAction extends ContextualLaunchAction {

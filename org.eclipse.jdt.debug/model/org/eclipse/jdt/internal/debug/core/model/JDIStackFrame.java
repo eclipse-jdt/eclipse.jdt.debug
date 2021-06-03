@@ -497,14 +497,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				if (synVars.length + 1 == allFields.size()) {
 					while (listIterator.hasNext()) {
 						FieldImpl field = (FieldImpl) listIterator.next();
-						String newName = field.name();
+						// remove 'this' field from the fields of the lambda
 						if (i == 0) {
-							newName = "this"; //$NON-NLS-1$
+							listIterator.remove();
 						} else {
-							newName = synVars[i - 1].getName();
+							String newName = synVars[i - 1].getName();
+							FieldImpl newField = createRenamedCopy(field, newName);
+							listIterator.set(newField);
 						}
-						FieldImpl newField = createRenamedCopy(field, newName);
-						listIterator.set(newField);
 						i++;
 					}
 				}

@@ -134,7 +134,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 			@Override
 			public String isValid(String value) {
 				try {
-					hitCount= Integer.valueOf(value.trim()).intValue();
+					hitCount= Integer.parseInt(value.trim());
 				} catch (NumberFormatException nfe) {
 					hitCount= -1;
 				}

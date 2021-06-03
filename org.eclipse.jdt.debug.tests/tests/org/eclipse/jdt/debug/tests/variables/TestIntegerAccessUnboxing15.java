@@ -108,7 +108,7 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testRowAccess() throws Exception {
-		doAccessTest("matrix[new Integer(0)][0]", 1);
+		doAccessTest("matrix[Integer.valueOf(0)][0]", 1);
 	}
 
 	/**
@@ -117,10 +117,10 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testColumnAccess() throws Exception {
-		doAccessTest("matrix[2][new Integer(2)]", 9);
+		doAccessTest("matrix[2][Integer.valueOf(2)]", 9);
 	}
 
 	public void testRowColumnAccess() throws Exception {
-		doAccessTest("matrix[1][new Integer(1)]", 5);
+		doAccessTest("matrix[1][Integer.valueOf(1)]", 5);
 	}
 }

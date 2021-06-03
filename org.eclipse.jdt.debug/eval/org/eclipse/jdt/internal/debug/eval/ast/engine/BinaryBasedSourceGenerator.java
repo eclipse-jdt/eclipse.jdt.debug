@@ -70,10 +70,10 @@ public class BinaryBasedSourceGenerator {
 		} else {
 			num = sourceLevel;
 		}
-		fSourceMajorLevel = Integer.valueOf(num).intValue();
+		fSourceMajorLevel = Integer.parseInt(num);
 		if (index != -1) {
 			num = sourceLevel.substring(index + 1);
-			fSourceMinorLevel = Integer.valueOf(num).intValue();
+			fSourceMinorLevel = Integer.parseInt(num);
 		} else {
 			fSourceMinorLevel = 0;
 		}

@@ -311,7 +311,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			typeName = s.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
 			String lineNumber = s.substring(index + 1, s.length());
 			lineNumber = lineNumber.trim();
-			int line = (Integer.valueOf(lineNumber)).intValue();
+			int line = Integer.parseInt(lineNumber);
 			getTypeMatches(typeName, matches);
 			return line;
 		}
@@ -326,7 +326,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			typeName = typeName.trim();
 			String lineNumber = s.substring(index + 1, s.length());
 			lineNumber = lineNumber.trim();
-			int line = (Integer.valueOf(lineNumber)).intValue();
+			int line = Integer.parseInt(lineNumber);
 			getTypeMatches(typeName, matches);
 			return line;
 		}
@@ -336,7 +336,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			String typeLine = s.substring(index1 + 1, index2).trim();
 			int index = typeLine.indexOf(':');
 			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
-			int line = (Integer.valueOf(lineNumber)).intValue();
+			int line = Integer.parseInt(lineNumber);
 
 			Pattern pattern = Pattern.compile(STACK_TRACE_QUALIFIED_LINE_PATTERN);
 			Matcher matcher = pattern.matcher(s);
@@ -361,7 +361,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			String method = s.substring(0, index + 1);
 			index = s.indexOf(':');
 			String lineNumber = s.substring(index + 1).trim();
-			int line = (Integer.valueOf(lineNumber)).intValue();
+			int line = Integer.parseInt(lineNumber);
 			getMethodMatches(method, matches);
 			return line;
 		}

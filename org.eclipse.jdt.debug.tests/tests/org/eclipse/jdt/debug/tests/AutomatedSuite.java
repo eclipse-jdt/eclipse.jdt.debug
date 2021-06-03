@@ -92,7 +92,9 @@ import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.eval.BlockStatementEvaluationTests;
+import org.eclipse.jdt.debug.tests.eval.ExpressionEvalTest;
 import org.eclipse.jdt.debug.tests.eval.GeneralEvalTests;
+import org.eclipse.jdt.debug.tests.eval.GenericsEval17Test;
 import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
 import org.eclipse.jdt.debug.tests.eval.LambdaVariableTest;
 import org.eclipse.jdt.debug.tests.eval.SyntheticVariableTests;
@@ -330,7 +332,9 @@ public class AutomatedSuite extends DebugSuite {
 
 	//add the complete eval suite
 		addTest(new TestSuite(GeneralEvalTests.class));
+		addTest(new TestSuite(GenericsEval17Test.class));
 		addTest(new TestSuite(BlockStatementEvaluationTests.class));
+		addTest(new TestSuite(ExpressionEvalTest.class));
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(LambdaVariableTest.class));
 		}

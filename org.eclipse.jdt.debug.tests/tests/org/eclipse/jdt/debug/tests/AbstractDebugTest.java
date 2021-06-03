@@ -439,6 +439,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	    		cfgs.add(createLaunchConfiguration(jp, LiteralTests17.LITERAL_TYPE_NAME));
 				cfgs.add(createLaunchConfiguration(jp, "ThreadNameChange"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug567801"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug572782"));
 	    		loaded17 = true;
 	    		waitForBuild();
 	        }
@@ -492,6 +493,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug564801"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug567801"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug571230"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug572629"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug569413"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }

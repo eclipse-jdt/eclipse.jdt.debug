@@ -345,7 +345,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return vmargs;
 	}
 
-	protected class CommandDetails {
+	protected static class CommandDetails {
 		private String[] commandLine;
 		private String[] envp;
 		private File workingDir;

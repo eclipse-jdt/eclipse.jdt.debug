@@ -15,6 +15,7 @@ package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -143,6 +144,35 @@ public class LambdaVariableTest extends AbstractDebugTest {
 
 		assertEquals("wrong type : ", "boolean", value.getReferenceTypeName());
 		assertEquals("Actual value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_Bug569413_NestedLambdaCapturedParameters() throws Exception {
+		debugWithBreakpoint("Bug569413", 23);
+
+		IValue pValue = doEval(javaThread, "p");
+		assertEquals("wrong type : ", "java.lang.String", pValue.getReferenceTypeName());
+		assertEquals("wrong result : ", "ab", pValue.getValueString());
+
+		IValue ppValue = doEval(javaThread, "pp");
+		assertEquals("wrong type : ", "Bug569413$TestClass", ppValue.getReferenceTypeName());
+
+		IValue pkgsVar = doEval(javaThread, "pkgs");
+		assertEquals("wrong type : ", "java.util.LinkedHashSet", Signature.getTypeErasure(pkgsVar.getReferenceTypeName()));
+		IValue pkgsValue = doEval(javaThread, "pkgs.toString()");
+		assertEquals("wrong result : ", "[ab, b, c]", pkgsValue.getValueString());
+
+		IValue thisBasePackages = doEval(javaThread, "this.basePackages");
+		assertEquals("wrong type : ", "java.util.HashMap", Signature.getTypeErasure(thisBasePackages.getReferenceTypeName()));
+		IValue thisBasePackagesSize = doEval(javaThread, "this.basePackages.size()");
+		assertEquals("wrong result : ", "0", thisBasePackagesSize.getValueString());
+	}
+
+	public void testEvaluate_Bug569413_NestedLambdaCapturedParameterAndNull() throws Exception {
+		debugWithBreakpoint("Bug569413", 29);
+
+		IValue value = doEval(javaThread, "p");
+		assertEquals("wrong type : ", "java.lang.String", value.getReferenceTypeName());
+		assertEquals("wrong result : ", "ab", value.getValueString());
 	}
 
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {

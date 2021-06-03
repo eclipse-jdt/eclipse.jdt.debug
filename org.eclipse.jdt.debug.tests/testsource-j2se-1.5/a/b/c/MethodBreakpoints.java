@@ -22,7 +22,7 @@ public class MethodBreakpoints<T> {
 		staticTypeParameter(new ArrayList<String>());
 		MethodBreakpoints<String> breakpoints = new MethodBreakpoints<String>();
 		breakpoints.typeParameter("Testing");
-		breakpoints.methodTypeParameter(new Integer(34));
+		breakpoints.methodTypeParameter(Integer.valueOf(34));
 	}
 	
 	public static <X> void staticTypeParameter(List<X> list) {

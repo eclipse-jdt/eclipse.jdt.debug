@@ -72,7 +72,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Used to test breakpoint install/suspend voting.
 	 */
-	class SuspendVoter implements IJavaBreakpointListener {
+	static class SuspendVoter implements IJavaBreakpointListener {
 
 		int fVote;
 		IJavaBreakpoint fTheBreakpoint;
@@ -782,7 +782,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
-		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(i);";
+		EvalualtionBreakpointListener.EXPRESSION = "return Integer.valueOf(i);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
 
 		IJavaThread thread= null;
@@ -851,7 +851,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
-		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
+		EvalualtionBreakpointListener.EXPRESSION = "return Integer.valueOf(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
 
@@ -904,7 +904,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = get14Project();
-		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
+		EvalualtionBreakpointListener.EXPRESSION = "return Integer.valueOf(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
 

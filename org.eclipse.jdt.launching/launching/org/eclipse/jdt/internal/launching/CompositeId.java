@@ -29,7 +29,7 @@ public class CompositeId {
 		ArrayList<String> parts= new ArrayList<>();
 		int commaIndex= idString.indexOf(',');
 		while (commaIndex > 0) {
-			int length= Integer.valueOf(idString.substring(0, commaIndex)).intValue();
+			int length= Integer.parseInt(idString.substring(0, commaIndex));
 			String part= idString.substring(commaIndex+1, commaIndex+1+length);
 			parts.add(part);
 			idString= idString.substring(commaIndex+1+length);

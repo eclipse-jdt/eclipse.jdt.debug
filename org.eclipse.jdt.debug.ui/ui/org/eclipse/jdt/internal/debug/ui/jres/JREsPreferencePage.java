@@ -34,6 +34,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -249,14 +250,32 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			AbstractVMInstall install = (AbstractVMInstall) vm;
 			String vmver = install.getJavaVersion();
 			if(vmver == null) {
-				//if we cannot get a version from the VM we must return true, and let the runtime
-				//error sort it out
-				return true;
+				vmver = getVersionFromRealVM(vm);
+				if (vmver == null) {
+					//if we cannot get a version from the VM we must return true, and let the runtime
+					//error sort it out
+					return true;
+				}
 			}
 			int val = compliance.compareTo(vmver);
 			return  val < 0 || val == 0;
 		}
 		return false;
+	}
+
+
+	// If a JRE is newly added and selected without saving, convertToRealVM may not have been
+	// invoked and hence getJavaVersion would be null.
+	private String getVersionFromRealVM(IVMInstall vm) {
+		String vmver = null;
+		if (vm instanceof VMStandin) {
+			IVMInstall convertToRealVM = ((VMStandin) vm).convertToRealVM();
+			if(convertToRealVM instanceof AbstractVMInstall) {
+				vmver = ((AbstractVMInstall) convertToRealVM).getJavaVersion();
+				((VMStandin) vm).getVMInstallType().disposeVMInstall(vm.getId());
+			}
+		}
+		return vmver;
 	}
 
 	/* (non-Javadoc)

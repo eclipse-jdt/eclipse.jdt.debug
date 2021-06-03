@@ -266,7 +266,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 					continue;
 				}
 				int value = field.getInt(null);
-				setNames.put(new Integer(value), removePrefix(name));
+				setNames.put(Integer.valueOf(value), removePrefix(name));
 			} catch (IllegalAccessException e) {
 				// Will not occur for own class.
 			} catch (IllegalArgumentException e) {
@@ -295,7 +295,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 				Integer val = (Integer) field.get(null);
 				int value = val.intValue();
 				int set = value >>> 8;
-				String setName = setNames.get(new Integer(set));
+				String setName = setNames.get(Integer.valueOf(set));
 				String entryName = setName + " - " + removePrefix(name); //$NON-NLS-1$
 
 				fgCommandMap.put(val, entryName);

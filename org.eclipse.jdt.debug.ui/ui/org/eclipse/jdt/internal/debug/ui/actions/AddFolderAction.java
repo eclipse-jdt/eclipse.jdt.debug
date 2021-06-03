@@ -53,7 +53,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 * @since 3.2
 	 *
 	 */
-	class FileFilter extends ViewerFilter {
+	static class FileFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if(element instanceof IProject) {
@@ -130,7 +130,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			IRuntimeClasspathEntry entry = iter.next();
 			if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
 				IResource res = entry.getResource();
-				if (res != null && res instanceof IContainer) {
+				if (res instanceof IContainer) {
 					folders.add(res);
 				}
 			}

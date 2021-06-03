@@ -59,7 +59,7 @@ public class SocketTransportService extends TransportService {
 		}
 	};
 
-	private class SocketListenKey extends ListenKey {
+	private static class SocketListenKey extends ListenKey {
 		private String fAddress;
 
 		SocketListenKey(String address) {

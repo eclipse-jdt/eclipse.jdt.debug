@@ -70,13 +70,12 @@ public abstract class JDIModificationVariable extends JDIVariable {
 				String flse = Boolean.FALSE.toString();
 				String tre = Boolean.TRUE.toString();
 				if (expression.equals(tre) || expression.equals(flse)) {
-					boolean booleanValue = Boolean.valueOf(expression)
-							.booleanValue();
+					boolean booleanValue = Boolean.parseBoolean(expression);
 					vmValue = vm.mirrorOf(booleanValue);
 				}
 				break;
 			case 'B':
-				byte byteValue = Byte.valueOf(expression).byteValue();
+				byte byteValue = Byte.parseByte(expression);
 				vmValue = vm.mirrorOf(byteValue);
 				break;
 			case 'C':
@@ -120,23 +119,23 @@ public abstract class JDIModificationVariable extends JDIVariable {
 				}
 				break;
 			case 'S':
-				short shortValue = Short.valueOf(expression).shortValue();
+				short shortValue = Short.parseShort(expression);
 				vmValue = vm.mirrorOf(shortValue);
 				break;
 			case 'I':
-				int intValue = Integer.valueOf(expression).intValue();
+				int intValue = Integer.parseInt(expression);
 				vmValue = vm.mirrorOf(intValue);
 				break;
 			case 'J':
-				long longValue = Long.valueOf(expression).longValue();
+				long longValue = Long.parseLong(expression);
 				vmValue = vm.mirrorOf(longValue);
 				break;
 			case 'F':
-				float floatValue = Float.valueOf(expression).floatValue();
+				float floatValue = Float.parseFloat(expression);
 				vmValue = vm.mirrorOf(floatValue);
 				break;
 			case 'D':
-				double doubleValue = Double.valueOf(expression).doubleValue();
+				double doubleValue = Double.parseDouble(expression);
 				vmValue = vm.mirrorOf(doubleValue);
 				break;
 			case 'L':

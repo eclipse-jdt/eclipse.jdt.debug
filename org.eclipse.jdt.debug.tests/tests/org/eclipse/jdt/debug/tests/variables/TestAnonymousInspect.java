@@ -32,7 +32,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	static final String TYPE_NAME = "InspectTests";
 	static final String SNIPPET = "getchar()";
 
-	class Listener implements IEvaluationListener {
+	static class Listener implements IEvaluationListener {
 		IEvaluationResult fResult;
 
 		@Override

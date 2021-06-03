@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,6 +60,7 @@ public class ActionMessages extends NLS {
 	public static String JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1;
 	public static String MoveDownAction_M_ove_Down_1;
 	public static String MoveUpAction_Move_U_p_1;
+	public static String CopyAction_1;
 
 	public static String OpenFromClipboardAction_ElementToOpen;
 	public static String OpenFromClipboardAction_OpenFromClipboard;

@@ -3739,7 +3739,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *
 	 * @since 3.3.0
 	 */
-	class SerialPerObjectRule implements ISchedulingRule {
+	static class SerialPerObjectRule implements ISchedulingRule {
 
 		private Object fObject = null;
 

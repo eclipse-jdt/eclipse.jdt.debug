@@ -185,7 +185,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Step into 'new Integer(i)'
+	 * Step into 'Integer.valueOf(i)'
 	 *
 	 * @throws Exception
 	 */

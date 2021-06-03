@@ -796,7 +796,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		return fModifierKindMap;
 	}
 
-	class ExceptionFilter {
+	static class ExceptionFilter {
 		/**
 		 * If non-null, specifies that exceptions which are instances of
 		 * fExceptionFilterRef will be reported.
@@ -808,7 +808,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		boolean fNotifyUncaught = false;
 	}
 
-	class ThreadStepFilter {
+	static class ThreadStepFilter {
 		/** ThreadReference of thread in which to step. */
 		protected ThreadReferenceImpl fThread = null;
 		/** Size of each step. */
