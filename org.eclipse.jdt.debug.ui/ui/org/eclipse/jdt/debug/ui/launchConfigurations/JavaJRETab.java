@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -215,7 +215,7 @@ public class JavaJRETab extends JavaLaunchTab {
 			IPath containerPath = fJREBlock.getPath();
 			String portablePath = null;
 			if (containerPath != null) {
-				portablePath = containerPath.toPortableString();
+				portablePath = containerPath.addTrailingSeparator().toPortableString();
 			}
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, portablePath);
 		}
