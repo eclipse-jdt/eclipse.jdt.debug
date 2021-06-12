@@ -829,6 +829,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		return null;
 	}
 
+
 	/**
 	 * Calls the internal stack frame categorizer to evaluate the frame.
 	 */
