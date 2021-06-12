@@ -150,6 +150,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	private JavaElementLabelProvider fJavaLabelProvider;
 
+	private StackFramePresentationProvider fStackFrameProvider;
+
 	public JDIModelPresentation() {
 		super();
 	}
@@ -164,6 +166,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fJavaLabelProvider.dispose();
 		}
 		fAttributes.clear();
+		if (fStackFrameProvider != null) {
+			fStackFrameProvider.close();
+		}
 	}
 
 	/**
@@ -736,7 +741,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
 				}
 			}
-			if (item instanceof IJavaStackFrame || item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
+			if (item instanceof IJavaStackFrame) {
+				return getStackFrameImage((IJavaStackFrame) item);
+			}
+			if (item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
 			}
 			if (item instanceof IJavaValue) {
@@ -936,6 +944,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return getDebugImage(image, flags);
 	}
 
+	private Image getStackFrameImage(IJavaStackFrame stackFrame) {
+		var image = getStackFrameProvider().getStackFrameImage(stackFrame);
+		if (image == null) {
+			image = DebugUITools.getDefaultImageDescriptor(stackFrame);
+		}
+
+		int flags = 0;
+		try {
+			if (stackFrame.isOutOfSynch()) {
+				flags = JDIImageDescriptor.IS_OUT_OF_SYNCH;
+			} else if (!stackFrame.isObsolete() && stackFrame.isSynchronized()) {
+				flags = JDIImageDescriptor.SYNCHRONIZED;
+			}
+		} catch (DebugException e) {
+			// no need to log errors - elements may no longer exist by the time we render them
+		}
+
+		return getDebugImage(image, flags);
+	}
 	/**
 	 * Returns the image associated with the given element or <code>null</code>
 	 * if none is defined.
@@ -964,15 +991,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	private int computeJDIAdornmentFlags(Object element) {
 		try {
-			if (element instanceof IJavaStackFrame) {
-				IJavaStackFrame javaStackFrame = ((IJavaStackFrame)element);
-				if (javaStackFrame.isOutOfSynch()) {
-					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (!javaStackFrame.isObsolete() && javaStackFrame.isSynchronized()) {
-					return JDIImageDescriptor.SYNCHRONIZED;
-				}
-			}
 			if (element instanceof IJavaThread) {
 				int flag= 0;
 				IJavaThread javaThread = ((IJavaThread)element);
@@ -1203,6 +1221,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			show= show == null ? Boolean.FALSE : show;
 			return show.booleanValue();
 		}
+	}
+
+	protected boolean isColorizeStackFrames() {
+		return getStackFrameProvider().isColorizeStackFrames();
 	}
 
 	protected boolean isShowHexValues() {
@@ -2048,6 +2070,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return fJavaLabelProvider;
 	}
 
+	private StackFramePresentationProvider getStackFrameProvider() {
+		if (fStackFrameProvider == null) {
+			fStackFrameProvider = new StackFramePresentationProvider();
+		}
+		return fStackFrameProvider;
+	}
 	/**
 	 * Returns whether the given field variable has the same name as any variables
 	 */
@@ -2114,6 +2142,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (element instanceof IJavaThread javaThread && ThreadMonitorManager.getDefault().isInDeadlock(javaThread)) {
 			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
+		if (element instanceof IJavaStackFrame frame && isColorizeStackFrames()) {
+			return getStackFrameProvider().getForeground(frame);
+		}
 		return null;
 	}
 
@@ -2129,6 +2160,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	@Override
 	public Color getBackground(Object element) {
+		if (element instanceof IJavaStackFrame frame && isColorizeStackFrames()) {
+			return getStackFrameProvider().getBackground(frame);
+		}
 		return null;
 	}
 
