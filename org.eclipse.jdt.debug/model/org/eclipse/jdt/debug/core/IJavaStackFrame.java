@@ -36,6 +36,15 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 		IFilteredStep, IDropToFrame {
 
 	/**
+	 * Categorization of the stack frame.
+	 *
+	 * @since 3.23
+	 *
+	 */
+	record Category(String name, boolean hideWhenCollapse) {
+	}
+
+	/**
 	 * Status code indicating a stack frame is invalid. A stack frame becomes
 	 * invalid when the thread containing the stack frame resumes. A stack frame
 	 * may or may not be valid if the thread subsequently suspends, depending on
@@ -533,4 +542,18 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * @since 3.3
 	 */
 	public void forceReturn(IJavaValue value) throws DebugException;
+
+	/**
+	 * @since 3.23
+	 * @return the category of the stack frame.
+	 */
+	Category getCategory();
+
+	/**
+	 * Request re-evaluation of the category.
+	 *
+	 * @since 3.23
+	 */
+	void resetCategory();
+
 }

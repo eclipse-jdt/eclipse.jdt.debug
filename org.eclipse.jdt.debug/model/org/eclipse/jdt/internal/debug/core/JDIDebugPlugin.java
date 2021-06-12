@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
+import java.util.function.Function;
+
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,6 +41,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -210,6 +213,8 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 */
 	private BreakpointListenerManager fJavaBreakpointManager;
 
+	private Function<IJavaStackFrame, IJavaStackFrame.Category> stackFrameCategorizer;
+
 	/**
 	 * Returns whether the debug UI plug-in is in trace mode.
 	 *
@@ -308,7 +313,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 					@Override
 					public void saving(ISaveContext c) throws CoreException {
-						IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
+						IEclipsePreferences node = getInstancePreferences();
 						if(node != null) {
 							try {
 								node.flush();
@@ -321,10 +326,17 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList<>();
 		fJavaBreakpointManager = new BreakpointListenerManager();
-		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
+		IEclipsePreferences node = getInstancePreferences();
 		if(node != null) {
 			node.addPreferenceChangeListener(this);
 		}
+	}
+
+	/**
+	 * @return the plugin's preferences from the InstanceScope.
+	 */
+	private static IEclipsePreferences getInstancePreferences() {
+		return InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
 	}
 
 	/**
@@ -355,7 +367,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
+			IEclipsePreferences node = getInstancePreferences();
 			if(node != null) {
 				node.removePreferenceChangeListener(this);
 			}
@@ -816,4 +828,19 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		}
 		return null;
 	}
+
+	/**
+	 * Calls the internal stack frame categorizer to evaluate the frame.
+	 */
+	public synchronized IJavaStackFrame.Category getStackFrameCategorization(IJavaStackFrame frameToCategorize) {
+		return stackFrameCategorizer != null ? stackFrameCategorizer.apply(frameToCategorize) : null;
+	}
+
+	/**
+	 * Sets the function that helps categorizing the stack frames.
+	 */
+	public synchronized void setStackFrameCategorizer(Function<IJavaStackFrame, IJavaStackFrame.Category> stackFrameCategorizer) {
+		this.stackFrameCategorizer = stackFrameCategorizer;
+	}
+
 }

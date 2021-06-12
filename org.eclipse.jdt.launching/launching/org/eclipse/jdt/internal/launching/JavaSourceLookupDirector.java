@@ -32,7 +32,7 @@ import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupPartici
  */
 public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 
-	private static Set<String> fFilteredTypes;
+	private static final Set<String> fFilteredTypes;
 
 	static {
 		fFilteredTypes = new HashSet<>();

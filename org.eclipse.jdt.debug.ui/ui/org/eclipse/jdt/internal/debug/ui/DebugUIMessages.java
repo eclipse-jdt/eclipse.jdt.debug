@@ -155,6 +155,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation__garbage_collected_object__6;
 	public static String JDIModelPresentation__obsolete_method_in__1;
 	public static String JDIModelPresentation__terminated__2;
+	public static String JDIModelPresentation_collapsed_frames;
 
 	public static String JDIModelPresentation_117;
 
