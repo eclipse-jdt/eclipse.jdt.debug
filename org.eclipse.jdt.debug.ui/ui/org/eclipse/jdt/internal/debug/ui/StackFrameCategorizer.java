@@ -41,27 +41,27 @@ public class StackFrameCategorizer implements IPreferenceChangeListener {
 	/**
 	 * The user specified a filter, can be used for highlighting specific, very important code layers.
 	 */
-	static final Category CATEGORY_CUSTOM_FILTERED = new Category("CUSTOM_FILTERED", false); //$NON-NLS-1$
+	public static final Category CATEGORY_CUSTOM_FILTERED = new Category("CUSTOM_FILTERED", false); //$NON-NLS-1$
 
 	/**
 	 * The stack frame represents a synthetic function call, which is not based on actual Java source code.
 	 */
-	static final Category CATEGORY_SYNTHETIC = new Category("SYNTHETIC", true); //$NON-NLS-1$
+	public static final Category CATEGORY_SYNTHETIC = new Category("SYNTHETIC", true); //$NON-NLS-1$
 
 	/**
 	 * Methods in classes that considered as platform, like code in 'java.*' packages.
 	 */
-	static final Category CATEGORY_PLATFORM = new Category("PLATFORM", true); //$NON-NLS-1$
+	public static final Category CATEGORY_PLATFORM = new Category("PLATFORM", true); //$NON-NLS-1$
 
 	/**
 	 * Classes found in a test source folder in the project.
 	 */
-	static final Category CATEGORY_TEST = new Category("TEST", false); //$NON-NLS-1$
+	public static final Category CATEGORY_TEST = new Category("TEST", false); //$NON-NLS-1$
 
 	/**
 	 * Classes found in a non-test source folder in the project.
 	 */
-	static final Category CATEGORY_PRODUCTION = new Category("PRODUCTION", false); //$NON-NLS-1$
+	public static final Category CATEGORY_PRODUCTION = new Category("PRODUCTION", false); //$NON-NLS-1$
 
 	/**
 	 * Classes coming from a library, not from the actual project.
@@ -71,7 +71,7 @@ public class StackFrameCategorizer implements IPreferenceChangeListener {
 	/**
 	 * Classes with unknown origin.
 	 */
-	static final Category CATEGORY_UNKNOWN = new Category("UNKNOWN", true); //$NON-NLS-1$
+	public static final Category CATEGORY_UNKNOWN = new Category("UNKNOWN", true); //$NON-NLS-1$
 
 	/**
 	 * Class to decide if a particular class name is part of a list of classes and list of packages.

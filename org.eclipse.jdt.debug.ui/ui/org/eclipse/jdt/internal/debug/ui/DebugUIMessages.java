@@ -104,10 +104,13 @@ public class DebugUIMessages extends NLS {
 
 	public static String JavaStackFramesPreferencePage_title;
 	public static String JavaStackFramesPreferencePage_description;
+	public static String JavaStackFramesPreferencePage__Color_stack_frames;
 	public static String JavaStackFramesPreferencePage__Collapse_stack_frames;
 	public static String JavaStackFramesPreferencePage_Defined_stack_frame_filters_for_platform;
 	public static String JavaStackFramesPreferencePage_Defined_custom_stack_frame_filters;
 	public static String JavaStackFramesPreferencePage_Appearance_of_stack_frames;
+	public static String JavaStackFramesPreferencePage_fg_color;
+	public static String JavaStackFramesPreferencePage_bg_color;
 	public static String JavaStackFramesPreferencePage_category_platform;
 	public static String JavaStackFramesPreferencePage_category_synthetic;
 	public static String JavaStackFramesPreferencePage_category_library;
