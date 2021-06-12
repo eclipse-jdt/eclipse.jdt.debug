@@ -149,6 +149,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	private JavaElementLabelProvider fJavaLabelProvider;
 
+	private StackFramePresentationProvider fStackFrameProvider;
+
 	public JDIModelPresentation() {
 		super();
 	}
@@ -163,6 +165,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fJavaLabelProvider.dispose();
 		}
 		fAttributes.clear();
+		if (fStackFrameProvider != null) {
+			fStackFrameProvider.close();
+		}
 	}
 
 	/**
@@ -1271,6 +1276,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 
+	protected boolean isColorizeStackFrames() {
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_COLORIZE_STACK_FRAMES);
+	}
+
 	protected boolean isShowHexValues() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_HEX);
 	}
@@ -2089,6 +2098,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return fJavaLabelProvider;
 	}
 
+	private StackFramePresentationProvider getStackFrameProvider() {
+		if (fStackFrameProvider == null) {
+			fStackFrameProvider = new StackFramePresentationProvider();
+		}
+		return fStackFrameProvider;
+	}
 	/**
 	 * Returns whether the given field variable has the same name as any variables
 	 */
@@ -2131,6 +2146,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (element instanceof IJavaThread && ThreadMonitorManager.getDefault().isInDeadlock((IJavaThread)element)) {
 			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
+		if (element instanceof IJavaStackFrame && isColorizeStackFrames()) {
+			IJavaStackFrame frame = (IJavaStackFrame) element;
+
+			return getStackFrameProvider().getForeground(frame);
+		}
 		return null;
 	}
 
@@ -2139,6 +2159,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	@Override
 	public Color getBackground(Object element) {
+		if (element instanceof IJavaStackFrame && isColorizeStackFrames()) {
+			IJavaStackFrame frame = (IJavaStackFrame) element;
+
+			return getStackFrameProvider().getBackground(frame);
+		}
 		return null;
 	}
 
