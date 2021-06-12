@@ -19,9 +19,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaStackFrame.Category;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.StackFrameCategorizer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.test.OrderedTestSuite;
@@ -224,6 +227,41 @@ public class DebugViewTests extends AbstractDebugViewTests {
 		String breakpointMethodName = "breakpointMethod";
 		int expectedBreakpointHitsCount = 1;
 		doTestWrongSelection(iterations, typeName, breakpointMethodName, expectedBreakpointHitsCount);
+	}
+
+	public void testStackFrameGrouppingAndColors() throws Exception {
+		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES, true);
+		IJavaThread thread = null;
+		try {
+			thread = runCodeUntilBreakpoint("StackFrameColoring", "breakpointMethod");
+			assertNotNull("thread", thread);
+			var selectedStackFrame = assertStackFrameIsSelected("breakpointMethod");
+			if (selectedStackFrame == null) {
+				// skip this test on Mac - see bug 516024
+				return;
+			}
+			sync(() -> {
+				var allFrames = selectedStackFrame.getParentItem().getItems();
+				assertNotNull("all frames", allFrames);
+				assertEquals("frame[0]", "StackFrameColoring.breakpointMethod() line: 34", allFrames[0].getText());
+				assertEquals("frame[0] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 0));
+				assertEquals("frame[1]", "1 collapsed frames", allFrames[1].getText());
+				assertTrue("frame[2]", allFrames[2].getText().contains("apply(Object) line: not available"));
+				assertEquals("frame[2] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 2));
+				assertEquals("frame[3]", "7 collapsed frames", allFrames[3].getText());
+				assertEquals("frame[4]", "StackFrameColoring.run() line: 29", allFrames[4].getText());
+				assertEquals("frame[4] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 4));
+				assertEquals("frame[5]", "StackFrameColoring.main(String[]) line: 22", allFrames[5].getText());
+				assertEquals("frame[5] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 5));
+			});
+		} finally {
+			terminateAndCleanUp(thread);
+		}
+	}
+
+	private Category getStackFrameCategory(TreeItem[] allFrames, int idx) {
+		return ((IJavaStackFrame) allFrames[idx].getData()).getCategory();
 	}
 
 	/**
