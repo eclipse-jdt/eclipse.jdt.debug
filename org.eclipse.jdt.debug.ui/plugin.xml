@@ -2299,6 +2299,14 @@
         style="toggle"
         menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
         id="org.eclipse.jdt.debug.ui.launchViewActions.CollapseStackFrames"/>
+  <action
+        helpContextId="colorize_stack_frames_action_context"
+        label="%colorizeStackFrames.label"
+        tooltip="%colorizeStackFrames.tooltip"
+        class="org.eclipse.jdt.internal.debug.ui.actions.ColorizeStackFramesAction"
+        style="toggle"
+        menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
+        id="org.eclipse.jdt.debug.ui.launchViewActions.ColorizeStackFrames"/>
   <menu
         id="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu"
         label="%LaunchViewJavaSubmenu.label"
@@ -2570,6 +2578,13 @@
             class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
             id="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage">
          <keywordReference id="org.eclipse.jdt.debug.ui.general"/>
+      </page>
+      <page
+            name="%javaStackFramePrefName"
+            category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.JavaStackFramePreferencePage"
+            id="org.eclipse.jdt.debug.ui.JavaStackFramePreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.stepFilters"/>
       </page>
       <page
             name="%javaStepFilterPrefName"
@@ -3676,6 +3691,108 @@ M4 = Platform-specific fourth key
           label="%LabeledObjectColorDefinition.label"
           value="COLOR_RED">
        <description>%LabeledObjectColorDefinition.description</description>
+    </colorDefinition>
+
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.CustomFilteredStackFrameFgColor"
+          isEditable="true"
+          label="%CustomFilteredStackFrameFgColorDefinition.label"
+          value="COLOR_LIST_FOREGROUND">
+       <description>%CustomFilteredStackFrameFgColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.CustomFilteredStackFrameBgColor"
+          isEditable="true"
+          label="%CustomFilteredStackFrameBgColorDefinition.label"
+          value="252,226,186">
+       <description>%CustomFilteredStackFrameBgColorDefinition.description</description>
+    </colorDefinition>
+
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.SyntheticStackFrameFgColor"
+          isEditable="true"
+          label="%SyntheticStackFrameFgColorDefinition.label"
+          value="101,65,65">
+       <description>%SyntheticStackFrameFgColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.SyntheticStackFrameBgColor"
+          isEditable="true"
+          label="%SyntheticStackFrameBgColorDefinition.label"
+          value="COLOR_LIST_BACKGROUND">
+       <description>%SyntheticStackFrameBgColorDefinition.description</description>
+    </colorDefinition>
+
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.PlatformStackFrameFgColor"
+          isEditable="true"
+          label="%PlatformStackFrameFgColorDefinition.label"
+          value="75,102,78">
+       <description>%PlatformStackFrameFgColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.PlatformStackFrameBgColor"
+          isEditable="true"
+          label="%PlatformStackFrameBgColorDefinition.label"
+          value="COLOR_LIST_BACKGROUND">
+       <description>%PlatformStackFrameBgColorDefinition.description</description>
+    </colorDefinition>
+
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.TestStackFrameFgColor"
+          isEditable="true"
+          label="%TestStackFrameFgColorDefinition.label"
+          value="COLOR_LIST_FOREGROUND">
+       <description>%TestStackFrameFgColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.TestStackFrameBgColor"
+          isEditable="true"
+          label="%TestStackFrameBgColorDefinition.label"
+          value="229,253,204">
+       <description>%TestStackFrameBgColorDefinition.description</description>
+    </colorDefinition>
+
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.ProductionStackFrameFgColor"
+          isEditable="true"
+          label="%ProductionStackFrameFgColorDefinition.label"
+          value="52,101,164">
+       <description>%ProductionStackFrameFgColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.ProductionStackFrameBgColor"
+          isEditable="true"
+          label="%ProductionStackFrameBgColorDefinition.label"
+          value="COLOR_LIST_BACKGROUND">
+       <description>%ProductionStackFrameBgColorDefinition.description</description>
+    </colorDefinition>
+
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.LibraryStackFrameFgColor"
+          isEditable="true"
+          label="%LibraryStackFrameFgColorDefinition.label"
+          value="102,84,126">
+       <description>%LibraryStackFrameFgColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.LibraryStackFrameBgColor"
+          isEditable="true"
+          label="%LibraryStackFrameBgColorDefinition.label"
+          value="COLOR_LIST_BACKGROUND">
+       <description>%LibraryStackFrameBgColorDefinition.description</description>
     </colorDefinition>
  </extension>
  <extension
