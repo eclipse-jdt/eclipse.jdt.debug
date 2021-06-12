@@ -72,6 +72,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
@@ -151,6 +152,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	private JavaElementLabelProvider fJavaLabelProvider;
 
+	private StackFramePresentationProvider fStackFrameProvider;
+
 	public JDIModelPresentation() {
 		super();
 	}
@@ -165,6 +168,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fJavaLabelProvider.dispose();
 		}
 		fAttributes.clear();
+		if (fStackFrameProvider != null) {
+			fStackFrameProvider.close();
+		}
 	}
 
 	/**
@@ -244,6 +250,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaOwningTreadText((JavaOwningThread)item);
 			} else if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingTreadText((JavaWaitingThread)item);
+			} else if (item instanceof GroupedStackFrame groupping) {
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_collapsed_frames, String.valueOf(groupping.getFrameCount()));
 			} else if (item instanceof NoMonitorInformationElement) {
                 return DebugUIMessages.JDIModelPresentation_5;
             } else {
@@ -744,7 +752,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
 				}
 			}
-			if (item instanceof IJavaStackFrame || item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
+			if (item instanceof IJavaStackFrame) {
+				return getStackFrameImage((IJavaStackFrame) item);
+			}
+			if (item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
 			}
 			if (item instanceof IJavaValue) {
@@ -945,6 +956,30 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	/**
+	 * Returns the image associated with the given {@link IJavaStackFrame}, decorated with overlays, if the stack frame is out of sync
+	 * ({@link IJavaStackFrame#isOutOfSynch()} or synchronized ({@link IJavaStackFrame#isSynchronized()}). The base image is acquired from the
+	 * {@link StackFramePresentationProvider}.
+	 */
+	private Image getStackFrameImage(IJavaStackFrame stackFrame) {
+		var image = getStackFrameProvider().getStackFrameImage(stackFrame);
+		if (image == null) {
+			image = DebugUITools.getDefaultImageDescriptor(stackFrame);
+		}
+
+		int flags = 0;
+		try {
+			if (stackFrame.isOutOfSynch()) {
+				flags = JDIImageDescriptor.IS_OUT_OF_SYNCH;
+			} else if (!stackFrame.isObsolete() && stackFrame.isSynchronized()) {
+				flags = JDIImageDescriptor.SYNCHRONIZED;
+			}
+		} catch (DebugException e) {
+			// no need to log errors - elements may no longer exist by the time we render them
+		}
+
+		return getDebugImage(image, flags);
+	}
+	/**
 	 * Returns the image associated with the given element or <code>null</code>
 	 * if none is defined.
 	 */
@@ -966,21 +1001,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	/**
-	 * Returns the adornment flags for the given element.
-	 * These flags are used to render appropriate overlay
-	 * icons for the element.
+	 * Returns the adornment flags for the given element. These flags are used to render appropriate overlay icons for the element. It only supports
+	 * {@link IJavaThread} and {@link IJavaDebugTarget}, for other types it always returns 0.
 	 */
 	private int computeJDIAdornmentFlags(Object element) {
 		try {
-			if (element instanceof IJavaStackFrame) {
-				IJavaStackFrame javaStackFrame = ((IJavaStackFrame)element);
-				if (javaStackFrame.isOutOfSynch()) {
-					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (!javaStackFrame.isObsolete() && javaStackFrame.isSynchronized()) {
-					return JDIImageDescriptor.SYNCHRONIZED;
-				}
-			}
 			if (element instanceof IJavaThread) {
 				int flag= 0;
 				IJavaThread javaThread = ((IJavaThread)element);
@@ -2065,6 +2090,16 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return fJavaLabelProvider;
 	}
 
+	/**
+	 * @return a {@link StackFramePresentationProvider} which responsible to classify stack frames into categories and could provide category specific
+	 *         visual representations.
+	 */
+	private StackFramePresentationProvider getStackFrameProvider() {
+		if (fStackFrameProvider == null) {
+			fStackFrameProvider = new StackFramePresentationProvider();
+		}
+		return fStackFrameProvider;
+	}
 	/**
 	 * Returns whether the given field variable has the same name as any variables
 	 */
