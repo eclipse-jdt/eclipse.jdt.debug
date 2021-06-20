@@ -801,6 +801,117 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		}
 	}
 
+	public void testBug572629_onThisExpression() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "equals";
+		final int frameNumber = 2;
+		final int bpLine = 37;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "payload";
+			int offset = part.getViewer().getDocument().get().indexOf("return this.payload") + "return this.".length();
+			IRegion region = new Region(offset, "payload".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("payload", info.getName());
+			assertEquals("p", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573223_onLocalVarChain_onArrayField() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "main";
+		final int frameNumber = 1;
+		final int bpLine = 64;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "names";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("local.names") + "local.".length();
+			IRegion region = new Region(offset, "names".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("local.names", info.getName());
+			assertTrue("Not an array variable", info.getValue() instanceof IJavaArray);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573223_onLocalVarChain_onArrayLength() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "main";
+		final int frameNumber = 1;
+		final int bpLine = 64;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("local.names.length") + "local.names.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("local.names.length", info.getName());
+			assertEquals("1", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 	private CompilationUnitEditor openEditorAndValidateStack(final String expectedMethod, final int expectedFramesNumber, IFile file, IJavaThread thread) throws Exception, DebugException {
 		// Let now all pending jobs proceed, ignore console jobs
 		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));

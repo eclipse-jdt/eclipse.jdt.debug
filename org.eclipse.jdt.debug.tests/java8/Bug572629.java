@@ -60,6 +60,8 @@ public class Bug572629 {
 		new Bug572629("p").equals(new Bug572629("r"));
 		new Bug572629("p").hoverOverLocal(new String[] {"name"});
 		new Bug572629("p").hoverOnThis();
+		Bug572629 local = new Bug572629("p");
+		System.out.println(local.names.length);
 	}
 
 	public static class Parent {
@@ -72,4 +74,5 @@ public class Bug572629 {
 		public String name = "name";
 	}
 	
+	public String[] names = new String[]{"foo"};
 }

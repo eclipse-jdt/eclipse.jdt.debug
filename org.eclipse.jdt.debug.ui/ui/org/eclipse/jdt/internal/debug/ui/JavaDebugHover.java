@@ -359,8 +359,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 								}
             		    	}
             		    } else {
-							if (!frame.isStatic() && !frame.isNative()) {
-            		    		// ensure that we only resolve a field access on 'this':
+							if ((!frame.isStatic() || isLocalOrMemberVariable(javaElement)) && !frame.isNative()) {
+								// we resolve chain elements which are either on "this" or local variables. In case of
+								// local variables we also consider static frames.
 								if (!(codeAssist instanceof ITypeRoot)) {
 									return null;
 								}
