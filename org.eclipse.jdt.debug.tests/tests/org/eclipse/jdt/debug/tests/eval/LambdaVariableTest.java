@@ -16,6 +16,7 @@ package org.eclipse.jdt.debug.tests.eval;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -165,6 +166,13 @@ public class LambdaVariableTest extends AbstractDebugTest {
 		assertEquals("wrong type : ", "java.util.HashMap", Signature.getTypeErasure(thisBasePackages.getReferenceTypeName()));
 		IValue thisBasePackagesSize = doEval(javaThread, "this.basePackages.size()");
 		assertEquals("wrong result : ", "0", thisBasePackagesSize.getValueString());
+	}
+
+	public void testEvaluate_Bug574395_onIntermediateFrame_InsideLambda() throws Exception {
+		debugWithBreakpoint("Bug574395", 26);
+
+		IValue value = doEval(javaThread, () -> (IJavaStackFrame) javaThread.getStackFrames()[1], "match(i, list)");
+		assertEquals("wrong result : ", "false", value.getValueString());
 	}
 
 	public void testEvaluate_Bug569413_NestedLambdaCapturedParameterAndNull() throws Exception {
