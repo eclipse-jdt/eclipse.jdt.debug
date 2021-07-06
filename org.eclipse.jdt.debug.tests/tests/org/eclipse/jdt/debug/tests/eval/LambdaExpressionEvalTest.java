@@ -84,6 +84,24 @@ public class LambdaExpressionEvalTest extends AbstractDebugTest {
 		}
 	}
 
+	public void testBug571310_EvalLambdaWithPublicMethodInvocation_ExpectSuccessfulEval() throws Exception {
+		debugWithBreakpoint("Bug571310", 12);
+		resume(javaThread);
+		IValue value = doEval(javaThread, "this.selfAppend(f) + \".00\"");
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not 22.00", "22.00", value.getValueString());
+	}
+
+	public void testBug571310_EvalLambdaWithPrivateMethodInvocation_ExpectSuccessfulEval() throws Exception {
+		debugWithBreakpoint("Bug571310", 13);
+		resume(javaThread);
+		IValue value = doEval(javaThread, "this.appendDollar(f) + \"0\"");
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not $22.00", "$22.00", value.getValueString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);
