@@ -14,11 +14,13 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
@@ -129,5 +131,16 @@ public interface IRuntimeContext {
 	 * @since 3.2
 	 */
 	public IJavaClassObject classForName(String name) throws CoreException;
+
+	/**
+	 * Returns the stack frame in which the evaluation is performed on.
+	 *
+	 * @return stack frame
+	 * @throws DebugException
+	 *             if unable to load the stack frame.
+	 */
+	default IJavaStackFrame getFrame() throws DebugException {
+		return (IJavaStackFrame) getThread().getTopStackFrame();
+	}
 
 }

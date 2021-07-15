@@ -495,6 +495,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug571230"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug572629"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug569413"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug573589"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug574395"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug571310"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
@@ -2886,6 +2889,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IValue doEval(IJavaThread thread, String snippet) throws Exception{
+		return this.doEval(thread, () -> (IJavaStackFrame) thread.getTopStackFrame(), snippet);
+	}
+
+	/**
+	 * Perform the actual evaluation (inspect)
+	 *
+	 * @param thread
+	 * @param frameSupplier
+	 *            The frame supplier which provides the frame for the evaluation
+	 * @return the result of the evaluation
+	 * @throws Exception
+	 */
+	protected IValue doEval(IJavaThread thread, StackFrameSupplier frameSupplier, String snippet) throws Exception {
 		class Listener implements IEvaluationListener {
 			IEvaluationResult fResult;
 
@@ -2899,7 +2915,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		Listener listener = new Listener();
-		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+		IJavaStackFrame frame = frameSupplier.get();
 		assertNotNull("There should be a stackframe", frame);
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
@@ -2973,5 +2989,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			markersInfo.append(marker);
 		}
 		return markersInfo.toString();
+	}
+
+	public interface StackFrameSupplier {
+		IJavaStackFrame get() throws Exception;
 	}
 }

@@ -8,15 +8,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="ui/org/eclipse/jdt/internal/debug/ui/actions/ToggleBreakpointAdapter.java" type="org.eclipse.jdt.internal.debug.ui.actions.ToggleBreakpointAdapter">
-        <filter comment="For Java 15" id="640712815">
-            <message_arguments>
-                <message_argument value="IType"/>
-                <message_argument value="ToggleBreakpointAdapter"/>
-                <message_argument value="isRecord()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="ui/org/eclipse/jdt/internal/debug/ui/classpath/ClasspathEntry.java" type="org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry">
         <filter comment="Known illegal implementation" id="574619656">
             <message_arguments>

@@ -85,7 +85,8 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	 * @param frame
 	 *            the stack frame context used to compile/run expressions
 	 */
-	protected IJavaStackFrame getFrame() {
+	@Override
+	public IJavaStackFrame getFrame() {
 		return fFrame;
 	}
 

@@ -114,13 +114,12 @@ public class FunctionalCaptureTest18 {
 
 		/* Capture methods */
 		assertFunctionalExpression(s -> Integer.valueOf(s, 16), "0B", 11);
-		/* But not yet directlt on the instance */
 		assertFunctionalExpression(obj -> obj.publicMethod() + 7, this, 12);
 		assertFunctionalExpression(obj -> this.publicMethod() + 8, this, 13);
 		assertFunctionalExpression(obj -> publicMethod() + 8, this, 13);
-		assertFunctionalExpression(obj -> obj.privateMethod() + 8, this, 14);/* SKIP */
-		assertFunctionalExpression(obj -> this.privateMethod() + 9, this, 15);/* SKIP */
-		assertFunctionalExpression(obj -> privateMethod() + 9, this, 15);/* SKIP */
+		assertFunctionalExpression(obj -> obj.privateMethod() + 8, this, 14);
+		assertFunctionalExpression(obj -> this.privateMethod() + 9, this, 15);
+		assertFunctionalExpression(obj -> privateMethod() + 9, this, 15);
 
 		/* Constructor references */
 		assertFunctionalExpression(String::new, new char[] { 'a','b','c' }, "abc");

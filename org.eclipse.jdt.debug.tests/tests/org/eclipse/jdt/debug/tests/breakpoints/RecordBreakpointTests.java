@@ -15,6 +15,7 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 public class RecordBreakpointTests extends AbstractDebugTest {
@@ -30,12 +31,26 @@ public class RecordBreakpointTests extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get16_Project();
 	}
+
 	public void testRecordClassBreakpoint() throws Exception {
 
 		try {
 			// create a classLoad breakpoint to test
 			IJavaClassPrepareBreakpoint classPrepareBreakpoint = createClassPrepareBreakpoint("a.b.c.RecordTests");
 			assertEquals("wrong type name", "a.b.c.RecordTests", classPrepareBreakpoint.getTypeName());
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testRecordLineBreakpoint() throws Exception {
+
+		try {
+			// create a classLoad breakpoint to test
+			IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(17, "a.b.c.RecordTests");
+			assertEquals("wrong type name", "a.b.c.RecordTests", lineBreakpoint.getTypeName());
 		} catch (Exception e) {
 			throw e;
 		} finally {

@@ -26,7 +26,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 
@@ -53,10 +52,9 @@ public class LambdaUtils {
 	 *             If accessing the top stack frame or the local variables on stack frames fails, due to failure to communicate with the debug target.
 	 */
 	public static IVariable findLambdaFrameVariable(IRuntimeContext context, String variableName) throws DebugException {
-		IJavaThread thread = context.getThread();
-		if (thread != null) {
-			IStackFrame topStackFrame = thread.getTopStackFrame();
-			List<IVariable> variables = getLambdaFrameVariables(topStackFrame);
+		IStackFrame stackFrame = context.getFrame();
+		if (stackFrame != null) {
+			List<IVariable> variables = getLambdaFrameVariables(stackFrame);
 			for (IVariable variable : variables) {
 				if (variable.getName().equals(variableName)) {
 					return variable;

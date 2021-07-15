@@ -12,7 +12,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package a.b.c;
-record R(int i, String s) {}
+record R(int i, String s) {
+	R( int i){
+		this(i, "hello");
+	}
+}
 
 public class RecordTests {
 
