@@ -912,6 +912,48 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		}
 	}
 
+	public void testBug574969_onChainHover_preserveEditorSelection() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug572629";
+		final String expectedMethod = "main";
+		final int frameNumber = 1;
+		final int bpLine = 64;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			sync(() -> part.selectAndReveal(part.getViewer().getDocument().get().lastIndexOf("local.names"), "local.names".length()));
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			int offset = part.getViewer().getDocument().get().lastIndexOf("local.names.length") + "local.names.".length();
+			IRegion region = new Region(offset, "length".length());
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("local.names.length", info.getName());
+			assertEquals("1", info.getValue().getValueString());
+
+			ITextSelection selection = sync(() -> {
+				processUiEvents(100);
+				return (ITextSelection) part.getSelectionProvider().getSelection();
+			});
+			assertEquals(selection.getText(), "local.names");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 	private CompilationUnitEditor openEditorAndValidateStack(final String expectedMethod, final int expectedFramesNumber, IFile file, IJavaThread thread) throws Exception, DebugException {
 		// Let now all pending jobs proceed, ignore console jobs
 		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
