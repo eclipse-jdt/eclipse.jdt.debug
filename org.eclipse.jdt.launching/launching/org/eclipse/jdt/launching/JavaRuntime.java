@@ -1663,41 +1663,59 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		if (isModularConfiguration(configuration)) {
-			IRuntimeClasspathEntry[] entries1 = getClasspathProvider(configuration).resolveClasspath(entries, configuration);
-			ArrayList<IRuntimeClasspathEntry> entries2 = new ArrayList<>(entries1.length);
+		if (!isModularConfiguration(configuration)) {
+			return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+		}
+		IRuntimeClasspathEntry[] entries1 = getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+		List<IRuntimeClasspathEntry> entries2 = new ArrayList<>(entries1.length);
+		IJavaProject project;
+		try {
+			project = JavaRuntime.getJavaProject(configuration);
+		} catch (CoreException e) {
+			project = null;
+		}
+		if (project == null) {
+			entries2.addAll(Arrays.asList(entries1));
+		} else {
+			// Add all entries except the one from JRE itself
+			IPackageFragmentRoot jreContainer = findJreContainer(project);
+			IPath canonicalJrePath = jreContainer != null ? JavaProject.canonicalizedPath(jreContainer.getPath()) : null;
+
 			for (IRuntimeClasspathEntry entry : entries1) {
 				switch (entry.getClasspathEntry().getEntryKind()) {
 					case IClasspathEntry.CPE_LIBRARY:
-						try {
-							IJavaProject project = JavaRuntime.getJavaProject(configuration);
-							if (project == null) {
-								entries2.add(entry);
-							}
-							else {
-								IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
-								if (root == null && !entry.getPath().lastSegment().contains("jrt-fs.jar")) { //$NON-NLS-1$
-									entries2.add(entry);
-								} else if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
-									entries2.add(entry);
-								}
-							}
-						}
-						catch (CoreException ex) {
-							// Not a java project
-							if (!entry.getPath().lastSegment().contains("jrt-fs.jar")) { //$NON-NLS-1$
-								entries2.add(entry);
-							}
+						if (!entry.getPath().lastSegment().contains("jrt-fs.jar") //$NON-NLS-1$
+								&& (canonicalJrePath == null || !canonicalJrePath.equals(JavaProject.canonicalizedPath(entry.getPath())))) {
+							entries2.add(entry);
 						}
 						break;
 					default:
 						entries2.add(entry);
-
 				}
 			}
-			return entries2.toArray(new IRuntimeClasspathEntry[entries2.size()]);
 		}
-		return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+		return entries2.toArray(new IRuntimeClasspathEntry[entries2.size()]);
+	}
+
+	/**
+	 * Find the {@link IPackageFragmentRoot} of the JRE container for the given project, if it exists.
+	 *
+	 * @param project
+	 *            Java project
+	 * @return the {@link IPackageFragmentRoot} for the JRE container or null if no JRE container is on the classpath
+	 * @throws JavaModelException
+	 */
+	private static IPackageFragmentRoot findJreContainer(IJavaProject project) throws JavaModelException {
+		IPackageFragmentRoot jreContainer = null;
+
+		IPackageFragmentRoot[] allPackageFragmentRoots = project.getAllPackageFragmentRoots();
+		for (IPackageFragmentRoot packageFragmentRoot : allPackageFragmentRoots) {
+			if (packageFragmentRoot.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
+				jreContainer = packageFragmentRoot;
+				break;
+			}
+		}
+		return jreContainer;
 	}
 
 	/**

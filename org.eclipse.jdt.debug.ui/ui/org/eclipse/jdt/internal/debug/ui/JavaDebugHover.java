@@ -566,7 +566,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 
 			public void run() throws DebugException {
 				IAstEvaluationEngine engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) frame.getDebugTarget());
-				engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION, false);
+				engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION_IMPLICIT, false);
 			}
 
 			public Optional<IEvaluationResult> getResult() {
