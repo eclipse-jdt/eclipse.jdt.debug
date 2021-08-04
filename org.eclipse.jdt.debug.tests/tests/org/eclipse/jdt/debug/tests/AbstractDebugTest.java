@@ -529,6 +529,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			if (!loaded9) {
 				jp = createProject(NINE_PROJECT_NAME, JavaProjectHelper.TEST_9_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_9_EE_NAME, false);
 				cfgs.add(createLaunchConfiguration(jp, "LogicalStructures"));
+				cfgs.add(createLaunchConfiguration(jp, "Bug575039"));
 				loaded9 = true;
 				waitForBuild();
 			}

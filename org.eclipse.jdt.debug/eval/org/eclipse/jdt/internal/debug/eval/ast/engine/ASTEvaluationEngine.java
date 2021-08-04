@@ -41,6 +41,7 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -62,6 +63,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
@@ -384,10 +386,16 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			// frame.getThis().getJavaType();
 			// }
 
+			Map<String, String> extraOptions = Collections.emptyMap();
+			// if target runtime is above java 1.8 then switch the compiler to debug mode to ignore java 9 module system
+			if (JavaCore.compareJavaVersions(((IJavaDebugTarget) frame.getDebugTarget()).getVersion(), JavaCore.VERSION_1_8) > 0) {
+				extraOptions = Collections.singletonMap(CompilerOptions.OPTION_JdtDebugCompileMode, JavaCore.ENABLED);
+			}
+
 			unit = parseCompilationUnit(
 					mapper.getSource(receivingType, frame.getLineNumber(), javaProject,
 							frame.isStatic()).toCharArray(),
-					mapper.getCompilationUnitName(), javaProject);
+					mapper.getCompilationUnitName(), javaProject, extraOptions);
 		} catch (CoreException e) {
 			InstructionSequence expression = new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
