@@ -80,37 +80,8 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_STEP_THRU_FILTERS = IJavaDebugUIConstants.PLUGIN_ID + ".step_thru_filters"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference indicating whether to colorize the stack frames in the debug view.
-	 *
-	 */
-	public static final String PREF_COLORIZE_STACK_FRAMES = IJavaDebugUIConstants.PLUGIN_ID + ".colorize_stack_frames"; //$NON-NLS-1$
-
-	/**
-	 * List of active filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
-	 * names/patterns.
-	 */
-	public static final String PREF_ACTIVE_CUSTOM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".active_custom_frames_filters"; //$NON-NLS-1$
-
-	/**
-	 * List of inactive filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
-	 * names/patterns.
-	 */
-	public static final String PREF_INACTIVE_CUSTOM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".inactive_custom_frames_filters"; //$NON-NLS-1$
-
-	/**
-	 * List of active filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
-	 * names/patterns.
-	 */
-	public static final String PREF_ACTIVE_PLATFORM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".active_platform_frames_filters"; //$NON-NLS-1$
-
-	/**
-	 * List of inactive filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
-	 * names/patterns.
-	 */
-	public static final String PREF_INACTIVE_PLATFORM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".inactive_platform_frames_filters"; //$NON-NLS-1$
-
-	/**
-	 * List of active step filters. A String containing a comma separated list of fully qualified type names/patterns.
+	 * List of active step filters. A String containing a comma
+	 * separated list of fully qualified type names/patterns.
 	 */
 	public static final String PREF_ACTIVE_FILTERS_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".active_filters"; //$NON-NLS-1$
 
@@ -243,24 +214,6 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT = IJavaDebugUIConstants.PLUGIN_ID + ".prompt_unable_to_install_breakpoint"; //$NON-NLS-1$
 
 	public static final String PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR= "org.eclipse.jdt.debug.ui.InDeadlockColor"; //$NON-NLS-1$
-
-	public static final String PREF_TEST_STACK_FRAME_FG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".TestStackFrameFgColor"; //$NON-NLS-1$
-	public static final String PREF_TEST_STACK_FRAME_BG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".TestStackFrameBgColor"; //$NON-NLS-1$
-
-	public static final String PREF_LIB_STACK_FRAME_FG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".LibraryStackFrameFgColor"; //$NON-NLS-1$
-	public static final String PREF_LIB_STACK_FRAME_BG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".LibraryStackFrameBgColor"; //$NON-NLS-1$
-
-	public static final String PREF_SYNT_STACK_FRAME_FG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".SyntheticStackFrameFgColor"; //$NON-NLS-1$
-	public static final String PREF_SYNT_STACK_FRAME_BG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".SyntheticStackFrameBgColor"; //$NON-NLS-1$
-
-	public static final String PREF_PLATFORM_STACK_FRAME_FG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".PlatformStackFrameFgColor"; //$NON-NLS-1$
-	public static final String PREF_PLATFORM_STACK_FRAME_BG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".PlatformStackFrameBgColor"; //$NON-NLS-1$
-
-	public static final String PREF_PRODUCTION_STACK_FRAME_FG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".ProductionStackFrameFgColor"; //$NON-NLS-1$
-	public static final String PREF_PRODUCTION_STACK_FRAME_BG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".ProductionStackFrameBgColor"; //$NON-NLS-1$
-
-	public static final String PREF_CUSTOM_FILTERED_STACK_FRAME_FG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".CustomFilteredStackFrameFgColor"; //$NON-NLS-1$
-	public static final String PREF_CUSTOM_FILTERED_STACK_FRAME_BG_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".CustomFilteredStackFrameBgColor"; //$NON-NLS-1$
 
 	/**
 	 * @since 3.2
