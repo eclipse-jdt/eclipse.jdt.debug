@@ -96,6 +96,7 @@ import org.eclipse.jdt.debug.tests.eval.ExpressionEvalTest;
 import org.eclipse.jdt.debug.tests.eval.GeneralEvalTests;
 import org.eclipse.jdt.debug.tests.eval.GenericsEval17Test;
 import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
+import org.eclipse.jdt.debug.tests.eval.Java9Tests;
 import org.eclipse.jdt.debug.tests.eval.LambdaVariableTest;
 import org.eclipse.jdt.debug.tests.eval.SyntheticVariableTests;
 import org.eclipse.jdt.debug.tests.launching.ClasspathShortenerTests;
@@ -339,6 +340,9 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(LambdaVariableTest.class));
 		}
 		//addTest(EvalTestSuite.suite());
+		if (JavaProjectHelper.isJava9Compatible()) {
+			addTest(new TestSuite(Java9Tests.class));
+		}
 
 		// long classpath tests
 		addTest(new TestSuite(ClasspathShortenerTests.class));

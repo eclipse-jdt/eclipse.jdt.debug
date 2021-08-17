@@ -1679,13 +1679,13 @@ public final class JavaRuntime {
 		} else {
 			// Add all entries except the one from JRE itself
 			IPackageFragmentRoot jreContainer = findJreContainer(project);
-			IPath canonicalJrePath = jreContainer != null ? JavaProject.canonicalizedPath(jreContainer.getPath()) : null;
+			IPath jrePath = jreContainer != null ? jreContainer.getPath() : null;
 
 			for (IRuntimeClasspathEntry entry : entries1) {
 				switch (entry.getClasspathEntry().getEntryKind()) {
 					case IClasspathEntry.CPE_LIBRARY:
 						if (!entry.getPath().lastSegment().contains("jrt-fs.jar") //$NON-NLS-1$
-								&& (canonicalJrePath == null || !canonicalJrePath.equals(JavaProject.canonicalizedPath(entry.getPath())))) {
+								&& (jrePath == null || !jrePath.equals(entry.getPath()))) {
 							entries2.add(entry);
 						}
 						break;

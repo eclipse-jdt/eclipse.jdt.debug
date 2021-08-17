@@ -19,11 +19,13 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -63,6 +65,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIThisVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
@@ -80,7 +83,8 @@ import org.eclipse.ui.IEditorPart;
 
 public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
 
-    private IEditorPart fEditor;
+	private static final String THIS = "this"; //$NON-NLS-1$
+	private IEditorPart fEditor;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
@@ -267,7 +271,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 			if (document != null) {
 			    try {
                     String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
-                    if (variableName.equals("this")) { //$NON-NLS-1$
+					if (variableName.equals(THIS)) {
                         try {
                             IJavaVariable variable = frame.findVariable(variableName);
                             if (variable != null) {
@@ -373,15 +377,15 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 								StructuralPropertyDescriptor locationInParent = node.getLocationInParent();
 								if (locationInParent == FieldAccess.NAME_PROPERTY) {
 									FieldAccess fieldAccess = (FieldAccess) node.getParent();
-									if (fieldAccess.getExpression() instanceof ThisExpression) {
-										variable = evaluateField(frame, field);
+									if (fieldAccess.getExpression() instanceof ThisExpression && !onArrayLength) {
+										variable = evaluateField(findFirstFrameForVariable(frame, forField(field)), field);
 									} else {
-										variable = evaluateQualifiedNode(fieldAccess, frame, typeRoot.getJavaProject());
+										variable = evaluateQualifiedNode(fieldAccess, frame, typeRoot.getJavaProject(), forField(field));
 									}
 								} else if (locationInParent == QualifiedName.NAME_PROPERTY) {
-									variable = evaluateQualifiedNode(node.getParent(), frame, typeRoot.getJavaProject());
+									variable = evaluateQualifiedNode(node.getParent(), frame, typeRoot.getJavaProject(), forField(field));
 								} else {
-									variable = evaluateField(frame, field);
+									variable = evaluateField(findFirstFrameForVariable(frame, forField(field)), field);
 								}
             		    	}
             		    }
@@ -391,6 +395,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             			break;
             		}
             		if (javaElement instanceof ILocalVariable) {
+						ILocalVariable var = (ILocalVariable) javaElement;
 						// if we are on a array, regardless where we are send it to evaluation engine
 						if (onArrayLength) {
 							if (!(codeAssist instanceof ITypeRoot)) {
@@ -401,10 +406,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 							if (node == null) {
 								return null;
 							}
-							return evaluateQualifiedNode(node.getParent(), frame, typeRoot.getJavaProject());
+							return evaluateQualifiedNode(node.getParent(), frame, typeRoot.getJavaProject(), forLocalVariable(var));
 						}
 
-            		    ILocalVariable var = (ILocalVariable)javaElement;
             		    IJavaElement parent = var.getParent();
 						while (!(parent instanceof IMethod) && !(parent instanceof IInitializer) && parent != null) {
             		    	parent = parent.getParent();
@@ -462,7 +466,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             				}
             				// find variable if equal or method is a Lambda Method
             				if (equal || method.isLambdaMethod()) {
-            					return findLocalVariable(frame, var.getElementName());
+								return findLocalVariable(findFirstFrameForVariable(frame, forLocalVariable(var)), var.getElementName());
             				}
             			}
             		    break;
@@ -530,7 +534,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		return null;
 	}
 
-	private IJavaVariable evaluateQualifiedNode(ASTNode node, IJavaStackFrame frame, IJavaProject project) {
+	private IJavaVariable evaluateQualifiedNode(ASTNode node, IJavaStackFrame frame, IJavaProject project, Predicate<IJavaStackFrame> framePredicate) {
 		StringBuilder snippetBuilder = new StringBuilder();
 		if (node instanceof QualifiedName) {
 			snippetBuilder.append(((QualifiedName) node).getFullyQualifiedName());
@@ -545,7 +549,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 
 				@Override
 				public boolean visit(ThisExpression node) {
-					segments.add("this"); //$NON-NLS-1$
+					segments.add(THIS);
 					return true;
 				}
 
@@ -556,6 +560,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		}
 
 		final String snippet = snippetBuilder.toString();
+
 		class Evaluator implements IEvaluationListener {
 			private CompletableFuture<IEvaluationResult> result = new CompletableFuture<>();
 
@@ -566,7 +571,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 
 			public void run() throws DebugException {
 				IAstEvaluationEngine engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) frame.getDebugTarget());
-				engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION_IMPLICIT, false);
+				engine.evaluate(snippet, findFirstFrameForVariable(frame, framePredicate), this, DebugEvent.EVALUATION_IMPLICIT, false);
 			}
 
 			public Optional<IEvaluationResult> getResult() {
@@ -593,4 +598,64 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new ExpressionInformationControlCreator();
 	}
+
+	private static IJavaStackFrame findFirstFrameForVariable(IJavaStackFrame currentFrame, Predicate<IJavaStackFrame> framePredicate) throws DebugException {
+		// check the current frame first
+		if (framePredicate.test(currentFrame)) {
+			return currentFrame;
+		}
+
+		for (IStackFrame stackFrame : currentFrame.getThread().getStackFrames()) {
+			IJavaStackFrame javaStackFrame = (IJavaStackFrame) stackFrame;
+			if (currentFrame != javaStackFrame && framePredicate.test(javaStackFrame)) {
+				return javaStackFrame;
+			}
+		}
+
+		// we couldn't find a frame, so return the current frame, this is highly unlikely we endup here.
+		return currentFrame;
+	}
+
+	private static boolean containsVariable(IStackFrame frame, String variableName) throws DebugException {
+		for (IVariable variable : frame.getVariables()) {
+			if (variable instanceof JDIThisVariable) {
+				for (IVariable fieldVar : variable.getValue().getVariables()) {
+					if (variableName.equals(fieldVar.getName())) {
+						return true;
+					}
+				}
+			} else if (variableName.equals(variable.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// the following two predicates will make sure to find correct frame according the java element's enclosing parent.
+	private static Predicate<IJavaStackFrame> forLocalVariable(ILocalVariable variable) {
+		return frame -> {
+			try {
+				return variable.getDeclaringMember() != null && variable.getDeclaringMember().getElementName().equals(frame.getMethodName())
+						&& containsVariable(frame, variable.getElementName());
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e);
+				return false;
+			}
+		};
+
+	}
+
+	private static Predicate<IJavaStackFrame> forField(IField field) {
+		return frame -> {
+			try {
+				return frame.getThis() != null && frame.getThis().getJavaType().getName().equals(field.getDeclaringType().getFullyQualifiedName())
+						&& containsVariable(frame, field.getElementName());
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e);
+				return false;
+			}
+		};
+
+	}
+
 }

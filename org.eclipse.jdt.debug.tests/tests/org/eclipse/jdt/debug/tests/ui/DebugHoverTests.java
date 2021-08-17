@@ -25,6 +25,8 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
+import org.eclipse.debug.internal.ui.views.launch.LaunchView;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdi.internal.StringReferenceImpl;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -43,6 +45,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.test.OrderedTestSuite;
 
 import junit.framework.Test;
@@ -954,6 +958,434 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		}
 	}
 
+	public void testBug573547_insideLambda_onOuterScopeLocalVariableChain() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 34;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "payload";
+			int offset = part.getViewer().getDocument().get().indexOf("System.out.println(object.payload")
+					+ "System.out.println(object.".length();
+			IRegion region = new Region(offset, "payload".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("object.payload", info.getName());
+			assertEquals("p", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeMemberVariable() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 38;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "payloads";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("System.out.println(payloads") + "System.out.println(".length();
+			IRegion region = new Region(offset, "payloads".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("payloads", info.getName());
+			assertTrue("Not an array variable", info.getValue() instanceof IJavaArray);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeMemberVariable_withThis() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 37;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "payloads";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("System.out.println(this.payloads") + "System.out.println(this.".length();
+			IRegion region = new Region(offset, "payloads".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("payloads", info.getName());
+			assertTrue("Not an array variable", info.getValue() instanceof IJavaArray);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeStaticVariable() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 22;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "PAYLOADS";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("private static String[] PAYLOADS") + "private static String[] ".length();
+			IRegion region = new Region(offset, "payloads".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("PAYLOADS", info.getName());
+			assertTrue("Not an array variable", info.getValue() instanceof IJavaArray);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeMemberVariable_onLength() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 38;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("System.out.println(payloads.length")
+					+ "System.out.println(payloads.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("payloads.length", info.getName());
+			assertEquals("1", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeMemberVariable_withThis_onLength() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 37;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("System.out.println(this.payloads.length")
+					+ "System.out.println(this.payloads.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("this.payloads.length", info.getName());
+			assertEquals("1", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeLocalVariable_onLength() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 36;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "length";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("System.out.println(object.payloads.length")
+					+ "System.out.println(object.payloads.".length();
+			IRegion region = new Region(offset, "length".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("object.payloads.length", info.getName());
+			assertEquals("1", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_insideLambda_onOuterScopeVariable_whileOnPreviousFrame() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "lambda$0";
+		final int frameNumber = 6;
+		final int bpLine = 41;
+		final int hoverLine = 36;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+
+			selectFrame(thread.getStackFrames()[4]);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "object";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("/*Root*/System.out.println(object")
+					+ "/*Root*/System.out.println(".length();
+			IRegion region = new Region(offset, "object".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("object", info.getName());
+			assertEquals("Bug573547", info.getValue().getReferenceTypeName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_inNestedMethodInvocation_useCorrectFrameForSelectedVariable() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "nestedHover";
+		final int frameNumber = 3;
+		final int bpLine = 48;
+		final int hoverLine = 48;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "object";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("/*Nested1*/System.out.println(object")
+					+ "/*Nested1*/System.out.println(".length();
+			IRegion region = new Region(offset, "object".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals("object", info.getName());
+			assertEquals("1234", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_onVariableOutOfExecutionStack_expectNoHoverInfo() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "nestedHover";
+		final int frameNumber = 3;
+		final int bpLine = 48;
+		final int hoverLine = 60;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			String variableName = "object";
+			int offset = part.getViewer().getDocument().get().lastIndexOf("/*Nested2*/System.out.println(object")
+					+ "/*Nested2*/System.out.println(".length();
+			IRegion region = new Region(offset, "object".length());
+			String text = selectAndReveal(part, hoverLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNull(info);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testBug573547_inNestedMethodInvocation_inNestedClasses_useCorrectFrameForSelectedVariables() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "Bug573547";
+		final String expectedMethod = "nestedHover";
+		final int frameNumber = 4;
+		final int bpLine = 60;
+		final int hoverLineVar = 60;
+		final int hoverLineField = 56;
+
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+
+			// local variable
+			String variableNameVar = "object";
+			int offsetVar = part.getViewer().getDocument().get().lastIndexOf("/*Nested2*/System.out.println(object")
+					+ "/*Nested1*/System.out.println(".length();
+			IRegion regionVar = new Region(offsetVar, "object".length());
+			String textVar = selectAndReveal(part, hoverLineVar, regionVar);
+			assertEquals(variableNameVar, textVar);
+			IVariable infoVar = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), regionVar));
+
+			assertNotNull(infoVar);
+			assertEquals("object", infoVar.getName());
+			assertEquals("1234n", infoVar.getValue().getValueString());
+
+			// field
+			String variableNameField = "payload";
+			int offsetField = part.getViewer().getDocument().get().lastIndexOf("/*Nested2*/private String payload")
+					+ "/*Nested2*/private String ".length();
+			IRegion regionField = new Region(offsetField, "payload".length());
+			String textField = selectAndReveal(part, hoverLineField, regionField);
+			assertEquals(variableNameField, textField);
+			IVariable infoField = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), regionField));
+
+			assertNotNull(infoField);
+			assertEquals("payload", infoField.getName());
+			assertEquals("np", infoField.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 	private CompilationUnitEditor openEditorAndValidateStack(final String expectedMethod, final int expectedFramesNumber, IFile file, IJavaThread thread) throws Exception, DebugException {
 		// Let now all pending jobs proceed, ignore console jobs
 		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
@@ -1019,6 +1451,23 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		int actualLine = sync(() -> selection.getStartLine() + 1);
 		assertEquals(line, actualLine);
 		return sync(() -> selection.getText());
+	}
+
+	private void selectFrame(IStackFrame frame) throws Exception {
+		LaunchView debugView = sync(() -> (LaunchView) getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW));
+		assertNotNull("expected Debug View to be open", debugView);
+
+		TreeSelection selection = sync(() -> (TreeSelection) debugView.getViewer().getSelection());
+		TreePath path = selection.getPaths()[0];
+		TreePath newPath = path.getParentPath().createChildPath(frame);
+		TreeSelection newSelection = new TreeSelection(newPath);
+		sync(() -> debugView.getViewer().setSelection(newSelection, true));
+		processUiEvents(100);
+	}
+
+	@Override
+	protected boolean enableUIEventLoopProcessingInWaiter() {
+		return true;
 	}
 
 	public void testResolveIn2Lambdas() throws Exception {
