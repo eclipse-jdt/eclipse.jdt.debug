@@ -14,25 +14,21 @@
 package org.eclipse.jdt.internal.launching;
 
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -40,7 +36,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -81,17 +76,16 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * @return system property for the policy file
 	 */
 	public String getJavaPolicyFile(File workingDir) {
-			File file = new File(workingDir, "java.policy.applet");//$NON-NLS-1$
-			if (!file.exists()) {
-				// copy it to the working directory
-				File test = LaunchingPlugin.getFileInPlugin(new Path("java.policy.applet")); //$NON-NLS-1$
+		File file = new File(workingDir, "java.policy.applet");//$NON-NLS-1$
+		if (!file.exists()) {
+			// copy it to the working directory
+			File test = LaunchingPlugin.getFileInPlugin(new Path("java.policy.applet")); //$NON-NLS-1$
 			try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-					byte[] bytes = getFileByteContent(test);
-					outputStream.write(bytes);
-				} catch (IOException e) {
-					return "";//$NON-NLS-1$
+				Files.copy(test.toPath(), outputStream);
+			} catch (IOException e) {
+				return "";//$NON-NLS-1$
 			}
-			}
+		}
 		return "-Djava.security.policy=java.policy.applet";//$NON-NLS-1$
 	}
 
@@ -247,81 +241,6 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns the contents of the given file as a byte array.
-	 * @param file the file
-	 * @return the byte array form the file
-	 * @throws IOException if a problem occurred reading the file.
-	 */
-	protected static byte[] getFileByteContent(File file) throws IOException {
-		try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-			return getInputStreamAsByteArray(stream, (int) file.length());
-		}
-	}
-
-	/**
-	 * Returns the given input stream's contents as a byte array.
-	 * If a length is specified (ie. if length != -1), only length bytes
-	 * are returned. Otherwise all bytes in the stream are returned.
-	 * Note this doesn't close the stream.
-	 * @param stream the stream
-	 * @param length the length to read
-	 * @return the byte array from the stream
-	 * @throws IOException if a problem occurred reading the stream.
-	 */
-	protected static byte[] getInputStreamAsByteArray(InputStream stream, int length)
-		throws IOException {
-		byte[] contents;
-		if (length == -1) {
-			contents = new byte[0];
-			int contentsLength = 0;
-			int bytesRead = -1;
-			do {
-				int available = stream.available();
-
-				// resize contents if needed
-				if (contentsLength + available > contents.length) {
-					System.arraycopy(
-						contents,
-						0,
-						contents = new byte[contentsLength + available],
-						0,
-						contentsLength);
-				}
-
-				// read as many bytes as possible
-				bytesRead = stream.read(contents, contentsLength, available);
-
-				if (bytesRead > 0) {
-					// remember length of contents
-					contentsLength += bytesRead;
-				}
-			} while (bytesRead > 0);
-
-			// resize contents if necessary
-			if (contentsLength < contents.length) {
-				System.arraycopy(
-					contents,
-					0,
-					contents = new byte[contentsLength],
-					0,
-					contentsLength);
-			}
-		} else {
-			contents = new byte[length];
-			int len = 0;
-			int readSize = 0;
-			while ((readSize != -1) && (len != length)) {
-				// See PR 1FMS89U
-				// We record first the read size. In this case len is the actual read size.
-				len += readSize;
-				readSize = stream.read(contents, len, length - len);
-			}
-		}
-
-		return contents;
 	}
 
 	/* (non-Javadoc)

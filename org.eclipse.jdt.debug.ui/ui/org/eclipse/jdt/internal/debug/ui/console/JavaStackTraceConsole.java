@@ -16,12 +16,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -127,19 +125,9 @@ public class JavaStackTraceConsole extends TextConsole {
 	public void initializeDocument() {
         File file = new File(FILE_NAME);
         if (file.exists()) {
-			try (InputStream fin = new BufferedInputStream(new FileInputStream(file))) {
-                int fileLength = (int) file.length();
-                byte[] fileContent = new byte[fileLength];
-                int bufIndex = 0;
-				int read = 0;
-				while (bufIndex < fileContent.length) {
-					read = fin.read(fileContent, bufIndex, fileContent.length - bufIndex);
-					if (read < 0) {
-						break;
-					}
-					bufIndex += read;
-                }
-				getDocument().set(new String(fileContent, 0, bufIndex));
+			try {
+				byte[] fileContent = Files.readAllBytes(file.toPath());
+				getDocument().set(new String(fileContent));
             } catch (IOException e) {
 				getDocument().set(NLS.bind(ConsoleMessages.JavaStackTraceConsole_2, e.getMessage()));
             }
