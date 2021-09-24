@@ -17,7 +17,6 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -139,7 +138,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Collection of stack frames
 	 */
-	private List<IJavaStackFrame> fStackFrames;
+	private volatile List<IJavaStackFrame> fStackFrames;
 	/**
 	 * Underlying thread group, cached on first access.
 	 */
@@ -157,15 +156,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Currently pending step handler, <code>null</code> when not performing a
 	 * step.
 	 */
-	private StepHandler fStepHandler;
+	private volatile StepHandler fStepHandler;
 	/**
 	 * Whether running.
 	 */
-	private boolean fRunning;
+	private volatile boolean fRunning;
 	/**
 	 * Whether terminated.
 	 */
-	private boolean fTerminated;
+	private volatile boolean fTerminated;
 
 	/**
 	 * Whether this thread is a system thread.
@@ -180,50 +179,54 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	private boolean fIsDaemon;
 
 	/**
-	 * The collection of breakpoints that caused the last suspend, or an empty
-	 * collection if the thread is not suspended or was not suspended by any
+	 * Lock used to guard access to internal data that need to be updated in atomic manner
+	 */
+	private final Object breakpointAcessLock = new Object();
+
+	/**
+	 * The collection of breakpoints that caused the last suspend, or an empty collection if the thread is not suspended or was not suspended by any
 	 * breakpoint(s).
 	 */
-	private List<IBreakpoint> fCurrentBreakpoints = new ArrayList<>(2);
+	private final List<IBreakpoint> fCurrentBreakpoints = new Vector<>(2);
 	/**
 	 * Non-null when this thread is executing an evaluation runnable. An
 	 * evaluation may involve a series of method invocations.
 	 */
-	private IEvaluationRunnable fEvaluationRunnable;
+	private volatile IEvaluationRunnable fEvaluationRunnable;
 
 	/**
 	 * Whether this thread was manually suspended during an evaluation.
 	 */
-	private boolean fEvaluationInterrupted;
+	private volatile boolean fEvaluationInterrupted;
 
 	/**
 	 * <code>true</code> when there has been a request to suspend this thread
 	 * via {@link #suspend()}. Remains <code>true</code> until there is a
 	 * request to resume this thread via {@link #resume()}.
 	 */
-	private boolean fClientSuspendRequest;
+	private volatile boolean fClientSuspendRequest;
 
 	/**
 	 * Whether this thread is currently invoking a method. Nested method
 	 * invocations cannot be performed.
 	 */
-	private boolean fIsInvokingMethod;
+	private volatile boolean fIsInvokingMethod;
 
 	/**
 	 * Lock used to wait for method invocations to complete.
 	 */
-	private Object fInvocationLock = new Object();
+	private final Object fInvocationLock = new Object();
 
 	/**
 	 * Lock used to wait for evaluations to complete.
 	 */
-	private Object fEvaluationLock = new Object();
+	private final Object fEvaluationLock = new Object();
 
 	/**
 	 * Whether or not this thread is currently honoring breakpoints. This flag
 	 * allows breakpoints to be disabled during evaluations.
 	 */
-	private boolean fHonorBreakpoints = true;
+	private volatile boolean fHonorBreakpoints = true;
 
 	/**
 	 * Whether a suspend vote is currently in progress. While voting this thread
@@ -231,7 +234,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *
 	 * @since 3.5
 	 */
-	private boolean fSuspendVoteInProgress;
+	private volatile boolean fSuspendVoteInProgress;
 
 	/**
 	 * The kind of step that was originally requested. Zero or more 'secondary
@@ -239,11 +242,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * user-requested step, and this field tracks the type (step into, over,
 	 * return) of the original step.
 	 */
-	private int fOriginalStepKind;
+	private volatile int fOriginalStepKind;
+
 	/**
 	 * The JDI Location from which an original user-requested step began.
 	 */
-	private Location fOriginalStepLocation;
+	private volatile Location fOriginalStepLocation;
+
 	/**
 	 * The total stack depth at the time an original (user-requested) step is
 	 * initiated. This is used along with the original step Location to
@@ -251,68 +256,68 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * be 'nudged' forward. Checking the stack depth eliminates undesired
 	 * 'nudging' in recursive methods.
 	 */
-	private int fOriginalStepStackDepth;
+	private volatile int fOriginalStepStackDepth;
 
 	/**
 	 * Whether or not this thread is currently suspending (user-requested).
 	 */
-	private boolean fIsSuspending;
+	private volatile boolean fIsSuspending;
 
-	private ThreadJob fAsyncJob;
+	private final ThreadJob fAsyncJob;
 
-	private ThreadJob fRunningAsyncJob;
+	private volatile boolean fRunningAsyncJob;
 
 	/**
 	 * The current MethodExitRequest if a step-return or step-over is in progress.
 	 */
-	private MethodExitRequest fCurrentMethodExitRequest;
+	private volatile MethodExitRequest fCurrentMethodExitRequest;
 
-	private Thread fCurrentMethodExitRequestDisabler;
+	private volatile Thread fCurrentMethodExitRequestDisabler;
 
 	/**
 	 * The current ExceptionRequest if a step-return or step-over is in progress.
 	 */
-	private ExceptionRequest fCurrentExceptionRequest;
+	private volatile ExceptionRequest fCurrentExceptionRequest;
 
 	/**
 	 * The current MethodEntryRequest if a step-over is in progress.
 	 */
-	private MethodEntryRequest fCurrentMethodEntryRequest;
+	private volatile MethodEntryRequest fCurrentMethodEntryRequest;
 
 	/**
 	 * Method for which a result value is expected
 	 */
-	private Method fStepResultMethod;
+	private volatile Method fStepResultMethod;
 
 	/**
 	 * The location if a step-over is in progress.
 	 */
-	private Location fStepOverLocation;
+	private volatile Location fStepOverLocation;
 
 	/**
 	 * The depth if a step-over is in progress.
 	 */
-	private int fStepOverFrameCount;
+	private volatile int fStepOverFrameCount;
 
 	/**
 	 * Candidate for depth of stack that will be returned values belong to. Is copied to fStepReturnTargetDepth only when step-return is actually
 	 * observed
 	 */
-	private int fStepReturnTargetFrameCount;
+	private volatile int fStepReturnTargetFrameCount;
 
-	private MethodResult fStepResultCandidate;
+	private volatile MethodResult fStepResultCandidate;
 
-	private AtomicBoolean fStepResultTimeoutTriggered = new AtomicBoolean();
+	private final AtomicBoolean fStepResultTimeoutTriggered = new AtomicBoolean();
 
 	/**
 	 * Result of the last step step-over or step-return operation or method exit breakpoint of exception break point
 	 */
-	private MethodResult fMethodResult;
+	private volatile MethodResult fMethodResult;
 
 	/**
 	 * If previous suspend was on an exception breakpoint, this variable holds that Java exception instance, else {@code null}.
 	 */
-	private IJavaObject fPreviousException;
+	private volatile IJavaObject fPreviousException;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -330,6 +335,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			throws ObjectCollectedException {
 		super(target);
 		setUnderlyingThread(thread);
+		fAsyncJob = new ThreadJob();
 		initialize();
 	}
 
@@ -347,7 +353,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *                initialized
 	 */
 	protected void initialize() throws ObjectCollectedException {
-		fStackFrames = new ArrayList<>();
+		fStackFrames = new Vector<>();
 		// system thread
 		try {
 			determineIfSystemThread();
@@ -432,7 +438,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *            the breakpoint to add to the listing
 	 */
 	protected void addCurrentBreakpoint(IBreakpoint bp) {
-		fCurrentBreakpoints.add(bp);
+		synchronized (breakpointAcessLock) {
+			fCurrentBreakpoints.add(bp);
+		}
 	}
 
 	/**
@@ -444,13 +452,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *            the breakpoint to remove from the listing
 	 */
 	protected void removeCurrentBreakpoint(IBreakpoint bp) {
-		fCurrentBreakpoints.remove(bp);
+		synchronized (breakpointAcessLock) {
+			fCurrentBreakpoints.remove(bp);
+		}
 	}
 
 	@Override
-	public synchronized IBreakpoint[] getBreakpoints() {
-		return fCurrentBreakpoints
-				.toArray(new IBreakpoint[fCurrentBreakpoints.size()]);
+	public IBreakpoint[] getBreakpoints() {
+		synchronized (breakpointAcessLock) {
+			return fCurrentBreakpoints.toArray(new IBreakpoint[fCurrentBreakpoints.size()]);
+		}
 	}
 
 	@Override
@@ -827,8 +838,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				fireSuspendEvent(evaluationDetail);
 			}
 			if (fEvaluationInterrupted
-					&& (fAsyncJob == null || fAsyncJob.isEmpty())
-					&& (fRunningAsyncJob == null || fRunningAsyncJob.isEmpty())) {
+					&& fAsyncJob.isEmpty() && fRunningAsyncJob == false) {
 				// @see bug 31585:
 				// When an evaluation was interrupted & resumed, the launch view
 				// does
@@ -864,9 +874,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	@Override
 	public void queueRunnable(Runnable evaluation) {
-		if (fAsyncJob == null) {
-			fAsyncJob = new ThreadJob(this);
-		}
 		fAsyncJob.addRunnable(evaluation);
 	}
 
@@ -1460,7 +1467,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			JavaExceptionBreakpoint exceptionBreakpoint = (JavaExceptionBreakpoint) breakpoint;
 			try {
 				IJavaObject lastException = exceptionBreakpoint.getLastException();
-				if (fPreviousException != null && fPreviousException.equals(lastException)) {
+				IJavaObject previousException = fPreviousException;
+				if (previousException != null && previousException.equals(lastException)) {
 					return exceptionBreakpoint.getSuspendOnRecurrenceStrategy();
 				}
 				fPreviousException = lastException;
@@ -1660,7 +1668,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected void setRunning(boolean running) {
 		fRunning = running;
 		if (running) {
-			fCurrentBreakpoints.clear();
+			synchronized (breakpointAcessLock) {
+				fCurrentBreakpoints.clear();
+			}
 		}
 	}
 
@@ -1955,7 +1965,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 							IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							SUSPEND_TIMEOUT,
-							MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, Integer.valueOf(timeout).toString()),
+							MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, timeout),
 							null);
 					IStatusHandler handler = DebugPlugin.getDefault()
 							.getStatusHandler(status);
@@ -3387,15 +3397,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Class which managed the queue of runnable associated with this thread.
 	 */
-	static class ThreadJob extends Job {
+	class ThreadJob extends Job {
 
-		private Vector<Runnable> fRunnables;
+		private final Vector<Runnable> fRunnables;
 
-		private JDIThread fJDIThread;
-
-		public ThreadJob(JDIThread thread) {
+		public ThreadJob() {
 			super(JDIDebugModelMessages.JDIThread_39);
-			fJDIThread = thread;
 			fRunnables = new Vector<>(5);
 			setSystem(true);
 		}
@@ -3413,7 +3420,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
-			fJDIThread.fRunningAsyncJob = this;
+			fRunningAsyncJob = true;
 			Object[] runnables;
 			synchronized (fRunnables) {
 				runnables = fRunnables.toArray();
@@ -3421,9 +3428,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 
 			MultiStatus failed = null;
-			monitor.beginTask(this.getName(), runnables.length);
+			monitor.beginTask(JDIDebugModelMessages.JDIThread_39, runnables.length);
 			int i = 0;
-			while (i < runnables.length && !fJDIThread.isTerminated()
+			while (i < runnables.length && !isTerminated()
 					&& !monitor.isCanceled()) {
 				try {
 					((Runnable) runnables[i]).run();
@@ -3441,7 +3448,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				i++;
 				monitor.worked(1);
 			}
-			fJDIThread.fRunningAsyncJob = null;
+			fRunningAsyncJob = false;
 			monitor.done();
 			if (failed == null) {
 				return Status.OK_STATUS;
@@ -3451,9 +3458,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		@Override
 		public boolean shouldRun() {
-			return !fJDIThread.isTerminated() && !fRunnables.isEmpty();
+			return !isTerminated() && !fRunnables.isEmpty();
 		}
 
+		@Override
+		public boolean belongsTo(Object family) {
+			return JDIThread.class == family || JDIThread.this == family;
+		}
 	}
 
 	@Override
@@ -3562,7 +3573,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *
 	 * @return whether a suspend vote is currently in progress
 	 */
-	public synchronized boolean isSuspendVoteInProgress() {
+	public boolean isSuspendVoteInProgress() {
 		return fSuspendVoteInProgress;
 	}
 
