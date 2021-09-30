@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIPrimitiveValue;
 
 public class AssignmentOperator extends CompoundInstruction {
 
@@ -35,7 +36,40 @@ public class AssignmentOperator extends CompoundInstruction {
 	@Override
 	public void execute() throws CoreException {
 		IJavaValue value = popValue();
-		IJavaVariable variable = (IJavaVariable) pop();
+		Object val = pop();
+		IJavaVariable variable = null;
+		if (val instanceof IJavaVariable) {
+			variable = (IJavaVariable) val;
+		} else if (val instanceof JDIPrimitiveValue) {
+			JDIPrimitiveValue jdiPrimitiveValue = (JDIPrimitiveValue) val;
+			switch (fVariableTypeId) {
+				case T_boolean:
+					push(newValue(jdiPrimitiveValue.getBooleanValue()));
+					break;
+				case T_byte:
+					push(newValue(jdiPrimitiveValue.getByteValue()));
+					break;
+				case T_short:
+					push(newValue(jdiPrimitiveValue.getShortValue()));
+					break;
+				case T_char:
+					push(newValue(jdiPrimitiveValue.getCharValue()));
+					break;
+				case T_int:
+					push(newValue(jdiPrimitiveValue.getIntValue()));
+					break;
+				case T_long:
+					push(newValue(jdiPrimitiveValue.getLongValue()));
+					break;
+				case T_float:
+					push(newValue(jdiPrimitiveValue.getFloatValue()));
+					break;
+				case T_double:
+					push(newValue(jdiPrimitiveValue.getDoubleValue()));
+					break;
+			}
+			return;
+		}
 
 		if (value instanceof IJavaPrimitiveValue) {
 			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
