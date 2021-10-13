@@ -223,13 +223,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaVariable) {
 				return getVariableText((IJavaVariable) item);
 			} else if (item instanceof IStackFrame) {
-				StringBuilder label= new StringBuilder(getStackFrameText((IStackFrame) item));
-				if (item instanceof IJavaStackFrame) {
-					if (((IJavaStackFrame)item).isOutOfSynch()) {
-						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1);
-					}
-				}
-				return label.toString();
+				return getStackFrameText((IStackFrame) item);
 			} else if (item instanceof IMarker) {
 				IBreakpoint breakpoint = getBreakpoint((IMarker)item);
 				if (breakpoint != null) {
@@ -482,6 +476,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		boolean isObject= isObjectValue(signature);
 		boolean isArray= value instanceof IJavaArray;
 		StringBuilder buffer= new StringBuilder();
+		if (value instanceof IJavaObject) {
+			String label = ((IJavaObject) value).getLabel();
+			if (label != null) {
+				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_7, new String[] { label }));
+			}
+		}
 		if(isUnknown(signature)) {
 			buffer.append(signature);
 		} else if (isObject && !isString && (refTypeName.length() > 0)) {
@@ -1937,6 +1937,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				label.append(' ');
 				label.append(DebugUIMessages.JDIModelPresentation_local_variables_unavailable);
 			}
+			if (frame.isOutOfSynch()) {
+				label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1);
+			}
 
 			return label.toString();
 
@@ -2116,7 +2119,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	@Override
 	public Color getForeground(Object element) {
-		if (element instanceof JavaContendedMonitor && ((JavaContendedMonitor)element).getMonitor().isInDeadlock()) {
+		if (element instanceof IJavaVariable) {
+			try {
+				var variable = ((IJavaVariable) element).getValue();
+				if (variable instanceof IJavaObject) {
+					var label = ((IJavaObject) variable).getLabel();
+					if (label != null) {
+						return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_LABELED_OBJECT_COLOR);
+					}
+				}
+			} catch (DebugException e) {
+			}
+		}
+		if (element instanceof JavaContendedMonitor && ((JavaContendedMonitor) element).getMonitor().isInDeadlock()) {
 			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		if (element instanceof JavaOwnedMonitor && ((JavaOwnedMonitor)element).getMonitor().isInDeadlock()) {

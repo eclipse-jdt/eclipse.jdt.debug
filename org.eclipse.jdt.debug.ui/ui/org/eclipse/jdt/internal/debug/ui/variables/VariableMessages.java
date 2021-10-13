@@ -32,5 +32,6 @@ public class VariableMessages extends NLS {
 
 	public static String JavaVariableColumnPresentation_0;
 	public static String JavaVariableColumnPresentation_1;
+	public static String JavaVariableColumnPresentation_2;
 
 }

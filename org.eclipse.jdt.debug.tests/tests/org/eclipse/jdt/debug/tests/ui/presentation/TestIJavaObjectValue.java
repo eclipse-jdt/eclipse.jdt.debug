@@ -25,6 +25,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  */
 public class TestIJavaObjectValue extends TestIJavaValue implements IJavaObject {
 
+	private String label;
+
 	/**
 	 * Constructor
 	 * @param type
@@ -114,5 +116,15 @@ public class TestIJavaObjectValue extends TestIJavaValue implements IJavaObject 
 	@Override
 	public long getUniqueId() throws DebugException {
 		return 9999;
+	}
+
+	@Override
+	public String getLabel() throws DebugException {
+		return label;
+	}
+
+	@Override
+	public void setLabel(String newLabel) throws DebugException {
+		this.label = newLabel;
 	}
 }

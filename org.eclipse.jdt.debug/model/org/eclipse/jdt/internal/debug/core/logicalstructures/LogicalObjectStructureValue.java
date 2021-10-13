@@ -297,4 +297,14 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public boolean isNull() {
 		return false;
 	}
+
+	@Override
+	public String getLabel() throws DebugException {
+		return fObject.getLabel();
+	}
+
+	@Override
+	public void setLabel(String newLabel) throws DebugException {
+		fObject.setLabel(newLabel);
+	}
 }

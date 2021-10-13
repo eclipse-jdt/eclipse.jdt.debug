@@ -358,6 +358,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation_4;
 	public static String JDIModelPresentation_5;
 	public static String JDIModelPresentation_6;
+	public static String JDIModelPresentation_7;
 	public static String NoLineNumberAttributesStatusHandler_3;
 	public static String EditLogicalStructureDialog_0;
 	public static String EditLogicalStructureDialog_1;

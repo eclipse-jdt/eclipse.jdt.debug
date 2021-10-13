@@ -36,6 +36,11 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	public final static String COLUMN_INSTANCE_COUNT = JAVA_VARIABLE_COLUMN_PRESENTATION + ".COL_INSTANCE_COUNT"; //$NON-NLS-1$
 
 	/**
+	 * Object label column identifier
+	 */
+	public final static String COLUMN_LABEL = JAVA_VARIABLE_COLUMN_PRESENTATION + ".COL_LABEL"; //$NON-NLS-1$
+
+	/**
 	 * Column ids
 	 */
 	private static String[] fgAllColumns = null;
@@ -47,10 +52,11 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	public String[] getAvailableColumns() {
 		if (fgAllColumns == null) {
 			String[] basic = super.getAvailableColumns();
-			fgAllColumns = new String[basic.length + 2];
+			fgAllColumns = new String[basic.length + 3];
 			System.arraycopy(basic, 0, fgAllColumns, 0, basic.length);
 			fgAllColumns[basic.length] = COLUMN_INSTANCE_ID;
 			fgAllColumns[basic.length+1] = COLUMN_INSTANCE_COUNT;
+			fgAllColumns[basic.length + 2] = COLUMN_LABEL;
 		}
 		return fgAllColumns;
 	}
@@ -65,6 +71,9 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 		}
 		if (COLUMN_INSTANCE_COUNT.equals(id)) {
 			return VariableMessages.JavaVariableColumnPresentation_1;
+		}
+		if (COLUMN_LABEL.equals(id)) {
+			return VariableMessages.JavaVariableColumnPresentation_2;
 		}
 		return super.getHeader(id);
 	}

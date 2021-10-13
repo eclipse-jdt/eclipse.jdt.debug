@@ -215,6 +215,7 @@ public interface IJDIPreferencesConstants {
 
 	public static final String PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR= "org.eclipse.jdt.debug.ui.InDeadlockColor"; //$NON-NLS-1$
 
+	public static final String PREF_LABELED_OBJECT_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".LabeledObject"; //$NON-NLS-1$
 	/**
 	 * @since 3.2
 	 */

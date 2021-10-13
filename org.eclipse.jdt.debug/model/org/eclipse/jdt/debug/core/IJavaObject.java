@@ -236,4 +236,23 @@ public interface IJavaObject extends IJavaValue {
 	 */
 	public long getUniqueId() throws DebugException;
 
+	/**
+	 * Returns the user assigned label for this object.
+	 *
+	 * @since 3.19
+	 * @throws DebugException
+	 *             if the request fails
+	 * @return the label, or <code>null</code> if there isn't any.
+	 */
+	public String getLabel() throws DebugException;
+
+	/**
+	 * Sets the label for this object. If the newLabel is <code>null</code> or empty string, then it removes the previous assignment.
+	 *
+	 * @since 3.19
+	 * @throws DebugException
+	 *             if the request fails
+	 */
+	void setLabel(String newLabel) throws DebugException;
+
 }

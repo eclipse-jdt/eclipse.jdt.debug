@@ -909,6 +909,15 @@
                </objectState>
             </not>
          </visibility>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.SetObjectLabelAction"
+               enablesFor="1"
+               helpContextId="set_object_label_action_context"
+               id="org.eclipse.jdt.debug.ui.actions.SetObjectLabel"
+               label="%setObjectLabel.label"
+               menubarPath="emptyNavigationGroup"
+               tooltip="%setObjectLabel.tooltip">
+         </action>
       </objectContribution>
       <viewerContribution
             targetID="#JavaSnippetEditorContext"
@@ -3482,6 +3491,14 @@ M4 = Platform-specific fourth key
           label="%InDeadlockColorDefinition.label"
           value="COLOR_RED">
        <description>%InDeadlockColorDefinition.description</description>
+    </colorDefinition>
+    <colorDefinition
+          categoryId="org.eclipse.debug.ui.presentation"
+          id="org.eclipse.jdt.debug.ui.LabeledObject"
+          isEditable="true"
+          label="%LabeledObjectColorDefinition.label"
+          value="COLOR_RED">
+       <description>%LabeledObjectColorDefinition.description</description>
     </colorDefinition>
  </extension>
  <extension

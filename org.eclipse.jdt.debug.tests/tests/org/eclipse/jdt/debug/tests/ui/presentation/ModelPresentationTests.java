@@ -121,6 +121,26 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	}
 
 	/**
+	 * Tests getting the value text for a simple String type with a label
+	 *
+	 * @throws Exception
+	 */
+	public void testResolvedStringValueTextWithLabel() throws Exception {
+		var pres = new JDIModelPresentation();
+		try {
+			var sig = Signature.createTypeSignature("java.lang.String", true);
+			var type = new TestIJavaType("foobar", sig);
+			var value = new TestIJavaObjectValue(type, sig, null, "org.test.MyClass", "test Java value");
+			value.setLabel("myLabel");
+			var valTxt = pres.getValueText(value);
+			assertNotNull("the value should have been computed", valTxt);
+			assertEquals("The value text should be '\"(myLabel) MyClass test Java value\"'", "(myLabel) MyClass test Java value", valTxt);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	/**
 	 * Tests a simple array value text
 	 *
 	 * @throws Exception

@@ -540,6 +540,18 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		}
 	}
 
+	@Override
+	public String getLabel() throws DebugException {
+		JDIDebugTarget debugTarget = getJavaDebugTarget();
+		return debugTarget.getObjectLabel(this);
+	}
+
+	@Override
+	public void setLabel(String newLabel) throws DebugException {
+		JDIDebugTarget debugTarget = getJavaDebugTarget();
+		debugTarget.setObjectLabel(this, newLabel);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

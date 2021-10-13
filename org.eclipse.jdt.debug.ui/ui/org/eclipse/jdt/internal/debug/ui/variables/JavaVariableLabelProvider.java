@@ -46,6 +46,8 @@ import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
 
 /**
  * Base implementation of a label provider for Java variables
@@ -101,6 +103,23 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			}
 		} catch (DebugException e) {}
 		return typeName;
+	}
+
+	@Override
+	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		var result = super.getFontData(elementPath, presentationContext, columnId);
+		if (result == null) {
+			return result;
+		}
+		var element = elementPath.getLastSegment();
+		if (element instanceof IJavaVariable) {
+			var variable = (IJavaVariable) element;
+			var value = variable.getValue();
+			if (value instanceof IJavaObject && ((IJavaObject) value).getLabel() != null) {
+				return new FontData(result.getName(), result.getHeight(), result.getStyle() ^ SWT.BOLD);
+			}
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -168,6 +187,15 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 						buffer.append(count);
 						return buffer.toString();
 					}
+				}
+			}
+			return ""; //$NON-NLS-1$
+		}
+		if (JavaVariableColumnPresentation.COLUMN_LABEL.equals(columnId)) {
+			if (value instanceof IJavaObject) {
+				String label = ((IJavaObject) value).getLabel();
+				if (label != null) {
+					return label;
 				}
 			}
 			return ""; //$NON-NLS-1$

@@ -82,6 +82,7 @@ import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -327,6 +328,11 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Java types from breakpoints with the flag if they are in scope for current launch
 	 */
 	private Map<String, Boolean> fKnownTypes = new HashMap<>();
+
+	/**
+	 * Labels given by the user is stored in this map, where the key is the unique ID of the object.
+	 */
+	private Map<Long, String> objectLabels = new HashMap<>();
 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -895,6 +901,20 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		ThreadNameChangeHandler nameChangeHandler = getThreadNameChangeHandler();
 		if (nameChangeHandler != null) {
 			nameChangeHandler.deleteRequest();
+		}
+	}
+
+	public String getObjectLabel(IJavaObject javaObject) throws DebugException {
+		long id = javaObject.getUniqueId();
+		return objectLabels.get(id);
+	}
+
+	public void setObjectLabel(IJavaObject javaObject, String label) throws DebugException {
+		long id = javaObject.getUniqueId();
+		if (label == null || label.isBlank()) {
+			objectLabels.remove(id);
+		} else {
+			objectLabels.put(id, label);
 		}
 	}
 
