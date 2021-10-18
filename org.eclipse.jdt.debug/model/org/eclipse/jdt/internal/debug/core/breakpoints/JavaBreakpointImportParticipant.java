@@ -294,6 +294,9 @@ public class JavaBreakpointImportParticipant implements
 		 */
 		@Override
 		public boolean visit(MethodDeclaration node) {
+			if (fTypeNameStack.isEmpty()) {
+				return false;
+			}
 			SimpleName name = node.getName();
 			String typename = fTypeNameStack.peek();
 			if (!fTypename.equals(typename) && !fTypename.startsWith(typename)) {
@@ -550,7 +553,7 @@ public class JavaBreakpointImportParticipant implements
 			if (unit == null) {
 				ICompilationUnit cunit = JavaCore.createCompilationUnitFrom((IFile) resource);
 				if (cunit != null) {
-					ASTParser parser = ASTParser.newParser(AST.JLS4);
+					ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 					parser.setSource(cunit);
 					parser.setResolveBindings(true);
 					unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
