@@ -182,6 +182,9 @@ public class EvaluationSourceGenerator {
 		int token;
 		try {
 			token = scanner.getNextToken();
+			if (token == ITerminalSymbols.TokenNameEOF) {
+				return false;
+			}
 			int count = 0;
 			while (token != ITerminalSymbols.TokenNameEOF) {
 				if (count == 0 && (token == ITerminalSymbols.TokenNameIdentifier || token == ITerminalSymbols.TokenNameint || token == ITerminalSymbols.TokenNamefloat ||
