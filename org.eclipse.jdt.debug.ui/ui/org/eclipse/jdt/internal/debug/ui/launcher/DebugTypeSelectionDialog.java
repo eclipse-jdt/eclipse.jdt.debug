@@ -65,8 +65,15 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 					ImageDescriptor descriptor = adapter.getImageDescriptor(element);
 					Image image = fImageMap.get(descriptor);
 					if(image == null) {
-						image = descriptor.createImage();
-						fImageMap.put(descriptor, image);
+						boolean returnMissingImageOnError = false;
+						image = descriptor.createImage(returnMissingImageOnError);
+						if (image != null) {
+							fImageMap.put(descriptor, image);
+						} else {
+							// don't put shared image to map, to not dispose it later
+							returnMissingImageOnError = true;
+							image = descriptor.createImage(returnMissingImageOnError);
+						}
 					}
 					return image;
 				}
@@ -120,6 +127,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 
 		@Override
 		public void dispose() {
+			fImageMap.values().forEach(Image::dispose);
 			fImageMap.clear();
 			fImageMap = null;
 		}
