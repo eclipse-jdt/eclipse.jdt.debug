@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -176,6 +177,31 @@ public class JDTDebugRefactoringUtil {
 	}
 
 	/**
+	 * Provides a public mechanism for creating the <code>Change</code> for renaming a module
+	 *
+	 * @param module
+	 *            the module to rename
+	 * @param newname
+	 *            the new name for the module
+	 * @return the Change for the module rename
+	 * @throws CoreException
+	 */
+	public static Change createChangesForModuleRename(IModuleDescription module, String newname) throws CoreException {
+		List<Change> changes = new ArrayList<>();
+		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurationsForModule(module.getElementName());
+		LaunchConfigurationProjectMainTypeChange change = null;
+		for (int i = 0; i < configs.length; i++) {
+			change = new LaunchConfigurationProjectMainTypeChange(configs[i], null, newname);
+			String newcname = computeNewContainerName(configs[i]);
+			if (newcname != null) {
+				change.setNewContainerName(newcname);
+			}
+			changes.add(change);
+		}
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7);
+	}
+
+	/**
 	 * Creates a <code>Change</code> for a type change
 	 * @param type the type that is changing
 	 * @param newfqname the new fully qualified name
@@ -275,6 +301,33 @@ public class JDTDebugRefactoringUtil {
 			return list.toArray(new ILaunchConfiguration[list.size()]);
 		}
 		catch(CoreException e) {JDIDebugPlugin.log(e);}
+		return new ILaunchConfiguration[0];
+	}
+
+	/**
+	 * Returns a listing of configurations that have a specific module name attribute in them
+	 *
+	 * @param pname
+	 *            the module attribute to compare against
+	 * @return the list of java type launch configurations that have the specified module attribute
+	 */
+	protected static ILaunchConfiguration[] getJavaTypeLaunchConfigurationsForModule(String pname) {
+		try {
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+			ArrayList<ILaunchConfiguration> list = new ArrayList<>();
+			String attrib;
+			for (int i = 0; i < configs.length; i++) {
+				attrib = configs[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, (String) null);
+				if (attrib != null) {
+					if (attrib.equals(pname)) {
+						list.add(configs[i]);
+					}
+				}
+			}
+			return list.toArray(new ILaunchConfiguration[list.size()]);
+		} catch (CoreException e) {
+			JDIDebugPlugin.log(e);
+		}
 		return new ILaunchConfiguration[0];
 	}
 

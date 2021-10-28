@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2019 IBM Corporation and others.
+     Copyright (c) 2005, 2021 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -3149,6 +3149,21 @@ M4 = Platform-specific fourth key
            </with>
            <with variable="element">
    	         <instanceof value="org.eclipse.jdt.core.IPackageFragment"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationIModuleDescriptionRenameParticipant"
+            name="%LaunchConfigurationIModuleDescriptionRenameParticipant.name"
+            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.IModuleDescriptionRename">
+         <enablement>
+           <with variable="affectedNatures">
+             <iterate operator="or">
+               <equals value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.jdt.core.IModuleDescription"/>
            </with>
          </enablement>
       </renameParticipant>
