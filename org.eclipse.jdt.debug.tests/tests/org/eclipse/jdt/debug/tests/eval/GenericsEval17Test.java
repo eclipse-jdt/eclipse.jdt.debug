@@ -117,6 +117,18 @@ public class GenericsEval17Test extends AbstractDebugTest {
 		assertEquals("value is not 3", "3", value.getValueString());
 	}
 
+	public void testEvaluate_Bug576829_RecursiveGenerics_ObjectInstanceEvaluation() throws Exception {
+		createConditionalLineBreakpoint(11, "Bug576829", "cls.getBoolean() && num.isEmpty()", false);
+		javaThread = launchToBreakpoint("Bug576829");
+		assertNotNull("The program did not suspend", javaThread);
+
+		String snippet = "cls.getBoolean() && num.isEmpty()";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not false", "false", value.getValueString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);

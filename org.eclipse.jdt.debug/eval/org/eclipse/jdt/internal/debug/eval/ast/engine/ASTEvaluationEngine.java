@@ -428,7 +428,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		 */
 		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE)) ||
 				genericSignature.startsWith(String.valueOf(Signature.C_CAPTURE)) ||
-				genericSignature.startsWith(String.valueOf(Signature.C_STAR)) ||
 				genericSignature.startsWith(String.valueOf(Signature.C_SUPER)))
 		{
 			fixedSignature.append(toDotQualified(erasureSignature));
@@ -445,6 +444,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 		String[] typeArguments = Signature.getTypeArguments(genericSignature);
 		if (typeArguments.length > 0) {
+			if (typeArguments.length == 1 && typeArguments[0].equals(String.valueOf(Signature.C_STAR))) {
+				// this is when we have recursive generics, so remove the generics to avoid compilation issues.
+				return;
+			}
+
 			fixedSignature.append(Signature.C_GENERIC_START);
 			for (int i = 0; i < typeArguments.length; i++) {
 				if (i > 0) {
