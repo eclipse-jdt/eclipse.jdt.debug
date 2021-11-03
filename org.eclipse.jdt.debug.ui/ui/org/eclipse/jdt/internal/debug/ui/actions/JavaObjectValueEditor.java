@@ -26,15 +26,19 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -118,7 +122,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 					if (expression == null || expression.length() == 0) {
 						variable.setValue(expression);
 					} else {
-						IValue newValue = evaluate(expression);
+						IValue newValue = evaluate(expression, variable);
 						if (newValue != null) {
 							variable.setValue(newValue);
 						} else {
@@ -153,7 +157,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * @param stringValue the snippet to evaluate
      * @return the value that was computed or <code>null</code> if any errors occurred.
      */
-    private IValue evaluate(String stringValue) throws DebugException {
+    private IValue evaluate(String stringValue, IVariable variable) throws DebugException {
         IAdaptable adaptable = DebugUITools.getDebugContext();
 		IJavaStackFrame frame = adaptable.getAdapter(IJavaStackFrame.class);
         if (frame != null) {
@@ -164,9 +168,11 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                 IAstEvaluationEngine engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) thread.getDebugTarget());
                 IEvaluationListener listener= new IEvaluationListener() {
                     @Override
-					public void evaluationComplete(IEvaluationResult result) {
+                    public void evaluationComplete(IEvaluationResult result) {
+                        var convertedResult = convert((EvaluationResult) result, variable, thread);
+
                         synchronized (JavaObjectValueEditor.this) {
-                            results[0]= result;
+                            results[0] = convertedResult;
                             JavaObjectValueEditor.this.notifyAll();
                         }
                     }
@@ -206,6 +212,73 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             }
         }
         return null;
+    }
+
+    /**
+	 * Convert the evaluationResult into an object, which can be stored into variable. Currently, it converts primitive types into the wrapper, boxed
+	 * types.
+	 */
+    private EvaluationResult convert(EvaluationResult evaluationResult, IVariable variable, IJavaThread thread) {
+        if (evaluationResult.hasErrors()) {
+            return evaluationResult;
+        }
+        var value = evaluationResult.getValue();
+        if (value instanceof IJavaPrimitiveValue) {
+            var primValue = (IJavaPrimitiveValue) value;
+            if (variable instanceof IJavaVariable) {
+                try {
+                    var type = ((IJavaVariable) variable).getJavaType();
+                    if (type instanceof IJavaClassType) {
+                        var classType = (IJavaClassType) type;
+                        var javaDebug = thread.getDebugTarget().getAdapter(IJavaDebugTarget.class);
+                        switch (classType.getName()) {
+                            case "java.lang.Long": //$NON-NLS-1$
+                            case "java.math.BigInteger": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getLongValue()), classType, thread);
+                                break;
+                            }
+                            case "java.lang.Integer": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getIntValue()), classType, thread);
+                                break;
+                            }
+                            case "java.lang.Short": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getShortValue()), classType, thread);
+                                break;
+                            }
+                            case "java.lang.Byte": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getByteValue()), classType, thread);
+                                break;
+                            }
+                            case "java.lang.Double": //$NON-NLS-1$
+                            case "java.math.BigDecimal": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getDoubleValue()), classType, thread);
+                                break;
+                            }
+                            case "java.lang.Float": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getFloatValue()), classType, thread);
+                                break;
+                            }
+                            case "java.lang.Boolean": { //$NON-NLS-1$
+                                updateEvaluation(evaluationResult, javaDebug.newValue(primValue.getBooleanValue()), classType, thread);
+                                break;
+                            }
+                        }
+                    }
+                } catch (DebugException e) {
+                    evaluationResult.setException(e);
+                }
+            }
+        }
+        return evaluationResult;
+    }
+
+    private void updateEvaluation(EvaluationResult evaluationResult, IJavaValue newValue, IJavaClassType instanceType, IJavaThread thread) throws DebugException {
+        var signature = String.format("(%s)%s", newValue.getSignature(), instanceType.getSignature()); //$NON-NLS-1$
+        updateEvaluation(evaluationResult, newValue, instanceType, "valueOf", signature, thread); //$NON-NLS-1$
+    }
+
+    private void updateEvaluation(EvaluationResult evaluationResult, IJavaValue newValue, IJavaClassType instanceType, String methodName, String signature, IJavaThread thread) throws DebugException {
+        evaluationResult.setValue(instanceType.sendMessage(methodName, signature, new IJavaValue[] { newValue }, thread));
     }
 
     /**
