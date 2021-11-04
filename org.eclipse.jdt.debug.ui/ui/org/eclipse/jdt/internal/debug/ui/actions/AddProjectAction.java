@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,8 +82,12 @@ public class AddProjectAction extends RuntimeClasspathAction {
 
 			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<>(additions.size());
 			Iterator<IJavaProject> iter = additions.iterator();
+			IRuntimeClasspathEntry[] addedEntries = getViewer().getEntries();
 			while (iter.hasNext()) {
 				IJavaProject jp = iter.next();
+				if (isProjectAdded(jp, addedEntries)) {
+					continue;
+				}
 				runtimeEntries.add(JavaRuntime.newProjectRuntimeClasspathEntry(jp));
 				if (dialog.isAddExportedEntries()) {
 					try {
@@ -100,6 +104,18 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		if (!status.isOK()) {
 			JDIDebugUIPlugin.statusDialog(status);
 		}
+	}
+
+	private boolean isProjectAdded(IJavaProject project, IRuntimeClasspathEntry[] addedEntries) {
+		for (IRuntimeClasspathEntry entry : addedEntries) {
+			if (entry.getType() == IRuntimeClasspathEntry.PROJECT) {
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
+				if (res.getLocationURI().equals(project.getResource().getLocationURI())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
