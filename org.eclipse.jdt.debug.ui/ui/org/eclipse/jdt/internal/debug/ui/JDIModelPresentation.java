@@ -2119,34 +2119,53 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	@Override
 	public Color getForeground(Object element) {
-		if (element instanceof IJavaVariable) {
+		if (element instanceof IJavaObject) {
 			try {
-				var variable = ((IJavaVariable) element).getValue();
-				if (variable instanceof IJavaObject) {
-					var label = ((IJavaObject) variable).getLabel();
-					if (label != null) {
-						return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_LABELED_OBJECT_COLOR);
-					}
+				var label = ((IJavaObject) element).getLabel();
+				if (label != null) {
+					return getColorFromRegistry(IJDIPreferencesConstants.PREF_LABELED_OBJECT_COLOR);
 				}
+				return null;
 			} catch (DebugException e) {
 			}
 		}
+		if (element instanceof IJavaVariable) {
+			try {
+				return getForeground(((IJavaVariable) element).getValue());
+			} catch (DebugException e) {
+			}
+		}
+		if (element instanceof IWatchExpression) {
+			var watchValue = ((IWatchExpression) element).getValue();
+			return getForeground(watchValue);
+		}
+		if (element instanceof JavaInspectExpression) {
+			var value = ((JavaInspectExpression) element).getValue();
+			return getForeground(value);
+		}
 		if (element instanceof JavaContendedMonitor && ((JavaContendedMonitor) element).getMonitor().isInDeadlock()) {
-			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		if (element instanceof JavaOwnedMonitor && ((JavaOwnedMonitor)element).getMonitor().isInDeadlock()) {
-			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		if (element instanceof JavaWaitingThread && ((JavaWaitingThread)element).getThread().isInDeadlock()) {
-			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		if (element instanceof JavaOwningThread && ((JavaOwningThread)element).getThread().isInDeadlock()) {
-			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		if (element instanceof IJavaThread && ThreadMonitorManager.getDefault().isInDeadlock((IJavaThread)element)) {
-			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		return null;
+	}
+
+	/**
+	 * Visible for testing.
+	 */
+	protected Color getColorFromRegistry(String symbolicName) {
+		return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(symbolicName);
 	}
 
 	/* (non-Javadoc)
