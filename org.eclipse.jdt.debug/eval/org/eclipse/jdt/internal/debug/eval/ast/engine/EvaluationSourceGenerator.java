@@ -305,7 +305,7 @@ public class EvaluationSourceGenerator {
 	private void createEvaluationSourceFromSource(String source, IType type,
 			int line, boolean createInAStaticMethod, IJavaProject project)
 			throws DebugException {
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		parser.setSource(source.toCharArray());
 		Map<String, String> options = getCompilerOptions(project);
 		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);

@@ -92,6 +92,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.QualifiedType;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -454,6 +455,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 						.equals(fLastTypeName)) {
 					source.append(buildEnumDeclaration(null, enumDeclaration));
 				}
+			} else if (bodyDeclaration instanceof RecordDeclaration) {
+				var recordDeclaration = (RecordDeclaration) bodyDeclaration;
+				if (!recordDeclaration.getName().getIdentifier().equals(fLastTypeName)) {
+					source.append(buildRecordDeclaration(null, recordDeclaration));
+				}
 			}
 		}
 		return source;
@@ -534,16 +540,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		appendExtraDimensions(source, methodDeclaration.getExtraDimensions());
 
 		first = true;
-		for (Iterator<Name> iterator = methodDeclaration.thrownExceptions()
-				.iterator(); iterator.hasNext();) {
-			Name name = iterator.next();
+		for (Object exceptionType : methodDeclaration.thrownExceptionTypes()) {
 			if (first) {
 				first = false;
 				source.append(" throws "); //$NON-NLS-1$
 			} else {
 				source.append(',');
 			}
-			source.append(getQualifiedIdentifier(name));
+			source.append(getTypeName((Type) exceptionType));
 		}
 
 		if (Flags.isAbstract(modifiers) || Flags.isNative(modifiers)) {
@@ -610,7 +614,71 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 		source.append(typeDeclaration.getName().getIdentifier());
 
-		List<TypeParameter> typeParameters = typeDeclaration.typeParameters();
+		buildTypeParameterList(source, typeDeclaration.typeParameters());
+
+		Type superClass = typeDeclaration.getSuperclassType();
+		if (superClass != null) {
+			source.append(" extends "); //$NON-NLS-1$
+			source.append(getTypeName(superClass));
+		}
+
+		buildSuperInterfaceTypeList(source, typeDeclaration.superInterfaceTypes().iterator(), typeDeclaration.isInterface());
+
+		if (buffer != null) {
+			fSnippetStartPosition += source.length();
+		}
+		source.append(buildTypeBody(buffer, typeDeclaration.bodyDeclarations()));
+
+		return source;
+	}
+
+	void buildSuperInterfaceTypeList(StringBuilder source, Iterator<Type> superInterfaceTypes, boolean isTypeInterface) {
+		if (superInterfaceTypes.hasNext()) {
+			if (isTypeInterface) {
+				source.append(" extends "); //$NON-NLS-1$
+			} else {
+				source.append(" implements "); //$NON-NLS-1$
+			}
+			source.append(getTypeName(superInterfaceTypes.next()));
+			while (superInterfaceTypes.hasNext()) {
+				source.append(',');
+				source.append(getTypeName(superInterfaceTypes.next()));
+			}
+		}
+	}
+
+	private StringBuilder buildRecordDeclaration(StringBuilder buffer, RecordDeclaration typeDeclaration) {
+
+		StringBuilder source = new StringBuilder();
+		source.append(Flags.toString(typeDeclaration.getModifiers()));
+		source.append(" record "); //$NON-NLS-1$
+
+		source.append(typeDeclaration.getName().getIdentifier());
+
+		buildTypeParameterList(source, typeDeclaration.typeParameters());
+
+		boolean first = true;
+		source.append('(');
+		for (SingleVariableDeclaration field : (List<SingleVariableDeclaration>) typeDeclaration.recordComponents()) {
+			if (first) {
+				first = false;
+			} else {
+				source.append(',');
+			}
+			source.append(getTypeName(field.getType())).append(' ').append(field.getName());
+		}
+		source.append(')');
+		buildSuperInterfaceTypeList(source, typeDeclaration.superInterfaceTypes().iterator(), false);
+
+		if (buffer != null) {
+			fSnippetStartPosition += source.length();
+		}
+		source.append(buildTypeBody(buffer, typeDeclaration.bodyDeclarations()));
+
+		return source;
+	}
+
+	void buildTypeParameterList(StringBuilder source, List<TypeParameter> typeParameters) {
 		if (!typeParameters.isEmpty() && isSourceLevelGreaterOrEqual(1, 5)) {
 			source.append('<');
 			Iterator<TypeParameter> iter = typeParameters.iterator();
@@ -643,33 +711,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			}
 			source.append('>');
 		}
-
-		Type superClass = typeDeclaration.getSuperclassType();
-		if (superClass != null) {
-			source.append(" extends "); //$NON-NLS-1$
-			source.append(getTypeName(superClass));
-		}
-
-		Iterator<Type> iter = typeDeclaration.superInterfaceTypes().iterator();
-		if (iter.hasNext()) {
-			if (typeDeclaration.isInterface()) {
-				source.append(" extends "); //$NON-NLS-1$
-			} else {
-				source.append(" implements "); //$NON-NLS-1$
-			}
-			source.append(getTypeName(iter.next()));
-			while (iter.hasNext()) {
-				source.append(',');
-				source.append(getTypeName(iter.next()));
-			}
-		}
-
-		if (buffer != null) {
-			fSnippetStartPosition += source.length();
-		}
-		source.append(buildTypeBody(buffer, typeDeclaration.bodyDeclarations()));
-
-		return source;
 	}
 
 	private StringBuilder buildCompilationUnit(StringBuilder buffer,
@@ -813,7 +854,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			}
 			return name;
 		} else if (type.isArrayType()) {
-			return getTypeName(((ArrayType) type).getComponentType()) + "[]"; //$NON-NLS-1$
+			return getTypeName(((ArrayType) type).getElementType()) + "[]"; //$NON-NLS-1$
 		} else if (type.isPrimitiveType()) {
 			return ((PrimitiveType) type).getPrimitiveTypeCode().toString();
 		} else if (type.isQualifiedType()) {
@@ -1091,7 +1132,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(TypeDeclaration node) {
-
 		if (hasError()) {
 			fTypeParameterStack.pop();
 			fTypeParameterTypeStack.pop();
