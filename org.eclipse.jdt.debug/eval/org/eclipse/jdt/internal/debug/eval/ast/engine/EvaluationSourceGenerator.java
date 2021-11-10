@@ -149,13 +149,15 @@ public class EvaluationSourceGenerator {
 			wordBuffer.append(codeSnippet.charAt(i));
 		}
 		// add semicolon at the end if missing
-		if (chars[chars.length -1] !=';' && chars[chars.length -1] !='}') {
-			wordBuffer.append(';');
-		} else if (chars[chars.length -1] !=';' && chars[chars.length -1] =='}'){
-			int j = lastSentence.lastIndexOf('=') ;
-			int k = lastSentence.lastIndexOf("==") ; //$NON-NLS-1$
-			if (j != -1 && (j != k)) {
+		if (chars.length > 0) {
+			if (chars[chars.length - 1] != ';' && chars[chars.length - 1] != '}') {
 				wordBuffer.append(';');
+			} else if (chars[chars.length - 1] != ';' && chars[chars.length - 1] == '}') {
+				int j = lastSentence.lastIndexOf('=');
+				int k = lastSentence.lastIndexOf("=="); //$NON-NLS-1$
+				if (j != -1 && (j != k)) {
+					wordBuffer.append(';');
+				}
 			}
 		}
 
