@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 
@@ -31,7 +32,7 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	 * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate#displayInstaces(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.internal.debug.core.model.JDIReferenceType)
 	 */
 	@Override
-	protected void displayInstaces(IJavaDebugTarget target, JDIReferenceType rtype) {
+	protected void displayInstaces(IAction action, JDIReferenceType rtype) {
 		try {
 			displayNumInstances(rtype.getName(), rtype.getInstanceCount());
 		} catch (CoreException e) {
@@ -44,7 +45,7 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	 * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate#displayNoInstances(org.eclipse.jdt.debug.core.IJavaDebugTarget, java.lang.String)
 	 */
 	@Override
-	protected void displayNoInstances(IJavaDebugTarget target, String typeName) {
+	protected void displayNoInstances(IAction action, IJavaDebugTarget target, String typeName) {
 		displayNumInstances(typeName, 0);
 	}
 
