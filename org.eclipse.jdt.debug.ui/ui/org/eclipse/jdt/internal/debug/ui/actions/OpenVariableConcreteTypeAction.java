@@ -47,7 +47,7 @@ public class OpenVariableConcreteTypeAction extends OpenVariableTypeAction {
 	}
 
 	@Override
-	protected boolean openElement(IAction action, Object element) throws DebugException, CoreException {
+	public boolean openElement(IAction action, Object element) throws DebugException, CoreException {
 		if (element instanceof JDIVariable) {
 			final var jdiVariable = (JDIVariable) element;
 			if (isInterfaceType(jdiVariable)) {
