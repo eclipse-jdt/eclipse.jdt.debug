@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -55,17 +54,36 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		try {
 			while (itr.hasNext()) {
 				Object element= itr.next();
-				Object sourceElement = resolveSourceElement(element);
-				if (sourceElement != null) {
-					openInEditor(sourceElement);
-				} else {
-					IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "Source not found", null); //$NON-NLS-1$
-					throw new CoreException(status);
+				if (openElement(action, element)) {
+					return;
 				}
 			}
 		} catch(CoreException e) {
 			JDIDebugUIPlugin.statusDialog(e.getStatus());
 		}
+	}
+
+	/**
+	 * Open the selected element, return true, if further selections should not be checked.
+	 *
+	 * @param action
+	 *            the action proxy that handles the presentation portion of the action
+	 * @param element
+	 *            the selected element.
+	 * @return true, if no other openElement calls should be made. Used, when multiple element is selected, and the action works as trying until one
+	 *         succeeds.
+	 * @throws CoreException
+	 *             if source element is not found.
+	 */
+	protected boolean openElement(IAction action, Object element) throws DebugException, CoreException {
+		IType sourceElement = resolveSourceElement(element);
+		if (sourceElement != null) {
+			openInEditor(element, sourceElement);
+		} else {
+			IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "Source not found", null); //$NON-NLS-1$
+			throw new CoreException(status);
+		}
+		return false;
 	}
 
 	protected abstract IDebugElement getDebugElement(IAdaptable element);
@@ -86,8 +104,8 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * @return the source element to open or <code>null</code> if none
 	 * @throws CoreException
 	 */
-	protected Object resolveSourceElement(Object e) throws CoreException {
-		Object source = null;
+	protected IType resolveSourceElement(Object e) throws CoreException {
+		IType source = null;
 		IAdaptable element= (IAdaptable) e;
 		IDebugElement dbgElement= getDebugElement(element);
 		if (dbgElement != null) {
@@ -107,20 +125,11 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		return source;
 	}
 
-	protected void openInEditor(Object sourceElement) throws CoreException {
+	protected void openInEditor(Object element, IType sourceElement) throws CoreException {
 		if (isHierarchy()) {
-			if (sourceElement instanceof IJavaElement) {
-				OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, getWorkbenchWindow());
-			} else {
-				typeHierarchyError();
-			}
+			OpenTypeHierarchyUtil.open(sourceElement, getWorkbenchWindow());
 		} else {
-			if(sourceElement instanceof IJavaElement) {
-				JavaUI.openInEditor((IJavaElement) sourceElement);
-			}
-			else {
-				showErrorMessage(ActionMessages.OpenTypeAction_2);
-			}
+			JavaUI.openInEditor(sourceElement);
 		}
 	}
 

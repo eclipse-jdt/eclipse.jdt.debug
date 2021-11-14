@@ -21,6 +21,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -194,6 +195,9 @@ public class JavaVarActionFilter implements IActionFilter {
 					}
 					if (value.equals("isObjectValue")) { //$NON-NLS-1$
 						return varValue != null && JDIObjectValue.class.isAssignableFrom(varValue.getClass());
+					}
+					if (value.equals("isFieldVariable")) { //$NON-NLS-1$
+						return var instanceof IJavaFieldVariable;
 					}
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
