@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -324,15 +325,10 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
      */
     @Override
 	public void setVMArgs(String vmArgs) {
-        if (fVMArgs == null) {
-            if (vmArgs == null) {
-                // No change
-                return;
-            }
-        } else if (fVMArgs.equals(vmArgs)) {
-    		// No change
-    		return;
-    	}
+		if (Objects.equals(vmArgs, fVMArgs)) {
+			// No change
+			return;
+		}
         PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_VM_ARGUMENTS, fVMArgs, vmArgs);
         fVMArgs = vmArgs;
 		if (fNotify) {
