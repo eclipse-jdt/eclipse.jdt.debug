@@ -16,11 +16,15 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +35,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.MacInstalledJREs;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -47,12 +52,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -84,8 +85,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -153,12 +152,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				fVMList.refresh();
 			}
 			else {
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						fVMList.refresh();
-					}
-				});
+				display.asyncExec(() -> fVMList.refresh());
 			}
 		}
 	}
@@ -192,6 +186,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private Button fEditButton;
 	private Button fCopyButton;
 	private Button fSearchButton;
+	private Button findSdkManJres;
 
 	// index of column used for sorting
 	private int fSortColumn = 0;
@@ -284,8 +279,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				if (bold == null) {
 					Font dialogFont = JFaceResources.getDialogFont();
 					FontData[] fontData = dialogFont.getFontData();
-					for (int i = 0; i < fontData.length; i++) {
-						FontData data = fontData[i];
+					for (FontData data : fontData) {
 						data.setStyle(SWT.BOLD);
 					}
 					Display display = JDIDebugUIPlugin.getStandardDisplay();
@@ -442,30 +436,19 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		// by default, sort by name
 		sortByName();
 
-		fVMList.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent evt) {
-				enableButtons();
+		fVMList.addSelectionChangedListener(evt -> enableButtons());
+
+		fVMList.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				setCheckedJRE((IVMInstall)event.getElement());
+			} else {
+				setCheckedJRE(null);
 			}
 		});
 
-		fVMList.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					setCheckedJRE((IVMInstall)event.getElement());
-				} else {
-					setCheckedJRE(null);
-				}
-			}
-		});
-
-		fVMList.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent e) {
-				if (!fVMList.getSelection().isEmpty()) {
-					editVM();
-				}
+		fVMList.addDoubleClickListener(e -> {
+			if (!fVMList.getSelection().isEmpty()) {
+				editVM();
 			}
 		});
 		fTable.addKeyListener(new KeyAdapter() {
@@ -482,46 +465,24 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		Composite buttons = SWTFactory.createComposite(parent, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 
 		fAddButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_3, null);
-		fAddButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event evt) {
-				addVM();
-			}
-		});
+		fAddButton.addListener(SWT.Selection, evt -> addVM());
 
 		fEditButton= SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_4, null);
-		fEditButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event evt) {
-				editVM();
-			}
-		});
+		fEditButton.addListener(SWT.Selection, evt -> editVM());
 
 		fCopyButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_16, null);
-		fCopyButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event evt) {
-				copyVM();
-			}
-		});
+		fCopyButton.addListener(SWT.Selection, evt -> copyVM());
 
 		fRemoveButton= SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_5, null);
-		fRemoveButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event evt) {
-				removeVMs();
-			}
-		});
+		fRemoveButton.addListener(SWT.Selection, evt -> removeVMs());
 
 		SWTFactory.createVerticalSpacer(parent, 1);
 
 		fSearchButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_6, null);
-		fSearchButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event evt) {
-				search();
-			}
-		});
+		fSearchButton.addListener(SWT.Selection, evt -> search());
+
+		findSdkManJres = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_20, null);
+		findSdkManJres.addListener(SWT.Selection, evt -> findSdkManJres());
 
 		fillWithWorkspaceJREs();
 		enableButtons();
@@ -544,7 +505,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
             // duplicate & add VM
             VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
             standin.setName(generateName(selectedVM.getName()));
-			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, fVMs.toArray(new IVMInstall[fVMs.size()]));
+			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, getJREs());
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
 			int dialogResult = dialog.open();
 			if (dialogResult == Window.OK) {
@@ -713,8 +674,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void setJREs(IVMInstall[] vms) {
 		fVMs.clear();
-		for (int i = 0; i < vms.length; i++) {
-			fVMs.add(vms[i]);
+		for (IVMInstall vm : vms) {
+			fVMs.add(vm);
 		}
 		fVMList.setInput(fVMs);
 		fVMList.refresh();
@@ -733,7 +694,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Bring up a wizard that lets the user create a new VM definition.
 	 */
 	private void addVM() {
-		AddVMInstallWizard wizard = new AddVMInstallWizard(fVMs.toArray(new IVMInstall[fVMs.size()]));
+		AddVMInstallWizard wizard = new AddVMInstallWizard(getJREs());
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		if (dialog.open() == Window.OK) {
 			VMStandin result = wizard.getResult();
@@ -774,8 +735,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	@Override
 	public boolean isDuplicateName(String name) {
-		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm = fVMs.get(i);
+		for (var vm : fVMs) {
 			if (vm.getName().equals(name)) {
 				return true;
 			}
@@ -796,7 +756,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			VMDetailsDialog dialog= new VMDetailsDialog(getShell(), vm);
 			dialog.open();
 		} else {
-			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, fVMs.toArray(new IVMInstall[fVMs.size()]));
+			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, getJREs());
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
 			if (dialog.open() == Window.OK) {
 				VMStandin result = wizard.getResult();
@@ -833,8 +793,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param vms
 	 */
 	public void removeJREs(IVMInstall[] vms) {
-		for (int i = 0; i < vms.length; i++) {
-			fVMs.remove(vms[i]);
+		for (IVMInstall vm : vms) {
+			fVMs.remove(vm);
 		}
 		fVMList.refresh();
 		IStructuredSelection curr = (IStructuredSelection) getSelection();
@@ -877,23 +837,17 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 
 		// ignore installed locations
-		final Set<File> exstingLocations = new HashSet<>();
-		for (IVMInstall vm : fVMs) {
-			exstingLocations.add(vm.getInstallLocation());
-		}
+		final Set<File> exstingLocations = getExistingLocations();
 
 		// search
 		final File rootDir = new File(path);
 		final List<File> locations = new ArrayList<>();
 		final List<IVMInstallType> types = new ArrayList<>();
 
-		IRunnableWithProgress r = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(JREMessages.InstalledJREsBlock_11, IProgressMonitor.UNKNOWN);
-				search(rootDir, locations, types, exstingLocations, monitor);
-				monitor.done();
-			}
+		IRunnableWithProgress r = monitor -> {
+			monitor.beginTask(JREMessages.InstalledJREsBlock_11, IProgressMonitor.UNKNOWN);
+			search(rootDir, locations, types, exstingLocations, monitor);
+			monitor.done();
 		};
 
 		try {
@@ -949,34 +903,74 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 	}
 
+	private Set<File> getExistingLocations() {
+		final Set<File> exstingLocations = new HashSet<>();
+		for (IVMInstall vm : fVMs) {
+			exstingLocations.add(vm.getInstallLocation());
+		}
+		return exstingLocations;
+	}
+
+	private void findSdkManJres() {
+		var vmInstallType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+		var sdkManPath = Optional.ofNullable(System.getProperty("user.home")) //$NON-NLS-1$
+				.map(File::new) //
+				.map(File::toPath) // .
+				.map(path -> path.resolve(".sdkman").resolve("candidates").resolve("java")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				.filter(javaDir -> Files.exists(javaDir) && Files.isDirectory(javaDir) && Files.isReadable(javaDir)); //
+		if (sdkManPath.isEmpty()) {
+			MessageDialog.openError(getShell(), JREMessages.InstalledJREsBlock_Error, JREMessages.InstalledJREsBlock_SdkManNotInstalled); //
+			return;
+		}
+		sdkManPath.stream() //
+				.flatMap(javaDir -> {
+					var existingLocations = getExistingLocations().stream().map(File::toPath).collect(Collectors.toSet());
+					try {
+						return Files.list(javaDir) //
+								.filter(dir -> !Files.isSymbolicLink(dir)) //
+								.filter(dir -> !existingLocations.contains(dir));
+					} catch (IOException e) {
+						JDIDebugUIPlugin.log(e);
+						return Stream.empty();
+					}
+				}).map(javaPath -> {
+					var location = javaPath.toFile();
+					var name = location.getName();
+					var vm = new VMStandin(vmInstallType, "sdkman-" + name); //$NON-NLS-1$
+					vm.setInstallLocation(location);
+					if (vmInstallType instanceof AbstractVMInstallType) {
+						vm.setJavadocLocation(((AbstractVMInstallType) vmInstallType).getDefaultJavadocLocation(location));
+					}
+					vm.setName(name);
+					return vm;
+				}).forEach(this::vmAdded);
+	}
+
 	/**
 	 * Calls out to {@link MacVMSearch} to find all installed JREs in the standard
 	 * Mac OS location
 	 */
 	private void doMacSearch() {
 		final List<VMStandin> added = new ArrayList<>();
-		IRunnableWithProgress r = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				Set<String> exists = new HashSet<>();
-				for (IVMInstall vm : fVMs) {
-					exists.add(vm.getId());
-				}
-				SubMonitor localmonitor = SubMonitor.convert(monitor, JREMessages.MacVMSearch_0, 5);
-				VMStandin[] standins = null;
-				try {
-					standins = MacInstalledJREs.getInstalledJREs(localmonitor);
-					for (int i = 0; i < standins.length; i++) {
-						if (!exists.contains(standins[i].getId())) {
-							added.add(standins[i]);
-						}
+		IRunnableWithProgress r = monitor -> {
+			Set<String> exists = new HashSet<>();
+			for (IVMInstall vm : fVMs) {
+				exists.add(vm.getId());
+			}
+			SubMonitor localmonitor = SubMonitor.convert(monitor, JREMessages.MacVMSearch_0, 5);
+			VMStandin[] standins = null;
+			try {
+				standins = MacInstalledJREs.getInstalledJREs(localmonitor);
+				for (VMStandin standin : standins) {
+					if (!exists.contains(standin.getId())) {
+						added.add(standin);
 					}
 				}
-				catch(CoreException ce) {
-					JDIDebugUIPlugin.log(ce);
-				}
-				monitor.done();
 			}
+			catch(CoreException ce) {
+				JDIDebugUIPlugin.log(ce);
+			}
+			monitor.done();
 		};
 
 		try {
@@ -1030,11 +1024,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return;
 		}
 		List<File> subDirs = new ArrayList<>();
-		for (int i = 0; i < names.length; i++) {
+		for (String name : names) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			File file = new File(directory, names[i]);
+			File file = new File(directory, name);
 			try {
 				monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()),
 						file.getCanonicalPath().replaceAll("&", "&&")}));   // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
@@ -1043,34 +1037,16 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();
 			if (file.isDirectory()) {
 				if (!ignore.contains(file)) {
-					boolean validLocation = false;
-
-					// Take the first VM install type that claims the location as a
-					// valid VM install.  VM install types should be smart enough to not
-					// claim another type's VM, but just in case...
-					for (int j = 0; j < vmTypes.length; j++) {
-						if (monitor.isCanceled()) {
-							return;
-						}
-						IVMInstallType type = vmTypes[j];
-						IStatus status = type.validateInstallLocation(file);
-						if (status.isOK()) {
-							String filePath = file.getPath();
-							int index = filePath.lastIndexOf(File.separatorChar);
-							File newFile = file;
-							// remove bin folder from install location as java executables are found only under bin for Java 9 and above
-							if (index > 0 && filePath.substring(index + 1).equals("bin")) { //$NON-NLS-1$
-								newFile = new File(filePath.substring(0, index));
-							}
-							found.add(newFile);
-							types.add(type);
-							validLocation = true;
-							break;
-						}
+					var detectedType = detectVm(file, vmTypes, monitor);
+					if (detectedType != null) {
+						found.add(findVmRoot(file));
+						types.add(detectedType);
+						break;
 					}
-					if (!validLocation) {
-						subDirs.add(file);
+					if (monitor.isCanceled()) {
+						return;
 					}
+					subDirs.add(file);
 				}
 			}
 		}
@@ -1082,6 +1058,34 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		}
 
+	}
+
+	private File findVmRoot(File file) {
+		String filePath = file.getPath();
+		int index = filePath.lastIndexOf(File.separatorChar);
+		File newFile = file;
+		// remove bin folder from install location as java executables are found only under bin for Java 9 and above
+		if (index > 0 && filePath.substring(index + 1).equals("bin")) { //$NON-NLS-1$
+			newFile = new File(filePath.substring(0, index));
+		}
+		return newFile;
+	}
+
+	IVMInstallType detectVm(File vmPath, IVMInstallType[] vmTypes, IProgressMonitor monitor) {
+
+		// Take the first VM install type that claims the location as a
+		// valid VM install.  VM install types should be smart enough to not
+		// claim another type's VM, but just in case...
+		for (IVMInstallType type : vmTypes) {
+			if (monitor.isCanceled()) {
+				return null;
+			}
+			IStatus status = type.validateInstallLocation(vmPath);
+			if (status.isOK()) {
+				return type;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -1181,11 +1185,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		// fill with JREs
 		List<VMStandin> standins = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < types.length; i++) {
-			IVMInstallType type = types[i];
+		for (IVMInstallType type : types) {
 			IVMInstall[] installs = type.getVMInstalls();
-			for (int j = 0; j < installs.length; j++) {
-				IVMInstall install = installs[j];
+			for (IVMInstall install : installs) {
 				standins.add(new VMStandin(install));
 			}
 		}
@@ -1236,8 +1238,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 
 		int nElements = fVMs.size();
 		buf.append('[').append(nElements).append(']');
-		for (int i = 0; i < nElements; i++) {
-			IVMInstall elem = fVMs.get(i);
+		for (IVMInstall elem : fVMs) {
 			if (elem == vmInstall)
 			 {
 				buf.append('[').append("defaultVM").append(']'); //$NON-NLS-1$
