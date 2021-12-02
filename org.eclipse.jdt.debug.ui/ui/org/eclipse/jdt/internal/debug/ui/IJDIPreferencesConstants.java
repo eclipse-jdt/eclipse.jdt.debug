@@ -213,6 +213,8 @@ public interface IJDIPreferencesConstants {
 	 */
 	public static final String PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT = IJavaDebugUIConstants.PLUGIN_ID + ".prompt_unable_to_install_breakpoint"; //$NON-NLS-1$
 
+	public static final String PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS = IJavaDebugUIConstants.PLUGIN_ID + ".prompt_before_modifying_final_fields"; //$NON-NLS-1$
+
 	public static final String PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR= "org.eclipse.jdt.debug.ui.InDeadlockColor"; //$NON-NLS-1$
 
 	public static final String PREF_LABELED_OBJECT_COLOR = IJavaDebugUIConstants.PLUGIN_ID + ".LabeledObject"; //$NON-NLS-1$

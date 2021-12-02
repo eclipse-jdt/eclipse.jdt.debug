@@ -84,6 +84,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendDuringEvaluations;
 	private Button fOpenInspector;
 	private Button fPromptUnableToInstallBreakpoint;
+	private Button fPromptBeforeModifyingFinalFields;
 	private Button fPromptDeleteConditionalBreakpoint;
 	private Button fFilterUnrelatedBreakpoints;
 	private Button fOnlyIncludeExportedEntries;
@@ -181,6 +182,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.load();
 
 		SWTFactory.createVerticalSpacer(composite, 1);
+		fPromptBeforeModifyingFinalFields = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_28, null, false, 1);
 		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19, null, false, 1);
 		fPromptDeleteConditionalBreakpoint= SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint, null, false, 1);
 		fFilterUnrelatedBreakpoints = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_filterUnrelatedBreakpoints, null, false, 1);
@@ -225,6 +227,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS, fPromptBeforeModifyingFinalFields.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, fPromptDeleteConditionalBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
@@ -277,6 +280,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
+		fPromptBeforeModifyingFinalFields.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS));
 		fPromptUnableToInstallBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fPromptDeleteConditionalBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
@@ -317,6 +321,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
+		fPromptBeforeModifyingFinalFields.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS));
 		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fPromptDeleteConditionalBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));

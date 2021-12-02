@@ -84,6 +84,7 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage_19;
 	public static String JavaDebugPreferencePage_0;
 	public static String JavaDebugPreferencePage_20;
+	public static String JavaDebugPreferencePage_28;
 
 	public static String JavaDebugPreferencePage_advancedSourcelookup;
 	public static String JavaDebugPreferencePage_listenToThreadNameChanges;
@@ -256,6 +257,10 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation_instance_1;
 	public static String NoLineNumberAttributesStatusHandler_Java_Breakpoint_1;
 	public static String NoLineNumberAttributesStatusHandler_2;
+
+	public static String JavaVariableValueEditor_prompt_before_final_value_change_title;
+	public static String JavaVariableValueEditor_prompt_before_final_value_change_message;
+	public static String JavaVariableValueEditor_prompt_before_final_value_change_toggle_message;
 
 	public static String JavaDetailFormattersPreferencePage_Add__Formatter____5;
 	public static String JavaDetailFormattersPreferencePage_Allow_you_to_create_a_new_detail_formatter_6;

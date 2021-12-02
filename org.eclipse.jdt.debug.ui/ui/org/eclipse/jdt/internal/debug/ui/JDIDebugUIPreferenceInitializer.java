@@ -36,6 +36,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, true);
 
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, false);
