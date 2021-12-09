@@ -7,6 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -846,7 +849,10 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if (version.startsWith(JavaCore.VERSION_17)) {
+			if (version.startsWith(JavaCore.VERSION_18)) {
+				// TODO: Needs an update after Java 18 release
+				return new URL("https://docs.oracle.com/en/java/javase/17/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_17)) {
 				return new URL("https://docs.oracle.com/en/java/javase/17/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_16)) {
 				return new URL("https://docs.oracle.com/en/java/javase/16/docs/api/"); //$NON-NLS-1$
