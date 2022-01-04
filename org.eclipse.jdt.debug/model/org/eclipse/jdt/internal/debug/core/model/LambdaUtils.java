@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,10 +30,14 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 
+import com.sun.jdi.Method;
+
 /**
  * Utility class for Lambda Expressions and Stack frames Place holder for all Lambda operation encapsulation.
  */
 public class LambdaUtils {
+
+	private static final String LAMBDA_METHOD_PREFIX = "lambda$"; //$NON-NLS-1$
 
 	/**
 	 * Inspects the top stack frame of the context; if that frame is a lambda frame, looks for a variable with the specified name in that frame and
@@ -121,7 +124,7 @@ public class LambdaUtils {
 	 * @since 3.8
 	 */
 	public static boolean isLambdaFrame(IJavaStackFrame frame) throws DebugException {
-		return frame.isSynthetic() && frame.getName().startsWith("lambda$"); //$NON-NLS-1$
+		return frame.isSynthetic() && frame.getName().startsWith(LAMBDA_METHOD_PREFIX);
 	}
 
 	/**
@@ -134,6 +137,18 @@ public class LambdaUtils {
 	 */
 	public static boolean isLambdaField(IVariable variable) throws DebugException {
 		return (variable instanceof IJavaFieldVariable) && ((IJavaFieldVariable) variable).getDeclaringType().getName().contains("$Lambda$"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns if the method is a lambda method.
+	 *
+	 * @param method
+	 *            the method for which to check
+	 * @return <code>True</code> if the method is a lambda method else return <code>False</code>
+	 * @since 3.20
+	 */
+	public static boolean isLambdaMethod(Method method) {
+		return method.name().startsWith(LAMBDA_METHOD_PREFIX);
 	}
 
 	private static boolean isLambdaObjectVariable(IVariable variable) {
