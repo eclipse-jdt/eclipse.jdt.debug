@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -83,9 +85,10 @@ public class LambdaUtils {
 		List<IVariable> variables = new ArrayList<>();
 		if (LambdaUtils.isLambdaFrame(frame)) {
 			IThread thread = frame.getThread();
-			IStackFrame[] stackFrames = thread.getStackFrames();
-			for (int i = 0; i < Math.min(3, stackFrames.length); ++i) {
-				IStackFrame stackFrame = stackFrames[i];
+			// look for two frames below the frame which is provided instead starting from first frame.
+			List<IStackFrame> stackFrames = Stream.of(thread.getStackFrames()).dropWhile(f -> f != frame)
+					.limit(3).collect(Collectors.toUnmodifiableList());
+			for (IStackFrame stackFrame : stackFrames) {
 				IVariable[] stackFrameVariables = stackFrame.getVariables();
 				variables.addAll(Arrays.asList(stackFrameVariables));
 				for (IVariable frameVariable : stackFrameVariables) {

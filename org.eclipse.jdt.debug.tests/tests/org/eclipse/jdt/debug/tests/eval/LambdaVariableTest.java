@@ -183,6 +183,23 @@ public class LambdaVariableTest extends AbstractDebugTest {
 		assertEquals("wrong result : ", "ab", value.getValueString());
 	}
 
+	public void testEvaluate_Bug575551_onIntermediateFrame_InsideLambda_OutFromMethodInvocationFrame() throws Exception {
+		createMethodBreakpoint("Bug575551$Character$CharacterLatin", "isDigit",
+				"(I)Z", true, false);
+		javaThread = launchToBreakpoint("Bug575551");
+		assertNotNull("The program did not suspend", javaThread);
+		// at method invocation stack
+		IValue value = doEval(javaThread, "ch");
+		assertEquals("wrong result at method stack : ", String.valueOf((int) 'n'), value.getValueString());
+
+		// at 1st lambda stack
+		value = doEval(javaThread, () -> (IJavaStackFrame) javaThread.getStackFrames()[3], "names.length");
+		assertEquals("wrong result at 1st lambda stack : ", "1", value.getValueString());
+
+		value = doEval(javaThread, () -> (IJavaStackFrame) javaThread.getStackFrames()[3], "s");
+		assertEquals("wrong result at 1st lambda stack : ", "name", value.getValueString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);
