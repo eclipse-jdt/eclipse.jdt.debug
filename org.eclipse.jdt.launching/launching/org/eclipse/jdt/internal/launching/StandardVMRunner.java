@@ -81,13 +81,31 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	/**
 	 * Returns the 'rendered' name for the specified command line
-	 * @param commandLine the command line
-	 * @param timestamp the run-at time for the process
+	 *
+	 * @param p
+	 * @param commandLine
+	 *            the command line
+	 * @param timestamp
+	 *            the run-at time for the process
 	 * @return the name for the process
 	 */
-	public static String renderProcessLabel(String[] commandLine, String timestamp) {
-		String format= LaunchingMessages.StandardVMRunner__0____1___2;
-		return NLS.bind(format, new String[] { commandLine[0], timestamp });
+	public static String renderProcessLabel(Process p, String[] commandLine, String timestamp) {
+		String processId = getProcessId(p);
+		if (processId == null) {
+			String format = LaunchingMessages.StandardVMRunner__0____1___2;
+			return NLS.bind(format, new String[] { commandLine[0], timestamp });
+		}
+		String format = LaunchingMessages.StandardVMRunner__0____1___2_3;
+		return NLS.bind(format, new String[] { commandLine[0], timestamp, processId });
+	}
+
+	private static String getProcessId(Process p) {
+		try {
+			return p != null ? Long.toString(p.pid()) : null;
+		} catch (UnsupportedOperationException e) {
+			// ignore, pid() is not implemented in this JVM
+		}
+		return null;
 	}
 
 	/**
@@ -524,7 +542,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			return;
 		}
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
-		IProcess process= newProcess(launch, p, renderProcessLabel(cmdLine, timestamp), getDefaultProcessMap());
+		IProcess process = newProcess(launch, p, renderProcessLabel(p, cmdLine, timestamp), getDefaultProcessMap());
 		process.setAttribute(DebugPlugin.ATTR_PATH, cmdLine[0]);
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 		String ltime = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
