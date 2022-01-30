@@ -58,7 +58,9 @@ public class SetObjectLabelAction extends ObjectActionDelegate {
 			}
 			if (value instanceof IJavaObject) {
 				final IJavaObject javaValue = (IJavaObject) value;
-				askForLabel(javaValue, name);
+				if (!javaValue.isNull()) {
+					askForLabel(javaValue, name);
+				}
 			}
 		} catch (DebugException e) {
 			return;

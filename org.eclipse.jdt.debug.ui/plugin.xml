@@ -935,6 +935,16 @@
                </objectState>
             </not>
          </visibility>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.JavaVariableActions">
+         <visibility>
+           <objectState
+                 name="JavaVariableFilter"
+                 value="isNonNullObjectValue">
+           </objectState>
+         </visibility>
          <action
                class="org.eclipse.jdt.internal.debug.ui.actions.SetObjectLabelAction"
                enablesFor="1"

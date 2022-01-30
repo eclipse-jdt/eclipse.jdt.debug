@@ -196,6 +196,10 @@ public class JavaVarActionFilter implements IActionFilter {
 					if (value.equals("isObjectValue")) { //$NON-NLS-1$
 						return varValue != null && JDIObjectValue.class.isAssignableFrom(varValue.getClass());
 					}
+					if (value.equals("isNonNullObjectValue")) { //$NON-NLS-1$
+						return varValue != null && JDIObjectValue.class.isAssignableFrom(varValue.getClass())
+								&& !((JDIObjectValue) varValue).isNull();
+					}
 					if (value.equals("isFieldVariable")) { //$NON-NLS-1$
 						return var instanceof IJavaFieldVariable;
 					}
