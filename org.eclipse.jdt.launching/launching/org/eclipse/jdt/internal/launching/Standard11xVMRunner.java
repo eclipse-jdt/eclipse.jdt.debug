@@ -132,7 +132,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			return;
 		}
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
-		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine, timestamp));
+		IProcess process = DebugPlugin.newProcess(launch, p, renderProcessLabel(p, cmdLine, timestamp));
 		process.setAttribute(DebugPlugin.ATTR_PATH, cmdLine[0]);
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 		String ltime = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);

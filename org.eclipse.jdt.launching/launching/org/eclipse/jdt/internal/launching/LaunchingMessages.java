@@ -124,6 +124,7 @@ public class LaunchingMessages extends NLS {
 	public static String StandardVMDebugger_Establishing_debug_connection____5;
 
 	public static String StandardVMRunner__0____1___2;
+	public static String StandardVMRunner__0____1___2_3;
 	public static String StandardVMRunner__0__at_localhost__1__1;
 	public static String StandardVMRunner_Specified_working_directory_does_not_exist_or_is_not_a_directory___0__3;
 	public static String StandardVMRunner_Launching_VM____1;

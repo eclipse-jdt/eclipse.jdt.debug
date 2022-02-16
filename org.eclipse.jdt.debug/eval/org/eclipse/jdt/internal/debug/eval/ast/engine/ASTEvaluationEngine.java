@@ -420,11 +420,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private void scanAndFixSignature(String genericSignature, String erasureSignature, StringBuilder fixedSignature) {
 		/*
-		 * This actually fix variables which are type of Generic Types which cannot be resolved to a type in the current content. For example variable
-		 * type like P_OUT in java.util.stream.ReferencePipeline.filter(Predicate<? super P_OUT>)
+		 * This actually fix variables which are type of Generic Types which cannot be resolved to a type in the current context.
+		 * For example variable type like P_OUT in java.util.stream.ReferencePipeline.filter(Predicate<? super P_OUT>)
 		 *
 		 * and also generic signature such as Ljava/util/function/Predicate<+Ljava/util/List<Ljava/lang/Integer;>;>; Ljava/util/Comparator<-TT;>;
-		 * which will fail the properly resolved to the type.
+		 * which will fail to properly resolved to the type.
 		 */
 		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE)) ||
 				genericSignature.startsWith(String.valueOf(Signature.C_CAPTURE)) ||
@@ -444,8 +444,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 		String[] typeArguments = Signature.getTypeArguments(genericSignature);
 		if (typeArguments.length > 0) {
-			if (typeArguments.length == 1 && typeArguments[0].equals(String.valueOf(Signature.C_STAR))) {
-				// this is when we have recursive generics, so remove the generics to avoid compilation issues.
+			if (typeArguments.length == 1 &&
+					(typeArguments[0].equals(String.valueOf(Signature.C_STAR)) ||
+							typeArguments[0].startsWith(String.valueOf(new char[] { Signature.C_EXTENDS, Signature.C_TYPE_VARIABLE })))) {
+				// this is when we have recursive generics or we have a upper bound type variable
+				// so remove the generics to avoid compilation issues.
 				return;
 			}
 

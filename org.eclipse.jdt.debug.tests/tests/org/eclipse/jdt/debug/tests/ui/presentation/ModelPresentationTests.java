@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui.presentation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -23,6 +26,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.swt.graphics.Color;
 
 /**
  * Tests for some of the methods of the model presentation
@@ -31,11 +36,28 @@ import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
  */
 public class ModelPresentationTests extends AbstractDebugTest {
 
+	private Map<String, Color> colors = new HashMap<>();
 	/**
 	 * Constructor
 	 */
 	public ModelPresentationTests() {
 		super("Model Presentation tests");
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		colors.clear();
+		colors.put("org.eclipse.jdt.debug.ui.LabeledObject", new Color(255, 0, 0));
+	}
+
+	private JDIModelPresentation mock() {
+		return new JDIModelPresentation() {
+			@Override
+			protected Color getColorFromRegistry(String symbolicName) {
+				return colors.get(symbolicName);
+			}
+		};
 	}
 
 	/**
@@ -45,7 +67,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testUnknownValueText() throws Exception {
-		JDIModelPresentation pres = new JDIModelPresentation();
+		JDIModelPresentation pres = mock();
 		try {
 			TestIJavaType type = new TestIJavaType("foo", "<unknown>");
 			TestIJavaValue value = new TestIJavaValue(type, "<unknown>", null, "<unknown>", null);
@@ -65,7 +87,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testAllNullValueText() throws Exception {
-		JDIModelPresentation pres = new JDIModelPresentation();
+		JDIModelPresentation pres = mock();
 		try {
 			TestIJavaType type = new TestIJavaType(null, null);
 			TestIJavaValue value = new TestIJavaValue(type, null, null, null, null);
@@ -86,11 +108,9 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testSimpleStringValueText() throws Exception {
-		JDIModelPresentation pres = new JDIModelPresentation();
+		JDIModelPresentation pres = mock();
 		try {
-			String sig = Signature.createTypeSignature("java.lang.String", false);
-			TestIJavaType type = new TestIJavaType("foobar", sig);
-			TestIJavaValue value = new TestIJavaValue(type, sig, null, "org.test.MyClass", "test Java value");
+			var value = createJavaObject();
 			String val = pres.getValueText(value);
 			assertNotNull("the value should have been computed", val);
 			assertEquals("The value text should be '\"MyClass test Java value\"'", "MyClass test Java value", val);
@@ -106,11 +126,9 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testResolvedStringValueText() throws Exception {
-		JDIModelPresentation pres = new JDIModelPresentation();
+		JDIModelPresentation pres = mock();
 		try {
-			String sig = Signature.createTypeSignature("java.lang.String", true);
-			TestIJavaType type = new TestIJavaType("foobar", sig);
-			TestIJavaValue value = new TestIJavaValue(type, sig, null, "org.test.MyClass", "test Java value");
+			var value = createJavaObject();
 			String val = pres.getValueText(value);
 			assertNotNull("the value should have been computed", val);
 			assertEquals("The value text should be '\"MyClass test Java value\"'", "MyClass test Java value", val);
@@ -125,12 +143,10 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
-	public void testResolvedStringValueTextWithLabel() throws Exception {
-		var pres = new JDIModelPresentation();
+	public void testStringValueTextWithLabel() throws Exception {
+		var pres = mock();
 		try {
-			var sig = Signature.createTypeSignature("java.lang.String", true);
-			var type = new TestIJavaType("foobar", sig);
-			var value = new TestIJavaObjectValue(type, sig, null, "org.test.MyClass", "test Java value");
+			var value = createJavaObject();
 			value.setLabel("myLabel");
 			var valTxt = pres.getValueText(value);
 			assertNotNull("the value should have been computed", valTxt);
@@ -138,6 +154,136 @@ public class ModelPresentationTests extends AbstractDebugTest {
 		} finally {
 			pres.dispose();
 		}
+	}
+
+	/**
+	 * Tests getting the value text for a simple String type
+	 *
+	 * @throws Exception
+	 */
+	public void testStringVariableWithValueText() throws Exception {
+		JDIModelPresentation pres = mock();
+		try {
+			var value = createJavaObject();
+			var variable = new TestIJavaVariable("myVariable", value);
+			String val = pres.getText(variable);
+			assertNotNull("the value should have been computed", val);
+			assertEquals("The value text should be '\"myVariable= MyClass test Java value\"'", "myVariable= MyClass test Java value", val);
+			var foreground = pres.getForeground(variable);
+			assertNull("the foreground color should have been null", foreground);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	/**
+	 * Tests getting the value text for a simple String type with a label
+	 *
+	 * @throws Exception
+	 */
+	public void testStringVariableWithValueTextWithLabel() throws Exception {
+		var pres = mock();
+		try {
+			var value = createJavaObject();
+			value.setLabel("myLabel");
+			var variable = new TestIJavaVariable("myVariable", value);
+			var valTxt = pres.getText(variable);
+			assertNotNull("the value should have been computed", valTxt);
+			assertEquals("The value text should be '\"myVariable= (myLabel) MyClass test Java value\"'", "myVariable= (myLabel) MyClass test Java value", valTxt);
+			var foreground = pres.getForeground(variable);
+			assertNotNull("the foreground should have been computed", foreground);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	/**
+	 * Tests for handling IWatchExpression
+	 *
+	 * @throws Exception
+	 */
+	public void testWatchExpression() throws Exception {
+		JDIModelPresentation pres = mock();
+		try {
+			var value = createJavaObject();
+			var variable = new TestIWatchExpression("myVariable", value);
+			String val = pres.getText(variable);
+			assertNotNull("the value should have been computed", val);
+			assertEquals("The value text should be '\"\\\"myVariable\\\"= MyClass test Java value\"'", "\"myVariable\"= MyClass test Java value", val);
+			var foreground = pres.getForeground(variable);
+			assertNull("the foreground color should have been null", foreground);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	/**
+	 * Tests for handling IWatchExpression with a label
+	 *
+	 * @throws Exception
+	 */
+	public void testWatchExpressionWithLabel() throws Exception {
+		var pres = mock();
+		try {
+			var value = createJavaObject();
+			value.setLabel("myLabel");
+			var variable = new TestIWatchExpression("myVariable", value);
+			var valTxt = pres.getText(variable);
+			assertNotNull("the value should have been computed", valTxt);
+			assertEquals("The value text should be '\"\\\"myVariable\\\"= (myLabel) MyClass test Java value\"'", "\"myVariable\"= (myLabel) MyClass test Java value", valTxt);
+			var foreground = pres.getForeground(variable);
+			assertNotNull("the foreground should have been computed", foreground);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	/**
+	 * Tests for handling JavaInspectExpression
+	 *
+	 * @throws Exception
+	 */
+	public void testJavaInspectExpression() throws Exception {
+		JDIModelPresentation pres = mock();
+		try {
+			var value = createJavaObject();
+			var variable = new JavaInspectExpression("myVariable", value);
+			String val = pres.getText(variable);
+			assertNotNull("the value should have been computed", val);
+			assertEquals("The value text should be '\"\\\"myVariable\\\"= MyClass test Java value\"'", "\"myVariable\"= MyClass test Java value", val);
+			var foreground = pres.getForeground(variable);
+			assertNull("the foreground color should have been null", foreground);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	/**
+	 * Tests for handling JavaInspectExpression with a label
+	 *
+	 * @throws Exception
+	 */
+	public void testJavaInspectExpressionWithLabel() throws Exception {
+		var pres = mock();
+		try {
+			var value = createJavaObject();
+			value.setLabel("myLabel");
+			var variable = new JavaInspectExpression("myVariable", value);
+			var valTxt = pres.getText(variable);
+			assertNotNull("the value should have been computed", valTxt);
+			assertEquals("The value text should be '\"\\\"myVariable\\\"= (myLabel) MyClass test Java value\"'", "\"myVariable\"= (myLabel) MyClass test Java value", valTxt);
+			var foreground = pres.getForeground(variable);
+			assertNotNull("the foreground should have been computed", foreground);
+		} finally {
+			pres.dispose();
+		}
+	}
+
+	private TestIJavaObjectValue createJavaObject() {
+		var sig = Signature.createTypeSignature("java.lang.String", true);
+		var type = new TestIJavaType("foobar", sig);
+		var value = new TestIJavaObjectValue(type, sig, null, "org.test.MyClass", "test Java value");
+		return value;
 	}
 
 	/**
@@ -169,7 +315,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	public void testShowTypeTest() throws Exception {
 		String typeName = "ModelPresentationTests";
 		IJavaLineBreakpoint bp = createLineBreakpoint(19, typeName);
-		JDIModelPresentation pres = new JDIModelPresentation();
+		JDIModelPresentation pres = mock();
 
 		IJavaThread thread = null;
 		try {

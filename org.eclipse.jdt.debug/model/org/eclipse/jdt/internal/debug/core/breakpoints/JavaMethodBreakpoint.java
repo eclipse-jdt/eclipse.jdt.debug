@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.LambdaUtils;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
@@ -464,7 +465,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 				}
 			}
 
-			if (getMethodName() != null) {
+			if (getMethodName() != null && !LambdaUtils.isLambdaMethod(method)) {
 				if (!method.name().equals(getMethodName())) {
 					return true;
 				}

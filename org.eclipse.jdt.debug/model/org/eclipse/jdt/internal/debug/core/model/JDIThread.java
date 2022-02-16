@@ -2787,8 +2787,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					fStepResultTimeoutTriggered.set(false);
 				}
 
+				Location stepOverLocation2 = fStepOverLocation;
 				if (getStepKind() == StepRequest.STEP_OVER) {
-					Location stepOverLocation2 = fStepOverLocation;
 					if (stepOverLocation2 != null && fStepOverFrameCount >= 0) {
 						int underlyingFrameCount = getUnderlyingFrameCount();
 						if (underlyingFrameCount > fStepOverFrameCount) {
@@ -2824,7 +2824,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				// a filtered location, or if we're back where
 				// we started on a step into, do another step of the same kind
 				if (locationShouldBeFiltered(currentLocation)
-						|| shouldDoExtraStepInto(currentLocation)) {
+						|| shouldDoExtraStepInto(currentLocation)
+						|| (getStepKind() == StepRequest.STEP_OVER && isSyntheticAndNotAvailable(currentLocation, stepOverLocation2))) {
 					setRunning(true);
 					deleteStepRequest();
 					createSecondaryStepRequest();
@@ -2984,6 +2985,22 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				fStepOverLocation = null;
 				fStepOverFrameCount =  -1;
 			}
+		}
+
+		private boolean isSyntheticAndNotAvailable(Location currentLocation, Location previousLocation) {
+			if (previousLocation != null) {
+				Method method = previousLocation.method();
+				if (method != null && method.isSynthetic()) {
+					boolean isLambdaMethod = LambdaUtils.isLambdaMethod(method);
+					if (isLambdaMethod) {
+						int currentLineNumber = currentLocation.lineNumber();
+						if (currentLineNumber == -1) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 	}
 

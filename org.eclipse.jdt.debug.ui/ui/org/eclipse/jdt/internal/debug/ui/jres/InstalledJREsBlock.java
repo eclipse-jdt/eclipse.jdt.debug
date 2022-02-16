@@ -153,7 +153,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				fVMList.refresh();
 			}
 			else {
-				display.syncExec(new Runnable() {
+				display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						fVMList.refresh();

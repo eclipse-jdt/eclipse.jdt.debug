@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2021 IBM Corporation and others.
+     Copyright (c) 2005, 2022 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -158,6 +158,16 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.RetargetToggleTracepointAction"
                menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
                id="org.eclipse.jdt.debug.ui.actions.ToggleTracepoint">
+         </action>
+         <action
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleLambdaEntryBreakpoint"
+               label="%ToggleLambdaEntryBreakpointAction.label"
+               icon="icons/full/obj16/brkp_obj.png"
+               disabledIcon="icons/full/obj16/brkpd_obj.png"
+               helpContextId="toggle_tracepoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RetargetToggleLambdaEntryBreakpointAction"
+               menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
+               id="org.eclipse.jdt.debug.ui.actions.ToggleLambdaEntryBreakpoint">
          </action>
          <action
 	           definitionId="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
@@ -646,6 +656,22 @@
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
          <filter
+               name="JavaVariableFilter"
+               value="isFieldVariable">
+         </filter>
+         <action
+               label="%openFieldDeclaration.label"
+               tooltip="%openFieldDeclaration.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclarationAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclarationAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
+         <filter
                name="PrimitiveVariableActionFilter"
                value="isPrimitive">
          </filter>
@@ -990,6 +1016,15 @@
                menubarPath="debug">
          </action>
          <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.RulerToggleLambdaEntryBreakpointActionDelegate"
+               helpContextId="manage_breakpoint_action_context"
+               icon="icons/full/obj16/brkp_obj.png"
+               id="org.eclipse.jdt.debug.ui.actions.RulerToggleLambdaEntryBreakpointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleLambdaEntryBreakpoint"
+               label="%AddLambdaEntryBreakpoint.label"
+               menubarPath="debug">
+         </action>
+         <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
                class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
@@ -1031,6 +1066,15 @@
                id="org.eclipse.jdt.debug.ui.actions.RulerToggleTracepointAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint"
                label="%AddTracepoint.label"
+               menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.RulerToggleLambdaEntryBreakpointActionDelegate"
+               helpContextId="manage_breakpoint_action_context"
+               icon="icons/full/obj16/brkp_obj.png"
+               id="org.eclipse.jdt.debug.ui.actions.RulerToggleLambdaEntryBreakpointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleLambdaEntryBreakpoint"
+               label="%AddLambdaEntryBreakpoint.label"
                menubarPath="debug">
          </action>
          <action
@@ -2670,6 +2714,12 @@ M4 = Platform-specific fourth key
             description="%ToggleTracepointCommand.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint">
+      </command>
+      <command
+            name="%ToggleLambdaEntryBreakpointCommand.label"
+            description="%ToggleLambdaEntryBreakpointCommand.description"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.commands.ToggleLambdaEntryBreakpoint">
       </command>
       <command
             name="%ActionDefinition.addException.name"
