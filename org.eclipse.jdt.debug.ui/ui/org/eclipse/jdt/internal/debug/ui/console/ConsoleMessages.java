@@ -38,6 +38,9 @@ public class ConsoleMessages extends NLS {
 	public static String JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6;
 	public static String JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8;
 
+	public static String JavaDebugStackTraceHyperlink_dialog_title;
+	public static String JavaDebugStackTraceHyperlink_dialog_message;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

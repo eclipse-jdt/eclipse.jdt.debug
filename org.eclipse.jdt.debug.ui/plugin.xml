@@ -3542,6 +3542,26 @@ M4 = Platform-specific fourth key
             </or>
          </enablement>
       </consolePatternMatchListener>
+      <!-- Add hyperlinks to stack traces copied from the Debug view, e.g.:
+
+              SomeClass.someMethod(String[]) line: 6
+              SomeClass.someMethod(SomeType1<?>, SomeType2<?>) line: 12
+              SomeClass<SomeType>.someMethod() line: 504
+
+           Triangle brackets for generics are specified as "&lt;" and "&gt;",
+           as characters "<" and ">" are not allowed within the pattern definition (due to xml).
+      -->
+      <consolePatternMatchListener
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaDebugStackTraceConsoleTracker"
+            regex="[$\w\(\)\.&lt;&gt;]+\.[$\w]+\([$\s\w\[\]\.,?&lt;&gt;]*\) line: [\d]+"
+            qualifier="line: [\d]+"
+            id="org.eclipse.jdt.debug.ui.JavaDebugStackTraceConsoleTracker">
+         <enablement>
+            <or>
+               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
+            </or>
+         </enablement>
+      </consolePatternMatchListener>
    </extension>
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
