@@ -133,6 +133,7 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIStackFrame_ThrowingException;
 	public static String JDIStackFrame_NoMethodReturnValue;
 	public static String JDIStackFrame_NotObservedBecauseOfTimeout;
+	public static String JDIStackFrame_NoLongerAvailable;
 
 	public static String JDIThisVariable_exception_while_retrieving_type_this;
 	public static String JDIThisVariableexception_retrieving_reference_type_name;

@@ -760,13 +760,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 		}
 
-		List<LocalVariable> locals = null;
+		List<LocalVariable> locals = Collections.EMPTY_LIST;
 		try {
-			locals = getUnderlyingStackFrame().visibleVariables();
+			StackFrame frame = getUnderlyingStackFrame();
+			if (frame != null) {
+				locals = frame.visibleVariables();
+			}
 		} catch (AbsentInformationException e) {
-			locals = Collections.EMPTY_LIST;
+			// continue with empty list of variables
 		} catch (NativeMethodException e) {
-			locals = Collections.EMPTY_LIST;
+			// continue with empty list of variables
 		} catch (RuntimeException e) {
 			targetRequestFailed(
 					MessageFormat.format(
@@ -980,7 +983,12 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		synchronized (fThread) {
 			List<LocalVariable> variables = Collections.EMPTY_LIST;
 			try {
-				variables = getUnderlyingStackFrame().visibleVariables();
+				StackFrame frame = getUnderlyingStackFrame();
+				if (frame != null) {
+					variables = frame.visibleVariables();
+				} else {
+					setLocalsAvailable(false);
+				}
 			} catch (AbsentInformationException e) {
 				setLocalsAvailable(false);
 			} catch (NativeMethodException e) {
@@ -1354,7 +1362,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					throw new DebugException(new Status(IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							IJavaStackFrame.ERR_INVALID_STACK_FRAME,
-							JDIDebugModelMessages.JDIStackFrame_25, null));
+							JDIDebugModelMessages.JDIStackFrame_25, new IllegalStateException()));
 				}
 				if (fThread.isSuspended()) {
 					// re-index stack frames - See Bug 47198
@@ -1364,14 +1372,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						fThread.computeStackFrames();
 						if (fDepth == -1) {
 						// If depth is -1, then this is an invalid frame
-							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.JDIStackFrame_25, null));
+							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.JDIStackFrame_25, new IllegalStateException()));
 						}
 					}
 				} else {
 					throw new DebugException(new Status(IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							IJavaThread.ERR_THREAD_NOT_SUSPENDED,
-							JDIDebugModelMessages.JDIStackFrame_25, null));
+							JDIDebugModelMessages.JDIStackFrame_25, new IllegalStateException()));
 				}
 			}
 			return fStackFrame;

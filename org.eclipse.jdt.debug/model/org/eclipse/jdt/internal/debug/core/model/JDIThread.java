@@ -2361,7 +2361,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					return;
 				}
 				setOriginalStepKind(getStepKind());
-				Location location = top.getUnderlyingStackFrame().location();
+				StackFrame frame = top.getUnderlyingStackFrame();
+				if (frame == null) {
+					return;
+				}
+				Location location = frame.location();
 				setOriginalStepLocation(location);
 				setOriginalStepStackDepth(computeStackFrames().size());
 				setStepRequest(createStepRequest());

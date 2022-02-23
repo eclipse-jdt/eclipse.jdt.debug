@@ -24,6 +24,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.StackFrame;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -58,8 +59,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 	protected Value retrieveValue() throws DebugException {
 		synchronized (fStackFrame.getThread()) {
 			if (getStackFrame().isSuspended()) {
-				return getStackFrame().getUnderlyingStackFrame().getValue(
-						fLocal);
+				StackFrame frame = getStackFrame().getUnderlyingStackFrame();
+				if (frame != null) {
+					return frame.getValue(fLocal);
+				}
 			}
 		}
 		// bug 6518
@@ -91,8 +94,16 @@ public class JDILocalVariable extends JDIModificationVariable {
 	protected void setJDIValue(Value value) throws DebugException {
 		try {
 			synchronized (getStackFrame().getThread()) {
-				getStackFrame().getUnderlyingStackFrame().setValue(getLocal(),
-						value);
+				StackFrame frame = getStackFrame().getUnderlyingStackFrame();
+				if (frame != null) {
+					frame.setValue(getLocal(), value);
+				} else {
+					String errorMessage = JDIDebugModelMessages.JDIStackFrame_NoLongerAvailable;
+					targetRequestFailed(
+							MessageFormat.format(
+									JDIDebugModelMessages.JDILocalVariable_exception_modifying_local_variable_value,
+									errorMessage), new Throwable(errorMessage)); // use Throwable, as RuntimeException is re-thrown
+				}
 			}
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
