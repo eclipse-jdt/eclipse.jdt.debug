@@ -466,6 +466,11 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @throws InterruptedException if canceled by the user
 	 */
 	private static void handleMatches(List<Object> matches, int line, String inputText) {
+		handleMatches(matches, line, inputText, ActionMessages.OpenFromClipboardAction_OpenFromClipboard);
+	}
+
+	public static void handleMatches(List<Object> matches, int line, String inputText, String title) {
+
 		if (matches.size() > 1) {
 			int flags = JavaElementLabelProvider.SHOW_DEFAULT | JavaElementLabelProvider.SHOW_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT;
 			IWorkbenchWindow window = JDIDebugUIPlugin.getActiveWorkbenchWindow();
@@ -480,7 +485,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 					return DialogSettings.getOrCreateSection(settings, "OpenFromClipboardAction_dialogBounds"); //$NON-NLS-1$
 				}
 			};
-			dialog.setTitle(ActionMessages.OpenFromClipboardAction_OpenFromClipboard);
+			dialog.setTitle(title);
 			dialog.setMessage(ActionMessages.OpenFromClipboardAction_SelectOrEnterTheElementToOpen);
 			dialog.setElements(matches.toArray());
 			dialog.setMultipleSelection(true);

@@ -15,6 +15,9 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,9 +27,15 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.TypeNameMatch;
+import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -113,8 +122,16 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 						result = JavaDebugUtils.resolveSourceElement(JavaDebugUtils.generateSourceName(typeName), getLaunch());
 					}
 					if (result == null) {
-						// search for any type in the workspace
-						result = OpenTypeAction.findTypeInWorkspace(typeName, false);
+						// search for all types in the workspace
+						result = findTypesInWorkspace(typeName); // List<IType>
+						if (result instanceof List) {
+							if (((List<?>) result).isEmpty()) {
+								result = null;
+							}
+							if (((List<?>) result).size() == 1) {
+								result = ((List<?>) result).get(0);
+							}
+						}
 					}
 					searchCompleted(result, typeName, lineNumber, null);
 				} catch (CoreException e) {
@@ -127,6 +144,29 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		search.schedule();
 	}
 
+	private static List<IType> findTypesInWorkspace(String typeName) throws CoreException {
+		int dot = typeName.lastIndexOf('.');
+		char[][] qualifications;
+		String simpleName;
+		if (dot != -1) {
+			qualifications = new char[][] { typeName.substring(0, dot).toCharArray() };
+			simpleName = typeName.substring(dot + 1);
+		} else {
+			qualifications = null;
+			simpleName = typeName;
+		}
+		char[][] typeNames = new char[][] { simpleName.toCharArray() };
+		List<IType> matchingTypes = new ArrayList<>();
+		TypeNameMatchRequestor requestor = new TypeNameMatchRequestor() {
+			@Override
+			public void acceptTypeNameMatch(TypeNameMatch match) {
+				matchingTypes.add(match.getType());
+			}
+		};
+		SearchEngine searchEngine = new SearchEngine();
+		searchEngine.searchAllTypeNames(qualifications, typeNames, SearchEngine.createWorkspaceScope(), requestor, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+		return matchingTypes;
+	}
 	/**
 	 * Reported back to from {@link JavaStackTraceHyperlink#startSourceSearch(String, int)} when results are found
 	 *
@@ -146,6 +186,12 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 					} else {
 						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
 					}
+				} else if (source instanceof List) { // ambiguous
+					@SuppressWarnings("unchecked")
+					List<Object> matches = (List<Object>) source;
+					int line = lineNumber + 1; // lineNumber starts with 0, but line with 1, see #linkActivated
+					OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+					return Status.OK_STATUS;
 				} else {
 					processSearchResult(source, typeName, lineNumber);
 				}
