@@ -1053,6 +1053,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 						}
 					}
+				} else if (body instanceof LambdaExpression) {
+					body.accept(this);
 				}
 			}
 			return false;
@@ -1064,7 +1066,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		String key = methodBinding.getKey();
 		return key.substring(key.indexOf('.') + 1, key.indexOf('('));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 *
