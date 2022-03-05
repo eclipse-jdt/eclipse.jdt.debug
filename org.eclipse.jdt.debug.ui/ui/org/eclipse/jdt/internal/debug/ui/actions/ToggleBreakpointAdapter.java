@@ -1283,6 +1283,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @param element the element to get the breakpoint from
      * @return the current breakpoint from the element or <code>null</code>
      */
+	@SuppressWarnings("restriction")
 	protected static IJavaBreakpoint getMethodBreakpoint(IMember element) {
         IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
         IBreakpoint[] breakpoints = breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
@@ -1314,6 +1315,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				}
 			} else {
 				if (container instanceof IMethod) {
+					if (method instanceof org.eclipse.jdt.internal.core.LambdaMethod) {
+						return null;
+					}
 					if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
 						if (method.isSimilar((IMethod) container)) {
 							return methodBreakpoint;
