@@ -23,6 +23,7 @@ public class FirstLambdaLocationLocator extends ASTVisitor {
 	private int fLineOffset = -1;
 	private int fLineEndPosition = -1;
 	private String fLambdaMethodName;
+	private String fLambdaMethodSignature;
 	private boolean fLocationFound = false;
 
 	public FirstLambdaLocationLocator(int lineOffset, int lineEndPosition) {
@@ -35,6 +36,15 @@ public class FirstLambdaLocationLocator extends ASTVisitor {
 	 */
 	public String getLambdaMethodName() {
 		return fLambdaMethodName;
+	}
+
+	/**
+	 * Return of the signature of the lambda method where the valid location is.
+	 * The signature is computed to be compatible with the final lambda method with
+	 * method arguments and outer local variables.
+	 */
+	public String getfLambdaMethodSignature() {
+		return fLambdaMethodSignature;
 	}
 
 	public int getNodeLength() {
@@ -57,15 +67,10 @@ public class FirstLambdaLocationLocator extends ASTVisitor {
 		fNodeOffset = node.getStartPosition();
 		IMethodBinding methodBinding = node.resolveMethodBinding();
 		if (methodBinding != null) {
-			fLambdaMethodName = toMethodName(methodBinding);
+			fLambdaMethodName = LambdaLocationLocatorHelper.toMethodName(methodBinding);
+			fLambdaMethodSignature = LambdaLocationLocatorHelper.toMethodSignature(methodBinding);
 			fLocationFound = true;
 		}
 		return false;
 	}
-
-	private String toMethodName(IMethodBinding methodBinding) {
-		String key = methodBinding.getKey();
-		return key.substring(key.indexOf('.') + 1, key.indexOf('('));
-	}
-
 }

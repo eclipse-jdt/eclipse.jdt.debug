@@ -140,6 +140,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	private boolean fLocationFound;
 	private boolean fLambdaVisited;
 	private String fLambdaMethodName;
+	private String fLambdaMethodSignature;
 	private String fTypeName;
 	private int fLineLocation;
 	private int fMemberOffset;
@@ -227,6 +228,16 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public String getLambdaMethodName() {
 		return fLambdaMethodName;
 	}
+
+	/**
+	 * Return of the signature of the lambda method where the valid location is.
+	 * The signature is computed to be compatible with the final lambda method with
+	 * method arguments and outer local variables.
+	 */
+	public String getfLambdaMethodSignature() {
+		return fLambdaMethodSignature;
+	}
+
 	/**
 	 * Return the line number of the computed valid location
 	 */
@@ -1024,7 +1035,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			if (methodBinding != null) {
 				fLambdaVisited = true;
 				fLocationType = LOCATION_LAMBDA_METHOD;
-				fLambdaMethodName = toMethodName(methodBinding);
+				fLambdaMethodName = LambdaLocationLocatorHelper.toMethodName(methodBinding);
+				fLambdaMethodSignature = LambdaLocationLocatorHelper.toMethodSignature(methodBinding);
 				fLocationFound = true;
 				return false;
 			}
@@ -1060,11 +1072,6 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			return false;
 		}
 		return visit(node, true);
-	}
-
-	private String toMethodName(IMethodBinding methodBinding) {
-		String key = methodBinding.getKey();
-		return key.substring(key.indexOf('.') + 1, key.indexOf('('));
 	}
 
 	/*

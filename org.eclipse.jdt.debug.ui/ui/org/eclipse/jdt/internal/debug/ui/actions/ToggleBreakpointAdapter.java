@@ -269,7 +269,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		job.schedule();
 	}
 
-	public void toggleLambdaEntryMethodBreakpoints(final IWorkbenchPart part, final ISelection finalSelection, final String lambdaMethodName) {
+	public void toggleLambdaEntryMethodBreakpoints(final IWorkbenchPart part, final ISelection finalSelection, final String lambdaMethodName, final String lambdaMethodSignature) {
 		Job job = new Job("Toggle Lambda Entry Method Breakpoints") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -277,7 +277,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					return Status.CANCEL_STATUS;
 				}
 				try {
-					return doToggleLambdaEntryMethodBreakpoints(part, finalSelection, lambdaMethodName, monitor);
+					return doToggleLambdaEntryMethodBreakpoints(part, finalSelection, lambdaMethodName, lambdaMethodSignature, monitor);
 				} catch (CoreException e) {
 					return e.getStatus();
 				} finally {
@@ -290,7 +290,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		job.schedule();
 	}
 
-	static IStatus doToggleLambdaEntryMethodBreakpoints(IWorkbenchPart part, ISelection selection, String lambdaMethodName, IProgressMonitor monitor) throws CoreException {
+	static IStatus doToggleLambdaEntryMethodBreakpoints(IWorkbenchPart part, ISelection selection, String lambdaMethodName, String lambdaMethodSignature, IProgressMonitor monitor) throws CoreException {
 		ITextEditor textEditor = getTextEditor(part);
 		if (textEditor == null || !(selection instanceof ITextSelection)) {
 			return Status.OK_STATUS;
@@ -316,7 +316,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			}
 
 			if (method != null) {
-				doToggleMethodBreakpoint(method, lambdaMethodName, part, selection, monitor);
+				doToggleMethodBreakpoint(method, lambdaMethodName, lambdaMethodSignature, part, selection, monitor);
 			} else {
 				BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
 			}
@@ -354,7 +354,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			}
 
 			if (method != null) {
-				doToggleMethodBreakpoint(method, loc.getLambdaMethodName(), part, selection, monitor);
+				doToggleMethodBreakpoint(method, loc.getLambdaMethodName(), loc.getfLambdaMethodSignature(), part, selection, monitor);
 			} else {
 				ValidBreakpointLocationLocator locNew = new ValidBreakpointLocationLocator(loc.getCompilationUnit(), textSelection.getStartLine()
 						+ 1, true, true);
@@ -392,10 +392,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	}
 
 	private static void doToggleMethodBreakpoint(IMethod member, IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
-		doToggleMethodBreakpoint(member, null, part, finalSelection, monitor);
+		doToggleMethodBreakpoint(member, null, null, part, finalSelection, monitor);
 	}
 
-	private static void doToggleMethodBreakpoint(IMethod member, String lambdaMethodName, IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
+	private static void doToggleMethodBreakpoint(IMethod member, String lambdaMethodName, String lambdaMethodSignature, IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
 		IJavaBreakpoint breakpoint = getMethodBreakpoint(member);
 		if (breakpoint != null) {
 			if (BreakpointToggleUtils.isToggleTracepoints()) {
@@ -416,15 +416,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		Map<String, Object> attributes = new HashMap<>(10);
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, member);
 		IType type = member.getDeclaringType();
-		String signature = member.getSignature();
 		String mname = Optional.ofNullable(lambdaMethodName).orElse(member.getElementName());
+		String signature = Optional.ofNullable(lambdaMethodSignature).orElse(member.getSignature());
 		if (member.isConstructor()) {
 			mname = "<init>"; //$NON-NLS-1$
 			if (type.isEnum()) {
 				signature = "(Ljava.lang.String;I" + signature.substring(1); //$NON-NLS-1$
 			}
 		}
-		if (!type.isBinary()) {
+		if (!type.isBinary() && lambdaMethodName == null) {
 			signature = resolveMethodSignature(member);
 			if (signature == null) {
 				BreakpointToggleUtils.report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part);
@@ -1601,7 +1601,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						return;
 					}
 					ITextSelection textSelection = new TextSelection(document, firstLambda.getNodeOffset(), firstLambda.getNodeLength());
-					toggleLambdaEntryMethodBreakpoints(part, textSelection, firstLambda.getLambdaMethodName());
+					toggleLambdaEntryMethodBreakpoints(part, textSelection, firstLambda.getLambdaMethodName(), firstLambda.getfLambdaMethodSignature());
 				} catch (BadLocationException e) {
 					BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
 				}
