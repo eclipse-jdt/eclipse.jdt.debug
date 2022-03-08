@@ -1568,7 +1568,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			lambdaEntryBP = true;
 			BreakpointToggleUtils.setUnsetLambdaEntryBreakpoint(false);
 		} else {
-			loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
+			loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true, ts.getOffset(), ts.getLength());
 		}
 		unit.accept(loc);
 
