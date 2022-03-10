@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1240,7 +1242,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			thread = launchToBreakpoint(typeName);
 			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
 
-			selectFrame(thread.getStackFrames()[4]);
+			selectFrame(part, thread.getStackFrames()[4]);
 
 			JavaDebugHover hover = new JavaDebugHover();
 			hover.setEditor(part);
@@ -1453,7 +1455,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		return sync(() -> selection.getText());
 	}
 
-	private void selectFrame(IStackFrame frame) throws Exception {
+	private void selectFrame(CompilationUnitEditor editor, IStackFrame frame) throws Exception {
 		LaunchView debugView = sync(() -> (LaunchView) getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW));
 		assertNotNull("expected Debug View to be open", debugView);
 
@@ -1461,8 +1463,25 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		TreePath path = selection.getPaths()[0];
 		TreePath newPath = path.getParentPath().createChildPath(frame);
 		TreeSelection newSelection = new TreeSelection(newPath);
-		sync(() -> debugView.getViewer().setSelection(newSelection, true));
-		processUiEvents(100);
+
+		// frames uses 1 based line number, subtract 1 to line up with editor line numbers
+		int targetLineNumber = frame.getLineNumber() - 1;
+		int initialLineNumber = sync(() -> ((ITextSelection) editor.getSelectionProvider().getSelection()).getStartLine());
+		assertNotEquals("selectFrame cannot detect when it has"
+				+ "completed because selecting frame doesn't change the line number.", initialLineNumber, targetLineNumber);
+		final int timeoutms = 1000;
+		int selectedLineNumer = sync(() -> {
+			int lineNumber;
+			long endtime = System.currentTimeMillis() + timeoutms;
+			debugView.getViewer().setSelection(newSelection, true);
+			do {
+				TestUtil.runEventLoop();
+				lineNumber = ((ITextSelection) editor.getSelectionProvider().getSelection()).getStartLine();
+			} while (lineNumber != targetLineNumber && System.currentTimeMillis() < endtime);
+			return lineNumber;
+		});
+		assertEquals("After waiting " + timeoutms
+				+ "ms the editor selection was not moved to the expected line", targetLineNumber, selectedLineNumer);
 	}
 
 	@Override
