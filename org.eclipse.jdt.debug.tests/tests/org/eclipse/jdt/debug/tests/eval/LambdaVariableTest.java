@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Gayan Perera and others.
+ * Copyright (c) 2020, 2022 Gayan Perera and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -198,6 +198,68 @@ public class LambdaVariableTest extends AbstractDebugTest {
 
 		value = doEval(javaThread, () -> (IJavaStackFrame) javaThread.getStackFrames()[3], "s");
 		assertEquals("wrong result at 1st lambda stack : ", "name", value.getValueString());
+	}
+
+	public void testEvaluate_Bug578145_NestedLambda() throws Exception {
+		debugWithBreakpoint("Bug578145NestedLambda", 16);
+
+		IValue value = doEval(javaThread, "numberInInnerLambda");
+		assertEquals("wrong result : ", "100", value.getValueString());
+
+		value = doEval(javaThread, "numberInExternalLambda");
+		assertEquals("wrong result : ", "10", value.getValueString());
+
+		value = doEval(javaThread, "numberInMain");
+		assertEquals("wrong result : ", "1", value.getValueString());
+	}
+
+	public void testEvaluate_Bug578145_LambdaInConstructor() throws Exception {
+		debugWithBreakpoint("Bug578145LambdaInConstructor", 13);
+		IValue value = doEval(javaThread, "localInLambda");
+		assertEquals("wrong result : ", "10", value.getValueString());
+
+		value = doEval(javaThread, "localInConstructor");
+		assertEquals("wrong result : ", "1", value.getValueString());
+	}
+
+	public void testEvaluate_Bug578145_LambdaInFieldDeclaration() throws Exception {
+		debugWithBreakpoint("Bug578145LambdaInFieldDeclaration", 11);
+
+		IValue value = doEval(javaThread, "numberInLambda");
+		assertEquals("wrong result : ", "10", value.getValueString());
+
+		value = doEval(javaThread, "numberInRunnable");
+		assertEquals("wrong result : ", "1", value.getValueString());
+	}
+
+	public void testEvaluate_Bug578145_LambdaInStaticInitializer() throws Exception {
+		debugWithBreakpoint("Bug578145LambdaInStaticInitializer", 12);
+
+		IValue value = doEval(javaThread, "numberInLambda");
+		assertEquals("wrong result : ", "10", value.getValueString());
+
+		value = doEval(javaThread, "numberInStaticInitializer");
+		assertEquals("wrong result : ", "1", value.getValueString());
+	}
+
+	public void testEvaluate_Bug578145_LambdaInAnonymous() throws Exception {
+		debugWithBreakpoint("Bug578145LambdaInAnonymous", 16);
+
+		IValue value = doEval(javaThread, "numberInLambda");
+		assertEquals("wrong result : ", "10", value.getValueString());
+
+		value = doEval(javaThread, "numberInMain");
+		assertEquals("wrong result : ", "1", value.getValueString());
+	}
+
+	public void testEvaluate_Bug578145_LambdaOnChainCalls() throws Exception {
+		debugWithBreakpoint("Bug578145LambdaOnChainCalls", 11);
+
+		IValue value = doEval(javaThread, "numberInLambda");
+		assertEquals("wrong result : ", "10", value.getValueString());
+
+		value = doEval(javaThread, "numberInMain");
+		assertEquals("wrong result : ", "1", value.getValueString());
 	}
 
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
