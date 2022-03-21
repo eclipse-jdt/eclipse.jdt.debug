@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -28,6 +29,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.TestAgainException;
+import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -120,12 +122,14 @@ public class OpenFromClipboardTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "setUp");
 		super.setUp();
 		fSourceFolder = JavaProjectHelper.addSourceContainer(MyTestSetup.fJProject, "src");
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "tearDown");
 		JavaProjectHelper.removeSourceContainer(MyTestSetup.fJProject, "src");
 		super.tearDown();
 	}
