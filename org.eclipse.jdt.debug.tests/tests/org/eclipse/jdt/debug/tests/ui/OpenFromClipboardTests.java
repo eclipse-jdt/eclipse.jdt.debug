@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -140,6 +141,7 @@ public class OpenFromClipboardTests extends TestCase {
 	}
 
 	private List<?> getJavaElementMatches(final String textData) {
+		JavaModelManager.getIndexManager().waitForIndex(false, null);
 		final List<?> matches = new ArrayList<>();
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
