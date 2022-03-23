@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2021 IBM Corporation and others.
+     Copyright (c) 2005, 2022 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -362,6 +362,11 @@
             description="%environment.description.21"
             id="JavaSE-17"
             compliance="17">
+      </environment>
+      <environment
+            description="%environment.description.22"
+            id="JavaSE-18"
+            compliance="18">
       </environment>         
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"
