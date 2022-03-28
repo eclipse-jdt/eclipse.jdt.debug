@@ -23,6 +23,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -154,7 +156,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	public void testFlood() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
 		ILaunch launch = null;
+		final IPreferenceStore debugPrefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		try {
+			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, false);
 			ILaunchConfiguration config = getLaunchConfiguration("FloodConsole");
 			assertNotNull("Could not locate launch configuration", config);
 			launch = config.launch(ILaunchManager.RUN_MODE, null);
@@ -169,6 +173,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			// Should be 10,000 lines
 			assertEquals("Wrong number of lines", 10000, fLinesRead.size());
 		} finally {
+			debugPrefStore.setValue(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, true);
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
 			DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
