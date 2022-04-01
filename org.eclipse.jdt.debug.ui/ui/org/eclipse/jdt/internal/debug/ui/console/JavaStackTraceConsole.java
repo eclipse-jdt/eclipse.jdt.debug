@@ -26,10 +26,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -207,19 +204,11 @@ public class JavaStackTraceConsole extends TextConsole {
     	WorkbenchJob job = new WorkbenchJob(ConsoleMessages.JavaStackTraceConsole_1) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-	            IJobManager jobManager = Job.getJobManager();
-	            try {
-	                jobManager.join(this, monitor);
-	            } catch (OperationCanceledException e1) {
-	                return Status.CANCEL_STATUS;
-	            } catch (InterruptedException e1) {
-	                return Status.CANCEL_STATUS;
-	            }
 	            IDocument document = getDocument();
 	            String orig = document.get();
 	            if (orig != null && orig.length() > 0) {
 	                document.set(format(orig));
-	            }
+				}
 
 				return Status.OK_STATUS;
 			}
