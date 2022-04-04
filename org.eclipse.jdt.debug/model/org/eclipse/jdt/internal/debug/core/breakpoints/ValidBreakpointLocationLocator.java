@@ -1067,6 +1067,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 					}
 				} else if (body instanceof LambdaExpression) {
 					body.accept(this);
+				} else if (body instanceof MethodInvocation) {
+					body.accept(this);
 				}
 			}
 			return false;
