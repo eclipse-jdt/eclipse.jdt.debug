@@ -123,13 +123,14 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 					}
 					if (result == null) {
 						// search for all types in the workspace
-						result = findTypesInWorkspace(typeName); // List<IType>
-						if (result instanceof List) {
-							if (((List<?>) result).isEmpty()) {
-								result = null;
-							}
-							if (((List<?>) result).size() == 1) {
-								result = ((List<?>) result).get(0);
+						List<IType> types = findTypesInWorkspace(typeName);
+						if (types.isEmpty()) {
+							result = null;
+						} else {
+							if (types.size() == 1) {
+								result = types.get(0);
+							} else {
+								result = types;
 							}
 						}
 					}
