@@ -230,6 +230,6 @@ public class JavaDebugStackTraceConsoleTest extends AbstractJavaStackTraceConsol
 	}
 
 	private void waitForJobs() throws Exception {
-		TestUtil.waitForJobs(getName(), 250, 1_000);
+		TestUtil.waitForJobs(getName(), 250, 10_000);
 	}
 }

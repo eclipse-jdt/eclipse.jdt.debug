@@ -93,13 +93,13 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 		IDocument initialDocument = fConsole.getDocument();
 		String storedContent = "at foo.bar.Type.method1(Type.java:fff)";
 		consoleDocumentWithText(storedContent);
-		removeConsole(true);
+		sync(() -> removeConsole(true));
 
 		Path file = Paths.get(JavaStackTraceConsole.FILE_NAME);
 		assertTrue("Content was not stored.", Files.exists(file));
 		assertTrue("Content was not stored.", Files.size(file) > 0);
 
-		initConsole(false);
+		sync(() -> initConsole(false));
 		assertNotSame("Failed to create new console.", initialDocument, fConsole.getDocument());
 		assertEquals("Failed to restore previous content.", storedContent, fConsole.getDocument().get());
 	}
@@ -189,7 +189,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting of a plain simple stack trace. */
-	public void testFormatSimple() {
+	public void testFormatSimple() throws Exception {
 		IDocument doc = consoleDocumentFormatted("java.lang.AssertionError: expected:5 but was:7\n\n"
 				+ "at org.junit.Ass\nert.fail(Assert.java:88) \n" + "at\norg.junit.   \nAssert.failNotEquals(Assert.java:834)\n"
 				+ "at org.junit.Assert.assertEquals(Assert.java:118)\n" + "at \norg.junit.Assert.assertEquals\n(Assert.java:144)");
@@ -202,7 +202,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting of a stack trace including thread name. */
-	public void testFormatThreadName() {
+	public void testFormatThreadName() throws Exception {
 		IDocument doc = consoleDocumentFormatted("Exception in thread \"ma\nin\" java.lang.NullPointerException\n"
 				+ "at \nStacktrace.main(Stacktrace.java:4)");
 		assertEquals("Exception in thread \"main\" java.lang.NullPointerException", getLine(doc, 0));
@@ -211,7 +211,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting with some less common method names. */
-	public void testFormatUncommonMethods() {
+	public void testFormatUncommonMethods() throws Exception {
 		IDocument doc = consoleDocumentFormatted("Stack Trace\n" + "  at org.eclipse.core.runtime.SafeRunner.run\n(SafeRunner.java:43)\n"
 				+ "      at org.eclipse.ui.internal.JFaceUtil.lambda$0(JFaceUtil.java:47)\n"
 				+ "    at org.eclipse.ui.internal.JFaceUtil$$Lambda$107/0x00000   \n008013c5c40.run(Unknown Source)\n"
@@ -229,7 +229,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting with a 'locked' entry. */
-	public void testFormatLocked() {
+	public void testFormatLocked() throws Exception {
 		IDocument doc = consoleDocumentFormatted("java.lang.Thread.State: RUNNABLE\n"
 				+ " at java.net.PlainSocketImpl.socketAccept(Native Method)\n\n\n"
 				+ "at java.net.PlainSocketImpl\n.accept(PlainSocketImpl.java:408)\n" + "\t - locked <0x911d3c30>   (a java.net.SocksSocketImpl)\n"
@@ -244,7 +244,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting with a ... more entry. */
-	public void testFormatMore() {
+	public void testFormatMore() throws Exception {
 		// additional this one is missing the 'header' line and starting with an 'at' line
 		IDocument doc = consoleDocumentFormatted(" at org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager.preparePersistenceUnitInfos(DefaultPersistenceUnitManager.java:470)\n"
 				+ "    at org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager.afterPropertiesSet(DefaultPersistenceUnitManager.java:424)\n"
@@ -264,7 +264,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting stack trace with cause. */
-	public void testFormatCause() {
+	public void testFormatCause() throws Exception {
 		IDocument doc = consoleDocumentFormatted("HighLevelException:\n LowLevelException\n" + "\tat Junk.a(Junk.java:13)\n"
 				+ "         at Junk.main(Junk.java:4)\n" + "     Caused by: LowLevelException\n" + " at Junk.e(Junk.java:30)\n"
 				+ "    at Junk.d\n(Junk.java:27)\n" + "at Junk.c(Junk.java:21)");
@@ -299,7 +299,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting stack trace with suppressed exceptions. */
-	public void testFormatSuppressed() {
+	public void testFormatSuppressed() throws Exception {
 		IDocument doc = consoleDocumentFormatted("Exception in thread \"main\" java.lang.Exception: Something happened\n" + "at Foo.bar(Native)\n"
 				+ "  at Foo.main(Foo.java:5)\n" + "  Suppressed: Resource$CloseFailException: Resource ID = 0\n"
 				+ "    at Resource.close(Resource\n.java:26)\n" + "      at Foo.bar(Foo.java)\n" + "         ... 1 more\n" + "");
@@ -329,7 +329,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting stack trace with mixture of cause and suppressed. */
-	public void testFormatSuppressedWithCause() {
+	public void testFormatSuppressedWithCause() throws Exception {
 		// exception with suppressed and cause
 		IDocument doc = consoleDocumentFormatted("Exception in thread \"main\" java.lang.Exception: Main block\n" + "  at Foo3.main(Foo3.java:7)\n"
 				+ "  Suppressed: Resource$CloseFailException: Resource ID = 1\n" + "          at Resource.close(Resource.java:26)\n"
@@ -373,7 +373,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting the rare [CIRCULAR REFERENCE:...] entry. */
-	public void testFormatCircular() {
+	public void testFormatCircular() throws Exception {
 		IDocument doc = consoleDocumentFormatted("Exception in thread \"main\" Stacktrace$BadException\n"
 				+ "at Stacktrace.main\n(Stacktrace.java:4)\n" + " Caused by: Stacktrace$BadExceptionCompanion: Stacktrace$BadException\n"
 				+ "   at Stacktrace$BadException.<init>(Stacktrace.java:10)\n" + "    ... 1 more\n"
@@ -388,7 +388,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	/** Test formatting stack trace from an ant execution. (output mixed with ant prefixes) */
-	public void testFormatAnt() {
+	public void testFormatAnt() throws Exception {
 		IDocument doc = consoleDocumentFormatted("[java] !ENTRY org.eclipse.debug.core 4 120 2005-01-11 03:02:30.321\n"
 				+ "     [java] !MESSAGE An exception occurred while dispatching debug events.\n" + "     [java] !STACK 0\n"
 				+ "     [java] java.lang.NullPointerException\n" + "     [java] 	at \n"
