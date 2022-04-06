@@ -71,12 +71,12 @@ public class AbstractJavaStackTraceConsoleTest extends AbstractDebugUiTests {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		initConsole(true);
+		sync(() -> initConsole(true));
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		removeConsole(false);
+		sync(() -> removeConsole(false));
 		super.tearDown();
 	}
 
@@ -135,9 +135,12 @@ public class AbstractJavaStackTraceConsoleTest extends AbstractDebugUiTests {
 		}
 	}
 
-	protected IDocument consoleDocumentWithText(String text) throws InterruptedException {
-		IDocument document = fConsole.getDocument();
-		document.set(text);
+	protected IDocument consoleDocumentWithText(String text) throws Exception {
+		IDocument document = sync(() -> {
+			IDocument doc = fConsole.getDocument();
+			doc.set(text);
+			return doc;
+		});
 		// wait for document being parsed and hyperlinks created
 		Job.getJobManager().join(fConsole, null);
 		TestUtil.runEventLoop();
@@ -218,11 +221,15 @@ public class AbstractJavaStackTraceConsoleTest extends AbstractDebugUiTests {
 	 * @param text
 	 *            new console text
 	 * @return the consoles document
+	 * @throws Exception
 	 */
-	protected IDocument consoleDocumentFormatted(String text) {
-		IDocument document = fConsole.getDocument();
-		document.set(text);
-		fConsole.format();
+	protected IDocument consoleDocumentFormatted(String text) throws Exception {
+		IDocument document = sync(() -> {
+			IDocument doc = fConsole.getDocument();
+			doc.set(text);
+			fConsole.format();
+			return doc;
+		});
 		// wait for document being formatted
 		TestUtil.waitForJobs(getName(), 30, 1000);
 		return document;
