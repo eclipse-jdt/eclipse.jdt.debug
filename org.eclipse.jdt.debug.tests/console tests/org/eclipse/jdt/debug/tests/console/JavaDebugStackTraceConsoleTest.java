@@ -146,6 +146,13 @@ public class JavaDebugStackTraceConsoleTest extends AbstractJavaStackTraceConsol
 				new String[] { "Type", "line: 704" }, matchTexts);
 	}
 
+	public void testMultipleTypeParameters() throws Exception {
+		consoleDocumentWithText("ReferencePipeline$Head<E_IN,E_OUT>.forEach(Consumer<? super E_OUT>) line: 658");
+
+		String[] matchTexts = linkTextsAtPositions(0, 69);
+		assertArrayEquals("Wrong hyperlinks, listing all links: " + allLinks(), new String[] { "ReferencePipeline", "line: 658" }, matchTexts);
+	}
+
 	public void testMethodParameters() throws Exception {
 		consoleDocumentWithText("Some3Class.someMethod(SomeType[]) line: 301");
 
