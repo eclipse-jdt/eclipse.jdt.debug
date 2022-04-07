@@ -3553,7 +3553,7 @@ M4 = Platform-specific fourth key
       -->
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaDebugStackTraceConsoleTracker"
-            regex="[$\w\(\)\.&lt;&gt;]+\.[$\w]+\([$\s\w\[\]\.,?&lt;&gt;]*\) line: [\d]+"
+            regex="[$\w\(\)\.&lt;&gt;,]+\.[$\w]+\([$\s\w\[\]\.,?&lt;&gt;]*\) line: [\d]+"
             qualifier="line: [\d]+"
             id="org.eclipse.jdt.debug.ui.JavaDebugStackTraceConsoleTracker">
          <enablement>
