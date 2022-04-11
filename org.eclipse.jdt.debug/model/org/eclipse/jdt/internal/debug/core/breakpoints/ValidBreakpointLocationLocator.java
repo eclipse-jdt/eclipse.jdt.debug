@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2021 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -202,6 +202,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 *         breakpoint location
 	 */
 	public boolean isBindingsRequired() {
+		System.out.println("dummy"); //$NON-NLS-1$
 		return fNeedBindings;
 	}
 
