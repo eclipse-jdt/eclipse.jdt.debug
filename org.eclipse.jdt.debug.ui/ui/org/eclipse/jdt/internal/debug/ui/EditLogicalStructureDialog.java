@@ -740,6 +740,9 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
 		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
+		if (searchPattern == null) {
+			return;
+		}
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		try {
