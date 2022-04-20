@@ -49,7 +49,7 @@ public class TestUtil {
 		if (timedOut) {
 			// We don't expect any extra jobs run during the test: try to cancel them
 			log(IStatus.INFO, owner, "Trying to cancel running jobs: " + getRunningOrWaitingJobs(null));
-			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
+			getRunningOrWaitingJobs(null).forEach(Job::cancel);
 			waitForJobs(owner, 5, 1000);
 		}
 
@@ -136,6 +136,7 @@ public class TestUtil {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
+		wakeUpSleepingJobs(null);
 		final long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < minTimeMs) {
 			runEventLoop();
@@ -168,9 +169,17 @@ public class TestUtil {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
 			}
+			wakeUpSleepingJobs(null);
 		}
 		runningJobs.clear();
 		return false;
+	}
+
+	private static void wakeUpSleepingJobs(Object family) {
+		List<Job> sleepingJobs = getSleepingJobs(family);
+		for (Job job : sleepingJobs) {
+			job.wakeUp();
+		}
 	}
 
 	static Set<Job> runningJobs = new LinkedHashSet<>();
@@ -218,6 +227,17 @@ public class TestUtil {
 			}
 		}
 		return running;
+	}
+
+	private static List<Job> getSleepingJobs(Object family) {
+		List<Job> sleeping = new ArrayList<>();
+		Job[] jobs = Job.getJobManager().find(family);
+		for (Job job : jobs) {
+			if (job.getState() == Job.SLEEPING) {
+				sleeping.add(job);
+			}
+		}
+		return sleeping;
 	}
 
 	private static boolean isRunningOrWaitingJob(Job job) {

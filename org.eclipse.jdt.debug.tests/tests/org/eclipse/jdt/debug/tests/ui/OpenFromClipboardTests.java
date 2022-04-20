@@ -16,6 +16,8 @@ package org.eclipse.jdt.debug.tests.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.resources.CharsetDeltaJob;
+import org.eclipse.core.internal.resources.ValidateProjectEncoding;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,6 +30,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.core.JavaModelManager;
@@ -86,13 +89,21 @@ public class OpenFromClipboardTests extends TestCase {
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
+			JavaTestPlugin.enableAutobuild(false);
 			fJProject = createProject("OpenFromClipboardTests");
+			waitForEncodingRelatedJobs();
 		}
 
 		@Override
 		protected void tearDown() throws Exception {
 			fJProject.getProject().delete(true, true, null);
+			JavaTestPlugin.enableAutobuild(true);
 			super.tearDown();
+		}
+
+		protected void waitForEncodingRelatedJobs() {
+			TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, ValidateProjectEncoding.class);
+			TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, CharsetDeltaJob.FAMILY_CHARSET_DELTA);
 		}
 
 		private static IJavaProject createProject(String name) throws CoreException {
