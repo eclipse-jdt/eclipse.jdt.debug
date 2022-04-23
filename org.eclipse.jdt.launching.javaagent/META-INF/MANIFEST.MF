@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.jdt.launching.javaagent;singleton:=true
 Bundle-Version: 3.9.800.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.objectweb.asm;bundle-version="[9.3.0,10.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eclipse.jdt.launching.javaagent
+Import-Package: org.objectweb.asm;version="[9.3.0,10.0.0)"
