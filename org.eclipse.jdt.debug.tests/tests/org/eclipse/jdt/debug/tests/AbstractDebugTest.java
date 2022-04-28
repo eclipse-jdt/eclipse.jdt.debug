@@ -497,6 +497,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaInStaticInitializer"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaInAnonymous"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaOnChainCalls"));
+				cfgs.add(createLaunchConfiguration(jp, "LambdaBreakpoints1"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
