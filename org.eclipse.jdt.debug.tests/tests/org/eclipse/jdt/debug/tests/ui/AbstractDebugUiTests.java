@@ -238,7 +238,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 * This method is to allow to catch AssertionFailedError's and other non-Exceptions happened in the UI thread
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends Throwable> void throwException(Throwable exception) throws T {
+	public static <T extends Throwable> void throwException(Throwable exception) throws T {
 		throw (T) exception;
 	}
 
@@ -292,6 +292,12 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 			return IDE.openEditor(page, file, true);
 		};
 		return callInUi(callable);
+	}
+
+	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, IEditorPart editor, BreakpointsMap bpMap) throws Exception {
+		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) toggleBreakpoint(editor, lineNumber);
+		bpMap.put(breakpoint, lineNumber);
+		return breakpoint;
 	}
 
 	/**
@@ -396,7 +402,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 				IJavaLineBreakpoint bp = entry.getKey();
 				assertBreakpointExists(bp, bps);
 				Integer line = entry.getValue();
-				assertEquals(line.intValue(), bp.getLineNumber());
+				assertEquals("Breakpoint moved", line.intValue(), bp.getLineNumber());
 			}
 		}
 	}

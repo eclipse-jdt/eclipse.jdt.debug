@@ -1160,7 +1160,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			return false;
 		}
 		if (visit(node, false)) {
-			// first run through arguments to avoid pre-mature line breakpoint identification
+			Expression expression = node.getExpression();
+			if (expression instanceof ClassInstanceCreation || expression instanceof MethodInvocation) {
+				expression.accept(this);
+			}
+			if (fLocationFound) {
+				return false;
+			}
 			List<? extends ASTNode> arguments = node.arguments();
 			for (ASTNode astNode : arguments) {
 				// arguments needs to be accepted to handle stream operation where the lambda debug point
@@ -1172,10 +1178,6 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				}
 			}
 
-			Expression expression = node.getExpression();
-			if (expression instanceof ClassInstanceCreation || expression instanceof MethodInvocation) {
-				expression.accept(this);
-			}
 		}
 		return visit(node, true);
 	}
