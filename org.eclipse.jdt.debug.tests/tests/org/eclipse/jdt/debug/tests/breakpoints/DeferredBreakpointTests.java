@@ -24,13 +24,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.ui.AbstractDebugUiTests;
 import org.eclipse.ui.IEditorPart;
 
 /**
  * Tests deferred breakpoints.
  */
-public class DeferredBreakpointTests extends AbstractDebugTest {
+public class DeferredBreakpointTests extends AbstractDebugUiTests {
 
 	/**
 	 * Constructor
