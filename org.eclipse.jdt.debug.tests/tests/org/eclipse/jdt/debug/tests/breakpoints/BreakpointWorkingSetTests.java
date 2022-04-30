@@ -14,18 +14,12 @@
 package org.eclipse.jdt.debug.tests.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Tests adding breakpoints and automatic addition to working sets.
@@ -93,27 +87,13 @@ public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest 
 		IWorkingSet set1 = createSet("One");
 		try {
 			BreakpointSetOrganizer.setDefaultWorkingSet(set1);
-			IDebugView bpview = openDebugView("org.eclipse.debug.ui.BreakpointView");
+			IViewPart bpview = openView("org.eclipse.debug.ui.BreakpointView");
 			assertNotNull("we should have opened the breakpoints view", bpview);
 			final BreakpointsView view = (BreakpointsView) bpview;
 			final IBreakpointOrganizer o = getOrganizer("org.eclipse.debug.ui.breakpointWorkingSetOrganizer");
 			assertNotNull("we should have found the working set breakpoint organizer", o);
 			//update the view organizers on the UI thread because it spawns viewer updates that require it
-			Display display = DebugUIPlugin.getStandardDisplay();
-			if (!Thread.currentThread().equals(display.getThread())) {
-				WorkbenchJob job = new WorkbenchJob("updating working sets in the breakpoint view") {
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						view.setBreakpointOrganizers(new IBreakpointOrganizer[] {o});
-						return Status.OK_STATUS;
-					}
-				};
-				job.schedule();
-				job.join();
-			}
-			else {
-				view.setBreakpointOrganizers(new IBreakpointOrganizer[] {o});
-			}
+			sync(() -> view.setBreakpointOrganizers(new IBreakpointOrganizer[] { o }));
 			//add a bp
 			createLineBreakpoint(52, "Breakpoints");
 			IAdaptable[] elements = set1.getElements();

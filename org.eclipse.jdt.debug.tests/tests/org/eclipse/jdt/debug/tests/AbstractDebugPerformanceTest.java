@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
+import org.eclipse.jdt.debug.tests.ui.AbstractDebugUiTests;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.test.performance.PerformanceTestCase;
 
 /**
  * An abstract implementation of a debug performance test
  */
-public class AbstractDebugPerformanceTest extends AbstractDebugTest {
+public class AbstractDebugPerformanceTest extends AbstractDebugUiTests {
 
 	protected PerformanceMeter fPerformanceMeter;
 

@@ -23,13 +23,13 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.ui.AbstractDebugUiTests;
 import org.eclipse.ui.IEditorPart;
 
 /**
  * Tests method breakpoints for 1.5 source code.
  */
-public class MethodBreakpointTests15 extends AbstractDebugTest {
+public class MethodBreakpointTests15 extends AbstractDebugUiTests {
 
 	public MethodBreakpointTests15(String name) {
 		super(name);
