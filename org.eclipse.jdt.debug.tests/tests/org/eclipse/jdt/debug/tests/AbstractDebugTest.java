@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -197,7 +198,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
 			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243",
-			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982" };
+			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982",
+			"SuspendVMConditionalBreakpointsTestSnippet" };
 
 	/**
 	 * the default timeout
@@ -1209,6 +1211,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
+		// Bug 575131: resuming and suspending threads on breakpoint hit is done in a job, wait for this job
+		try {
+			Job.getJobManager().join(JDIDebugTarget.class, new NullProgressMonitor());
+		} catch (OperationCanceledException | InterruptedException e) {
+			throw new AssertionError("Failed ot wait for JDIDebugTarget jobs", e);
+		}
 		return suspendee;
 	}
 
