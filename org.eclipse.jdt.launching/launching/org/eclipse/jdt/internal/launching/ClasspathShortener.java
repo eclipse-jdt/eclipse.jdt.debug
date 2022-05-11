@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -55,6 +55,15 @@ import org.eclipse.jdt.launching.IVMInstall2;
  *
  */
 public class ClasspathShortener {
+	// We need system encoding see https://docs.oracle.com/en/java/javase/18/docs/specs/man/java.html#java-command-line-argument-files
+	static final Charset SYTEM_CHARSET = (System.getProperty("native.encoding") != null) // Populated on Java 18 and later //$NON-NLS-1$
+			? Charset.forName(System.getProperty("native.encoding")) //$NON-NLS-1$
+			// Unlike the suggested implementation from https://openjdk.java.net/jeps/400 we use the internal "sun.jnu.encoding" for jdk <18
+			// - which is not overridden by the property "file.encoding" (eclipse typically sets that property).
+			: (System.getProperty("sun.jnu.encoding") != null //$NON-NLS-1$
+					? Charset.forName(System.getProperty("sun.jnu.encoding")) //$NON-NLS-1$
+					: Charset.defaultCharset());
+
 	private static final String CLASSPATH_ENV_VAR_PREFIX = "CLASSPATH="; //$NON-NLS-1$
 	public static final int ARG_MAX_LINUX = 2097152;
 	public static final int ARG_MAX_WINDOWS = 32767;
@@ -192,7 +201,7 @@ public class ClasspathShortener {
 				return false;
 			}
 			if (isArgumentFileSupported()) {
-				shortenModulePathUsingModulePathArgumentFile(modulePathArgumentIndex);
+				shortenPathUsingClasspathArgumentFile(modulePathArgumentIndex, "--module-path"); //$NON-NLS-1$
 				return true;
 			}
 		} catch (CoreException e) {
@@ -217,7 +226,7 @@ public class ClasspathShortener {
 				return false;
 			}
 			if (isArgumentFileSupported()) {
-				shortenClasspathUsingClasspathArgumentFile(classpathArgumentIndex);
+				shortenPathUsingClasspathArgumentFile(classpathArgumentIndex, "-classpath"); //$NON-NLS-1$
 				return true;
 			}
 			if (os.equals(Platform.OS_WIN32)) {
@@ -293,17 +302,27 @@ public class ClasspathShortener {
 		return Integer.MAX_VALUE;
 	}
 
-	private void shortenClasspathUsingClasspathArgumentFile(int classpathArgumentIndex) throws CoreException {
-		String classpath = cmdLine.get(classpathArgumentIndex);
-		File file = createClassPathArgumentFile(classpath);
-		removeCmdLineArgs(classpathArgumentIndex - 1, 2);
-		addCmdLineArgs(classpathArgumentIndex - 1, '@' + file.getAbsolutePath());
-		addProcessTempFile(file);
-	}
+	private void shortenPathUsingClasspathArgumentFile(int modulePathArgumentIndex, String option) throws CoreException {
+		String path = cmdLine.get(modulePathArgumentIndex);
+		File file;
+		try {
+			String timeStamp = getLaunchTimeStamp();
+			File argFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX + "%s" + option //$NON-NLS-1$
+					+ "-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
 
-	private void shortenModulePathUsingModulePathArgumentFile(int modulePathArgumentIndex) throws CoreException {
-		String modulePath = cmdLine.get(modulePathArgumentIndex);
-		File file = createModulePathArgumentFile(modulePath);
+			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
+			if (!SYTEM_CHARSET.newEncoder().canEncode(arg)) {
+				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot encode " + option //$NON-NLS-1$
+						+ " as argument file with system charset " //$NON-NLS-1$
+						+ ClasspathShortener.SYTEM_CHARSET.displayName() + ".", null)); //$NON-NLS-1$
+			}
+			Files.writeString(argFile.toPath(), arg, SYTEM_CHARSET);
+			file = argFile;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create " + option //$NON-NLS-1$
+					+ " argument file", e)); //$NON-NLS-1$
+		}
+
 		removeCmdLineArgs(modulePathArgumentIndex - 1, 2);
 		addCmdLineArgs(modulePathArgumentIndex - 1, '@' + file.getAbsolutePath());
 		addProcessTempFile(file);
@@ -376,36 +395,6 @@ public class ClasspathShortener {
 
 	protected String getLaunchConfigurationName() {
 		return launch.getLaunchConfiguration().getName();
-	}
-
-	private File createClassPathArgumentFile(String classpath) throws CoreException {
-		try {
-			String timeStamp = getLaunchTimeStamp();
-			File classPathFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
-					+ "%s-classpath-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
-
-			byte[] bytes = ("-classpath " + quoteWindowsPath(classpath)).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
-
-			Files.write(classPathFile.toPath(), bytes);
-			return classPathFile;
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create classpath argument file", e)); //$NON-NLS-1$
-		}
-	}
-
-	private File createModulePathArgumentFile(String modulePath) throws CoreException {
-		try {
-			String timeStamp = getLaunchTimeStamp();
-			File modulePathFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
-					+ "%s-module-path-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
-
-			byte[] bytes = ("--module-path " + quoteWindowsPath(modulePath)).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
-
-			Files.write(modulePathFile.toPath(), bytes);
-			return modulePathFile;
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create module-path argument file", e)); //$NON-NLS-1$
-		}
 	}
 
 	protected String getLaunchTimeStamp() {
