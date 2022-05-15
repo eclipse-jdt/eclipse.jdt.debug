@@ -69,7 +69,7 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 	}
 
 	public void testHyperlinkNoMatch() throws Exception {
-		consoleDocumentWithText("at foo.bar.Type.method1(foo.bar.Type.java:42)");
+		consoleDocumentWithText("at foo.bar.Type.method1(foo.bar#.Type.java:42)");
 
 		Position[] positions = allLinkPositions();
 		assertArrayEquals("Expected no hyperlinks for invalid type name", new Position[0], positions);
@@ -403,5 +403,12 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 		assertEquals("at org.eclipse.debug.internal.ui.views.console.ProcessConsole.handleDebugEvents(ProcessConsole.java:438)", getLine(doc, 5).replace("[java]", "").trim());
 		assertEquals("at org.eclipse.debug.core.DebugPlugin$EventNotifier.run(DebugPlugin.java:1043)", getLine(doc, 6).replace("[java]", "").trim());
 		checkIndentationConsistency(doc, 3);
+	}
+
+	public void testHyperlinkMatchWithModule() throws Exception {
+		consoleDocumentWithText("at java.nio.charset.Charset.checkName(java.base/Charset.java:296)");
+
+		String[] matchTexts = linkTextsAtPositions(38);
+		assertArrayEquals(allLinks(), new String[] { "java.base/Charset.java:296" }, matchTexts);
 	}
 }

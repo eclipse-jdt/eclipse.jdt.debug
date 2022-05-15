@@ -13,24 +13,42 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.jdt.debug.tests.VerticalRulerInfoStub;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -69,7 +87,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 				JavaUI.ID_PERSPECTIVE + ",");
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, true);
-		sync(() -> TestUtil.waitForJobs(getName(), 10, 1000));
+		sync(() -> TestUtil.waitForJobs(getName(), 10, 10000));
 	}
 
 	@Override
@@ -80,7 +98,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, debug_perspectives);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, user_view_bindings);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate_debug_view);
-		sync(() -> TestUtil.waitForJobs(getName(), 10, 1000));
+		sync(() -> TestUtil.waitForJobs(getName(), 10, 10000));
 		super.tearDown();
 	}
 
@@ -90,7 +108,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 * @param window
 	 * @param perspectiveId
 	 */
-	protected void switchPerspective(IWorkbenchWindow window, String perspectiveId) {
+	protected static void switchPerspective(IWorkbenchWindow window, String perspectiveId) {
 		IPerspectiveDescriptor descriptor = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 		assertNotNull("missing perspective " + perspectiveId, descriptor);
 		IWorkbenchPage page = window.getActivePage();
@@ -104,7 +122,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 *
 	 * @return the window in which the perspective is ready
 	 */
-	protected IWorkbenchWindow resetPerspective(final String id) throws Exception {
+	protected static IWorkbenchWindow resetPerspective(final String id) throws RuntimeException {
 		final IWorkbenchWindow[] windows = new IWorkbenchWindow[1];
 		sync(() -> {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -119,7 +137,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 *
 	 * @return the window in which the perspective is ready
 	 */
-	protected IWorkbenchWindow resetDebugPerspective() throws Exception {
+	protected static IWorkbenchWindow resetDebugPerspective() throws RuntimeException {
 		return resetPerspective(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 	}
 
@@ -128,8 +146,48 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 *
 	 * @return the window in which the perspective is ready
 	 */
-	protected IWorkbenchWindow resetJavaPerspective() throws Exception {
+	protected static IWorkbenchWindow resetJavaPerspective() throws RuntimeException {
 		return resetPerspective(JavaUI.ID_PERSPECTIVE);
+	}
+
+	/**
+	 * Process all queued UI events.
+	 */
+	public static void processUiEvents() throws RuntimeException {
+		sync(() -> {
+			Display display = Display.getCurrent();
+			if (!display.isDisposed()) {
+				while (display.readAndDispatch()) {
+					// Keep pumping events until the queue is empty
+				}
+			}
+		});
+	}
+
+	/**
+	 * Process all queued UI events. If called from background thread, just waits
+	 *
+	 * @param millis
+	 *            max wait time to process events
+	 */
+	public static void processUiEvents(final long millis) throws RuntimeException {
+		sync(() -> {
+			long start = System.currentTimeMillis();
+			while (System.currentTimeMillis() - start < millis) {
+				Display display = Display.getCurrent();
+				if (display != null && !display.isDisposed()) {
+					while (display.readAndDispatch()) {
+						// loop until the queue is empty
+					}
+				} else {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						break;
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -138,7 +196,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 * @param r
 	 * @throws Exception
 	 */
-	protected void sync(Runnable r) throws Exception {
+	protected static void sync(Runnable r) throws RuntimeException {
 		AtomicReference<Exception> error = new AtomicReference<>();
 		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
 			try {
@@ -149,7 +207,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 			}
 		});
 		if (error.get() != null) {
-			throw error.get();
+			throwException(error.get());
 		}
 	}
 
@@ -159,7 +217,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 * @param c
 	 * @throws Exception
 	 */
-	protected <V> V sync(Callable<V> c) throws Exception {
+	protected static <V> V sync(Callable<V> c) throws RuntimeException {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<V> result = new AtomicReference<>();
 		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
@@ -177,50 +235,176 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * This and the another {@link #throwException1(Throwable)} method below are here to allow to catch AssertionFailedError's and other
-	 * non-Exceptions happened in the UI thread
-	 *
-	 * @param exception
-	 */
-	private static void throwException(Throwable exception) {
-		AbstractDebugUiTests.<RuntimeException> throwException1(exception);
-	}
-
-	/**
-	 * @param dummy to make compiler happy
+	 * This method is to allow to catch AssertionFailedError's and other non-Exceptions happened in the UI thread
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends Throwable> void throwException1(Throwable exception) throws T {
+	public static <T extends Throwable> void throwException(Throwable exception) throws T {
 		throw (T) exception;
 	}
 
-	protected void processUiEvents(long millis) throws Exception {
-		Thread.sleep(millis);
-		if (Display.getCurrent() == null) {
-			sync(() -> TestUtil.runEventLoop());
-		} else {
-			TestUtil.runEventLoop();
+	protected static IWorkbenchPage getActivePage() throws RuntimeException {
+		Callable<IWorkbenchPage> callable = () -> {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window == null) {
+				window = workbench.getWorkbenchWindows()[0];
+				Shell shell = window.getShell();
+				shell.moveAbove(null);
+				shell.setActive();
+				shell.forceActive();
+			}
+			return window.getActivePage();
+		};
+		return callInUi(callable);
+	}
+
+	protected IEditorPart openEditor(String type) throws RuntimeException {
+		Callable<IEditorPart> callable = () -> {
+			IFile resource = (IFile) getResource(type);
+			IEditorPart editor = IDE.openEditor(getActivePage(), resource);
+			assertNotNull(editor);
+			processUiEvents(100);
+			return editor;
+		};
+		return callInUi(callable);
+	}
+
+	private static <T> T callInUi(Callable<T> callable) throws RuntimeException {
+		if (Display.getCurrent() != null) {
+			try {
+				return callable.call();
+			} catch (Exception e) {
+				throwException(e);
+			}
+		}
+		return sync(callable);
+	}
+
+	/**
+	 * Opens and returns an editor on the given file or <code>null</code> if none. The editor will be activated.
+	 *
+	 * @param file
+	 * @return editor or <code>null</code>
+	 */
+	protected static IEditorPart openEditor(final IFile file) throws RuntimeException {
+		Callable<IEditorPart> callable = () -> {
+			IWorkbenchPage page = getActivePage();
+			return IDE.openEditor(page, file, true);
+		};
+		return callInUi(callable);
+	}
+
+	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, IEditorPart editor, BreakpointsMap bpMap) throws Exception {
+		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) toggleBreakpoint(editor, lineNumber);
+		bpMap.put(breakpoint, lineNumber);
+		return breakpoint;
+	}
+
+	/**
+	 * Toggles a breakpoint in the editor at the given line number returning the breakpoint or <code>null</code> if none.
+	 *
+	 * @param editor
+	 * @param lineNumber
+	 * @return returns the created breakpoint or <code>null</code> if none.
+	 */
+	protected IBreakpoint toggleBreakpoint(final IEditorPart editor, int lineNumber) throws Exception {
+		final Object lock = new Object();
+		final AtomicReference<IBreakpoint> breakpoint = new AtomicReference<>();
+		IBreakpointListener listener = new IBreakpointListener() {
+			@Override
+			public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+			}
+
+			@Override
+			public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+			}
+
+			@Override
+			public void breakpointAdded(IBreakpoint b) {
+				synchronized (lock) {
+					breakpoint.set(b);
+					lock.notifyAll();
+				}
+			}
+		};
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		manager.addBreakpointListener(listener);
+		sync(() -> {
+			final IVerticalRulerInfo info = new VerticalRulerInfoStub(lineNumber - 1); // sub 1, as the doc lines start at 0
+			new ToggleBreakpointAction(editor, null, info).run();
+		});
+		synchronized (lock) {
+			if (breakpoint.get() == null) {
+				lock.wait(DEFAULT_TIMEOUT);
+			}
+		}
+		manager.removeBreakpointListener(listener);
+		IBreakpoint bp = breakpoint.get();
+		assertNotNull("Breakpoint not created", bp);
+		if (isLineBreakpoint(bp)) {
+			int line = ((IJavaLineBreakpoint) bp).getLineNumber();
+			assertEquals("Breakpoint line differs from expected", lineNumber, line);
+		}
+		return bp;
+	}
+
+	private boolean isLineBreakpoint(IBreakpoint bp) {
+		return bp instanceof IJavaLineBreakpoint
+				&& !(bp instanceof IJavaMethodBreakpoint)
+				&& !(bp instanceof IJavaMethodEntryBreakpoint);
+	}
+
+	/**
+	 * Closes all editors in the active workbench page.
+	 */
+	protected static void closeAllEditors() throws RuntimeException {
+		sync(() -> {
+			for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+				window.getActivePage().closeAllEditors(false);
+			}
+		});
+	}
+
+	/**
+	 * Opens the view with the given id, does nothing if no such view exists. This method can return <code>null</code>
+	 *
+	 * @param viewId
+	 * @return the handle to the {@link IDebugView} with the given id
+	 */
+	protected static IViewPart openView(final String viewId) throws RuntimeException {
+		return sync(() -> {
+			return getActivePage().showView(viewId);
+		});
+	}
+
+	private void assertBreakpointExists(IJavaLineBreakpoint bp, IBreakpoint[] bps) throws Exception {
+		boolean contains = Arrays.asList(bps).contains(bp);
+		assertTrue("Breakpoint not found: " + bp + ", all: " + Arrays.toString(bps), contains);
+	}
+
+	public class BreakpointsMap {
+		IdentityHashMap<IJavaLineBreakpoint, Integer> breakpoints = new IdentityHashMap<>();
+		HashMap<Integer, IJavaLineBreakpoint> lines = new HashMap<>();
+
+		public void put(IJavaLineBreakpoint breakpoint, int line) throws Exception {
+			int lineNumber = breakpoint.getLineNumber();
+			assertEquals("Breakpoint line differs from original", line, lineNumber);
+			Integer old = breakpoints.put(breakpoint, lineNumber);
+			assertNull("Breakpoint already exists for line: " + old, old);
+			IJavaLineBreakpoint oldB = lines.put(lineNumber, breakpoint);
+			assertNull("Breakpoint already exists for line: " + lineNumber, oldB);
+		}
+
+		public void assertBreakpointsConsistency() throws Exception {
+			IBreakpoint[] bps = getBreakpointManager().getBreakpoints();
+			Set<Entry<IJavaLineBreakpoint, Integer>> set = breakpoints.entrySet();
+			for (Entry<IJavaLineBreakpoint, Integer> entry : set) {
+				IJavaLineBreakpoint bp = entry.getKey();
+				assertBreakpointExists(bp, bps);
+				Integer line = entry.getValue();
+				assertEquals("Breakpoint moved", line.intValue(), bp.getLineNumber());
+			}
 		}
 	}
 
-	protected IWorkbenchPage getActivePage() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-		if (window == null) {
-			window = workbench.getWorkbenchWindows()[0];
-			Shell shell = window.getShell();
-			shell.moveAbove(null);
-			shell.setActive();
-			shell.forceActive();
-		}
-		return window.getActivePage();
-	}
-
-	protected IEditorPart openEditor(String type) throws Exception {
-		IFile resource = (IFile) getResource(type);
-		IEditorPart editor = IDE.openEditor(getActivePage(), resource);
-		assertNotNull(editor);
-		processUiEvents(100);
-		return editor;
-	}
 }

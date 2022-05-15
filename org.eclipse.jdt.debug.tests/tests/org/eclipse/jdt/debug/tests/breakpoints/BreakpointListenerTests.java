@@ -195,9 +195,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
 
 		try {
-			// close all editors before closing project: @see bug 204023
-			closeAllEditors();
-
 			getBreakpointManager().addBreakpointListener((IBreakpointsListener)this);
 
 			resetCallbacks();

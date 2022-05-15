@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -52,7 +51,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -82,10 +80,8 @@ import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
-import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClassFile;
@@ -148,24 +144,18 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.sun.jdi.InternalException;
@@ -507,6 +497,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaInStaticInitializer"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaInAnonymous"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaOnChainCalls"));
+				cfgs.add(createLaunchConfiguration(jp, "LambdaBreakpoints1"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
@@ -2539,7 +2530,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
                 Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
                 Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
 				// Let also all other pending jobs proceed, ignore console jobs
-				TestUtil.waitForJobs("waitForBuild", 100, 1000, ProcessConsole.class);
+				TestUtil.waitForJobs("waitForBuild", 100, 5000, ProcessConsole.class);
                 wasInterrupted = false;
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
@@ -2709,151 +2700,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				((JDIDebugTarget) target).shutdown();
 			}
 		}
-	}
-
-	/**
-	 * Opens and returns an editor on the given file or <code>null</code>
-	 * if none. The editor will be activated.
-	 *
-	 * @param file
-	 * @return editor or <code>null</code>
-	 */
-	protected IEditorPart openEditor(final IFile file) throws PartInitException, InterruptedException {
-		Display display = DebugUIPlugin.getStandardDisplay();
-		if (Thread.currentThread().equals(display.getThread())) {
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			return IDE.openEditor(page, file, true);
-		}
-		final IEditorPart[] parts = new IEditorPart[1];
-		WorkbenchJob job = new WorkbenchJob(display, "open editor") {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					parts[0] = IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-					return e.getStatus();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-		job.join();
-		return parts[0];
-	}
-
-	/**
-	 * Opens the {@link IDebugView} with the given id, does nothing if no such view exists.
-	 * This method can return <code>null</code>
-	 *
-	 * @param viewId
-	 * @return the handle to the {@link IDebugView} with the given id
-	 * @throws PartInitException
-	 * @throws InterruptedException
-	 * @since 3.8.100
-	 */
-	protected IDebugView openDebugView(final String viewId) throws PartInitException, InterruptedException {
-		if(viewId != null) {
-			Display display = DebugUIPlugin.getStandardDisplay();
-			if (Thread.currentThread().equals(display.getThread())) {
-				return doShowDebugView(viewId);
-			}
-			final IDebugView[] view = new IDebugView[1];
-			WorkbenchJob job = new WorkbenchJob("Showing the debug view: "+viewId) {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					try {
-					view[0] = doShowDebugView(viewId);
-					}
-					catch(CoreException ce) {
-						return ce.getStatus();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-			job.join();
-			return view[0];
-		}
-		return null;
-	}
-
-	/**
-	 * Opens a debug view
-	 * @param viewId
-	 * @return return the debug view handle or <code>null</code>
-	 * @throws PartInitException
-	 * @since 3.8.100
-	 */
-	private IDebugView doShowDebugView(String viewId) throws PartInitException {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			assertNotNull("We shold have found the active page to open the debug view in", page);
-			return (IDebugView) page.showView(viewId);
-		}
-		return null;
-	}
-
-	/**
-	 * Toggles a breakpoint in the editor at the given line number returning the breakpoint
-	 * or <code>null</code> if none.
-	 *
-	 * @param editor
-	 * @param lineNumber
-	 * @return returns the created breakpoint or <code>null</code> if none.
-	 * @throws InterruptedException
-	 */
-	protected IBreakpoint toggleBreakpoint(final IEditorPart editor, int lineNumber) throws InterruptedException {
-		final IVerticalRulerInfo info = new VerticalRulerInfoStub(lineNumber-1); // sub 1, as the doc lines start at 0
-		WorkbenchJob job = new WorkbenchJob(DebugUIPlugin.getStandardDisplay(), "toggle breakpoint") {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				ToggleBreakpointAction action = new ToggleBreakpointAction(editor, null, info);
-				action.run();
-				return Status.OK_STATUS;
-			}
-		};
-		final Object lock = new Object();
-		final IBreakpoint[] breakpoints = new IBreakpoint[1];
-		IBreakpointListener listener = new IBreakpointListener() {
-			@Override
-			public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-			}
-			@Override
-			public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-			}
-			@Override
-			public void breakpointAdded(IBreakpoint breakpoint) {
-				synchronized (lock) {
-					breakpoints[0] = breakpoint;
-					lock.notifyAll();
-				}
-			}
-		};
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		manager.addBreakpointListener(listener);
-		synchronized (lock) {
-			job.schedule();
-			lock.wait(DEFAULT_TIMEOUT);
-		}
-		manager.removeBreakpointListener(listener);
-		return breakpoints[0];
-	}
-
-	/**
-	 * Closes all editors in the active workbench page.
-	 */
-	protected void closeAllEditors() {
-	    Runnable closeAll = new Runnable() {
-            @Override
-			public void run() {
-                IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                activeWorkbenchWindow.getActivePage().closeAllEditors(false);
-            }
-        };
-        Display display = DebugUIPlugin.getStandardDisplay();
-        display.syncExec(closeAll);
 	}
 
 	/**

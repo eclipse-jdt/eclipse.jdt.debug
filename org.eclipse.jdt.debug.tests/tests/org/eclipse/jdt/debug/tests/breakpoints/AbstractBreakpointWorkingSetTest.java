@@ -15,7 +15,7 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.ui.AbstractDebugUiTests;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.2
  */
-public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugTest {
+public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugUiTests {
 
 	/**
 	 * Constructor
