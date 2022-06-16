@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2022 GK Software SE and others.
+ * Copyright (c) 2019, 2021 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,10 +7,6 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  *     Stephan Herrmann - initial API and implementation
@@ -109,17 +105,6 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.nio.mapmode," //
 			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,"
 			+ "jdk.unsupported.desktop," //
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_19 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.vector," // jdk.incubator.foreign removed in 19
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," //
-			+ "jdk.net," //
-			+ "jdk.nio.mapmode," //
-			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
 
 
@@ -267,7 +252,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			case ASSUMED_DEFAULT_MODULES_16:
 				expectedModules = "java.se," //
 						+ "jdk.accessibility," //
-						+ "jdk.dynalink,"
+						+ "jdk.dynalink," 
 						+ "jdk.httpserver," //
 						+ "jdk.incubator.foreign,jdk.incubator.vector," // jdk.incubator.vector added in 16
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
@@ -277,19 +262,6 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.nio.mapmode," //
 						+ "jdk.sctp,"
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," //
-						+ "jdk.xml.dom";
-			case ASSUMED_DEFAULT_MODULES_19:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility," //
-						+ "jdk.dynalink," + "jdk.httpserver," //
-						+ "jdk.incubator.vector," // jdk.incubator.foreign removed in 19
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," //
-						+ "jdk.net," //
-						+ "jdk.nio.mapmode," //
-						+ "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
 				break;
