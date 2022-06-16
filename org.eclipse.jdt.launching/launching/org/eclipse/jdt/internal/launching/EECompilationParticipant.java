@@ -8,9 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -237,8 +234,6 @@ public class EECompilationParticipant extends CompilationParticipant {
 		String version = vMInstall.getJavaVersion();
 		if (version == null) {
 			return null;
-		} else if (version.startsWith(JavaCore.VERSION_19)) {
-			return JavaCore.VERSION_19;
 		} else if (version.startsWith(JavaCore.VERSION_18)) {
 			return JavaCore.VERSION_18;
 		} else if (version.startsWith(JavaCore.VERSION_17)) {
