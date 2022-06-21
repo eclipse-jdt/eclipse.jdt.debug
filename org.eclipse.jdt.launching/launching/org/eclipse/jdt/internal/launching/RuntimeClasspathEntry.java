@@ -352,8 +352,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	protected IResource getResource(IPath path) {
 		if (path != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			if (getType() == PROJECT) {
-				// project entry should always have a workspace relative path, try the fastest lookup first
+			if (getType() == PROJECT || path.getDevice() == null) {
+				// Project entry should always have a workspace relative path, try the fastest lookup first.
+				// Also entry without device has a great chance to find the answer quickly in the workspace.
 				IResource member = root.findMember(path);
 				if (member != null) {
 					return member;
