@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -60,21 +61,20 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 	 */
 	public void testGetSystemDefaultEncoding() throws CoreException {
 		String oldencoding = ResourcesPlugin.getEncoding();
-		String oldsystemencoding = System.getProperty("file.encoding");
+		String defaultEncoding = getDefaultEncoding();
+		String systemEncoding = Platform.getSystemCharset().name();
 		try {
-			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, getDefaultEncoding());
-			System.setProperty("file.encoding", "UTF-16BE");
+			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, defaultEncoding);
 			ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
 			assertNotNull("the configuration could not be found", config);
 			assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null) == null);
 			String encoding = getLaunchManager().getEncoding(config);
 			assertNotNull("The configuration encoding should not be null", encoding);
-			assertEquals("The configuration encoding should match the file system encoding", encoding, System.getProperty("file.encoding"));
+			assertEquals("The configuration encoding should match the file system encoding", systemEncoding, encoding);
 		}
 		finally {
 			//ensure old encoding is restored
-			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, (oldencoding == null ? getDefaultEncoding() : oldencoding));
-			System.setProperty("file.encoding", oldsystemencoding);
+			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, (oldencoding == null ? defaultEncoding : oldencoding));
 		}
 	}
 
