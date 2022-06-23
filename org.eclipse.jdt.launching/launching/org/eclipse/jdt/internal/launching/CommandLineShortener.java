@@ -18,6 +18,7 @@ import static org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FIL
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -90,6 +92,7 @@ public class CommandLineShortener {
 	}
 
 	protected File createArgumentFile(String[] cmdLine) throws CoreException {
+		Charset systemCharset = Platform.getSystemCharset();
 		try {
 			String timeStamp = getLaunchTimeStamp();
 			File argumentsFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
@@ -97,15 +100,15 @@ public class CommandLineShortener {
 
 			cmdLine = quoteForArgfile(cmdLine);
 
-			Files.write(argumentsFile.toPath(), Arrays.asList(cmdLine), ClasspathShortener.SYTEM_CHARSET);
+			Files.write(argumentsFile.toPath(), Arrays.asList(cmdLine), systemCharset);
 			return argumentsFile;
 		} catch (CharacterCodingException e) {
 			for (String s : cmdLine) {
 				for (char c : s.toCharArray()) {
-					if (!ClasspathShortener.SYTEM_CHARSET.newEncoder().canEncode(c)) {
+					if (!systemCharset.newEncoder().canEncode(c)) {
 						throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot encode argument as file: Illegal character " //$NON-NLS-1$
 								+ String.format("\\u%04x", (int) c) //$NON-NLS-1$
-								+ " for system charset " + ClasspathShortener.SYTEM_CHARSET.displayName() + ".", e)); //$NON-NLS-1$ //$NON-NLS-2$
+								+ " for system charset " + systemCharset.displayName() + ".", e)); //$NON-NLS-1$ //$NON-NLS-2$
 
 					}
 				}

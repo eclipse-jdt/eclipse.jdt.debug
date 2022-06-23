@@ -55,15 +55,6 @@ import org.eclipse.jdt.launching.IVMInstall2;
  *
  */
 public class ClasspathShortener {
-	// We need system encoding see https://docs.oracle.com/en/java/javase/18/docs/specs/man/java.html#java-command-line-argument-files
-	static final Charset SYTEM_CHARSET = (System.getProperty("native.encoding") != null) // Populated on Java 18 and later //$NON-NLS-1$
-			? Charset.forName(System.getProperty("native.encoding")) //$NON-NLS-1$
-			// Unlike the suggested implementation from https://openjdk.java.net/jeps/400 we use the internal "sun.jnu.encoding" for jdk <18
-			// - which is not overridden by the property "file.encoding" (eclipse typically sets that property).
-			: (System.getProperty("sun.jnu.encoding") != null //$NON-NLS-1$
-					? Charset.forName(System.getProperty("sun.jnu.encoding")) //$NON-NLS-1$
-					: Charset.defaultCharset());
-
 	private static final String CLASSPATH_ENV_VAR_PREFIX = "CLASSPATH="; //$NON-NLS-1$
 	public static final int ARG_MAX_LINUX = 2097152;
 	public static final int ARG_MAX_WINDOWS = 32767;
@@ -311,12 +302,13 @@ public class ClasspathShortener {
 					+ "-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
 
 			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
-			if (!SYTEM_CHARSET.newEncoder().canEncode(arg)) {
+			Charset systemCharset = Platform.getSystemCharset();
+			if (!systemCharset.newEncoder().canEncode(arg)) {
 				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot encode " + option //$NON-NLS-1$
 						+ " as argument file with system charset " //$NON-NLS-1$
-						+ ClasspathShortener.SYTEM_CHARSET.displayName() + ".", null)); //$NON-NLS-1$
+						+ systemCharset.displayName() + ".", null)); //$NON-NLS-1$
 			}
-			Files.writeString(argFile.toPath(), arg, SYTEM_CHARSET);
+			Files.writeString(argFile.toPath(), arg, systemCharset);
 			file = argFile;
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create " + option //$NON-NLS-1$
