@@ -72,6 +72,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
@@ -249,6 +250,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaOwningTreadText((JavaOwningThread)item);
 			} else if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingTreadText((JavaWaitingThread)item);
+			} else if (item instanceof GroupedStackFrame) {
+				var groupping = (GroupedStackFrame) item;
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_collapsed_frames, String.valueOf(groupping.getFrameCount()));
 			} else if (item instanceof NoMonitorInformationElement) {
                 return DebugUIMessages.JDIModelPresentation_5;
             } else {

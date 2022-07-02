@@ -155,6 +155,7 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 
 	//widgets
 	private PreferenceButton fColorizeStackFrames;
+	private PreferenceButton fCollapseStackFrames;
 	private List<PreferenceButton> categoryButtons;
 	private PreferenceButton fEnablePlatformButton;
 	private PreferenceButton fEnableCustomButton;
@@ -203,7 +204,10 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 		var store = getPreferenceStore();
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
 		fColorizeStackFrames = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage__Color_stack_frames, store, IJDIPreferencesConstants.PREF_COLORIZE_STACK_FRAMES);
-		fColorizeStackFrames.widgetSelected(this::setPageEnablement);
+		fColorizeStackFrames.widgetSelected(this::updateCheckboxes);
+
+		fCollapseStackFrames = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage__Collapse_stack_frames, store, IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES);
+		fCollapseStackFrames.widgetSelected(this::updateCheckboxes);
 		initializeDialogUnits(container);
 
 		this.fEnableCustomButton = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage_Filter_custom, store, IJDIPreferencesConstants.PREF_COLORIZE_CUSTOM_METHODS).widgetSelected(selected -> fCustomStackFilterTable.setEnabled(selected
@@ -361,6 +365,10 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 		fAppearanceList.setSelection(new StructuredSelection(colors.get(0)));
 	}
 
+	protected void updateCheckboxes(@SuppressWarnings("unused") boolean flag) {
+		setPageEnablement(fCollapseStackFrames.isSelected() || fColorizeStackFrames.isSelected());
+	}
+
 	/**
 	 * Enables or disables the widgets on the page, with the
 	 * exception of <code>fUseStepFiltersButton</code> according
@@ -408,7 +416,7 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 	@Override
 	protected void performDefaults() {
 		var store = getPreferenceStore();
-		boolean enabled = fColorizeStackFrames.performDefault(store);
+		boolean enabled = fColorizeStackFrames.performDefault(store) || fCollapseStackFrames.performDefault(store);
 
 		for (var categoryButton : categoryButtons) {
 			categoryButton.performDefault(store);
