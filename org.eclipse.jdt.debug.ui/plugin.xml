@@ -2216,6 +2216,14 @@
         style="toggle"
         menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
         id="org.eclipse.jdt.debug.ui.launchViewActions.ColorizeStackFrames"/>
+  <action
+        helpContextId="collapse_stack_frames_action_context"
+        label="%collapseStackFrames.label"
+        tooltip="%collapseStackFrames.tooltip"
+        class="org.eclipse.jdt.internal.debug.ui.actions.CollapseStackFramesAction"
+        style="toggle"
+        menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
+        id="org.eclipse.jdt.debug.ui.launchViewActions.CollapseStackFrames"/>
 
   <menu
         id="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu"

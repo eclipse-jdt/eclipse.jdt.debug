@@ -13,20 +13,27 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaStackFrame.Category;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
+import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.ui.StackFramePresentationProvider;
 
 /**
  * Java thread presentation adapter.
@@ -34,6 +41,8 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
  * @since 3.3
  */
 public class JavaThreadContentProvider extends JavaElementContentProvider {
+
+	private StackFramePresentationProvider stackFrameProvider;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
@@ -44,7 +53,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 		if (!thread.isSuspended()) {
 			return 0;
 		}
-		int childCount = thread.getFrameCount();
+		int childCount = getFrameCount(thread);
 		if (isDisplayMonitors()) {
 			if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
 				childCount+= thread.getOwnedMonitors().length;
@@ -57,6 +66,13 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 			}
 		}
 		return childCount;
+	}
+
+	private int getFrameCount(IJavaThread thread) throws DebugException {
+		if (getStackFrameProvider().isCollapseStackFrames()) {
+			return getStackFrames(thread).size();
+		}
+		return thread.getFrameCount();
 	}
 
 	/* (non-Javadoc)
@@ -81,38 +97,63 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 					}
 				}
 			}
-			IStackFrame[] frames = thread.getStackFrames();
+			var frames = getStackFrames(thread);
 			if (!isDisplayMonitors()) {
-				return frames;
+				return frames.toArray();
 			}
 
-			Object[] children;
-			int length = frames.length;
 			if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
 				IDebugElement[] ownedMonitors = JavaDebugUtils.getOwnedMonitors(thread);
 				IDebugElement contendedMonitor = JavaDebugUtils.getContendedMonitor(thread);
-				length += ownedMonitors.length;
-				if (contendedMonitor != null) {
-					length++;
-				}
-				children = new Object[length];
-				if (ownedMonitors.length > 0) {
-					System.arraycopy(ownedMonitors, 0, children, 0, ownedMonitors.length);
-				}
 				if (contendedMonitor != null) {
 					// Insert the contended monitor after the owned monitors
-					children[ownedMonitors.length] = contendedMonitor;
+					frames.add(0, contendedMonitor);
+				}
+				if (ownedMonitors.length > 0) {
+					frames.addAll(0, Arrays.asList(ownedMonitors));
 				}
 			} else {
-				children = new Object[length + 1];
-				children[0] = new NoMonitorInformationElement(thread.getDebugTarget());
+				frames.add(0, new NoMonitorInformationElement(thread.getDebugTarget()));
 			}
-			int offset = children.length - frames.length;
-			System.arraycopy(frames, 0, children, offset, frames.length);
-			return children;
+			return frames.toArray();
 		} catch (DebugException e) {
 			return EMPTY;
 		}
+	}
+
+	private List<Object> getStackFrames(IJavaThread thread) throws DebugException {
+		var frames = thread.getStackFrames();
+		var stackFrameProvider = getStackFrameProvider();
+		var result = new ArrayList<>(frames.length);
+		if (!stackFrameProvider.isCollapseStackFrames()) {
+			result.addAll(Arrays.asList(frames));
+			return result;
+		}
+		GroupedStackFrame lastGroupping = null;
+		boolean first = true;
+		for (var frame : frames) {
+			if (first) {
+				result.add(frame);
+				first = false;
+			} else {
+				if (frame instanceof JDIStackFrame javaFrame) {
+					var category = stackFrameProvider.getCategory(javaFrame);
+					if (category == null || category == Category.TEST || category == Category.PRODUCTION || category == Category.CUSTOM_FILTERED) {
+						result.add(javaFrame);
+						lastGroupping = null;
+					} else {
+						if (lastGroupping == null) {
+							lastGroupping = new GroupedStackFrame(javaFrame.getJavaDebugTarget());
+							result.add(lastGroupping);
+						}
+						lastGroupping.add(javaFrame);
+					}
+				} else {
+					result.add(frame);
+				}
+			}
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -174,5 +215,11 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 		return null;
 	}
 
+	private synchronized StackFramePresentationProvider getStackFrameProvider() {
+		if (stackFrameProvider == null) {
+			stackFrameProvider = new StackFramePresentationProvider();
+		}
+		return stackFrameProvider;
+	}
 
 }

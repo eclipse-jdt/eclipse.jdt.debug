@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2020 IBM Corporation and others.
+ * Copyright (c) 2004, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -58,6 +58,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_COLORIZE_TEST_METHODS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_COLORIZE_PRODUCTION_METHODS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_COLORIZE_CUSTOM_METHODS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES, true);
 
 		store.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$
 		store.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$
