@@ -58,6 +58,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_COLORIZE_TEST_METHODS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_COLORIZE_PRODUCTION_METHODS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_COLORIZE_CUSTOM_METHODS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES, true);
 
 		store.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$
 		store.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$

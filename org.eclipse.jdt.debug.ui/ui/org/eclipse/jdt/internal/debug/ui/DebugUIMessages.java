@@ -103,6 +103,7 @@ public class DebugUIMessages extends NLS {
 	public static String JavaStackFramesPreferencePage_title;
 	public static String JavaStackFramesPreferencePage_description;
 	public static String JavaStackFramesPreferencePage__Color_stack_frames;
+	public static String JavaStackFramesPreferencePage__Collapse_stack_frames;
 	public static String JavaStackFramesPreferencePage_Defined_stack_frame_filters_for_platform;
 	public static String JavaStackFramesPreferencePage_Defined_custom_stack_frame_filters;
 	public static String JavaStackFramesPreferencePage_Appearance_of_stack_frames;
@@ -186,6 +187,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation__garbage_collected_object__6;
 	public static String JDIModelPresentation__obsolete_method_in__1;
 	public static String JDIModelPresentation__terminated__2;
+	public static String JDIModelPresentation_collapsed_frames;
 
 	public static String JDIModelPresentation_117;
 
