@@ -94,6 +94,7 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 	private final IPreferenceStore store;
 	private final EnumMap<Category, Boolean> enabledCategories;
 	private boolean colorizeStackFrames;
+	private boolean collapseStackFrames;
 
 	public StackFramePresentationProvider(IPreferenceStore store) {
 		this.store = store;
@@ -106,6 +107,7 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 			enabledCategories.put(kv.getValue(), enabled);
 		}
 		colorizeStackFrames = store.getBoolean(IJDIPreferencesConstants.PREF_COLORIZE_STACK_FRAMES);
+		collapseStackFrames = store.getBoolean(IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES);
 	}
 
 	private Filters getActivePlatformFilters(IPreferenceStore store) {
@@ -199,7 +201,10 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 		return null;
 	}
 
-	private IJavaStackFrame.Category getCategory(IJavaStackFrame frame) {
+	/**
+	 * @return the {@link IJavaStackFrame.Category} which matches the rules.
+	 */
+	public IJavaStackFrame.Category getCategory(IJavaStackFrame frame) {
 		if (frame.getCategory() != null) {
 			return frame.getCategory();
 		}
@@ -276,6 +281,8 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 			custom = getActiveCustomFilters(store);
 		} else if (IJDIPreferencesConstants.PREF_COLORIZE_STACK_FRAMES.equals(prop)) {
 			colorizeStackFrames = (Boolean) event.getNewValue();
+		} else if (IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES.equals(prop)) {
+			collapseStackFrames = (Boolean) event.getNewValue();
 		} else {
 			var category = prefConst.get(prop);
 			if (category != null) {
@@ -287,4 +294,9 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 	public boolean isColorizeStackFrames() {
 		return colorizeStackFrames;
 	}
+
+	public boolean isCollapseStackFrames() {
+		return collapseStackFrames;
+	}
+
 }
