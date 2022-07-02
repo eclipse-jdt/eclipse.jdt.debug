@@ -90,6 +90,7 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_COLORIZE_TEST_METHODS = IJavaDebugUIConstants.PLUGIN_ID + ".colorize_test_methods"; //$NON-NLS-1$
 	public static final String PREF_COLORIZE_PRODUCTION_METHODS = IJavaDebugUIConstants.PLUGIN_ID + ".colorize_production_methods"; //$NON-NLS-1$
 	public static final String PREF_COLORIZE_CUSTOM_METHODS = IJavaDebugUIConstants.PLUGIN_ID + ".colorize_custom_methods"; //$NON-NLS-1$
+	public static final String PREF_COLLAPSE_STACK_FRAMES = IJavaDebugUIConstants.PLUGIN_ID + ".collapse_stack_frames"; //$NON-NLS-1$
 
 	/**
 	 * List of active filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
