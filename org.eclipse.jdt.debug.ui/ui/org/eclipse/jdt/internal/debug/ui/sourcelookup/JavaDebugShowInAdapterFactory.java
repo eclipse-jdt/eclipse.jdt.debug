@@ -14,7 +14,10 @@
 package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 
@@ -41,6 +44,15 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 				return (T) new StackFrameShowInTargetListAdapter();
 			}
 		}
+		if (adapterType == ISourceDisplay.class) {
+			if (adaptableObject instanceof GroupedStackFrame) {
+				return (T) (ISourceDisplay) (element, page, forceSourceLookup) -> {
+					var frame = ((GroupedStackFrame) element).getTopMostFrame();
+					SourceLookupFacility.getDefault().displaySource(frame, page, forceSourceLookup);
+				};
+			}
+
+		}
 		return null;
 	}
 
@@ -49,7 +61,7 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 	 */
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[]{IShowInSource.class, IShowInTargetList.class};
+		return new Class[] { IShowInSource.class, IShowInTargetList.class, ISourceDisplay.class };
 	}
 
 }
