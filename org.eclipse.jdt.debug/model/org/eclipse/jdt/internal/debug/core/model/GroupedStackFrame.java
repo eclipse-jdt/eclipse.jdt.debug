@@ -41,6 +41,10 @@ public class GroupedStackFrame extends JDIDebugElement {
 		return stackFrames.toArray();
 	}
 
+	public IJavaStackFrame getTopMostFrame() {
+		return !stackFrames.isEmpty() ? stackFrames.get(0) : null;
+	}
+
 	/**
 	 * Delegates actions, and everything to the top most stack frame.
 	 */
