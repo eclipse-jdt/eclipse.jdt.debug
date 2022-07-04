@@ -57,6 +57,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionInspector;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntryAdapterFactory;
@@ -391,6 +392,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);
+		manager.registerAdapters(showInFactory, GroupedStackFrame.class);
 
         IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
         manager.registerAdapters(columnFactory, IJavaVariable.class);
