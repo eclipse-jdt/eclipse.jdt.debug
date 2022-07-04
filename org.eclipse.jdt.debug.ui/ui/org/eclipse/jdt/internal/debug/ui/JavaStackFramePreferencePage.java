@@ -210,8 +210,8 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 		fCollapseStackFrames.widgetSelected(this::updateCheckboxes);
 		initializeDialogUnits(container);
 
-		this.fEnableCustomButton = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage_Filter_custom, store, IJDIPreferencesConstants.PREF_COLORIZE_CUSTOM_METHODS).widgetSelected(selected -> fCustomStackFilterTable.setEnabled(selected
-				&& fColorizeStackFrames.isSelected()));
+		this.fEnableCustomButton = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage_Filter_custom, store, IJDIPreferencesConstants.PREF_COLORIZE_CUSTOM_METHODS) //
+				.widgetSelected(selected -> fCustomStackFilterTable.setEnabled(selected && isCategoryHandlingEnabled()));
 		categoryButtons.add(this.fEnableCustomButton);
 
 		fCustomStackFilterTable = new JavaFilterTable(this, CUSTOM_STACK_FRAMES,
@@ -230,8 +230,8 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 
 		categoryButtons.add(new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage_Filter_synthetic, store, IJDIPreferencesConstants.PREF_COLORIZE_SYNTHETIC_METHODS));
 
-		this.fEnablePlatformButton = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage_Filter_platform, store, IJDIPreferencesConstants.PREF_COLORIZE_PLATFORM_METHODS).widgetSelected(selected -> fPlatformStackFilterTable.setEnabled(selected
-				&& fColorizeStackFrames.isSelected()));
+		this.fEnablePlatformButton = new PreferenceButton(container, DebugUIMessages.JavaStackFramesPreferencePage_Filter_platform, store, IJDIPreferencesConstants.PREF_COLORIZE_PLATFORM_METHODS) //
+				.widgetSelected(selected -> fPlatformStackFilterTable.setEnabled(selected && isCategoryHandlingEnabled()));
 		categoryButtons.add(fEnablePlatformButton);
 
 		fPlatformStackFilterTable = new JavaFilterTable(this, PLATFORM_STACK_FRAMES,
@@ -257,7 +257,7 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 
 		createAppearanceList(container);
 
-		setPageEnablement(fColorizeStackFrames.isSelected());
+		setPageEnablement(isCategoryHandlingEnabled());
 		initList();
 	}
 
@@ -366,7 +366,11 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 	}
 
 	protected void updateCheckboxes(@SuppressWarnings("unused") boolean flag) {
-		setPageEnablement(fCollapseStackFrames.isSelected() || fColorizeStackFrames.isSelected());
+		setPageEnablement(isCategoryHandlingEnabled());
+	}
+
+	private boolean isCategoryHandlingEnabled() {
+		return fCollapseStackFrames.isSelected() || fColorizeStackFrames.isSelected();
 	}
 
 	/**
