@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     Microsoft Corporation - initial API and implementation
  *******************************************************************************/
@@ -61,6 +65,6 @@ public abstract class ThreadLifecycleRequestImpl extends EventRequestImpl {
 	 * @return whether JDWP supports platform threads filter
 	 */
 	private boolean supportsPlatformThreadsFilter() {
-		return ((VirtualMachineImpl) virtualMachine()).isJdwpVersionGreaterOrEqual(19, 0);
+		return ((VirtualMachineImpl) virtualMachine()).mayCreateVirtualThreads();
 	}
 }
