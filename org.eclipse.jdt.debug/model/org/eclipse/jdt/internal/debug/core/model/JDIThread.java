@@ -1367,7 +1367,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return handleSuspendForBreakpointInternal(breakpoint);
 		} finally {
-			fHandlingSuspendForBreakpoint.set(true);
+			fHandlingSuspendForBreakpoint.set(false);
 		}
 	}
 
