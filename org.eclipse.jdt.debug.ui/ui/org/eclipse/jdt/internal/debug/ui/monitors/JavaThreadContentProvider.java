@@ -49,6 +49,9 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+		if (element instanceof GroupedStackFrame) {
+			return ((GroupedStackFrame) element).getFrameCount();
+		}
 		IJavaThread thread = (IJavaThread)element;
 		if (!thread.isSuspended()) {
 			return 0;
@@ -80,11 +83,18 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+		if (parent instanceof GroupedStackFrame) {
+			return getChildren((GroupedStackFrame) parent, index, length);
+		}
 		IJavaThread thread = (IJavaThread)parent;
 		if (!thread.isSuspended()) {
 			return EMPTY;
 		}
 		return getElements(getChildren(thread), index, length);
+	}
+
+	private Object[] getChildren(GroupedStackFrame parent, int index, int length) {
+		return parent.getFramesAsArray(index, length);
 	}
 
 	protected Object[] getChildren(IJavaThread thread) {
@@ -169,6 +179,9 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 					return false;
 				}
 			}
+		}
+		if (element instanceof GroupedStackFrame) {
+			return ((GroupedStackFrame) element).getFrameCount() > 0;
 		}
 		return ((IJavaThread)element).hasStackFrames() ||
 			(isDisplayMonitors() && ((IJavaThread)element).hasOwnedMonitors());
