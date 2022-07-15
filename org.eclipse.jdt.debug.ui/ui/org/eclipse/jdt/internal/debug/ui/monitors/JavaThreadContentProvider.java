@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -49,6 +49,9 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+		if (element instanceof GroupedStackFrame groupedFrame) {
+			return groupedFrame.getFrameCount();
+		}
 		IJavaThread thread = (IJavaThread)element;
 		if (!thread.isSuspended()) {
 			return 0;
@@ -80,11 +83,18 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+		if (parent instanceof GroupedStackFrame groupedFrame) {
+			return getChildren(groupedFrame, index, length);
+		}
 		IJavaThread thread = (IJavaThread)parent;
 		if (!thread.isSuspended()) {
 			return EMPTY;
 		}
 		return getElements(getChildren(thread), index, length);
+	}
+
+	private Object[] getChildren(GroupedStackFrame parent, int index, int length) {
+		return parent.getFramesAsArray(index, length);
 	}
 
 	protected Object[] getChildren(IJavaThread thread) {
@@ -168,6 +178,9 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 					return false;
 				}
 			}
+		}
+		if (element instanceof GroupedStackFrame groupedFrame) {
+			return groupedFrame.getFrameCount() > 0;
 		}
 		return ((IJavaThread)element).hasStackFrames() ||
 			(isDisplayMonitors() && ((IJavaThread)element).hasOwnedMonitors());

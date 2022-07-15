@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -383,6 +383,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         manager.registerAdapters(monitorFactory, JavaOwningThread.class);
         manager.registerAdapters(monitorFactory, JavaWaitingThread.class);
         manager.registerAdapters(monitorFactory, IJavaStackFrame.class);
+        manager.registerAdapters(monitorFactory, GroupedStackFrame.class);
 
         IAdapterFactory targetFactory = new TargetAdapterFactory();
         manager.registerAdapters(targetFactory, IJavaDebugTarget.class);
@@ -392,7 +393,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);
-		manager.registerAdapters(showInFactory, GroupedStackFrame.class);
+        manager.registerAdapters(showInFactory, GroupedStackFrame.class);
 
         IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
         manager.registerAdapters(columnFactory, IJavaVariable.class);

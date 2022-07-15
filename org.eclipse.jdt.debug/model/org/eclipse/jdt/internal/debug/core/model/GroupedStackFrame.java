@@ -37,6 +37,11 @@ public class GroupedStackFrame extends JDIDebugElement {
 		return stackFrames.size();
 	}
 
+	public Object[] getFramesAsArray(int index, int length) {
+		var subList = stackFrames.subList(index, Math.min(index + length, stackFrames.size()));
+		return subList.isEmpty() ? null : subList.toArray();
+	}
+
 	public IJavaStackFrame getTopMostFrame() {
 		return !stackFrames.isEmpty() ? stackFrames.get(0) : null;
 	}
