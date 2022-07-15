@@ -319,6 +319,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private volatile IJavaObject fPreviousException;
 
+	private final AtomicBoolean fCompletingBreakpointHandling;
+	private final AtomicBoolean fHandlingSuspendForBreakpoint;
+
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
 	 * debug target.
@@ -337,6 +340,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		setUnderlyingThread(thread);
 		fAsyncJob = new ThreadJob();
 		initialize();
+		fCompletingBreakpointHandling = new AtomicBoolean(false);
+		fHandlingSuspendForBreakpoint = new AtomicBoolean(false);
 	}
 
 	/**
@@ -1358,6 +1363,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint,
 			boolean suspendVote) {
+		fHandlingSuspendForBreakpoint.set(true);
+		try {
+			return handleSuspendForBreakpointInternal(breakpoint);
+		} finally {
+			fHandlingSuspendForBreakpoint.set(false);
+		}
+	}
+
+	private boolean handleSuspendForBreakpointInternal(JavaBreakpoint breakpoint) {
 		int policy = IJavaBreakpoint.SUSPEND_THREAD;
 		synchronized (this) {
 			if (fClientSuspendRequest) {
@@ -1381,6 +1395,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (policy == IJavaBreakpoint.SUSPEND_VM) {
 				((JDIDebugTarget) getDebugTarget())
 						.prepareToSuspendByBreakpoint(breakpoint);
+				suspendedByVM();
 			} else {
 				setRunning(false);
 			}
@@ -1495,6 +1510,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public void completeBreakpointHandling(JavaBreakpoint breakpoint,
 			boolean suspend, boolean queue, EventSet set) {
+		fCompletingBreakpointHandling.set(true);
+		try {
+			completeBreakpointHandlingInternal(breakpoint, suspend, queue, set);
+		} finally {
+			fCompletingBreakpointHandling.set(false);
+		}
+	}
+
+	private void completeBreakpointHandlingInternal(JavaBreakpoint breakpoint, boolean suspend, boolean queue, EventSet set) {
 		synchronized (this) {
 			try {
 				int policy = breakpoint.getSuspendPolicy();
@@ -1514,6 +1538,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					if (policy == IJavaBreakpoint.SUSPEND_VM) {
 						((JDIDebugTarget) getDebugTarget())
 								.cancelSuspendByBreakpoint(breakpoint);
+						resumedByVM();
 					} else {
 						setRunning(true);
 						// dispose cached stack frames so we re-retrieve on the
@@ -1526,7 +1551,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setRunning(true);
 			}
 		}
-
 	}
 
 	@Override
@@ -3649,4 +3673,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		this.fMethodResult = fMethodResult;
 	}
 
+	boolean isBreakpointHandlingOngoing() {
+		return fCompletingBreakpointHandling.get() || fHandlingSuspendForBreakpoint.get();
+	}
 }
