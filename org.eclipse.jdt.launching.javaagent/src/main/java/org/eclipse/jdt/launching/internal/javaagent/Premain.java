@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.internal.javaagent;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -77,9 +76,7 @@ public class Premain {
 			}
 		});
 
-		if (debuglog) {
-			System.err.println("Advanced source lookup enabled."); //$NON-NLS-1$
-		}
+		printErrorMessage("Advanced source lookup enabled.", null, debuglog);//$NON-NLS-1$
 	}
 
 	private static short readJavaLangObjectMajor(boolean debuglog) {
@@ -88,45 +85,38 @@ public class Premain {
 
 		final int offset = 6;
 
-		final InputStream is = ClassLoader.getSystemResourceAsStream("java/lang/Object.class"); //$NON-NLS-1$
-		if (is == null) {
-			if (debuglog) {
-				System.err.println("Could not open java/lang/Object.class system resource stream."); //$NON-NLS-1$
+		try (InputStream is = ClassLoader.getSystemResourceAsStream("java/lang/Object.class")) {//$NON-NLS-1$ )
+			if (is == null) {
+				printErrorMessage("Could not open java/lang/Object.class system resource stream.", null, debuglog);//$NON-NLS-1$
+				return -1;
 			}
+			byte[] bytes = new byte[offset + 2];
+			if (is.read(bytes) < bytes.length) {
+				printErrorMessage("Could not read java/lang/Object.class system resource stream.", null, debuglog);//$NON-NLS-1$
+				return -1;
+			}
+
+			int magic = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+			if (magic != 0xCAFEBABE) {
+				printErrorMessage("Invalid java/lang/Object.class magic.", null, debuglog);//$NON-NLS-1$
+				return -1;
+			}
+
+			return (short) (((bytes[offset] & 0xFF) << 8) | (bytes[offset + 1] & 0xFF));
+		}
+		catch (Exception ex) {
+			printErrorMessage("Could not open java/lang/Object.class system resource stream.", ex, debuglog);//$NON-NLS-1$
 			return -1;
 		}
+	}
 
-		byte[] bytes = new byte[offset + 2];
-		try {
-			try {
-				if (is.read(bytes) < bytes.length) {
-					if (debuglog) {
-						System.err.println("Could not read java/lang/Object.class system resource stream."); //$NON-NLS-1$
-					}
-					return -1;
-				}
-			}
-			finally {
-				is.close();
+	private static void printErrorMessage(String errorMessage, Exception ex, boolean debuglog) {
+		if (debuglog) {
+			System.err.println(errorMessage);
+			if (ex != null) {
+				ex.printStackTrace(System.err);
 			}
 		}
-		catch (IOException e) {
-			if (debuglog) {
-				System.err.println("Could not read java/lang/Object.class system resource stream."); //$NON-NLS-1$
-				e.printStackTrace(System.err);
-			}
-			return -1;
-		}
-
-		int magic = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
-		if (magic != 0xCAFEBABE) {
-			if (debuglog) {
-				System.err.println("Invalid java/lang/Object.class magic."); //$NON-NLS-1$
-			}
-			return -1;
-		}
-
-		return (short) (((bytes[offset] & 0xFF) << 8) | (bytes[offset + 1] & 0xFF));
 	}
 
 }
