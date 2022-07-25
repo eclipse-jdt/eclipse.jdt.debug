@@ -112,7 +112,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.xml.dom";
 	private static final String ASSUMED_DEFAULT_MODULES_19 = "java.se," //
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.vector," // jdk.incubator.foreign removed in 19
+			+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
 			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
 			+ "jdk.jfr," //
 			+ "jdk.jshell,jdk.jsobject,jdk.management," //
@@ -189,7 +189,10 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		IJavaProject javaProject = getProjectContext();
 		List<String> defaultModules = getDefaultModules(javaProject);
 		String expectedModules;
-		switch (String.join(",", defaultModules)) {
+		String moduleList = String.join(",", defaultModules);
+		System.out.println("ModuleList: " + moduleList);
+		System.out.println("ASSUMED_DEFAULT_MODULES_19: " + ASSUMED_DEFAULT_MODULES_19);
+		switch (moduleList) {
 			case ASSUMED_DEFAULT_MODULES_9:
 				expectedModules = "java.se," //
 						+ "javafx.fxml,javafx.swing,javafx.web," //
@@ -283,7 +286,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 				expectedModules = "java.se," //
 						+ "jdk.accessibility," //
 						+ "jdk.dynalink," + "jdk.httpserver," //
-						+ "jdk.incubator.vector," // jdk.incubator.foreign removed in 19
+						+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
 						+ "jdk.jsobject," //
 						+ "jdk.management.jfr," //
@@ -294,7 +297,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.xml.dom";
 				break;
 			default:
-				fail("Unknown set of default modules " + String.join(",", defaultModules));
+				fail("Unknown set of default modules " + moduleList);
 				return;
 		}
 		assertTrue("expected module was not in defaultModules", defaultModules.remove("jdk.javadoc")); // requires java.compiler and jdk.compiler but
