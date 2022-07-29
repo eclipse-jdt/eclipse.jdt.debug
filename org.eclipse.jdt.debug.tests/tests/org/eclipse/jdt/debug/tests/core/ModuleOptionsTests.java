@@ -190,8 +190,6 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		List<String> defaultModules = getDefaultModules(javaProject);
 		String expectedModules;
 		String moduleList = String.join(",", defaultModules);
-		System.out.println("ModuleList: " + moduleList);
-		System.out.println("ASSUMED_DEFAULT_MODULES_19: " + ASSUMED_DEFAULT_MODULES_19);
 		switch (moduleList) {
 			case ASSUMED_DEFAULT_MODULES_9:
 				expectedModules = "java.se," //
@@ -282,6 +280,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
+				break;
 			case ASSUMED_DEFAULT_MODULES_19:
 				expectedModules = "java.se," //
 						+ "jdk.accessibility," //
