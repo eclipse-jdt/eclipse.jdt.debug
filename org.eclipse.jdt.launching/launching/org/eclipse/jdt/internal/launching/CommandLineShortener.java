@@ -41,7 +41,7 @@ import org.eclipse.jdt.launching.IVMInstall2;
 /**
  * Shortens the command line by writing all commands into an arguments file.
  */
-public class CommandLineShortener {
+public class CommandLineShortener implements IProcessTempFileCreator {
 	public static String getJavaVersion(IVMInstall vmInstall) {
 		if (vmInstall instanceof IVMInstall2) {
 			IVMInstall2 install = (IVMInstall2) vmInstall;
@@ -153,11 +153,7 @@ public class CommandLineShortener {
 		return timeStamp;
 	}
 
-	/**
-	 * The files that were created while shortening the path. They can be deleted once the process is terminated
-	 *
-	 * @return created files
-	 */
+	@Override
 	public List<File> getProcessTempFiles() {
 		return new ArrayList<>(processTempFiles);
 	}
