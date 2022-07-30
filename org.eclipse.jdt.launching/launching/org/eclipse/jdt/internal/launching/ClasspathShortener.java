@@ -54,7 +54,7 @@ import org.eclipse.jdt.launching.IVMInstall2;
  * env variable. The modulepath is replaced by an argument file if necessary.
  *
  */
-public class ClasspathShortener {
+public class ClasspathShortener implements IProcessTempFileCreator {
 	private static final String CLASSPATH_ENV_VAR_PREFIX = "CLASSPATH="; //$NON-NLS-1$
 	public static final int ARG_MAX_LINUX = 2097152;
 	public static final int ARG_MAX_WINDOWS = 32767;
@@ -136,11 +136,7 @@ public class ClasspathShortener {
 		return cmdLine.toArray(new String[cmdLine.size()]);
 	}
 
-	/**
-	 * The files that were created while shortening the path. They can be deleted once the process is terminated
-	 *
-	 * @return created files
-	 */
+	@Override
 	public List<File> getProcessTempFiles() {
 		return new ArrayList<>(processTempFiles);
 	}

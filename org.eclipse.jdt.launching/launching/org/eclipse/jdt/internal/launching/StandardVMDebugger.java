@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -272,29 +271,28 @@ public class StandardVMDebugger extends StandardVMRunner {
 			return null;
 		}
 		File workingDir = getWorkingDir(config);
-		ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
-		if (classpathShortener.shortenCommandLineIfNecessary()) {
-			cmdLine = classpathShortener.getCmdLine();
-			envp = classpathShortener.getEnvp();
+		CommandDetails cmd = new CommandDetails();
+		CommandLineShortener commandLineShortener = new CommandLineShortener(fVMInstance, launch, cmdLine, workingDir);
+		if (commandLineShortener.shouldShortenCommandLine()) {
+			cmdLine = commandLineShortener.shortenCommandLine();
+			cmd.setCommandLineShortener(commandLineShortener);
+		} else {
+			ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
+			if (classpathShortener.shortenCommandLineIfNecessary()) {
+				cmdLine = classpathShortener.getCmdLine();
+				envp = classpathShortener.getEnvp();
+			}
+			cmd.setCommandLineShortener(classpathShortener);
 		}
-
 		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 		if (newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}
 		subMonitor.worked(1);
 
-		CommandLineShortener commandLineShortener = new CommandLineShortener(fVMInstance, launch, newCmdLine, workingDir);
-		if (commandLineShortener.shouldShortenCommandLine()) {
-			cmdLine = commandLineShortener.shortenCommandLine();
-		}
-
-		CommandDetails cmd = new CommandDetails();
 		cmd.setCommandLine(cmdLine);
 		cmd.setEnvp(envp);
 		cmd.setWorkingDir(workingDir);
-		cmd.setClasspathShortener(classpathShortener);
-		cmd.setCommandLineShortener(commandLineShortener);
 		cmd.setPort(port);
 		return cmd;
 
@@ -366,9 +364,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 					}
 					process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
 				}
-				if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()
-						|| !cmdDetails.getCommandLineShortener().getProcessTempFiles().isEmpty()) {
-					String tempFiles = Stream.concat(cmdDetails.getClasspathShortener().getProcessTempFiles().stream(), cmdDetails.getCommandLineShortener().getProcessTempFiles().stream()).map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
+				List<File> processTempFiles = cmdDetails.getCommandLineShortener().getProcessTempFiles();
+				if (!processTempFiles.isEmpty()) {
+					String tempFiles = processTempFiles.stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 					process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 				}
 				subMonitor.worked(1);
