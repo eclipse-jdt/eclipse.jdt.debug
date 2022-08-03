@@ -147,11 +147,6 @@ public class EventWaiter implements EventListener {
 	 */
 	@Override
 	public boolean vmDeath(VMDeathEvent event) {
-		if (fEvent == null) {
-			// This is the last event we can ever get an this was not the one we expected
-			notifyEvent(null);
-			return true;
-		}
 		return handleEvent(event);
 	}
 	/**

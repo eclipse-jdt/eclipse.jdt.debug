@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,8 +8,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
@@ -24,6 +29,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.jdi.Bootstrap;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -159,8 +165,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * @since 3.8
 	 */
 	protected boolean is16OrGreater() {
-		String ver = fVM.version();
-		return ver.indexOf("1.6") > -1 || ver.indexOf("1.7") > -1;
+		return ((VirtualMachineImpl) fVM).isJdwpVersionGreaterOrEqual(1, 6);
 	}
 
 	/**
@@ -584,7 +589,7 @@ public abstract class AbstractJDITest extends TestCase {
 		return getThread("fMainThread");
 	}
 
-	private ThreadReference getThread(String fieldName) {
+	protected ThreadReference getThread(String fieldName) {
 		ClassType type = getMainClass();
 		if (type == null) {
 			return null;
@@ -664,7 +669,7 @@ public abstract class AbstractJDITest extends TestCase {
 		} else if (fVMLauncherName.equals("IBMVMLauncher")) {
 			launchIBMTarget();
 		} else {
-			launchJ9Target();
+			launchJavaTarget();
 		}
 	}
 
@@ -703,40 +708,29 @@ public abstract class AbstractJDITest extends TestCase {
 		return commandArray;
 	}
 
-	/**
-	 * Launches the target J9 VM.
-	 */
-	private void launchJ9Target() {
+	private void launchJavaTarget() {
 		try {
-			// Launch proxy
-			String proxyString[] = new String[3];
-			int index = 0;
+			// Launch target VM
 			String binDirectory =
 				fTargetAddress
 					+ File.separatorChar
 					+ "bin"
 					+ File.separatorChar;
 
-			proxyString[index++] = binDirectory + "j9proxy";
-			proxyString[index++] = "localhost:" + (fBackEndPort - 1);
-			proxyString[index++] = "" + fBackEndPort;
-			fLaunchedProxy = Runtime.getRuntime().exec(proxyString);
-
-			// Launch target VM
 			Vector<String> commandLine = new Vector<>();
 
-			String launcher = binDirectory + "j9w.exe";
-			File vm= new File(launcher);
-			if (!vm.exists()) {
-				launcher = binDirectory + "j9";
-			}
-			commandLine.add(launcher);
-
+			commandLine.add(binDirectory + "javaw");
 			if (fBootPath.length() > 0) {
-				commandLine.add("-bp:" + fBootPath);
+				commandLine.add("-bootpath");
+				commandLine.add(fBootPath);
 			}
-			commandLine.add("-cp:" + fClassPath);
-			commandLine.add("-debug:" + (fBackEndPort - 1));
+
+			commandLine.add("-classpath");
+			commandLine.add(fClassPath);
+			commandLine.add("-Xdebug");
+			commandLine.add("-Xnoagent");
+			commandLine.add("-Djava.compiler=NONE");
+			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
 			commandLine.add(getMainClassName());
 
@@ -953,9 +947,10 @@ public abstract class AbstractJDITest extends TestCase {
 			vmVendor != null && vmVendor.indexOf("IBM") > -1 && vmVersion != null) {
 			vmLauncherName = "IBMVMLauncher";
 		} else {
-			vmLauncherName = "J9VMLauncher";
+			vmLauncherName = "DefaultVMLauncher";
 		}
-		String classPath = System.getProperty("java.class.path");
+
+		String classPath = new File("./bin").getAbsolutePath();
 		String bootPath = "";
 		String vmType = "?";
 		boolean verbose = false;

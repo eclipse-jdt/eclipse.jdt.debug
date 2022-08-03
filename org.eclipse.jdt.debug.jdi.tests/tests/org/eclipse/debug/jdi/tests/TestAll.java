@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,8 +8,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
@@ -85,9 +90,13 @@ public class TestAll {
 			classes.addElement(WatchpointRequestTest.class);
 		}
 
+		if (Runtime.version().feature() >= 19) {
+			classes.addElement(VirtualThreadTest.class);
+		}
+
 		classes.addElement(VirtualMachineExitTest.class);
 		classes.addElement(VMDisconnectEventTest.class);
-		classes.addElement(VMDisposeTest.class);	// note that this test does not restore the state properly.
+		classes.addElement(VMDisposeTest.class); // note that this test does not restore the state properly.
 		return classes;
 	}
 	/**
