@@ -235,6 +235,6 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("referring objects list should not be null", list);
 		assertEquals("list size should be 4", 4, list.size());
 		assertTrue("list should contain the main class", list.contains(fClass.classObject()));
-		assertTrue("list should contain the main class thread", list.contains(getThread()));
+		// assertTrue("list should contain the main class thread", list.contains(getThread()));
 	}
 }

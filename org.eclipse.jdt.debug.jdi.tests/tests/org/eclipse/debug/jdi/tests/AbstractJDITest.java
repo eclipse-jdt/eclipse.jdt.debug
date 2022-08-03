@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.jdi.Bootstrap;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -164,8 +165,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * @since 3.8
 	 */
 	protected boolean is16OrGreater() {
-		String ver = fVM.version();
-		return ver.indexOf("1.6") > -1 || ver.indexOf("1.7") > -1;
+		return ((VirtualMachineImpl) fVM).isJdwpVersionGreaterOrEqual(1, 6);
 	}
 
 	/**
