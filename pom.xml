@@ -57,5 +57,6 @@
     <module>org.eclipse.jdt.launching.ui.macosx</module>
     <module>org.eclipse.jdt.debug.tests</module>
     <module>org.eclipse.jdt.debug.ui</module>
+    <module>org.eclipse.jdt.debug.jdi.tests</module>
   </modules>
 </project>
