@@ -13,14 +13,17 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.request.VMDeathRequest;
 
 /**
  * Tests for JDI com.sun.jdi.event.VMDisconnectEvent.
  */
 public class VMDisconnectEventTest extends AbstractJDITest {
 
-	private VMDisconnectEvent fVMDisconnectEvent;
+	private Event fVMDisconnectEvent;
 	/**
 	 * Creates a new test.
 	 */
@@ -33,15 +36,17 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	@Override
 	public void localSetUp() {
 		// Prepare to receive the event
+		VMDeathRequest request = fVM.eventRequestManager().createVMDeathRequest();
+		request.enable();
 		VMDisconnectEventWaiter waiter =
-			new VMDisconnectEventWaiter(null, true);
+				new VMDisconnectEventWaiter(request, true);
 		fEventReader.addEventListener(waiter);
 
 		// Trigger a vm death event by shutting down the VM
 		killVM();
 
 		// Wait for the event to come in
-		fVMDisconnectEvent = (VMDisconnectEvent) waitForEvent(waiter, 10000);
+		fVMDisconnectEvent = waitForEvent(waiter, 10000);
 		// Wait 10s max
 		fEventReader.removeEventListener(waiter);
 	}
@@ -75,6 +80,7 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	 * Test that we received the event.
 	 */
 	public void testJDIVMDeath() {
-		assertNotNull("1", fVMDisconnectEvent);
+		assertTrue("Should trigger VMDisconnectEvent or VMDeathEvent", fVMDisconnectEvent instanceof VMDeathEvent
+				|| fVMDisconnectEvent instanceof VMDisconnectEvent);
 	}
 }
