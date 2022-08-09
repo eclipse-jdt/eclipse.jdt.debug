@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ import org.eclipse.jdt.launching.IVMInstall2;
  * env variable. The modulepath is replaced by an argument file if necessary.
  *
  */
-public class ClasspathShortener implements IProcessTempFileCreator {
+public class ClasspathShortener {
 	private static final String CLASSPATH_ENV_VAR_PREFIX = "CLASSPATH="; //$NON-NLS-1$
 	public static final int ARG_MAX_LINUX = 2097152;
 	public static final int ARG_MAX_WINDOWS = 32767;
@@ -136,7 +136,11 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		return cmdLine.toArray(new String[cmdLine.size()]);
 	}
 
-	@Override
+	/**
+	 * The files that were created while shortening the path. They can be deleted once the process is terminated
+	 *
+	 * @return created files
+	 */
 	public List<File> getProcessTempFiles() {
 		return new ArrayList<>(processTempFiles);
 	}
@@ -188,7 +192,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 				return false;
 			}
 			if (isArgumentFileSupported()) {
-				shortenPathUsingClasspathArgumentFile(modulePathArgumentIndex, "--module-path"); //$NON-NLS-1$
+				shortenModulePathUsingModulePathArgumentFile(modulePathArgumentIndex);
 				return true;
 			}
 		} catch (CoreException e) {
@@ -213,7 +217,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 				return false;
 			}
 			if (isArgumentFileSupported()) {
-				shortenPathUsingClasspathArgumentFile(classpathArgumentIndex, "-classpath"); //$NON-NLS-1$
+				shortenClasspathUsingClasspathArgumentFile(classpathArgumentIndex);
 				return true;
 			}
 			if (os.equals(Platform.OS_WIN32)) {
@@ -289,28 +293,17 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		return Integer.MAX_VALUE;
 	}
 
-	private void shortenPathUsingClasspathArgumentFile(int modulePathArgumentIndex, String option) throws CoreException {
-		String path = cmdLine.get(modulePathArgumentIndex);
-		File file;
-		try {
-			String timeStamp = getLaunchTimeStamp();
-			File argFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX + "%s" + option //$NON-NLS-1$
-					+ "-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
+	private void shortenClasspathUsingClasspathArgumentFile(int classpathArgumentIndex) throws CoreException {
+		String classpath = cmdLine.get(classpathArgumentIndex);
+		File file = createClassPathArgumentFile(classpath);
+		removeCmdLineArgs(classpathArgumentIndex - 1, 2);
+		addCmdLineArgs(classpathArgumentIndex - 1, '@' + file.getAbsolutePath());
+		addProcessTempFile(file);
+	}
 
-			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
-			Charset systemCharset = Platform.getSystemCharset();
-			if (!systemCharset.newEncoder().canEncode(arg)) {
-				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot encode " + option //$NON-NLS-1$
-						+ " as argument file with system charset " //$NON-NLS-1$
-						+ systemCharset.displayName() + ".", null)); //$NON-NLS-1$
-			}
-			Files.writeString(argFile.toPath(), arg, systemCharset);
-			file = argFile;
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create " + option //$NON-NLS-1$
-					+ " argument file", e)); //$NON-NLS-1$
-		}
-
+	private void shortenModulePathUsingModulePathArgumentFile(int modulePathArgumentIndex) throws CoreException {
+		String modulePath = cmdLine.get(modulePathArgumentIndex);
+		File file = createModulePathArgumentFile(modulePath);
 		removeCmdLineArgs(modulePathArgumentIndex - 1, 2);
 		addCmdLineArgs(modulePathArgumentIndex - 1, '@' + file.getAbsolutePath());
 		addProcessTempFile(file);
@@ -383,6 +376,36 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 
 	protected String getLaunchConfigurationName() {
 		return launch.getLaunchConfiguration().getName();
+	}
+
+	private File createClassPathArgumentFile(String classpath) throws CoreException {
+		try {
+			String timeStamp = getLaunchTimeStamp();
+			File classPathFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
+					+ "%s-classpath-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
+
+			byte[] bytes = ("-classpath " + quoteWindowsPath(classpath)).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
+
+			Files.write(classPathFile.toPath(), bytes);
+			return classPathFile;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create classpath argument file", e)); //$NON-NLS-1$
+		}
+	}
+
+	private File createModulePathArgumentFile(String modulePath) throws CoreException {
+		try {
+			String timeStamp = getLaunchTimeStamp();
+			File modulePathFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
+					+ "%s-module-path-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
+
+			byte[] bytes = ("--module-path " + quoteWindowsPath(modulePath)).getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
+
+			Files.write(modulePathFile.toPath(), bytes);
+			return modulePathFile;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create module-path argument file", e)); //$NON-NLS-1$
+		}
 	}
 
 	protected String getLaunchTimeStamp() {

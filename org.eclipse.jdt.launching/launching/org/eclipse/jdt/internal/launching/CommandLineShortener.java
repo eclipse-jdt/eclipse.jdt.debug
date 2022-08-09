@@ -17,8 +17,6 @@ import static org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FIL
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,7 +26,6 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -41,7 +38,7 @@ import org.eclipse.jdt.launching.IVMInstall2;
 /**
  * Shortens the command line by writing all commands into an arguments file.
  */
-public class CommandLineShortener implements IProcessTempFileCreator {
+public class CommandLineShortener {
 	public static String getJavaVersion(IVMInstall vmInstall) {
 		if (vmInstall instanceof IVMInstall2) {
 			IVMInstall2 install = (IVMInstall2) vmInstall;
@@ -92,7 +89,6 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	}
 
 	protected File createArgumentFile(String[] cmdLine) throws CoreException {
-		Charset systemCharset = Platform.getSystemCharset();
 		try {
 			String timeStamp = getLaunchTimeStamp();
 			File argumentsFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
@@ -100,20 +96,8 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 
 			cmdLine = quoteForArgfile(cmdLine);
 
-			Files.write(argumentsFile.toPath(), Arrays.asList(cmdLine), systemCharset);
+			Files.write(argumentsFile.toPath(), Arrays.asList(cmdLine));
 			return argumentsFile;
-		} catch (CharacterCodingException e) {
-			for (String s : cmdLine) {
-				for (char c : s.toCharArray()) {
-					if (!systemCharset.newEncoder().canEncode(c)) {
-						throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot encode argument as file: Illegal character " //$NON-NLS-1$
-								+ String.format("\\u%04x", (int) c) //$NON-NLS-1$
-								+ " for system charset " + systemCharset.displayName() + ".", e)); //$NON-NLS-1$ //$NON-NLS-2$
-
-					}
-				}
-			}
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot encode argument as file", e)); //$NON-NLS-1$
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create argument file", e)); //$NON-NLS-1$
 		}
@@ -153,7 +137,11 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 		return timeStamp;
 	}
 
-	@Override
+	/**
+	 * The files that were created while shortening the path. They can be deleted once the process is terminated
+	 *
+	 * @return created files
+	 */
 	public List<File> getProcessTempFiles() {
 		return new ArrayList<>(processTempFiles);
 	}

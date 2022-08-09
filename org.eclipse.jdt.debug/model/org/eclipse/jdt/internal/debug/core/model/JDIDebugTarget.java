@@ -1733,10 +1733,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	protected void suspendThreads() {
 		Iterator<JDIThread> threads = getThreadIterator();
 		while (threads.hasNext()) {
-			JDIThread thread = threads.next();
-			if (!thread.isBreakpointHandlingOngoing()) {
-				thread.suspendedByVM();
-			}
+			threads.next().suspendedByVM();
 		}
 	}
 
@@ -1746,10 +1743,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	protected void resumeThreads() throws DebugException {
 		Iterator<JDIThread> threads = getThreadIterator();
 		while (threads.hasNext()) {
-			JDIThread thread = threads.next();
-			if (!thread.isBreakpointHandlingOngoing()) {
-				thread.resumedByVM();
-			}
+			threads.next().resumedByVM();
 		}
 	}
 
