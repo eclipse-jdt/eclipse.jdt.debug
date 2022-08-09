@@ -70,7 +70,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 			if(tref.isSuspended()) {
 				if(tref.isAtBreakpoint()) {
 					method = getMethod("printNumber", "(Ljava/io/OutputStream;I)I");
-					br = getBreakpointRequest(method.locationsOfLine(200).get(0));
+					br = getBreakpointRequest(method.locationsOfLine(207).get(0));
 					br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					br.enable();
 					waiter = new EventWaiter(br, true);
