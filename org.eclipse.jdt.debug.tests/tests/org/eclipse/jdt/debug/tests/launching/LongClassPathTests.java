@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -39,8 +38,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
-import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -58,11 +55,11 @@ import junit.framework.TestSuite;
  *
  */
 public class LongClassPathTests extends AbstractDebugTest {
-	protected static final String MAIN_TYPE_NAME = "test.classpath.Main";
-	protected static final IPath CLASSPATH_PROJECT_CONTENT_PATH = new Path("testresources/classpathProject");
-	protected IJavaProject javaProject;
-	protected ILaunchConfiguration launchConfiguration;
-	protected IJavaThread thread;
+	private static final String MAIN_TYPE_NAME = "test.classpath.Main";
+	private static final IPath CLASSPATH_PROJECT_CONTENT_PATH = new Path("testresources/classpathProject");
+	private IJavaProject javaProject;
+	private ILaunchConfiguration launchConfiguration;
+	private IJavaThread thread;
 
 	public LongClassPathTests(String name) {
 		super(name);
@@ -103,7 +100,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 	 */
 	public void testVeryLongClasspathWithClasspathOnlyJar() throws Exception {
 		// Given
-		javaProject = createJavaProjectClone("test ä VeryLongClasspathWithClasspathOnlyJar", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_1_6_EE_NAME, true);
+		javaProject = createJavaProjectClone("testVeryLongClasspathWithClasspathOnlyJar", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_1_6_EE_NAME, true);
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
 		int minClasspathLength = 300000;
 		setLongClasspath(javaProject, minClasspathLength);
@@ -185,7 +182,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		resumeAndExit(thread);
 	}
 
-	protected Optional<File> getTempFile(ILaunch launch) {
+	private Optional<File> getTempFile(ILaunch launch) {
 		IProcess process = launch.getProcesses()[0];
 		String tempFile = process.getAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES);
 		if (tempFile == null) {
@@ -194,7 +191,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		return Optional.of(new File(tempFile));
 	}
 
-	protected boolean isArgumentFileSupported(ILaunchConfiguration launchConfiguration) throws CoreException {
+	private boolean isArgumentFileSupported(ILaunchConfiguration launchConfiguration) throws CoreException {
 		IVMInstall vmInstall = JavaRuntime.computeVMInstall(launchConfiguration);
 		if (vmInstall instanceof AbstractVMInstall) {
 			AbstractVMInstall install = (AbstractVMInstall) vmInstall;
@@ -212,7 +209,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		return configurationWorkingCopy.doSave();
 	}
 
-	protected ILaunchConfiguration createLaunchConfigurationStopInMain(IJavaProject javaProject, String mainTypeName) throws Exception, CoreException {
+	private ILaunchConfiguration createLaunchConfigurationStopInMain(IJavaProject javaProject, String mainTypeName) throws Exception, CoreException {
 		ILaunchConfiguration launchConfiguration;
 		launchConfiguration = createLaunchConfiguration(javaProject, mainTypeName);
 		ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
@@ -221,7 +218,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		return launchConfiguration;
 	}
 
-	protected void setLongClasspath(IJavaProject javaProject, int minClassPathLength) throws Exception {
+	private void setLongClasspath(IJavaProject javaProject, int minClassPathLength) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		List<IClasspathEntry> classpathEntries = new ArrayList<>();
 		int i = 0;
@@ -243,17 +240,4 @@ public class LongClassPathTests extends AbstractDebugTest {
 		javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]), null);
 	}
 
-	/**
-	 * Increased timeout
-	 *
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IJavaThread launchAndSuspend(ILaunchConfiguration config) throws Exception {
-		DebugEventWaiter waiter = new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
-		waiter.setTimeout(DEFAULT_TIMEOUT * 2);
-		waiter.setEnableUIEventLoopProcessing(enableUIEventLoopProcessingInWaiter());
-		Object suspendee = launchAndWait(config, waiter);
-		return (IJavaThread) suspendee;
-	}
 }

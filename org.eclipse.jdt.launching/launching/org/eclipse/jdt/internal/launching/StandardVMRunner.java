@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -366,7 +367,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 		private String[] commandLine;
 		private String[] envp;
 		private File workingDir;
-		private IProcessTempFileCreator commandLineShortener;
+		private ClasspathShortener classpathShortener;
+		private CommandLineShortener commandLineShortener;
 		private int port;
 
 		public String[] getEnvp() {
@@ -393,11 +395,19 @@ public class StandardVMRunner extends AbstractVMRunner {
 			this.workingDir = workingDir;
 		}
 
-		public IProcessTempFileCreator getCommandLineShortener() {
+		public ClasspathShortener getClasspathShortener() {
+			return classpathShortener;
+		}
+
+		public void setClasspathShortener(ClasspathShortener classpathShortener) {
+			this.classpathShortener = classpathShortener;
+		}
+
+		public CommandLineShortener getCommandLineShortener() {
 			return commandLineShortener;
 		}
 
-		public void setCommandLineShortener(IProcessTempFileCreator commandLineShortener) {
+		public void setCommandLineShortener(CommandLineShortener commandLineShortener) {
 			this.commandLineShortener = commandLineShortener;
 		}
 
@@ -484,27 +494,25 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		File workingDir = getWorkingDir(config);
-		CommandDetails cmd = new CommandDetails();
-		CommandLineShortener commandLineShortener = new CommandLineShortener(fVMInstance, launch, cmdLine, workingDir);
-		if (commandLineShortener.shouldShortenCommandLine()) {
-			cmdLine = commandLineShortener.shortenCommandLine();
-			cmd.setCommandLineShortener(commandLineShortener);
-		} else {
-			ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
-			if (classpathShortener.shortenCommandLineIfNecessary()) {
-				cmdLine = classpathShortener.getCmdLine();
-				envp = classpathShortener.getEnvp();
-			}
-			cmd.setCommandLineShortener(classpathShortener);
+		ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
+		if (classpathShortener.shortenCommandLineIfNecessary()) {
+			cmdLine = classpathShortener.getCmdLine();
+			envp = classpathShortener.getEnvp();
 		}
 		String[] newCmdLine = validateCommandLine(launchConfiguration, cmdLine);
 		if (newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}
-
+		CommandLineShortener commandLineShortener = new CommandLineShortener(fVMInstance, launch, newCmdLine, workingDir);
+		if (commandLineShortener.shouldShortenCommandLine()) {
+			cmdLine = commandLineShortener.shortenCommandLine();
+		}
+		CommandDetails cmd = new CommandDetails();
 		cmd.setCommandLine(cmdLine);
 		cmd.setEnvp(envp);
 		cmd.setWorkingDir(workingDir);
+		cmd.setClasspathShortener(classpathShortener);
+		cmd.setCommandLineShortener(commandLineShortener);
 		subMonitor.worked(1);
 		return cmd;
 	}
@@ -547,9 +555,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 			Arrays.sort(envp);
 			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, String.join(String.valueOf('\n'), envp));
 		}
-		List<File> processTempFiles = cmdDetails.getCommandLineShortener().getProcessTempFiles();
-		if (!processTempFiles.isEmpty()) {
-			String tempFiles = processTempFiles.stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
+		if (!cmdDetails.getClasspathShortener().getProcessTempFiles().isEmpty()
+				|| !cmdDetails.getCommandLineShortener().getProcessTempFiles().isEmpty()) {
+			String tempFiles = Stream.concat(cmdDetails.getClasspathShortener().getProcessTempFiles().stream(), cmdDetails.getCommandLineShortener().getProcessTempFiles().stream()).map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
 			process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 		}
 		subMonitor.worked(1);
