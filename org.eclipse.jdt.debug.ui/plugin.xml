@@ -3642,7 +3642,7 @@ M4 = Platform-specific fourth key
           id="org.eclipse.jdt.debug.ui.SyntheticStackFrameFgColor"
           isEditable="true"
           label="%SyntheticStackFrameFgColorDefinition.label"
-          value="202,130,130">
+          value="101,65,65">
        <description>%SyntheticStackFrameFgColorDefinition.description</description>
     </colorDefinition>
     <colorDefinition
@@ -3659,7 +3659,7 @@ M4 = Platform-specific fourth key
           id="org.eclipse.jdt.debug.ui.PlatformStackFrameFgColor"
           isEditable="true"
           label="%PlatformStackFrameFgColorDefinition.label"
-          value="151,203,155">
+          value="75,102,78">
        <description>%PlatformStackFrameFgColorDefinition.description</description>
     </colorDefinition>
     <colorDefinition
@@ -3710,7 +3710,7 @@ M4 = Platform-specific fourth key
           id="org.eclipse.jdt.debug.ui.LibraryStackFrameFgColor"
           isEditable="true"
           label="%LibraryStackFrameFgColorDefinition.label"
-          value="205,167,251">
+          value="102,84,126">
        <description>%LibraryStackFrameFgColorDefinition.description</description>
     </colorDefinition>
     <colorDefinition
