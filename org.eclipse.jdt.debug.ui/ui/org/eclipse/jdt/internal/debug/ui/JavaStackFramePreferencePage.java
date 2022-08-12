@@ -28,6 +28,7 @@ import org.eclipse.jdt.internal.ui.filtertable.JavaFilterTable.FilterTableConfig
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -53,7 +54,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.19
  */
-public class JavaStackFramePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class JavaStackFramePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPropertyChangeListener {
 
 	private static class CategoryColors {
 		final IJavaStackFrame.Category category;
@@ -300,6 +301,7 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 			}
 		});
 
+
 		Composite stylesComposite = new Composite(editorComposite, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -329,6 +331,8 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 				fAppearanceList.update(selection, null);
 			}
 		});
+
+		PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().addListener(this);
 	}
 
 	private CategoryColors getSelected() {
@@ -438,4 +442,18 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 		super.performDefaults();
 	}
 
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		var propertyName = event.getProperty();
+		if (StackFramePresentationProvider.isColorName(propertyName)) {
+			fAppearanceList.update(colors.toArray(), null);
+			fAppearanceList.setSelection(new StructuredSelection(colors.get(0)));
+		}
+	}
+
+	@Override
+	public void dispose() {
+		PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().removeListener(this);
+		super.dispose();
+	}
 }
