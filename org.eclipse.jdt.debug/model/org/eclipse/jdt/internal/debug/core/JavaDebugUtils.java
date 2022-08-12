@@ -249,7 +249,7 @@ public class JavaDebugUtils {
 					try {
 						Integer.parseInt(innerTypeName.substring(0, 1)); // throws NFE if not an integer
 						// perform expensive lookup for anonymous types:
-						ASTParser parser = ASTParser.newParser(AST.JLS4);
+						ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 						parser.setResolveBindings(true);
 						parser.setSource(type.getTypeRoot());
 						CompilationUnit cu = (CompilationUnit) parser.createAST(null);

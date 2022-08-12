@@ -413,7 +413,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (type == null) {
 				return;
 			}
-			ASTParser parser = ASTParser.newParser(AST.JLS11);
+			ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 			parser.setResolveBindings(true);
 			parser.setSource(type.getTypeRoot());
 			CompilationUnit cu = (CompilationUnit) parser.createAST(null);
