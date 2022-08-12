@@ -299,4 +299,7 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 		return collapseStackFrames;
 	}
 
+	static boolean isColorName(String propertyName) {
+		return fgKeyMap.containsValue(propertyName) || bgKeyMap.containsValue(propertyName);
+	}
 }
