@@ -486,7 +486,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private CompilationUnit parseCompilationUnit(char[] source,
 			String unitName, IJavaProject project, Map<String, String> extraCompileOptions) {
-		ASTParser parser = ASTParser.newParser(AST.JLS15);
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);
@@ -685,7 +685,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 						|| problemId == IProblem.NotVisibleMethod
 						|| problemId == IProblem.NotVisibleConstructor
 						|| problemId == IProblem.NotVisibleField
-						|| problemId == IProblem.NotVisibleType 
+						|| problemId == IProblem.NotVisibleType
 						|| problemId == IProblem.UnexpectedStaticModifierForMethod) {
 					continue;
 				}

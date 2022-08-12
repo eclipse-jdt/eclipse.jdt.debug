@@ -74,7 +74,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						@Override
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
-							ASTParser parser = ASTParser.newParser(AST.JLS15);
+							ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 							parser.setSource(document.get().toCharArray());
 							Map<String, String> options = JavaCore.getOptions();
 							options.put(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
