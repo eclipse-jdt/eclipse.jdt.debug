@@ -161,7 +161,7 @@ public class CompilationUnitDelta {
 		char[] buffer = readString(input);
 		if (buffer != null) {
 			if (fParser == null) {
-				fParser = ASTParser.newParser(AST.JLS4);
+				fParser = ASTParser.newParser(AST.getJLSLatest());
 			}
 			fParser.setSource(buffer);
 			fParser.setProject(cu.getJavaProject());
