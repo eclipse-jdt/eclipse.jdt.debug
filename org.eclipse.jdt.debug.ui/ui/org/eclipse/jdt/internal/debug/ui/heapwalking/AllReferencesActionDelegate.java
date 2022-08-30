@@ -23,7 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate;
 import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.action.IAction;
@@ -35,18 +34,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Action to browse all references to selected object.
  *
  * @since 3.3
  */
-public class AllReferencesActionDelegate extends ObjectActionDelegate implements IWorkbenchWindowActionDelegate{
-
-	protected IWorkbenchWindow fWindow;
+public class AllReferencesActionDelegate extends BaseInstanceActionDelegate {
 
 	@Override
 	public void run(IAction action) {
@@ -60,6 +54,8 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 						PopupInspectAction.ACTION_DEFININITION_ID,
 						new JavaInspectExpression(NLS.bind(Messages.AllReferencesActionDelegate_1,new String[]{var.getName()}),referenceList));
 				ipd.open();
+				ipd.getTreeViewer().addDoubleClickListener(doubleClick -> handleDoubleClick(action, doubleClick));
+
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.statusDialog(e.getStatus());
 			}
@@ -87,14 +83,6 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 		return control.toDisplay(0, 0);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	@Override
-	public void init(IWorkbenchWindow window) {
-		fWindow = window;
-	}
-
 	/**
 	 * @return the shell to use for new popups or <code>null</code>
 	 */
@@ -104,20 +92,6 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 		}
 		if (getWorkbenchWindow() != null){
 			return getWorkbenchWindow().getShell();
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
-	 */
-	@Override
-	protected IWorkbenchPart getPart() {
-		IWorkbenchPart part = super.getPart();
-		if (part != null){
-			return part;
-		} else if (fWindow != null){
-			return fWindow.getActivePage().getActivePart();
 		}
 		return null;
 	}
