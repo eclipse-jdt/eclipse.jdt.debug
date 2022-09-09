@@ -622,7 +622,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 				count += fSourceNameFilters.size();
 			}
 		}
-		if (fPlatformThreadsFilter) {
+		if (fPlatformThreadsFilter && supportsPlatformThreadsFilter()) {
 			count++;
 		}
 		return count;
