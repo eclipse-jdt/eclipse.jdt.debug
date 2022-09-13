@@ -274,6 +274,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             // get File name (w/o .java)
             String typeName = linkText.substring(start + 1, end);
             typeName = JavaCore.removeJavaLikeExtension(typeName);
+			typeName = removeModuleInfo(typeName);
 
             String qualifier = linkText.substring(0, start);
             // remove the method name
@@ -372,4 +373,21 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		}
 	}
 
+	/**
+	 * {@code jstack} can produce stack trace lines such as:
+	 *
+	 * <pre>
+	 *     at java.util.StringJoiner.compactElts(java.base@11.0.10/StringJoiner.java:248)
+	 * </pre>
+	 *
+	 * We remove the module part, since otherwise the type is not determined correctly by this class.
+	 */
+	private static String removeModuleInfo(String typeName) {
+		int atIndex = typeName.lastIndexOf('@');
+		int slashIndex = typeName.lastIndexOf('/');
+		if (atIndex >= 0 && atIndex < slashIndex && slashIndex + 1 < typeName.length()) {
+			typeName = typeName.substring(slashIndex + 1);
+		}
+		return typeName;
+	}
 }
