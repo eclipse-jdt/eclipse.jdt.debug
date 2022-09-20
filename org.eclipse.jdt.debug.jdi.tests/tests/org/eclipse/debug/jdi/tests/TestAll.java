@@ -8,10 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Microsoft Corporation - supports virtual threads
@@ -67,8 +63,9 @@ public class TestAll {
 		classes.addElement(MethodExitRequestTest.class);
 		classes.addElement(MirrorTest.class);
 
-		if (info.fVM.canWatchFieldModification())
+		if (info.fVM.canWatchFieldModification()) {
 			classes.addElement(ModificationWatchpointEventTest.class);
+		}
 
 		classes.addElement(ObjectReferenceTest.class);
 		classes.addElement(PrimitiveValueTest.class);
@@ -113,8 +110,9 @@ public class TestAll {
 		AbstractJDITest test= run(result, VirtualMachineTest.class, arguments, null);
 
 		// Was it possible to run the first test?
-		if (test == null)
+		if (test == null) {
 			return;
+		}
 
 		// Get the VM info
 		VMInformation info = test.getVMInfo();
@@ -158,8 +156,9 @@ public class TestAll {
 		} catch (InvocationTargetException e) {
 			throw e.getTargetException();
 		}
-		if (!AbstractJDITest.parseArgs(arguments))
+		if (!AbstractJDITest.parseArgs(arguments)) {
 			return null;
+		}
 		test.setVMInfo(info);
 		test.setInControl(false);
 

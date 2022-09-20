@@ -8,10 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Microsoft Corporation - supports virtual threads
@@ -199,13 +195,15 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	 */
 	@Override
 	public void putProperty(Object key, Object value) {
-		if (fPropertyMap == null)
+		if (fPropertyMap == null) {
 			fPropertyMap = new HashMap<>();
+		}
 
-		if (value == null)
+		if (value == null) {
 			fPropertyMap.remove(key);
-		else
+		} else {
 			fPropertyMap.put(key, value);
+		}
 	}
 
 	/**
@@ -229,8 +227,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	 */
 	@Override
 	public synchronized void disable() {
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 
 		initJdwpRequest();
 		try {
@@ -263,8 +262,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	 */
 	@Override
 	public synchronized void enable() {
-		if (isEnabled())
+		if (isEnabled()) {
 			return;
+		}
 
 		initJdwpRequest();
 		try {
@@ -318,10 +318,11 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	 */
 	@Override
 	public void setEnabled(boolean enable) {
-		if (enable)
+		if (enable) {
 			enable();
-		else
+		} else {
 			disable();
+		}
 	}
 
 	/**
@@ -329,8 +330,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	 *                is thrown if this request is enabled.
 	 */
 	public void checkDisabled() throws InvalidRequestStateException {
-		if (isEnabled())
+		if (isEnabled()) {
 			throw new InvalidRequestStateException();
+		}
 	}
 
 	/**
@@ -366,8 +368,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	@Override
 	public void addCountFilter(int count) throws InvalidRequestStateException {
 		checkDisabled();
-		if (fCountFilters == null)
+		if (fCountFilters == null) {
 			fCountFilters = new ArrayList<>();
+		}
 
 		fCountFilters.add(Integer.valueOf(count));
 	}
@@ -380,10 +383,12 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			InvalidRequestStateException {
 		checkVM(threadFilter);
 		checkDisabled();
-		if (threadFilter.isCollected())
+		if (threadFilter.isCollected()) {
 			throw new ObjectCollectedException();
-		if (fThreadFilters == null)
+		}
+		if (fThreadFilters == null) {
 			fThreadFilters = new ArrayList<>();
+		}
 
 		fThreadFilters.add(threadFilter);
 	}
@@ -396,8 +401,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			throws VMMismatchException, InvalidRequestStateException {
 		checkVM(filter);
 		checkDisabled();
-		if (fClassFilterRefs == null)
+		if (fClassFilterRefs == null) {
 			fClassFilterRefs = new ArrayList<>();
+		}
 
 		fClassFilterRefs.add(filter);
 	}
@@ -409,8 +415,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	public void addClassFilter(String filter)
 			throws InvalidRequestStateException {
 		checkDisabled();
-		if (fClassFilters == null)
+		if (fClassFilters == null) {
 			fClassFilters = new ArrayList<>();
+		}
 
 		fClassFilters.add(filter);
 	}
@@ -423,8 +430,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	public void addClassExclusionFilter(String filter)
 			throws InvalidRequestStateException {
 		checkDisabled();
-		if (fClassExclusionFilters == null)
+		if (fClassExclusionFilters == null) {
 			fClassExclusionFilters = new ArrayList<>();
+		}
 
 		fClassExclusionFilters.add(filter);
 	}
@@ -438,8 +446,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		checkDisabled();
 		// Used in createBreakpointRequest.
 		checkVM(location);
-		if (fLocationFilters == null)
+		if (fLocationFilters == null) {
 			fLocationFilters = new ArrayList<>();
+		}
 
 		fLocationFilters.add(location);
 	}
@@ -453,11 +462,13 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			throws VMMismatchException {
 		checkDisabled();
 		// refType Null means report exceptions of all types.
-		if (refType != null)
+		if (refType != null) {
 			checkVM(refType);
+		}
 
-		if (fExceptionFilters == null)
+		if (fExceptionFilters == null) {
 			fExceptionFilters = new ArrayList<>();
+		}
 
 		ExceptionFilter filter = new ExceptionFilter();
 		filter.fException = refType;
@@ -473,8 +484,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		checkDisabled();
 		// Used in createXWatchpointRequest methods.
 		checkVM(field);
-		if (fFieldFilters == null)
+		if (fFieldFilters == null) {
 			fFieldFilters = new ArrayList<>();
+		}
 
 		fFieldFilters.add(field);
 	}
@@ -489,8 +501,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		// Used in createStepRequest.
 		checkVM(thread);
 
-		if (fThreadStepFilters == null)
+		if (fThreadStepFilters == null) {
 			fThreadStepFilters = new ArrayList<>();
+		}
 
 		ThreadStepFilter filter = new ThreadStepFilter();
 		filter.fThread = thread;
@@ -597,26 +610,36 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	protected int modifierCount() {
 		int count = 0;
 
-		if (fCountFilters != null)
+		if (fCountFilters != null) {
 			count += fCountFilters.size();
-		if (fThreadFilters != null)
+		}
+		if (fThreadFilters != null) {
 			count += fThreadFilters.size();
-		if (fClassFilterRefs != null)
+		}
+		if (fClassFilterRefs != null) {
 			count += fClassFilterRefs.size();
-		if (fClassFilters != null)
+		}
+		if (fClassFilters != null) {
 			count += fClassFilters.size();
-		if (fClassExclusionFilters != null)
+		}
+		if (fClassExclusionFilters != null) {
 			count += fClassExclusionFilters.size();
-		if (fLocationFilters != null)
+		}
+		if (fLocationFilters != null) {
 			count += fLocationFilters.size();
-		if (fExceptionFilters != null)
+		}
+		if (fExceptionFilters != null) {
 			count += fExceptionFilters.size();
-		if (fFieldFilters != null)
+		}
+		if (fFieldFilters != null) {
 			count += fFieldFilters.size();
-		if (fThreadStepFilters != null)
+		}
+		if (fThreadStepFilters != null) {
 			count += fThreadStepFilters.size();
-		if (fInstanceFilters != null)
+		}
+		if (fInstanceFilters != null) {
 			count += fInstanceFilters.size();
+		}
 		if (fSourceNameFilters != null) {
 			if (supportsSourceNameFilters()) {
 				count += fSourceNameFilters.size();
@@ -658,10 +681,11 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			for (ExceptionFilter filter : fExceptionFilters) {
 				writeByte(MODIF_KIND_EXCEPTIONONLY,
 						"modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				if (filter.fException != null)
+				if (filter.fException != null) {
 					filter.fException.write(this, outData);
-				else
+				} else {
 					ReferenceTypeImpl.writeNull(this, outData);
+				}
 
 				writeBoolean(filter.fNotifyCaught, "notify caught", outData); //$NON-NLS-1$
 				writeBoolean(filter.fNotifyUncaught, "notify uncaught", outData); //$NON-NLS-1$
@@ -760,8 +784,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fStepSizeMap != null)
+		if (fStepSizeMap != null) {
 			return;
+		}
 
 		fStepSizeMap = new HashMap<>();
 		fStepDepthMap = new HashMap<>();
@@ -770,8 +795,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		for (Field field : EventRequestImpl.class.getDeclaredFields()) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0
-					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();

@@ -8,10 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Microsoft Corporation - supports virtual threads
@@ -764,10 +760,13 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 		JdwpThreadID ID = new JdwpThreadID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
+		 {
 			target.fVerboseWriter.println("threadReference", ID.value()); //$NON-NLS-1$
+		}
 
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 
 		ThreadReferenceImpl mirror = (ThreadReferenceImpl) vmImpl
 				.getCachedMirror(ID);
@@ -793,8 +792,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
-					|| (field.getModifiers() & Modifier.FINAL) == 0)
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();

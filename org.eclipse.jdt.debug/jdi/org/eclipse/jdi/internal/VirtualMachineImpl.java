@@ -8,10 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -280,8 +276,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	public final void removeKnownRefType(String signature) {
 		List<ReferenceType> refTypeList = classesBySignature(signature);
-		if (refTypeList.isEmpty())
+		if (refTypeList.isEmpty()) {
 			return;
+		}
 
 		// If we have only one known class for this signature, we known that
 		// this is the class
@@ -317,9 +314,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * HCR.
 	 */
 	public void checkHCRSupported() throws UnsupportedOperationException {
-		if (!isHCRSupported())
+		if (!isHCRSupported()) {
 			throw new UnsupportedOperationException(
 					NLS.bind(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, new String[] { name() }));
+		}
 	}
 
 	/*
@@ -452,8 +450,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * Retrieve this VM's capabilities.
 	 */
 	public void getCapabilities() {
-		if (fGotCapabilities)
+		if (fGotCapabilities) {
 			return;
+		}
 
 		int command = JdwpCommandPacket.VM_CAPABILITIES;
 		if (isJdwpVersionGreaterOrEqual(1, 4)) {
@@ -972,8 +971,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * Request and fetch ID sizes of Virtual Machine.
 	 */
 	private void getIDSizes() {
-		if (fGotIDSizes)
+		if (fGotIDSizes) {
 			return;
+		}
 
 		/*
 		 * fGotIDSizes must first be assigned true to prevent an infinite loop
@@ -1009,8 +1009,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * Retrieves version info of the VM.
 	 */
 	public void getVersionInfo() {
-		if (fVersionDescription != null)
+		if (fVersionDescription != null) {
 			return;
+		}
 
 		initJdwpRequest();
 		try {
@@ -1042,8 +1043,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * Retrieves the HCR capabilities of the VM.
 	 */
 	public void getHCRCapabilities() {
-		if (fHcrCapabilities != null)
+		if (fHcrCapabilities != null) {
 			return;
+		}
 		fHcrCapabilities = new boolean[HCR_CAN_REENTER_ON_EXIT + 1];
 
 		if (isHCRSupported()) {
