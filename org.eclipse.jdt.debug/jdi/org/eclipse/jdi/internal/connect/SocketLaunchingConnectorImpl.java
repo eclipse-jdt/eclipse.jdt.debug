@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
  *     			from Eclipse
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -54,6 +55,12 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	private boolean fSuspend;
 	/** Name of the Java VM launcher. */
 	private String fLauncher;
+	/**
+	 * List of all threads includes virtual threads as well as platform threads.
+	 * Virtual threads are a preview feature of the Java platform.
+	 * @since 3.20
+	 */
+	private boolean fIncludeVirtualThreads;
 
 	/**
 	 * Creates new SocketAttachingConnectorImpl.
@@ -108,6 +115,12 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		strArg.setValue("java"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
+		// Include Virtual Threads
+		BooleanArgumentImpl vthreadsArg = new BooleanArgumentImpl(
+				"includevirtualthreads", ConnectMessages.SocketLaunchingConnectorImpl_Include_virtual_threads_17, ConnectMessages.SocketLaunchingConnectorImpl_IncludeVirtualThreads_18, false); //$NON-NLS-1$
+		vthreadsArg.setValue(false);
+		arguments.put(vthreadsArg.name(), vthreadsArg);
+
 		return arguments;
 	}
 
@@ -152,6 +165,9 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 			attribute = "vmexec"; //$NON-NLS-1$
 			fLauncher = ((Connector.StringArgument) connectionArgs
 					.get(attribute)).value();
+			attribute = "includevirtualthreads"; //$NON-NLS-1$
+			fIncludeVirtualThreads = ((Connector.BooleanArgument) connectionArgs
+					.get(attribute)).booleanValue();
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException(
 					ConnectMessages.SocketLaunchingConnectorImpl_Connection_argument_is_not_of_the_right_type_14,
@@ -190,6 +206,9 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		// Add Debug options.
 		execString += " -Xdebug -Xnoagent -Djava.compiler=NONE"; //$NON-NLS-1$
 		execString += " -Xrunjdwp:transport=dt_socket,address=" + address + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (fIncludeVirtualThreads) { // The default value is 'n', add it only when explicitly enabled.
+			execString += ",includevirtualthreads=y"; //$NON-NLS-1$
+		}
 
 		// Add User specified options.
 		if (fOptions != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Google Inc - add support for accepting multiple connections
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -48,6 +49,8 @@ public class ConnectMessages extends NLS {
 	public static String SocketLaunchingConnectorImpl_Connection_argument_is_not_of_the_right_type_14;
 	public static String SocketLaunchingConnectorImpl_Necessary_connection_argument_is_null_15;
 	public static String SocketLaunchingConnectorImpl_Connection_argument_is_not_a_number_16;
+	public static String SocketLaunchingConnectorImpl_Include_virtual_threads_17;
+	public static String SocketLaunchingConnectorImpl_IncludeVirtualThreads_18;
 	public static String SocketListeningConnectorImpl_Port_number_at_which_to_listen_for_VM_connections_1;
 	public static String SocketListeningConnectorImpl_Port_2;
 	public static String SocketListeningConnectorImpl_Timeout_before_accept_returns_3;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
@@ -62,8 +63,9 @@ public class TestAll {
 		classes.addElement(MethodExitRequestTest.class);
 		classes.addElement(MirrorTest.class);
 
-		if (info.fVM.canWatchFieldModification())
+		if (info.fVM.canWatchFieldModification()) {
 			classes.addElement(ModificationWatchpointEventTest.class);
+		}
 
 		classes.addElement(ObjectReferenceTest.class);
 		classes.addElement(PrimitiveValueTest.class);
@@ -85,9 +87,13 @@ public class TestAll {
 			classes.addElement(WatchpointRequestTest.class);
 		}
 
+		if (Runtime.version().feature() >= 19) {
+			classes.addElement(VirtualThreadTest.class);
+		}
+
 		classes.addElement(VirtualMachineExitTest.class);
 		classes.addElement(VMDisconnectEventTest.class);
-		classes.addElement(VMDisposeTest.class);	// note that this test does not restore the state properly.
+		classes.addElement(VMDisposeTest.class); // note that this test does not restore the state properly.
 		return classes;
 	}
 	/**
@@ -104,8 +110,9 @@ public class TestAll {
 		AbstractJDITest test= run(result, VirtualMachineTest.class, arguments, null);
 
 		// Was it possible to run the first test?
-		if (test == null)
+		if (test == null) {
 			return;
+		}
 
 		// Get the VM info
 		VMInformation info = test.getVMInfo();
@@ -149,8 +156,9 @@ public class TestAll {
 		} catch (InvocationTargetException e) {
 			throw e.getTargetException();
 		}
-		if (!AbstractJDITest.parseArgs(arguments))
+		if (!AbstractJDITest.parseArgs(arguments)) {
 			return null;
+		}
 		test.setVMInfo(info);
 		test.setInControl(false);
 

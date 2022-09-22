@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdi.OpaqueFrameException;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
@@ -77,6 +79,10 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * The cached thread group. A thread's thread group cannot be changed.
 	 */
 	private ThreadGroupReferenceImpl fThreadGroup = null;
+
+	// Whether a thread is a virtual thread or not is cached
+	private volatile boolean isVirtual;
+	private volatile boolean isVirtualCached;
 
 	/**
 	 * Creates new ThreadReferenceImpl.
@@ -182,8 +188,10 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 				throw new UnsupportedOperationException(
 						JDIMessages.ThreadReferenceImpl_no_force_early_return_on_threads);
 			case JdwpReplyPacket.OPAQUE_FRAME:
-				throw new NativeMethodException(
-						JDIMessages.ThreadReferenceImpl_thread_cannot_force_native_method);
+				if (isVirtual()) {
+					throw new OpaqueFrameException();
+				}
+				throw new NativeMethodException(JDIMessages.ThreadReferenceImpl_thread_cannot_force_native_method);
 			case JdwpReplyPacket.NO_MORE_FRAMES:
 				throw new InvalidStackFrameException(
 						JDIMessages.ThreadReferenceImpl_thread_no_stackframes);
@@ -347,6 +355,43 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 		} finally {
 			handledJdwpRequest();
 		}
+	}
+
+	/**
+	 * isVirtual is a preview API of the Java platform. Programs can only use isVirtual when preview features are enabled. Preview features may be
+	 * removed in a future release, or upgraded to permanent features of the Java platform.
+	 *
+	 * @return true if the thread is a virtual thread
+	 * @since 3.20
+	 */
+	public boolean isVirtual() {
+		if (isVirtualCached) {
+			return isVirtual;
+		}
+		boolean result = false;
+		boolean supportsVirtualThreads = virtualMachineImpl().mayCreateVirtualThreads();
+		if (supportsVirtualThreads) {
+			initJdwpRequest();
+			try {
+				JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TR_IS_VIRTUAL, this);
+				switch (replyPacket.errorCode()) {
+					case JdwpReplyPacket.INVALID_THREAD:
+						throw new ObjectCollectedException();
+				}
+				defaultReplyErrorHandler(replyPacket.errorCode());
+				DataInputStream replyData = replyPacket.dataInStream();
+				result = readBoolean("isVirtual", replyData); //$NON-NLS-1$
+			} catch (IOException e) {
+				defaultIOExceptionHandler(e);
+				return false;
+			} finally {
+				handledJdwpRequest();
+			}
+		}
+
+		isVirtual = result;
+		isVirtualCached = true;
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -715,10 +760,13 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 		JdwpThreadID ID = new JdwpThreadID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
+		 {
 			target.fVerboseWriter.println("threadReference", ID.value()); //$NON-NLS-1$
+		}
 
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 
 		ThreadReferenceImpl mirror = (ThreadReferenceImpl) vmImpl
 				.getCachedMirror(ID);
@@ -744,8 +792,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
-					|| (field.getModifiers() & Modifier.FINAL) == 0)
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();
@@ -814,6 +863,11 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 			JdwpReplyPacket replyPacket = requestVM(
 					JdwpCommandPacket.SF_POP_FRAME, outBytes);
 			switch (replyPacket.errorCode()) {
+			case JdwpReplyPacket.OPAQUE_FRAME:
+				if (isVirtual()) {
+					throw new OpaqueFrameException();
+				}
+				throw new NativeMethodException();
 			case JdwpReplyPacket.INVALID_THREAD:
 				throw new InvalidStackFrameException();
 			case JdwpReplyPacket.INVALID_FRAMEID:

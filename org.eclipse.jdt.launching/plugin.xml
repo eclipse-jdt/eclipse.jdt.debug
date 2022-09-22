@@ -9,7 +9,7 @@
      https://www.eclipse.org/legal/epl-2.0/
 
  	 SPDX-License-Identifier: EPL-2.0
- 	
+ 
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -367,6 +367,11 @@
             description="%environment.description.22"
             id="JavaSE-18"
             compliance="18">
+      </environment>
+      <environment
+            description="%environment.description.23"
+            id="JavaSE-19"
+            compliance="19">
       </environment>         
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"

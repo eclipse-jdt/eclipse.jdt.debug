@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
@@ -137,6 +138,13 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int TR_SUSPEND_COUNT = 12 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_OWNED_MONITOR_STACK_DEPTH = 13 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_FORCE_EARLY_RETURN = 14 + (CSET_THREAD_REFERENCE << 8);
+	/**
+	 * IsVirtual is a preview API of the Java platform. Preview features may be removed in a future release, or upgraded to permanent features of the
+	 * Java platform. Since JDWP version 19.
+	 *
+	 * @since 3.20
+	 */
+	public static final int TR_IS_VIRTUAL = 15 + (CSET_THREAD_REFERENCE << 8);
 
 	/** Commands ThreadGroupReference. */
 	public static final int TGR_NAME = 1 + (CSET_THREAD_GROUP_REFERENCE << 8);

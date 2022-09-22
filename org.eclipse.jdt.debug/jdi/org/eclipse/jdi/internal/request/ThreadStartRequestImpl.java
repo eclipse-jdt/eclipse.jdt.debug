@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
@@ -23,7 +24,7 @@ import com.sun.jdi.request.ThreadStartRequest;
  * specification. See the com.sun.jdi package for more information.
  *
  */
-public class ThreadStartRequestImpl extends EventRequestImpl implements
+public class ThreadStartRequestImpl extends ThreadLifecycleRequestImpl implements
 		ThreadStartRequest {
 	/**
 	 * Creates new ThreadStartRequest.

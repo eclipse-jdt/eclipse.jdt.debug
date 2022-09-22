@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -26,7 +27,10 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
+import com.sun.jdi.event.ThreadDeathEvent;
 import com.sun.jdi.event.ThreadStartEvent;
+import com.sun.jdi.request.ThreadDeathRequest;
+import com.sun.jdi.request.ThreadStartRequest;
 
 /**
  * Tests for JDI com.sun.jdi.ThreadReference
@@ -232,5 +236,41 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	 */
 	public void testJDIThreadGroup() {
 		assertNotNull("1", fThread.threadGroup());
+	}
+
+	/**
+	 * Test JDI addPlatformThreadsOnlyFilter() is skipped in old JDK version (<=18).
+	 */
+	public void testJDIPlatformThreadsOnlyFilter() {
+		// Make sure the entire VM is not suspended before we start a new thread
+		// (otherwise this new thread will start suspended and we will never get the
+		// ThreadStart event)
+		fVM.resume();
+
+		// Trigger a thread start event
+		ThreadStartRequest threadStartRequest = fVM.eventRequestManager().createThreadStartRequest();
+		try {
+			java.lang.reflect.Method method = threadStartRequest.getClass().getMethod("addPlatformThreadsOnlyFilter");
+			method.invoke(threadStartRequest);
+		} catch (NoSuchMethodException | SecurityException e) {
+			fail("1");
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			fail("2");
+		}
+		ThreadStartEvent startEvent = (ThreadStartEvent) triggerAndWait(threadStartRequest, "ThreadStartEvent", true, 3000);
+		assertNotNull("3", startEvent);
+
+		// Trigger a thread death event
+		ThreadDeathRequest threadDeathRequest = fVM.eventRequestManager().createThreadDeathRequest();
+		try {
+			java.lang.reflect.Method method = threadDeathRequest.getClass().getMethod("addPlatformThreadsOnlyFilter");
+			method.invoke(threadDeathRequest);
+		} catch (NoSuchMethodException | SecurityException e) {
+			fail("4");
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			fail("5");
+		}
+		ThreadDeathEvent deathEvent = (ThreadDeathEvent) triggerAndWait(threadDeathRequest, "ThreadDeathEvent", true, 3000);
+		assertNotNull("6", deathEvent);
 	}
 }

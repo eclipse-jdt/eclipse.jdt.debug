@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2021 GK Software SE and others.
+ * Copyright (c) 2019, 2022 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -106,6 +106,17 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,"
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
+	private static final String ASSUMED_DEFAULT_MODULES_19 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
 
 
 	public ModuleOptionsTests(String name) {
@@ -174,7 +185,8 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		IJavaProject javaProject = getProjectContext();
 		List<String> defaultModules = getDefaultModules(javaProject);
 		String expectedModules;
-		switch (String.join(",", defaultModules)) {
+		String moduleList = String.join(",", defaultModules);
+		switch (moduleList) {
 			case ASSUMED_DEFAULT_MODULES_9:
 				expectedModules = "java.se," //
 						+ "javafx.fxml,javafx.swing,javafx.web," //
@@ -252,7 +264,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			case ASSUMED_DEFAULT_MODULES_16:
 				expectedModules = "java.se," //
 						+ "jdk.accessibility," //
-						+ "jdk.dynalink," 
+						+ "jdk.dynalink,"
 						+ "jdk.httpserver," //
 						+ "jdk.incubator.foreign,jdk.incubator.vector," // jdk.incubator.vector added in 16
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
@@ -265,8 +277,22 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
 				break;
+			case ASSUMED_DEFAULT_MODULES_19:
+				expectedModules = "java.se," //
+						+ "jdk.accessibility," //
+						+ "jdk.dynalink," + "jdk.httpserver," //
+						+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+						+ "jdk.jsobject," //
+						+ "jdk.management.jfr," //
+						+ "jdk.net," //
+						+ "jdk.nio.mapmode," //
+						+ "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.unsupported.desktop," //
+						+ "jdk.xml.dom";
+				break;
 			default:
-				fail("Unknown set of default modules " + String.join(",", defaultModules));
+				fail("Unknown set of default modules " + moduleList);
 				return;
 		}
 		assertTrue("expected module was not in defaultModules", defaultModules.remove("jdk.javadoc")); // requires java.compiler and jdk.compiler but

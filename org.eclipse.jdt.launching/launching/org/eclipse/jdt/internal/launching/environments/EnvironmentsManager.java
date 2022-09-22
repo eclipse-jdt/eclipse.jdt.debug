@@ -7,7 +7,6 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *
@@ -196,7 +195,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
 		String desc = executionEnvironment.getId();
-		if (desc.indexOf(JavaCore.VERSION_18) != -1) {
+		if (desc.indexOf(JavaCore.VERSION_19) != -1) {
+			return JavaCore.VERSION_19;
+		} else if (desc.indexOf(JavaCore.VERSION_18) != -1) {
 			return JavaCore.VERSION_18;
 		} else if (desc.indexOf(JavaCore.VERSION_17) != -1) {
 			return JavaCore.VERSION_17;

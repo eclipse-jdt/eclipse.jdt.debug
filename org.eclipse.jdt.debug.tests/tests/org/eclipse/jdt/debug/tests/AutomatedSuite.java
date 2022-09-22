@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -343,7 +343,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(LambdaVariableTest.class));
 		}
 		//addTest(EvalTestSuite.suite());
-		if (JavaProjectHelper.isJava9Compatible()) {
+		if (JavaProjectHelper.isJava9Compatible() && !JavaProjectHelper.isJava19_Compatible()) {
 			addTest(new TestSuite(Java9Tests.class));
 		}
 

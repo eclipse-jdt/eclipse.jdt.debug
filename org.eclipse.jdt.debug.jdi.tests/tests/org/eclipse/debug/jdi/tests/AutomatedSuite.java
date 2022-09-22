@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Microsoft Corporation - supports virtual threads
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
@@ -88,7 +89,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VMDisconnectEventTest.class));
 		addTest(new TestSuite(VMDisposeTest.class));
 
-	//Java 1.6 capability tests
+		// Java 1.6 capability tests
 		addTest(new TestSuite(HeapWalkingTests.class));
 		addTest(new TestSuite(ConstantPoolTests.class));
 		addTest(new TestSuite(SourceNameFilterTests.class));
@@ -97,6 +98,11 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(MonitorFrameInfoTests.class));
 		addTest(new TestSuite(ProvideArgumentsTests.class));
 		addTest(new TestSuite(ContendedMonitorTests.class));
+
+		// Java 19 capability tests
+		if (Runtime.version().feature() >= 19) {
+			addTest(new TestSuite(VirtualThreadTest.class));
+		}
 	}
 
 }

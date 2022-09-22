@@ -3364,8 +3364,11 @@ public final class JavaRuntime {
 				} else if (javaVersion.startsWith(JavaCore.VERSION_18)
 						&& (javaVersion.length() == JavaCore.VERSION_18.length() || javaVersion.charAt(JavaCore.VERSION_18.length()) == '.')) {
 					compliance = JavaCore.VERSION_18;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_19)
+						&& (javaVersion.length() == JavaCore.VERSION_19.length() || javaVersion.charAt(JavaCore.VERSION_19.length()) == '.')) {
+					compliance = JavaCore.VERSION_18;
 				} else {
-					compliance = JavaCore.VERSION_18; // use latest by default
+					compliance = JavaCore.VERSION_19; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();
