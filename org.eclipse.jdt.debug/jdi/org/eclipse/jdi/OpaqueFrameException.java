@@ -16,7 +16,7 @@ package org.eclipse.jdi;
 /**
  * Thrown to indicate an operation could not be performed on a frame.
  *
- * @since 3.19
+ * @since 3.20
  */
 public class OpaqueFrameException extends RuntimeException {
 
