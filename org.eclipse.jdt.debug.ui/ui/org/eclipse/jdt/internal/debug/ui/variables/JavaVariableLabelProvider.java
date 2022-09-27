@@ -220,16 +220,12 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	 * @param value preference value for PREF_SHOW_DETAILS
 	 */
 	private void determineSerializationMode(String value) {
-		switch (value) {
-			case IJDIPreferencesConstants.INLINE_ALL:
-				fSerializeMode = SERIALIZE_NONE;
-				break;
-			case IJDIPreferencesConstants.INLINE_FORMATTERS:
-				fSerializeMode = SERIALIZE_SOME;
-				break;
-			default:
-				fSerializeMode = SERIALIZE_ALL;
-				break;
+		if (IJDIPreferencesConstants.INLINE_ALL.equals(value)) {
+			fSerializeMode = SERIALIZE_NONE;
+		} else if (IJDIPreferencesConstants.INLINE_FORMATTERS.equals(value)) {
+			fSerializeMode = SERIALIZE_SOME;
+		} else {
+			fSerializeMode = SERIALIZE_ALL;
 		}
 	}
 
