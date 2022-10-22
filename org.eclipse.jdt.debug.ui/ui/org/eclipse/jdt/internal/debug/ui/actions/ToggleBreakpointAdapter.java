@@ -338,7 +338,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			synchronized (unit) {
 				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 			}
-			IJavaElement[] elements = unit.codeSelect(textSelection.getOffset(), textSelection.getLength());
+			IJavaElement[] elements = unit.codeSelect(Math.min(textSelection.getOffset(), loc.getMemberOffset()), Math.max(textSelection.getLength(), loc.getNodeLength()));
+
 			if (elements == null || elements.length == 0) {
 				ValidBreakpointLocationLocator locNew = new ValidBreakpointLocationLocator(loc.getCompilationUnit(), textSelection.getStartLine()
 						+ 1, true, true);
