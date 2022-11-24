@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,18 +40,19 @@ import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.widgets.Display;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * Tests the Open from Clipboard action.
  */
-public class OpenFromClipboardTests extends TestCase {
+public class OpenFromClipboardTests {
 
 	/*
 	 * Copy of constants from OpenFromClipboardAction
@@ -78,72 +81,56 @@ public class OpenFromClipboardTests extends TestCase {
 
 	private Accessor fAccessor = new Accessor(OpenFromClipboardAction.class);
 
-	private static class MyTestSetup extends TestSetup {
+	public static IJavaProject fJProject;
 
-		public static IJavaProject fJProject;
+	@Rule
+	public TestName name = new TestName();
 
-		public MyTestSetup(Test test) {
-			super(test);
-		}
-
-		@Override
-		protected void setUp() throws Exception {
-			super.setUp();
-			JavaTestPlugin.enableAutobuild(false);
-			fJProject = createProject("OpenFromClipboardTests");
-			waitForEncodingRelatedJobs();
-		}
-
-		@Override
-		protected void tearDown() throws Exception {
-			fJProject.getProject().delete(true, true, null);
-			JavaTestPlugin.enableAutobuild(true);
-			super.tearDown();
-		}
-
-		protected void waitForEncodingRelatedJobs() {
-			TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, ValidateProjectEncoding.class);
-			TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, CharsetDeltaJob.FAMILY_CHARSET_DELTA);
-		}
-
-		private static IJavaProject createProject(String name) throws CoreException {
-			// delete any pre-existing project
-			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (pro.exists()) {
-				pro.delete(true, true, null);
-			}
-
-			// create project
-			IJavaProject javaProject = JavaProjectHelper.createJavaProject(name, "bin");
-
-			// add rt.jar
-			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-			Assert.assertNotNull("No default JRE", vm);
-			JavaProjectHelper.addContainerEntry(javaProject, new Path(JavaRuntime.JRE_CONTAINER));
-			return javaProject;
-		}
+	@BeforeClass
+	public static void setUpClass() throws CoreException {
+		JavaTestPlugin.enableAutobuild(false);
+		fJProject = createProject("OpenFromClipboardTests");
+		waitForEncodingRelatedJobs();
 	}
 
-	public static Test suite() {
-		return new MyTestSetup(new TestSuite(OpenFromClipboardTests.class));
+	@AfterClass
+	public static void tearDownClass() throws CoreException {
+		fJProject.getProject().delete(true, true, null);
+		JavaTestPlugin.enableAutobuild(true);
 	}
 
-	public static Test setUpTest(Test someTest) {
-		return new MyTestSetup(someTest);
+	private static void waitForEncodingRelatedJobs() {
+		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, ValidateProjectEncoding.class);
+		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, CharsetDeltaJob.FAMILY_CHARSET_DELTA);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "setUp");
-		super.setUp();
-		fSourceFolder = JavaProjectHelper.addSourceContainer(MyTestSetup.fJProject, "src");
+	private static IJavaProject createProject(String name) throws CoreException {
+		// delete any pre-existing project
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		if (pro.exists()) {
+			pro.delete(true, true, null);
+		}
+
+		// create project
+		IJavaProject javaProject = JavaProjectHelper.createJavaProject(name, "bin");
+
+		// add rt.jar
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		Assert.assertNotNull("No default JRE", vm);
+		JavaProjectHelper.addContainerEntry(javaProject, new Path(JavaRuntime.JRE_CONTAINER));
+		return javaProject;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "tearDown");
-		JavaProjectHelper.removeSourceContainer(MyTestSetup.fJProject, "src");
-		super.tearDown();
+	@Before
+	public void setUp() throws Exception {
+		TestUtil.log(IStatus.INFO, name.getMethodName(), "setUp");
+		fSourceFolder = JavaProjectHelper.addSourceContainer(fJProject, "src");
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		TestUtil.log(IStatus.INFO, name.getMethodName(), "tearDown");
+		JavaProjectHelper.removeSourceContainer(fJProject, "src");
 	}
 
 	private int getMatachingPattern(String s) {
@@ -177,6 +164,7 @@ public class OpenFromClipboardTests extends TestCase {
 
 	}
 
+	@Test
 	public void testClassFileLine_1() throws Exception {
 		String s = "OpenFromClipboardTests.java:100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
@@ -186,6 +174,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testClassFileLine_2() throws Exception {
 		String s = "OpenFromClipboardTests.java : 100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
@@ -195,6 +184,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testClassFileLine_3() throws Exception {
 		String s = "OpenFromClipboard$Tests.java:100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
@@ -204,6 +194,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testDBCS() throws Exception {
 		String typeName= "\u65b0\u898f\u30af\u30e9\u30b9";
 		String s= typeName + ".java:100";
@@ -216,6 +207,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testUmlaut() throws Exception {
 		String typeName= "\u0042\u006c\u00f6\u0064";
 		String s= typeName + ".java:100";
@@ -228,6 +220,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testClassFile_1() throws Exception {
 		String s = "OpenFromClipboardTests.java";
 		assertEquals(JAVA_FILE, getMatachingPattern(s));
@@ -237,6 +230,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testTypeLine_1() throws Exception {
 		String s = "OpenFromClipboardTests:100";
 		assertEquals(TYPE_LINE, getMatachingPattern(s));
@@ -246,6 +240,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testTypeLine_2() throws Exception {
 		String s = "OpenFromClipboardTests : 100";
 		assertEquals(TYPE_LINE, getMatachingPattern(s));
@@ -256,6 +251,7 @@ public class OpenFromClipboardTests extends TestCase {
 	}
 
 	// stack trace element tests
+	@Test
 	public void testStackTraceLine_1() throws Exception {
 		String s = "(OpenFromClipboardTests.java:121)";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
@@ -265,6 +261,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackTraceLine_2() throws Exception {
 		String s = "( OpenFromClipboardTests.java : 121 )";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
@@ -274,6 +271,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackTraceLine_3() throws Exception {
 		String s = "at p.OpenFromClipboardTests.getMatchingPattern(OpenFromClipboardTests.java:121)";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
@@ -283,6 +281,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackTraceLine_4() throws Exception {
 		String s = "OpenFromClipboardTests.getMatchingPattern(OpenFromClipboardTests.java:121)";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
@@ -292,6 +291,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackTraceLine_5() throws Exception {
 		String s = "OpenFromClipboardTests.getMatchingPattern ( OpenFromClipboardTests.java : 121 )";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
@@ -301,6 +301,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackTraceLine_6() throws Exception {
 		String s = "at p.OpenFromClipboard$Tests.getMatching$Pattern(OpenFromClipboardTests.java:121)";
 		setupTypeTest("OpenFromClipboardTests");
@@ -310,6 +311,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackTraceLine_7() throws Exception {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=349933#c2
 		String s = "getMatchingPattern ( OpenFromClipboardTests.java : 121 )";
@@ -336,6 +338,7 @@ public class OpenFromClipboardTests extends TestCase {
 		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
+	@Test
 	public void testMethod_1() throws Exception {
 		String s = "invokeOpenFromClipboardCommand()";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -345,6 +348,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_2() throws Exception {
 		String s = "invokeOpenFromClipboardCommand(String, int[], int)";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -354,6 +358,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_3() throws Exception {
 		String s = "OpenFromClipboardTests.invokeOpenFromClipboardCommand()";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -363,6 +368,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_4() throws Exception {
 		String s = "OpenFromClipboardTests.invokeOpenFromClipboardCommand(String, int[], int)";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -372,6 +378,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_5() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand()";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -381,6 +388,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_6() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(String)";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -390,6 +398,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_7() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(String, int[], int)";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -399,6 +408,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_8() throws Exception {
 		String s = "java.util.List.containsAll(Collection<?>)";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -425,6 +435,7 @@ public class OpenFromClipboardTests extends TestCase {
 		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
 	}
 
+	@Test
 	public void testMethod_9() throws Exception {
 		String s = "OpenFromClipboard$Tests.invokeOpenFromClipboardCommand()";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -434,6 +445,7 @@ public class OpenFromClipboardTests extends TestCase {
 		// performTest(s,1);
 	}
 
+	@Test
 	public void testMethod_10() throws Exception {
 		String s = "OpenFromClipboard$Tests.invokeOpenFromClipboardCommand(String)";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -443,6 +455,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMethod_11() throws Exception {
 		String s = "$.$$()";
 		assertEquals(METHOD, getMatachingPattern(s));
@@ -464,6 +477,7 @@ public class OpenFromClipboardTests extends TestCase {
 		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
+	@Test
 	public void testMember_1() throws Exception {
 		String s = "OpenFromClipboardTests#invokeOpenFromClipboardCommand";
 		assertEquals(MEMBER, getMatachingPattern(s));
@@ -473,6 +487,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMember_2() throws Exception {
 		String s = "p.OpenFromClipboardTests#invokeOpenFromClipboardCommand";
 		assertEquals(MEMBER, getMatachingPattern(s));
@@ -482,6 +497,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testMember_3() throws Exception {
 		String s = "p.OpenFromClipboardTests#invokeOpenFromClipboardCommand(String)";
 		assertEquals(METHOD_JAVADOC_REFERENCE, getMatachingPattern(s));
@@ -492,6 +508,7 @@ public class OpenFromClipboardTests extends TestCase {
 	}
 
 	// qualified name tests
+	@Test
 	public void testQualifiedName_1() throws Exception {
 		String s = "invokeOpenFromClipboardCommand";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
@@ -504,6 +521,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testQualifiedName_2() throws Exception {
 		String s = "OpenFromClipboardTests.invokeOpenFromClipboardCommand";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
@@ -513,6 +531,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testQualifiedName_3() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
@@ -541,6 +560,7 @@ public class OpenFromClipboardTests extends TestCase {
 		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
 	}
 
+	@Test
 	public void testQualifiedName_4() throws Exception {
 		String s = "$";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
@@ -550,6 +570,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testQualifiedName_5() throws Exception {
 		String s = "$$";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
@@ -559,6 +580,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testQualifiedName_6() throws Exception {
 		String s = "OpenFromClipboard$Tests";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
@@ -580,6 +602,7 @@ public class OpenFromClipboardTests extends TestCase {
 		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
+	@Test
 	public void testStackElement_1() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(char) line: 1456";
 		assertEquals(STACK, getMatachingPattern(s));
@@ -589,6 +612,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	@Test
 	public void testStackElement_2() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(char): 1456";
 		assertEquals(STACK, getMatachingPattern(s));
@@ -599,16 +623,19 @@ public class OpenFromClipboardTests extends TestCase {
 	}
 
 	// invalid pattern tests
+	@Test
 	public void testInvalidPattern_1() {
 		String s = "(Collection)";
 		assertEquals(INVALID, getMatachingPattern(s));
 	}
 
+	@Test
 	public void testInvalidPattern_2() {
 		String s = "()";
 		assertEquals(INVALID, getMatachingPattern(s));
 	}
 
+	@Test
 	public void testInvalidPattern_3() throws Exception {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=426392#c6
 		String s = "java.lang.IllegalArgumentException\n" +
