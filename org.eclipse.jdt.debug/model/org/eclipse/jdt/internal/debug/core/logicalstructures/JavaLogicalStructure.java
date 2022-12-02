@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,6 +56,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import com.sun.jdi.VMDisconnectedException;
 
 
+@SuppressWarnings("restriction")
 public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStructureTypeDelegate3 {
 
 	private static IStatusHandler fgStackFrameProvider;

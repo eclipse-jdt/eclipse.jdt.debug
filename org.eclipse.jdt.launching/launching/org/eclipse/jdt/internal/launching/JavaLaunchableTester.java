@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -424,6 +424,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	private int readName(IScanner scanner, StringBuilder buf) throws InvalidInputException {
 		int tok= scanner.getNextToken();
 		while (tok == ITerminalSymbols.TokenNameIdentifier) {

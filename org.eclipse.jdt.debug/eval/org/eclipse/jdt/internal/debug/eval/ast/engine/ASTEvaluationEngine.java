@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -80,6 +80,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
+@SuppressWarnings("restriction")
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	public static final String ANONYMOUS_VAR_PREFIX = "val$"; //$NON-NLS-1$
 	private static final int EVALUATION_DETAIL_BITMASK = DebugEvent.EVALUATION | DebugEvent.EVALUATION_IMPLICIT;

@@ -72,6 +72,7 @@ import junit.framework.TestCase;
  *   -launcher SunVMLauncher -address c:\jdk1.2.2\ -cp d:\target
  *   -launcher J9VMLauncher -address d:\ive\ -cp d:\target
  */
+@SuppressWarnings("restriction")
 public abstract class AbstractJDITest extends TestCase {
 	static int TIMEOUT = 10000; //ms
 	static protected int fBackEndPort = 9900;
@@ -159,6 +160,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * @return <code>true</code> if a 1.6 or higher VM
 	 * @since 3.8
 	 */
+	@SuppressWarnings("restriction")
 	protected boolean is16OrGreater() {
 		return ((VirtualMachineImpl) fVM).isJdwpVersionGreaterOrEqual(1, 6);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Adapter factory for java breakpoints.
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "deprecation" })
 public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {

@@ -125,7 +125,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		return source;
 	}
 
-	protected void openInEditor(Object element, IType sourceElement) throws CoreException {
+	protected void openInEditor(@SuppressWarnings("unused") Object element, IType sourceElement) throws CoreException {
 		if (isHierarchy()) {
 			OpenTypeHierarchyUtil.open(sourceElement, getWorkbenchWindow());
 		} else {

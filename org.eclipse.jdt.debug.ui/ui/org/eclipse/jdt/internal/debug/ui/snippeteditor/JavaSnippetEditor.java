@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1447,6 +1447,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public <T> T getAdapter(Class<T> required) {
 		if (required == IShowInTargetList.class) {
 			return (T) new IShowInTargetList() {
+				@SuppressWarnings("deprecation")
 				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011-2016 Igor Fedorenko
+ * Copyright (c) 2011, 2022 Igor Fedorenko
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -128,7 +128,7 @@ public class FileHashing {
 
 		@SuppressWarnings("serial")
 		public HasherImpl(int cacheSize) {
-			this.cache = new LinkedHashMap<CacheKey, HashCode>() {
+			this.cache = new LinkedHashMap<>() {
 				@Override
 				protected boolean removeEldestEntry(Map.Entry<CacheKey, HashCode> eldest) {
 					return size() > cacheSize;

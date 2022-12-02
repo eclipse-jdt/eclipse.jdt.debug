@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -113,6 +113,7 @@ public class StepIntoSelectionUtils {
 	 * @return the first method found at or after <code>offset</code> on the same line
 	 * @throws JavaModelException
 	 */
+	@SuppressWarnings("deprecation")
 	public static IMethod getFirstMethodOnLine(int offset, IEditorPart activeEditor, IJavaElement element) throws JavaModelException {
 		if (! (activeEditor instanceof ITextEditor) || ! (element instanceof ICodeAssist)) {
 			return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Ecliptical Software Inc. and others.
+ * Copyright (c) 2007, 2022 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,6 +56,7 @@ import org.eclipse.ui.PartInitException;
  *
  * @since 3.4.0
  */
+@SuppressWarnings("deprecation")
 public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**

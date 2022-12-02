@@ -116,6 +116,7 @@ import org.xml.sax.SAXException;
  * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@SuppressWarnings("deprecation")
 public final class JavaRuntime {
 
 	/**
@@ -1769,7 +1770,6 @@ public final class JavaRuntime {
 	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		String jreAttr = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 		if (jreAttr == null) {
-			@SuppressWarnings("deprecation")
 			String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			if (type == null) {
 				IJavaProject proj = getJavaProject(configuration);
@@ -1780,7 +1780,6 @@ public final class JavaRuntime {
 					}
 				}
 			} else {
-				@SuppressWarnings("deprecation")
 				String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 				return resolveVM(type, name, configuration);
 			}
@@ -2514,7 +2513,6 @@ public final class JavaRuntime {
 		String jreAttr = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 		IPath containerPath = null;
 		if (jreAttr == null) {
-			@SuppressWarnings("deprecation")
 			String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			if (type == null) {
 				// default JRE for the launch configuration
@@ -2528,7 +2526,6 @@ public final class JavaRuntime {
 					return computeJREEntry(proj);
 				}
 			} else {
-				@SuppressWarnings("deprecation")
 				String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 				if (name != null) {
 					containerPath = newDefaultJREContainerPath().append(type).append(name);
@@ -2709,7 +2706,6 @@ public final class JavaRuntime {
 	 * @return the preference store for the launching plug-in
 	 * @since 2.0
 	 */
-	@SuppressWarnings("deprecation")
 	public static Preferences getPreferences() {
 		return LaunchingPlugin.getDefault().getPluginPreferences();
 	}
