@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.core.Signature;
@@ -23,8 +27,11 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for force return from a method.
@@ -92,16 +99,20 @@ public class ForceReturnAction extends EvaluateAction {
 	@Override
 	protected void run() {
 		IJavaStackFrame stackFrame= getStackFrameContext();
+		ForceReturnRunnable runnable = new ForceReturnRunnable(stackFrame);
 		if (stackFrame != null) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
 			try {
-				String returnType = Signature.getReturnType(stackFrame.getSignature());
-				if (Signature.SIG_VOID.equals(returnType)) {
-					// no evaluation required for void methods
-					stackFrame.forceReturn(((IJavaDebugTarget)stackFrame.getDebugTarget()).voidValue());
-					return;
-				}
-			} catch (DebugException e) {
-				JDIDebugUIPlugin.statusDialog(e.getStatus());
+				workbench.getProgressService().busyCursorWhile(runnable);
+			} catch (InvocationTargetException e) {
+				Status status = new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), "Force return failed", e); //$NON-NLS-1$
+				JDIDebugUIPlugin.log(status);
+				return;
+			} catch (InterruptedException e) {
+				// e.g. user cancelled the operation via the modal dialog
+				return;
+			}
+			if (runnable.forceReturnDone) {
 				return;
 			}
 		}
@@ -111,7 +122,30 @@ public class ForceReturnAction extends EvaluateAction {
 	}
 
 
+	private static class ForceReturnRunnable implements IRunnableWithProgress {
 
+		private final IJavaStackFrame stackFrame;
+		private boolean forceReturnDone;
 
+		private ForceReturnRunnable(IJavaStackFrame stackFrame) {
+			this.stackFrame = stackFrame;
+		}
 
+		@Override
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			try {
+				if (stackFrame != null && stackFrame.isSuspended() && !monitor.isCanceled()) {
+					String returnType = Signature.getReturnType(stackFrame.getSignature());
+					if (Signature.SIG_VOID.equals(returnType)) {
+						// no evaluation required for void methods
+						stackFrame.forceReturn(((IJavaDebugTarget) stackFrame.getDebugTarget()).voidValue());
+						forceReturnDone = true;
+					}
+				}
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.statusDialog(e.getStatus());
+				forceReturnDone = true;
+			}
+		}
+	}
 }
