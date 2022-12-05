@@ -15,14 +15,11 @@ package org.eclipse.jdi.internal;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.URL;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -31,6 +28,8 @@ import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketRawLaunchingConnectorImpl;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
@@ -56,10 +55,9 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
 	List<VirtualMachine> fConnectedVMs = new ArrayList<>();
-	/** True if in verbose mode. */
-	private boolean fVerbose = false;
+
 	/** Name of verbose file. */
-	private String fVerboseFile = null;
+	private String fVerboseFile;
 
 	/**
 	 * Creates new VirtualMachineManagerImpl.
@@ -69,23 +67,35 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		getPreferences();
 
 		// See if verbose info must be given.
-		if (fVerbose) {
-			OutputStream out;
+		if (isVerboseTracingEnabled()) {
+			OutputStream out = null;
 			if (fVerboseFile != null && fVerboseFile.length() > 0) {
 				try {
 					out = new FileOutputStream(fVerboseFile);
 				} catch (IOException e) {
-					out = System.out;
-					System.out
-							.println(JDIMessages.VirtualMachineManagerImpl_Could_not_open_verbose_file___1
+					JDIDebugPlugin.logError(JDIMessages.VirtualMachineManagerImpl_Could_not_open_verbose_file___1
 									+ fVerboseFile
 									+ JDIMessages.VirtualMachineManagerImpl_____2
-									+ e); //
+							, e); //
 				}
-			} else {
-				out = System.out;
 			}
-			fVerbosePrintWriter = new PrintWriter(out);
+			if (out == null) {
+				fVerbosePrintWriter = new PrintWriter(new StringWriter()) {
+					@Override
+					public void flush() {
+						super.flush();
+						StringWriter writer = new StringWriter();
+						synchronized (lock) {
+							JDIDebugOptions.trace(JDIDebugOptions.DEBUG_JDI_VERBOSE_FLAG, this.out.toString(), null);
+							this.out = writer;
+							this.lock = writer;
+						}
+					}
+				};
+
+			} else {
+				fVerbosePrintWriter = new PrintWriter(out);
+			}
 		}
 	}
 
@@ -105,33 +115,21 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		return MINOR_INTERFACE_VERSION;
 	}
 
+	public static boolean isVerboseTracingEnabled() {
+		return JDIDebugOptions.DEBUG_JDI_VEBOSE;
+	}
+
+	static String getTracingFileName() {
+		return JDIDebugOptions.DEBUG_JDI_VEBOSE_FILE;
+	}
+
 	/**
-	 * Loads the user preferences from the jdi.ini file.
+	 * Loads the user preferences from .options file
 	 */
 	private void getPreferences() {
-		// Get jdi.ini info.
-		URL url = getClass().getResource("/jdi.ini"); //$NON-NLS-1$
-		if (url == null) {
-			return;
+		if (isVerboseTracingEnabled()) {
+			fVerboseFile = getTracingFileName();
 		}
-
-		try {
-			InputStream stream = url.openStream();
-			PropertyResourceBundle prefs = new PropertyResourceBundle(stream);
-
-			try {
-				fVerbose = Boolean.parseBoolean(prefs.getString("User.verbose")); //$NON-NLS-1$
-			} catch (MissingResourceException e) {
-			}
-
-			try {
-				fVerboseFile = prefs.getString("Verbose.out"); //$NON-NLS-1$
-			} catch (MissingResourceException e) {
-			}
-
-		} catch (IOException e) {
-		}
-
 	}
 
 	/**

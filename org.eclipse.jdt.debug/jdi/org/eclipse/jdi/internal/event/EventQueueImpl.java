@@ -72,22 +72,22 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
 						JdwpCommandPacket.E_COMPOSITE, timeout);
 				initJdwpEventSet(packet);
 				set = EventSetImpl.read(this, packet.dataInStream());
-				handledJdwpEventSet();
+				handledJdwpEventSet(null);
 			} while (set.isEmpty());
 			return set;
 		} catch (TimeoutException e) {
 			// Timeout in getCommand, JDI spec says return null.
-			handledJdwpEventSet();
+			handledJdwpEventSet(e);
 			return null;
 		} catch (IOException e) {
 			// This means the already received data is invalid.
-			handledJdwpEventSet();
+			handledJdwpEventSet(e);
 			defaultIOExceptionHandler(e);
 			return null;
 		} catch (VMDisconnectedException e) {
 			// JDI spec says that a VMDisconnectedException must always be
 			// preceeded by a VMDisconnectEvent.
-			handledJdwpEventSet();
+			handledJdwpEventSet(e);
 			if (!genereatedVMDisconnectEvent) {
 				genereatedVMDisconnectEvent = true;
 				return new EventSetImpl(virtualMachineImpl(),

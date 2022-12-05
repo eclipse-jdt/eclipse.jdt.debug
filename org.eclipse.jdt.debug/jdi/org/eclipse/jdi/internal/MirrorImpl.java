@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.eclipse.jdi.Bootstrap;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
@@ -68,10 +69,7 @@ public class MirrorImpl implements Mirror {
 	public MirrorImpl(String description) {
 		fDescription = description;
 		fVirtualMachineImpl = (VirtualMachineImpl) this;
-		PrintWriter writer = ((VirtualMachineManagerImpl) org.eclipse.jdi.Bootstrap
-				.virtualMachineManager()).verbosePrintWriter();
-		if (writer != null)
-			fVerboseWriter = new VerboseWriter(writer);
+		initVerboseWriter();
 	}
 
 	/**
@@ -80,10 +78,18 @@ public class MirrorImpl implements Mirror {
 	public MirrorImpl(String description, VirtualMachineImpl virtualMachineImpl) {
 		fVirtualMachineImpl = virtualMachineImpl;
 		fDescription = description;
-		PrintWriter writer = ((VirtualMachineManagerImpl) org.eclipse.jdi.Bootstrap
-				.virtualMachineManager()).verbosePrintWriter();
-		if (writer != null)
+		initVerboseWriter();
+	}
+
+	private void initVerboseWriter() {
+		if (!VirtualMachineManagerImpl.isVerboseTracingEnabled()) {
+			return;
+		}
+		VirtualMachineManagerImpl machineManagerImpl = (VirtualMachineManagerImpl) org.eclipse.jdi.Bootstrap.virtualMachineManager();
+		PrintWriter writer = machineManagerImpl.verbosePrintWriter();
+		if (writer != null) {
 			fVerboseWriter = new VerboseWriter(writer);
+		}
 	}
 
 	/**
@@ -129,9 +135,16 @@ public class MirrorImpl implements Mirror {
 	/**
 	 * Processing after each Jdwp Event.
 	 */
-	public void handledJdwpEventSet() {
+	public void handledJdwpEventSet(Throwable t) {
 		if (fVerboseWriter != null) {
-			fVerboseWriter.println();
+			if (t instanceof TimeoutException || t instanceof VMDisconnectedException) {
+				// do nothing
+			} else {
+				if (t != null) {
+					fVerboseWriter.printStackTrace(t);
+				}
+				fVerboseWriter.println();
+			}
 			fVerboseWriter.flush();
 		}
 	}
@@ -332,8 +345,9 @@ public class MirrorImpl implements Mirror {
 	 */
 	public void checkVM(Mirror mirror) throws VMMismatchException {
 		if (((MirrorImpl) mirror).virtualMachineImpl() != this
-				.virtualMachineImpl())
+				.virtualMachineImpl()) {
 			throw new VMMismatchException();
+		}
 	}
 
 	/**

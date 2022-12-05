@@ -34,12 +34,16 @@ public class JDIDebugOptions implements DebugOptionsListener {
 	public static final String DEBUG_JDI_REQUEST_TIMES_FLAG = "org.eclipse.jdt.debug/debug/jdiRequestTimes"; //$NON-NLS-1$
 	public static final String DEBUG_JDI_EVENTS_FLAG = "org.eclipse.jdt.debug/debug/jdiEvents"; //$NON-NLS-1$
 	public static final String DEBUG_FLAG = "org.eclipse.jdt.debug/debug"; //$NON-NLS-1$
+	public static final String DEBUG_JDI_VERBOSE_FLAG = "org.eclipse.jdt.debug/debug/jdi/verbose"; //$NON-NLS-1$
+	public static final String DEBUG_JDI_VERBOSE_FILE = "org.eclipse.jdt.debug/debug/jdi/verbose/file"; //$NON-NLS-1$
 
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_JDI_EVENTS = false;
 	public static boolean DEBUG_JDI_REQUEST_TIMES = false;
 	public static boolean DEBUG_AST_EVAL = false;
 	public static boolean DEBUG_AST_EVAL_THREAD_TRACE = false;
+	public static boolean DEBUG_JDI_VEBOSE;
+	public static String DEBUG_JDI_VEBOSE_FILE;
 
 	/**
 	 * The {@link DebugTrace} object to print to OSGi tracing
@@ -70,24 +74,27 @@ public class JDIDebugOptions implements DebugOptionsListener {
 		DEBUG_JDI_REQUEST_TIMES = DEBUG && options.getBooleanOption(DEBUG_JDI_REQUEST_TIMES_FLAG, false);
 		DEBUG_AST_EVAL = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_FLAG, false);
 		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_CALLING_THREADS_FLAG, false);
+		DEBUG_JDI_VEBOSE = DEBUG && options.getBooleanOption(DEBUG_JDI_VERBOSE_FLAG, false);
+		if (DEBUG && DEBUG_JDI_VEBOSE) {
+			DEBUG_JDI_VEBOSE_FILE = options.getOption(DEBUG_JDI_VERBOSE_FILE);
+		}
 	}
 
 	/**
-	 * Prints the given message to System.out and to the OSGi tracing (if started)
+	 * Prints the given message to the OSGi tracing (if started)
 	 * @param option the option or <code>null</code>
 	 * @param message the message to print or <code>null</code>
 	 * @param throwable the {@link Throwable} or <code>null</code>
 	 * @since 3.8
 	 */
 	public static void trace(String option, String message, Throwable throwable) {
-		System.out.println(message);
 		if(fgDebugTrace != null) {
 			fgDebugTrace.trace(option, message, throwable);
 		}
 	}
 
 	/**
-	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 * Prints the given message to the OSGi tracing (if enabled)
 	 *
 	 * @param message the message or <code>null</code>
 	 * @since 3.8
