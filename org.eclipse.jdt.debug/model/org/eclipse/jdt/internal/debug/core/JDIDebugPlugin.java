@@ -401,7 +401,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 *
 	 * @param t {@link Throwable} to log
 	 */
-	public static void log(Throwable t) {
+	public static void logError(String message, Throwable t) {
 		Throwable top = t;
 		if (t instanceof CoreException) {
 			CoreException de = (CoreException) t;
@@ -413,7 +413,17 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		// this message is intentionally not internationalized, as an exception
 		// may be due to the resource bundle itself
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR,
-				"Internal error logged from JDI Debug: ", top)); //$NON-NLS-1$
+				message, top));
+	}
+
+	/**
+	 * Logs the specified {@link Throwable} with this plug-in's log.
+	 *
+	 * @param t
+	 *            {@link Throwable} to log
+	 */
+	public static void log(Throwable t) {
+		logError("Internal error logged from JDI Debug: ", t); //$NON-NLS-1$
 	}
 
 	/**

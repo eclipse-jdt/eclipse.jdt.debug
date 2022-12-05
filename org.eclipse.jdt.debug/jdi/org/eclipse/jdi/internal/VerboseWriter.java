@@ -14,9 +14,10 @@
 package org.eclipse.jdi.internal;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 public class VerboseWriter {
 	/** Length of verbose description. */
@@ -30,16 +31,16 @@ public class VerboseWriter {
 	 * Number extra verbose lines. These are caused by hex dumps that span more
 	 * than one line.
 	 */
-	int fExtraVerboseLines = 0;
+	volatile int fExtraVerboseLines = 0;
 
 	/** PrintWriter that is written to. */
-	private PrintWriter fOutput;
+	private final PrintWriter fOutput;
 	/** Buffer for output: one StringBuilder entry per line. */
-	private List<StringBuilder> fLineBuffer;
+	private final List<StringBuffer> fLineBuffer;
 	/** Position from where buffer is written to. */
-	private int fPosition;
+	private volatile int fPosition;
 	/** True if the current line has not yet been written to. */
-	private boolean fNewLine = true;
+	private volatile boolean fNewLine = true;
 
 	/**
 	 * Creates new VerboseWriter that writes to the given PrintWriter. Output is
@@ -47,9 +48,9 @@ public class VerboseWriter {
 	 */
 	public VerboseWriter(PrintWriter out) {
 		fOutput = out;
-		fLineBuffer = new ArrayList<>();
+		fLineBuffer = new Vector<>();
 		fPosition = 0;
-		fLineBuffer.add(new StringBuilder());
+		fLineBuffer.add(new StringBuffer());
 	}
 
 	/**
@@ -57,7 +58,7 @@ public class VerboseWriter {
 	 * autoflush is set and there are extra vebose lines caused by printHex,
 	 * these lines are also printed.
 	 */
-	public void println() {
+	public synchronized void println() {
 		while (fExtraVerboseLines > 0) {
 			fExtraVerboseLines--;
 			markLn();
@@ -69,7 +70,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, byte value) {
+	public synchronized void println(String description, byte value) {
 		printDescription(description);
 		printHex(value);
 		println();
@@ -78,7 +79,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, short value) {
+	public synchronized void println(String description, short value) {
 		printDescription(description);
 		printHex(value);
 		println();
@@ -87,7 +88,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, int value) {
+	public synchronized void println(String description, int value) {
 		printDescription(description);
 		printHex(value);
 		println();
@@ -96,7 +97,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, long value) {
+	public synchronized void println(String description, long value) {
 		printDescription(description);
 		printHex(value);
 		println();
@@ -105,17 +106,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, byte value, Map<Integer, String> valueToString) {
-		printDescription(description);
-		printHex(value);
-		printValue(value, valueToString);
-		println();
-	}
-
-	/**
-	 * Prints verbose line.
-	 */
-	public void println(String description, short value, Map<Integer, String> valueToString) {
+	public synchronized void println(String description, byte value, Map<Integer, String> valueToString) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, valueToString);
@@ -125,7 +116,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, int value, Map<Integer, String> valueToString) {
+	public synchronized void println(String description, short value, Map<Integer, String> valueToString) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, valueToString);
@@ -135,7 +126,17 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, byte value, String[] bitNames) {
+	public synchronized void println(String description, int value, Map<Integer, String> valueToString) {
+		printDescription(description);
+		printHex(value);
+		printValue(value, valueToString);
+		println();
+	}
+
+	/**
+	 * Prints verbose line.
+	 */
+	public synchronized void println(String description, byte value, String[] bitNames) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, bitNames);
@@ -145,7 +146,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, short value, String[] bitNames) {
+	public synchronized void println(String description, short value, String[] bitNames) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, bitNames);
@@ -155,7 +156,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, int value, String[] bitNames) {
+	public synchronized void println(String description, int value, String[] bitNames) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, bitNames);
@@ -165,7 +166,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, String value) {
+	public synchronized void println(String description, String value) {
 		printDescription(description);
 		printHex(value);
 		print(value);
@@ -175,7 +176,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, boolean value) {
+	public synchronized void println(String description, boolean value) {
 		printDescription(description);
 		printHex(value);
 		print(Boolean.valueOf(value).toString());
@@ -185,7 +186,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, char value) {
+	public synchronized void println(String description, char value) {
 		printDescription(description);
 		printHex(value);
 		print(value);
@@ -195,7 +196,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, double value) {
+	public synchronized void println(String description, double value) {
 		printDescription(description);
 		printHex(value);
 		print(Double.valueOf(value).toString());
@@ -205,7 +206,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, float value) {
+	public synchronized void println(String description, float value) {
 		printDescription(description);
 		printHex(value);
 		print(Float.valueOf(value).toString());
@@ -215,7 +216,7 @@ public class VerboseWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, byte[] value) {
+	public synchronized void println(String description, byte[] value) {
 		printDescription(description);
 		printHex(value);
 		println();
@@ -224,7 +225,7 @@ public class VerboseWriter {
 	/**
 	 * Prints string with right size.
 	 */
-	public void printWidth(String str, int width) {
+	public synchronized void printWidth(String str, int width) {
 		print(str);
 		int spaces = width - str.length();
 		if (spaces > 0) {
@@ -237,14 +238,14 @@ public class VerboseWriter {
 	/**
 	 * Prints description string with right size plus its seperator spaces.
 	 */
-	public void printDescription(String str) {
+	public synchronized void printDescription(String str) {
 		printWidth(str, VERBOSE_DESCRIPTION_LENGTH);
 	}
 
 	/**
 	 * Prints hex substitution string with right size plus its seperator spaces.
 	 */
-	public void printHexSubstitution(String str) {
+	public synchronized void printHexSubstitution(String str) {
 		// Note that bytes also start with a space.
 		print(' ');
 		printWidth(str, VERBOSE_HEX_WIDTH - 1);
@@ -288,7 +289,7 @@ public class VerboseWriter {
 	/**
 	 * Prints hex representation of a byte.
 	 */
-	public void printHex(byte b) {
+	public synchronized void printHex(byte b) {
 		char buffer[] = new char[VERBOSE_HEX_WIDTH];
 		appendHexByte(b, buffer, 0);
 		appendHexSpaces(buffer, 1);
@@ -298,10 +299,11 @@ public class VerboseWriter {
 	/**
 	 * Prints hex representation of an int.
 	 */
-	public void printHex(short s) {
+	public synchronized void printHex(short s) {
 		char buffer[] = new char[VERBOSE_HEX_WIDTH];
-		for (int i = 1; i >= 0; i--)
+		for (int i = 1; i >= 0; i--) {
 			appendHexByte((byte) (s >>> i * 8), buffer, 1 - i);
+		}
 		appendHexSpaces(buffer, 2);
 		print(buffer);
 	}
@@ -309,10 +311,11 @@ public class VerboseWriter {
 	/**
 	 * Prints hex representation of an int.
 	 */
-	public void printHex(int integer) {
+	public synchronized void printHex(int integer) {
 		char buffer[] = new char[VERBOSE_HEX_WIDTH];
-		for (int i = 3; i >= 0; i--)
+		for (int i = 3; i >= 0; i--) {
 			appendHexByte((byte) (integer >>> i * 8), buffer, 3 - i);
+		}
 		appendHexSpaces(buffer, 4);
 		print(buffer);
 	}
@@ -320,10 +323,11 @@ public class VerboseWriter {
 	/**
 	 * Prints hex representation of a long.
 	 */
-	public void printHex(long l) {
+	public synchronized void printHex(long l) {
 		char buffer[] = new char[VERBOSE_HEX_WIDTH];
-		for (int i = 7; i >= 0; i--)
+		for (int i = 7; i >= 0; i--) {
 			appendHexByte((byte) (l >>> i * 8), buffer, 7 - i);
+		}
 		appendHexSpaces(buffer, 8);
 		print(buffer);
 	}
@@ -332,7 +336,7 @@ public class VerboseWriter {
 	 * Prints hex representation of a long.
 	 * @param b the boolean
 	 */
-	public void printHex(boolean b) {
+	public synchronized void printHex(boolean b) {
 		printHexSubstitution("<boolean>"); //$NON-NLS-1$
 	}
 
@@ -340,7 +344,7 @@ public class VerboseWriter {
 	 * Prints hex representation of a long.
 	 * @param c the char
 	 */
-	public void printHex(char c) {
+	public synchronized void printHex(char c) {
 		printHexSubstitution("<char>"); //$NON-NLS-1$
 	}
 
@@ -348,7 +352,7 @@ public class VerboseWriter {
 	 * Prints hex representation of a long.
 	 * @param d the double
 	 */
-	public void printHex(double d) {
+	public synchronized void printHex(double d) {
 		printHexSubstitution("<double>"); //$NON-NLS-1$
 	}
 
@@ -356,7 +360,7 @@ public class VerboseWriter {
 	 * Prints hex representation of a long.
 	 * @param f the float
 	 */
-	public void printHex(float f) {
+	public synchronized void printHex(float f) {
 		printHexSubstitution("<float>"); //$NON-NLS-1$
 	}
 
@@ -364,7 +368,7 @@ public class VerboseWriter {
 	 * Prints hex representation of a String.
 	 * @param str the string
 	 */
-	public void printHex(String str) {
+	public synchronized void printHex(String str) {
 		printHexSubstitution("<string>"); //$NON-NLS-1$
 	}
 
@@ -374,7 +378,7 @@ public class VerboseWriter {
 	 * Therefore, a println after a printHex can result in more than one line
 	 * being printed to the PrintWriter.
 	 */
-	public void printHex(byte[] bytes) {
+	public synchronized void printHex(byte[] bytes) {
 		int startPosition = position();
 		char linebuf[] = new char[VERBOSE_HEX_WIDTH];
 		int extraLines = 0;
@@ -408,7 +412,7 @@ public class VerboseWriter {
 	 * Prints string representation of a value given a Map from values to
 	 * strings.
 	 */
-	public void printValue(int value, Map<Integer, String> valueToString) {
+	public synchronized void printValue(int value, Map<Integer, String> valueToString) {
 		Integer val = Integer.valueOf(value);
 		if (valueToString == null) {
 			print(val.toString());
@@ -426,7 +430,7 @@ public class VerboseWriter {
 	 * Prints string representation of a value given a Vector with the names of
 	 * the bits.
 	 */
-	public void printValue(byte value, String[] bitNames) {
+	public synchronized void printValue(byte value, String[] bitNames) {
 		printValue(value & 0xff, bitNames);
 	}
 
@@ -434,7 +438,7 @@ public class VerboseWriter {
 	 * Prints string representation of a value given a Vector with the names of
 	 * the bits.
 	 */
-	public void printValue(short value, String[] bitNames) {
+	public synchronized void printValue(short value, String[] bitNames) {
 		printValue(value & 0xffff, bitNames);
 	}
 
@@ -442,7 +446,7 @@ public class VerboseWriter {
 	 * Prints string representation of a value given a Vector with the names of
 	 * the bits.
 	 */
-	public void printValue(int value, String[] bitNames) {
+	public synchronized void printValue(int value, String[] bitNames) {
 		Integer val = Integer.valueOf(value);
 		if (bitNames == null) {
 			print(val.toString());
@@ -483,7 +487,7 @@ public class VerboseWriter {
 	 */
 	private void checkForNewLine() {
 		if (fNewLine) {
-			(fLineBuffer.get(fPosition)).setLength(0);
+			getCurrentBuffer().setLength(0);
 			fNewLine = false;
 		}
 	}
@@ -491,31 +495,46 @@ public class VerboseWriter {
 	/**
 	 * Print a String.
 	 */
-	public void print(String str) {
+	public synchronized void print(String str) {
 		checkForNewLine();
-		(fLineBuffer.get(fPosition)).append(str);
+		getCurrentBuffer().append(str);
 	}
 
 	/**
 	 * Print a Character.
 	 */
-	public void print(char c) {
+	public synchronized void print(char c) {
 		checkForNewLine();
-		(fLineBuffer.get(fPosition)).append(c);
+		getCurrentBuffer().append(c);
+	}
+
+	private StringBuffer getCurrentBuffer() {
+		return fLineBuffer.get(nextPosition());
+	}
+
+	private int nextPosition() {
+		int pos = fPosition;
+		if (pos >= fLineBuffer.size()) {
+			pos = fLineBuffer.size() - 1;
+		}
+		if (pos < 0) {
+			pos = 0;
+		}
+		return pos;
 	}
 
 	/**
 	 * Print array of Characters.
 	 */
-	public void print(char[] c) {
+	public synchronized void print(char[] c) {
 		checkForNewLine();
-		(fLineBuffer.get(fPosition)).append(c);
+		getCurrentBuffer().append(c);
 	}
 
 	/**
 	 * Print a String and then terminate the line.
 	 */
-	public void println(String str) {
+	public synchronized void println(String str) {
 		print(str);
 		println();
 	}
@@ -524,23 +543,32 @@ public class VerboseWriter {
 	 * Flush buffer. If autoflush is off, this method is synchronized on the
 	 * PrintWriter given in the constructor.
 	 */
-	public void flush() {
-		synchronized (fOutput) {
-			int bufSize = fLineBuffer.size();
+	public synchronized void flush() {
+		int bufSize = fLineBuffer.size();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
 
-			for (int i = 0; i < bufSize - 1; i++)
-				fOutput.println(new String(fLineBuffer.get(i)));
-
-			// The last line should be printed without an extra newline
-			StringBuilder lastLine = fLineBuffer.get(bufSize - 1);
-			if (lastLine.length() > 0)
-				fOutput.print(new String(lastLine));
-
-			fOutput.flush();
-			fLineBuffer.clear();
-			fPosition = 0;
-			fLineBuffer.add(new StringBuilder());
+		for (int i = 0; i < bufSize - 1; i++) {
+			pw.println(fLineBuffer.get(i));
 		}
+
+		// The last line should be printed without an extra newline
+		StringBuffer lastLine = fLineBuffer.get(bufSize - 1);
+		if (lastLine.length() > 0) {
+			pw.print(lastLine);
+		}
+		fLineBuffer.clear();
+		fPosition = 0;
+		fLineBuffer.add(new StringBuffer());
+		// sync on fOutput to avoid writing from multiple writer instances
+		synchronized (fOutput) {
+			fOutput.print(sw.toString());
+			fOutput.flush();
+		}
+	}
+
+	public synchronized void printStackTrace(Throwable t) {
+		t.printStackTrace(fOutput);
 	}
 
 	/**
@@ -548,20 +576,21 @@ public class VerboseWriter {
 	 * than the current position, subsequent print commands overwrite existing
 	 * lines in the buffer. Else, new lines are added to the buffer.
 	 */
-	public void gotoPosition(int pos) {
+	public synchronized void gotoPosition(int pos) {
 		int delta = pos - fPosition;
 		if (delta < 0) {
 			fPosition = pos;
 		} else {
-			while (delta-- > 0)
+			while (delta-- > 0) {
 				println();
+			}
 		}
 	}
 
 	/**
 	 * Prints given number of lines.
 	 */
-	public void printLines(int lines) {
+	public synchronized void printLines(int lines) {
 		gotoPosition(fPosition + lines);
 	}
 
@@ -576,9 +605,9 @@ public class VerboseWriter {
 	 * Terminate the current line by writing the line separator string, start at
 	 * end of next line.
 	 */
-	public void markLn() {
+	public synchronized void markLn() {
 		if (++fPosition == fLineBuffer.size()) {
-			fLineBuffer.add(new StringBuilder());
+			fLineBuffer.add(new StringBuffer());
 		}
 
 		fNewLine = true;
