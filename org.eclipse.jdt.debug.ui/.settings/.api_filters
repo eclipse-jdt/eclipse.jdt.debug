@@ -8,6 +8,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/actions/PopupInspectAction.java" type="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction">
+        <filter id="571519004">
+            <message_arguments>
+                <message_argument value="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction.showPopup(StyledText)"/>
+                <message_argument value="InspectPopupDialog"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="ui/org/eclipse/jdt/internal/debug/ui/classpath/ClasspathEntry.java" type="org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry">
         <filter comment="Known illegal implementation" id="574619656">
             <message_arguments>
@@ -29,6 +37,46 @@
             <message_arguments>
                 <message_argument value="JavaElementLabelProvider"/>
                 <message_argument value="PackageRenderer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/launcher/RuntimeClasspathViewer.java" type="org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="TableViewer"/>
+                <message_argument value="RuntimeClasspathViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/snippeteditor/JavaSnippetViewerConfiguration.java" type="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetViewerConfiguration">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="JavaSourceViewerConfiguration"/>
+                <message_argument value="JavaSnippetViewerConfiguration"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/snippeteditor/SnippetEditorPropertyPage.java" type="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorPropertyPage$Proxy">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ILaunchConfigurationDialog"/>
+                <message_argument value="Proxy"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/snippeteditor/SnippetOpenHierarchyOnSelectionAction.java" type="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetOpenHierarchyOnSelectionAction">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="OpenTypeHierarchyAction"/>
+                <message_argument value="SnippetOpenHierarchyOnSelectionAction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/snippeteditor/SnippetOpenOnSelectionAction.java" type="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetOpenOnSelectionAction">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="OpenAction"/>
+                <message_argument value="SnippetOpenOnSelectionAction"/>
             </message_arguments>
         </filter>
     </resource>

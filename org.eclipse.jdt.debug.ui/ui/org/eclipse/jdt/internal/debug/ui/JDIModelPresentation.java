@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -115,6 +115,7 @@ import com.sun.jdi.ObjectCollectedException;
  * Determines how to display java elements, including labels, images and editors.
  * @see IDebugModelPresentation
  */
+@SuppressWarnings("deprecation")
 public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentationExtension, IColorProvider {
 
 	/**
@@ -675,7 +676,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return charText.toString();
 	}
 
-	@SuppressWarnings("deprecation")
 	protected String getMarkerTypeName(IJavaBreakpoint breakpoint, boolean qualified) throws CoreException {
 		String typeName= null;
 		if (breakpoint instanceof IJavaPatternBreakpoint) {
@@ -1568,7 +1568,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buff.toString();
 	}
 
-	@SuppressWarnings("deprecation")
 	protected String getBreakpointText(IBreakpoint breakpoint) {
 	    try {
 	    	String label = null;
@@ -1736,7 +1735,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return label;
 	}
 
-	protected String getJavaPatternBreakpointText(@SuppressWarnings("deprecation") IJavaPatternBreakpoint breakpoint) throws CoreException {
+	protected String getJavaPatternBreakpointText(IJavaPatternBreakpoint breakpoint) throws CoreException {
 		IResource resource= breakpoint.getMarker().getResource();
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuilder label= new StringBuilder(resource.getName());

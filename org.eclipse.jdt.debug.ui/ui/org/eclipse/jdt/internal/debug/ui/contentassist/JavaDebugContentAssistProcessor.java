@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,7 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 	private ContentAssistant fAssistant;
 
 
+	@SuppressWarnings("deprecation")
 	public JavaDebugContentAssistProcessor(IJavaDebugContentAssistContext context) {
 		fContext = context;
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_ALL);

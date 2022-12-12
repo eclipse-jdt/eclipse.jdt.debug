@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,9 +23,11 @@ public class Bootstrap {
 	public Bootstrap() {
 	}
 
+	@SuppressWarnings("deprecation")
 	public static synchronized com.sun.jdi.VirtualMachineManager virtualMachineManager() {
-		if (fVirtualMachineManager != null)
+		if (fVirtualMachineManager != null) {
 			return fVirtualMachineManager;
+		}
 
 		try {
 			IExtensionRegistry extensionRegistry = Platform

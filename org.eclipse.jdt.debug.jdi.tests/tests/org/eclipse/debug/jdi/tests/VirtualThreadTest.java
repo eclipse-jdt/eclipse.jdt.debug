@@ -36,6 +36,7 @@ import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.request.ThreadDeathRequest;
 import com.sun.jdi.request.ThreadStartRequest;
 
+@SuppressWarnings("restriction")
 public class VirtualThreadTest extends AbstractJDITest {
 	private static final String defaultJavaCompilerName = "com.sun.tools.javac.api.JavacTool";
 	private static JavaCompiler compiler;

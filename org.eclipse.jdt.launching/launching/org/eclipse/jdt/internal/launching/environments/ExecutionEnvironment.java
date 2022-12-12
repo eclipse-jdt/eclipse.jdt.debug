@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -447,6 +447,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * @param path bundle relative path to properties file
 	 * @return properties or <code>null</code> if none
 	 */
+	@SuppressWarnings("deprecation")
 	private Properties getJavaProfileProperties(Bundle bundle, String path) {
 		Properties profile = new Properties();
 		URL profileURL = bundle.getEntry(path);
