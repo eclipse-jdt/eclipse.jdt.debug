@@ -40,6 +40,8 @@ public class ExceptionEventImpl extends LocatableEventImpl implements
 	private ObjectReferenceImpl fException;
 	/** Location of catch, or 0 if not caught. */
 	private LocationImpl fCatchLocation;
+	/** Whether garbage collection has been re-enabled for the exception. */
+	private boolean fExceptionCollectionEnabled;
 
 	/**
 	 * Creates new ExceptionEventImpl.
@@ -60,6 +62,8 @@ public class ExceptionEventImpl extends LocatableEventImpl implements
 		event.readThreadAndLocation(target, dataInStream);
 		event.fException = ObjectReferenceImpl.readObjectRefWithTag(target,
 				dataInStream);
+		event.fException.disableCollection();
+		event.fExceptionCollectionEnabled = false;
 		event.fCatchLocation = LocationImpl.read(target, dataInStream);
 		return event;
 	}
@@ -78,5 +82,15 @@ public class ExceptionEventImpl extends LocatableEventImpl implements
 	@Override
 	public ObjectReference exception() {
 		return fException;
+	}
+
+	/**
+	 * Enables garbage collection for the exception in the event. GC for the exception is initially disabled, until the exception event is processed.
+	 */
+	public void enableExceptionGC() {
+		if (!fExceptionCollectionEnabled && fException != null) {
+			fException.enableCollection();
+			fExceptionCollectionEnabled = true;
+		}
 	}
 }
