@@ -3084,6 +3084,9 @@ public final class JavaRuntime {
 		List<IClasspathEntry> req = null;
 		for (int i = 0; i < classpathEntries.length; i++) {
 			IClasspathEntry entry = classpathEntries[i];
+			if (entry.isDisabled()) {
+				continue;
+			}
 			IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
 			for (int j = 0; j < extraAttributes.length; j++) {
 				String[] paths = getLibraryPaths(extraAttributes[j]);
