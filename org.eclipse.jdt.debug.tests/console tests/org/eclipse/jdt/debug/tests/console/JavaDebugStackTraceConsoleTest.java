@@ -213,6 +213,31 @@ public class JavaDebugStackTraceConsoleTest extends AbstractJavaStackTraceConsol
 				new String[] { "somewhere1.somewhere2.Some1Class105", "line: 5" }, matchTexts);
 	}
 
+	public void testStackTraceDetectionWithColors() throws Exception {
+		String exception = ""
+				+ "Caused by\033[m: java.lang.NullPointerException: \033[1;31mCannot invoke \"org.eclipse.equinox.internal.provisional.p2.core.eventbus.IProvisioningEventBus.addListener(org.eclipse.equinox.internal.provisional.p2.core.eventbus.ProvisioningListener)\" because \"this.eventBus\" is null\033[m\n"
+				+ "    \033[1mat\033[m org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.<init> (\033[1mAbstractRepositoryManager.java:107\033[m)\n"
+				+ "    \033[1mat\033[m org.eclipse.equinox.internal.p2.artifact.repository.ArtifactRepositoryManager.<init> (\033[1mArtifactRepositoryManager.java:41\033[m)\n"
+				// ...
+				+ "    \033[1mat\033[m java.lang.reflect.Method.invoke (\033[1mMethod.java:568\033[m)\n"
+				+ "    \033[1mat\033[m org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (\033[1mLauncher.java:282\033[m)\n"
+				+ "    \033[1mat\033[m org.codehaus.plexus.classworlds.launcher.Launcher.launch (\033[1mLauncher.java:225\033[m)\n"
+				+ "    \033[1mat\033[m org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (\033[1mLauncher.java:406\033[m)\n"
+				+ "    \033[1mat\033[m org.codehaus.plexus.classworlds.launcher.Launcher.main (\033[1mLauncher.java:347\033[m)\n";
+		consoleDocumentWithText(exception);
+
+		Position[] positions = allLinkPositions();
+		int[] offsets = new int[positions.length];
+		for (int i = 0; i < offsets.length; i++) {
+			offsets[i] = positions[i].getOffset();
+		}
+
+		String[] matchTexts = linkTextsAtPositions(offsets);
+		String[] expected = { "java.lang.NullPointerException", "AbstractRepositoryManager.java:107", "ArtifactRepositoryManager.java:41",
+				"Method.java:568", "Launcher.java:282", "Launcher.java:225", "Launcher.java:406", "Launcher.java:347" };
+		assertArrayEquals("Wrong hyperlinks, listing all links: " + allLinks(), expected, matchTexts);
+	}
+
 	private static String getSelectedText(IEditorPart editor) {
 		ITextEditor textEditor = (ITextEditor) editor;
 		ISelectionProvider selectionProvider = textEditor.getSelectionProvider();
