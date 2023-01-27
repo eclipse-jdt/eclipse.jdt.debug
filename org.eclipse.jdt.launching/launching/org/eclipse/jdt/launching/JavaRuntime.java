@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * SPDX-License-Identifier: EPL-2.0
  *
@@ -3362,9 +3366,12 @@ public final class JavaRuntime {
 					compliance = JavaCore.VERSION_18;
 				} else if (javaVersion.startsWith(JavaCore.VERSION_19)
 						&& (javaVersion.length() == JavaCore.VERSION_19.length() || javaVersion.charAt(JavaCore.VERSION_19.length()) == '.')) {
-					compliance = JavaCore.VERSION_18;
+					compliance = JavaCore.VERSION_19;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_20)
+						&& (javaVersion.length() == JavaCore.VERSION_20.length() || javaVersion.charAt(JavaCore.VERSION_20.length()) == '.')) {
+					compliance = JavaCore.VERSION_20;
 				} else {
-					compliance = JavaCore.VERSION_19; // use latest by default
+					compliance = JavaCore.VERSION_20; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();

@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * SPDX-License-Identifier: EPL-2.0
  *
@@ -846,7 +850,10 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if (version.startsWith(JavaCore.VERSION_19)) {
+			if (version.startsWith(JavaCore.VERSION_20)) {
+				// To modify to version 20 after the release
+				return new URL("https://docs.oracle.com/en/java/javase/19/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_19)) {
 				return new URL("https://docs.oracle.com/en/java/javase/19/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_18)) {
 				return new URL("https://docs.oracle.com/en/java/javase/18/docs/api/"); //$NON-NLS-1$

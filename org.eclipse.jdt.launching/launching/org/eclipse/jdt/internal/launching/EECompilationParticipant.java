@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2022 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * SPDX-License-Identifier: EPL-2.0
  *
@@ -234,6 +238,8 @@ public class EECompilationParticipant extends CompilationParticipant {
 		String version = vMInstall.getJavaVersion();
 		if (version == null) {
 			return null;
+		} else if (version.startsWith(JavaCore.VERSION_20)) {
+			return JavaCore.VERSION_20;
 		} else if (version.startsWith(JavaCore.VERSION_19)) {
 			return JavaCore.VERSION_19;
 		} else if (version.startsWith(JavaCore.VERSION_18)) {
