@@ -561,9 +561,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 				int slot = readInt("slot", replyData); //$NON-NLS-1$
 				boolean isArgument = slot < fArgumentSlotsCount;
 
-				// Note that for instance methods, the first slot contains the
-				// this reference.
-				if (isStatic() || slot > 0) {
+				if (!name.equals("this")) { //$NON-NLS-1$
 					LocalVariableImpl localVar = new LocalVariableImpl(
 							virtualMachineImpl(), this, codeIndex, name,
 							signature, genericSignature, length, slot,
