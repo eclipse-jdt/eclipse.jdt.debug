@@ -74,6 +74,7 @@ import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
@@ -1032,12 +1033,7 @@ public final class JavaRuntime {
 			return false;
 		}
 
-		for (IClasspathAttribute classpathAttribute : entry.getExtraAttributes()) {
-			if (classpathAttribute.getName().equals(IClasspathAttribute.MODULE) && "true".equals(classpathAttribute.getValue())) {//$NON-NLS-1$
-				return true;
-			}
-		}
-		return false;
+		return ClasspathEntry.isModular(entry);
 
 	}
 
