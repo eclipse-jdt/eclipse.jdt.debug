@@ -16,6 +16,8 @@ package org.eclipse.debug.jdi.tests;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -665,6 +667,8 @@ public abstract class AbstractJDITest extends TestCase {
 			launchSunTarget();
 		} else if (fVMLauncherName.equals("IBMVMLauncher")) {
 			launchIBMTarget();
+		} else if (fVMLauncherName.equals("AndroidDalvikVMLauncher")) {
+			launchAndroidDalvikVMTarget();
 		} else {
 			launchJavaTarget();
 		}
@@ -813,6 +817,60 @@ public abstract class AbstractJDITest extends TestCase {
 			fLaunchedVM = exec(commandLine);
 
 		} catch (IOException e) {
+			throw new Error("Could not launch the VM because " + e.getMessage());
+		}
+	}
+
+	private void launchAndroidDalvikVMTarget() {
+		try {
+			// Create jar with dex files
+			// d8 --debug org.eclipse.jdt.debug.jdi.tests/bin/org/eclipse/debug/jdi/tests/program/*.class --no-desugaring --output org.eclipse.jdt.debug.jdi.tests/target/program-android.jar
+
+			File androidJar = File.createTempFile("program-android", ".jar");
+
+			Vector<String> createDexCommand = new Vector<>(List.of("d8", "--debug", "--no-desugaring", "--output", androidJar.getAbsolutePath()));
+
+			Files.find(
+				Path.of(fClassPath, "org/eclipse/debug/jdi/tests/program"),
+				Integer.MAX_VALUE,
+				(filePath, fileAttr) -> {
+					return fileAttr.isRegularFile() && filePath.toString().toLowerCase().endsWith(".class");
+				}
+			).forEach((path) -> {
+				createDexCommand.add(path.toAbsolutePath().toString());
+			});
+
+			Runtime.getRuntime().exec(createDexCommand.toArray(new String[createDexCommand.size()])).waitFor();
+
+			Runtime.getRuntime().exec(new String[] {"adb", "shell", "mkdir", "-p", "/data/local/tmp/eclipse-jdi-tests/dalvik-cache"}).waitFor();
+			Runtime.getRuntime().exec(new String[] {"adb", "push", androidJar.getAbsolutePath(), "/data/local/tmp/eclipse-jdi-tests/test-program.jar"}).waitFor();
+			Runtime.getRuntime().exec(new String[] {"adb", "forward", "tcp:" + fBackEndPort, "tcp:" + fBackEndPort}).waitFor();
+
+			Vector<String> commandLine = new Vector<>();
+
+			commandLine.add("adb");
+			commandLine.add("shell");
+			commandLine.add("ANDROID_DATA=/data/local/tmp/eclipse-jdi-tests/");
+			commandLine.add("dalvikvm");
+
+			// // TODO: Support boot classpath in Android
+			// // dalvikvm does support an options called `-Xbootclasspath:`, but we might need to transfer the files first?
+			// // if (fBootPath.length() > 0) {
+			// // 	commandLine.add("-bootpath");
+			// // 	commandLine.add(fBootPath);
+			// // }
+
+			commandLine.add("-classpath");
+			commandLine.add("/data/local/tmp/eclipse-jdi-tests/test-program.jar");
+			commandLine.add("-Xplugin:libopenjdkjvmti.so");
+			commandLine.add("-agentpath:libjdwp.so=transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
+			commandLine.add("-Djava.compiler=NONE");
+			injectVMArgs(commandLine);
+			commandLine.add(getMainClassName());
+
+			fLaunchedVM = exec(commandLine);
+
+		} catch (IOException|InterruptedException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
 		}
 	}
@@ -1112,7 +1170,7 @@ public abstract class AbstractJDITest extends TestCase {
 			launchTargetAndStartProgram();
 		}
 		try {
-			verbose("Setting up the test");
+			verbose("Setting up the test: " + getName());
 			localSetUp();
 		} catch (RuntimeException e) {
 			System.out.println("Runtime exception during set up:");
@@ -1332,7 +1390,7 @@ public abstract class AbstractJDITest extends TestCase {
 			e.printStackTrace();
 		}
 		try {
-			verbose("Tearing down the test");
+			verbose("Tearing down the test: " + getName());
 			localTearDown();
 
 			// Ensure that the test didn't leave a modification watchpoint that could change the expected state of the program
