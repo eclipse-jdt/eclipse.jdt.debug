@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdi.internal.event.ExceptionEventImpl;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -153,7 +154,13 @@ public class EventDispatcher implements Runnable {
 					}
 				}
 				vote = true;
-				resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
+				try {
+					resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
+				} catch (Throwable t) {
+					logHandleEventError(listener, event, t);
+				} finally {
+					enableGCForExceptionEvent(event);
+				}
 				continue;
 			}
 
@@ -187,7 +194,13 @@ public class EventDispatcher implements Runnable {
 						.get(event.request());
 				if (listener != null) {
 					vote = true;
-					resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
+					try {
+						resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
+					} catch (Throwable t) {
+						logHandleEventError(listener, event, t);
+					} finally {
+						enableGCForExceptionEvent(event);
+					}
 					continue;
 				}
 			}
@@ -411,4 +424,17 @@ public class EventDispatcher implements Runnable {
 		}
 	}
 
+	private static void enableGCForExceptionEvent(Event event) {
+		if (event instanceof ExceptionEventImpl) {
+			try {
+				((ExceptionEventImpl) event).enableExceptionGC();
+			} catch (Throwable t) {
+				JDIDebugPlugin.logError("Failed to enable GC for event: " + event, t); //$NON-NLS-1$
+			}
+		}
+	}
+
+	private static void logHandleEventError(IJDIEventListener listener, Event event, Throwable t) {
+		JDIDebugPlugin.logError("Exception occurred while notifying listener: " + listener + ", with event: " + event, t); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

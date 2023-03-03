@@ -618,6 +618,9 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		if (skip == SuspendOnRecurrenceStrategy.RECURRENCE_UNCONFIGURED) {
 			skip = new AskRecurrenceDialog(JDIDebugUIPlugin.getShell()).getAnswer();
 		}
+		if (skip == null) {
+			return false; // user didn't understand the question and cancelled dialog
+		}
 		switch (skip) {
 			case SKIP_RECURRENCES:
 				return true;
