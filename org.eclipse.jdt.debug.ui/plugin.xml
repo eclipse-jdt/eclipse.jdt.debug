@@ -1782,6 +1782,14 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.EditStepFiltersAction">
          </action>
+         <action
+               label="%highlightStackFrame.label"
+               tooltip="%highlightStackFrame.tooltip"
+               menubarPath="emptyThreadGroup"
+               enablesFor="+"
+               class="org.eclipse.jdt.internal.debug.ui.actions.HighlightStackFrameAction"
+               id="org.eclipse.jdt.debug.ui.actions.HighlightStackFrameAction">
+         </action>
       </objectContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView.detail"
