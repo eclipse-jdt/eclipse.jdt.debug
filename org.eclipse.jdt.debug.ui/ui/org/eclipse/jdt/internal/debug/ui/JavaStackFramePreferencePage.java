@@ -152,7 +152,7 @@ public class JavaStackFramePreferencePage extends PreferencePage implements IWor
 
 	public static final String PAGE_ID = "org.eclipse.jdt.debug.ui.JavaStackFramePreferencePage"; //$NON-NLS-1$
 	final static FilterManager PLATFORM_STACK_FRAMES = new FilterManager(IJDIPreferencesConstants.PREF_ACTIVE_PLATFORM_FRAME_FILTER_LIST, IJDIPreferencesConstants.PREF_INACTIVE_PLATFORM_FRAME_FILTER_LIST);
-	final static FilterManager CUSTOM_STACK_FRAMES = new FilterManager(IJDIPreferencesConstants.PREF_ACTIVE_CUSTOM_FRAME_FILTER_LIST, IJDIPreferencesConstants.PREF_INACTIVE_CUSTOM_FRAME_FILTER_LIST);
+	public static final FilterManager CUSTOM_STACK_FRAMES = new FilterManager(IJDIPreferencesConstants.PREF_ACTIVE_CUSTOM_FRAME_FILTER_LIST, IJDIPreferencesConstants.PREF_INACTIVE_CUSTOM_FRAME_FILTER_LIST);
 
 	//widgets
 	private PreferenceButton fColorizeStackFrames;
