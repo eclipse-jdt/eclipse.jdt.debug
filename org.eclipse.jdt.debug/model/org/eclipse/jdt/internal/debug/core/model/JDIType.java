@@ -15,12 +15,9 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
@@ -67,17 +64,6 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 	public void requestFailed(String message, Throwable e, int code)
 			throws DebugException {
 		throwDebugException(message, code, e);
-	}
-
-	/**
-	 * Throws a debug exception with the given message, error code, and
-	 * underlying exception.
-	 */
-	@Override
-	protected void throwDebugException(String message, int code,
-			Throwable exception) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,
-				JDIDebugModel.getPluginIdentifier(), code, message, exception));
 	}
 
 	/**
