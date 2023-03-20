@@ -294,8 +294,10 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		File file;
 		try {
 			String timeStamp = getLaunchTimeStamp();
-			File argFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX + "%s" + option //$NON-NLS-1$
-					+ "-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
+			String configName = (getLaunchConfigurationName().length() > 10) ? getLaunchConfigurationName().substring(0, 10)
+                                : getLaunchConfigurationName();
+                        File argFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX + "%s" + option //$NON-NLS-1$
+					+ "-arg-%s.txt", configName, timeStamp)); //$NON-NLS-1$
 
 			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
 			Charset systemCharset = Platform.getSystemCharset();
