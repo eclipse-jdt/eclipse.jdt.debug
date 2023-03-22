@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -47,6 +48,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class StringSubstitutionTests extends AbstractDebugTest implements IValueVariableListener {
 
+	private static final String JAVA14_SOURCE_FILE = "src/bug329294.java";
 	// change notification
 	public IValueVariable[] fAdded;
 	public IValueVariable[] fChanged;
@@ -464,9 +466,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			manager.removeVariables(new IValueVariable[]{one, two});
 		}
 	}
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -477,9 +477,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		manager.addValueVariableListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -490,25 +487,16 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		super.tearDown();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener#variablesAdded(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
-	 */
 	@Override
 	public void variablesAdded(IValueVariable[] variables) {
 		fAdded = variables;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener#variablesChanged(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
-	 */
 	@Override
 	public void variablesChanged(IValueVariable[] variables) {
 		fChanged = variables;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener#variablesRemoved(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
-	 */
 	@Override
 	public void variablesRemoved(IValueVariable[] variables) {
 		fRemoved = variables;
@@ -575,7 +563,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testProjectPathSelectFile() throws CoreException {
 		String expression = "${project_path}";
-		IResource resource = get14Project().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(JAVA14_SOURCE_FILE);
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getFullPath().toOSString(), result);
@@ -719,7 +707,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testResourcePathSelectFile() throws CoreException {
 		String expression = "${resource_path}";
-		IResource resource = get14Project().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(JAVA14_SOURCE_FILE);
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getFullPath().toOSString(), result);
@@ -739,7 +727,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testResourceNameSelectFile() throws CoreException {
 		String expression = "${resource_name}";
-		IResource resource = get14Project().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(JAVA14_SOURCE_FILE);
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getName(), result);
@@ -750,7 +738,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * application configurations.
 	 */
 	public void testLocalJavaApplicationParameters() throws CoreException {
-		IResource resource = get14Project().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(JAVA14_SOURCE_FILE);
 		setSelection(resource);
 
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
@@ -774,31 +762,27 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * @param resource resource to select or <code>null</code> if empty
 	 */
 	protected void setSelection(final IResource resource) {
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-				assertNotNull("the active workbench window page should not be null", page);
-				IViewPart part;
-				try {
-					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
-					assertNotNull("the part org.eclipse.ui.views.ResourceNavigator should not be null", part);
-					ISelection selection = null;
-					if (resource == null) {
-						selection = new StructuredSelection();
-					} else {
-						selection = new StructuredSelection(resource);
-					}
-					IWorkbenchPartSite site = part.getSite();
-					assertNotNull("The part site for org.eclipse.ui.views.ResourceNavigator should not be null ", site);
-					ISelectionProvider provider = site.getSelectionProvider();
-					assertNotNull("the selection provider should not be null for org.eclipse.ui.views.ResourceNavigator", provider);
-					provider.setSelection(selection);
-				} catch (PartInitException e) {
-					assertNotNull("Failed to open navigator view", null);
+		Runnable r = () -> {
+			IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+			assertNotNull("the active workbench window page should not be null", page);
+			try {
+				IViewPart part = page.showView(IPageLayout.ID_PROJECT_EXPLORER);
+				assertNotNull("the part 'Project Explorer' should not be null", part);
+				ISelection selection = null;
+				if (resource == null) {
+					selection = new StructuredSelection();
+				} else {
+					selection = new StructuredSelection(resource);
 				}
-
+				IWorkbenchPartSite site = part.getSite();
+				assertNotNull("The part site for 'Project Explorer' should not be null ", site);
+				ISelectionProvider provider = site.getSelectionProvider();
+				assertNotNull("the selection provider should not be null for 'Project Explorer'", provider);
+				provider.setSelection(selection);
+			} catch (PartInitException e) {
+				assertNotNull("Failed to open 'Project Explorer' view", null);
 			}
+
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
 	}
@@ -808,7 +792,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testSelectedResourcePathFile() throws CoreException {
 		String expression = "${selected_resource_path}";
-		IResource resource = get14Project().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(JAVA14_SOURCE_FILE);
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getFullPath().toOSString(), result);
@@ -819,7 +803,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testSelectedResourceNameFile() throws CoreException {
 		String expression = "${selected_resource_name}";
-		IResource resource = get14Project().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(JAVA14_SOURCE_FILE);
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getName(), result);
