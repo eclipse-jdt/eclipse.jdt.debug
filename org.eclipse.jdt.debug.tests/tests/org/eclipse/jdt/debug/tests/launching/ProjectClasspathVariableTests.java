@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -46,31 +47,28 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 	 * @param resource resource to select or <code>null</code> if empty
 	 */
 	protected void setSelection(final IResource resource) {
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-				assertNotNull("the active workbench window page should not be null", page);
-				IViewPart part;
-				try {
-					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
-					assertNotNull("the part org.eclipse.ui.views.ResourceNavigator should not be null", part);
-					ISelection selection = null;
-					if (resource == null) {
-						selection = new StructuredSelection();
-					} else {
-						selection = new StructuredSelection(resource);
-					}
-					IWorkbenchPartSite site = part.getSite();
-					assertNotNull("The part site for org.eclipse.ui.views.ResourceNavigator should not be null ", site);
-					ISelectionProvider provider = site.getSelectionProvider();
-					assertNotNull("the selection provider should not be null for org.eclipse.ui.views.ResourceNavigator", provider);
-					provider.setSelection(selection);
-				} catch (PartInitException e) {
-					assertNotNull("Failed to open navigator view", null);
+		Runnable r = () -> {
+			IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+			assertNotNull("the active workbench window page should not be null", page);
+			IViewPart part;
+			try {
+				part = page.showView(IPageLayout.ID_PROJECT_EXPLORER);
+				assertNotNull("the part 'Project Explorer' should not be null", part);
+				ISelection selection = null;
+				if (resource == null) {
+					selection = new StructuredSelection();
+				} else {
+					selection = new StructuredSelection(resource);
 				}
-
+				IWorkbenchPartSite site = part.getSite();
+				assertNotNull("The part site for 'Project Explorer' should not be null ", site);
+				ISelectionProvider provider = site.getSelectionProvider();
+				assertNotNull("the selection provider should not be null for 'Project Explorer'", provider);
+				provider.setSelection(selection);
+			} catch (PartInitException e) {
+				assertNotNull("Failed to open 'Project Explorer' view", null);
 			}
+
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
 	}
