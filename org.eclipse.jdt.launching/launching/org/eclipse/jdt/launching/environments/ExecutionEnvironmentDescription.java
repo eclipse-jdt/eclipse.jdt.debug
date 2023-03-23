@@ -14,27 +14,24 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.launching.EEVMType;
@@ -187,18 +184,18 @@ public final class ExecutionEnvironmentDescription {
 	/**
 	 * Execution environment description properties
 	 */
-	private Map<String, String> fProperties = null;
+	private final Map<String, String> fProperties;
 
 	/**
 	 * Creates an execution environment description based on the properties defined in the given
 	 * execution environment description file. The format of the file is defined by
-	 * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
+	 * <code>https://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
 	 *
 	 * @param eeFile execution environment description file
 	 * @throws CoreException if unable to read or parse the file
 	 */
 	public ExecutionEnvironmentDescription(File eeFile) throws CoreException {
-		initProperties(eeFile);
+		this.fProperties = loadProperties(eeFile);
 	}
 
 	/**
@@ -274,16 +271,9 @@ public final class ExecutionEnvironmentDescription {
 		}
 
 
-		//remove duplicates
-		HashSet<String> set = new HashSet<>();
-		LibraryLocation lib = null;
-		for(ListIterator<LibraryLocation> liter = allLibs.listIterator(); liter.hasNext();) {
-			lib = liter.next();
-			if(!set.add(lib.getSystemLibraryPath().toOSString())) {
-				//did not add it, duplicate
-				liter.remove();
-			}
-		}
+		// remove duplicates
+		Set<String> set = new HashSet<>();
+		allLibs.removeIf(lib -> !set.add(lib.getSystemLibraryPath().toOSString()));
 
 		// If the ee.src.map property is specified, use it to associate source locations with the libraries
 		addSourceLocationsToLibraries(getSourceMap(), allLibs);
@@ -301,18 +291,15 @@ public final class ExecutionEnvironmentDescription {
 	 */
 	public String getVMArguments() {
 		StringBuilder arguments = new StringBuilder();
-		Iterator<Entry<String, String>> entries = fProperties.entrySet().iterator();
-		while (entries.hasNext()) {
-			Entry<String, String> entry = entries.next();
-			String key = entry.getKey();
-			String value = entry.getValue();
+		String eeHome = fProperties.get(EE_HOME);
+		fProperties.forEach((key, value) -> {
 			boolean appendArgument = !key.startsWith(EE_ARG_FILTER);
 			if (appendArgument) {
 				arguments.append(key);
 				if (!value.isEmpty()) {
 					arguments.append('=');
-					value = resolveHome(value);
-					if (value.indexOf(' ') > -1){
+					value = resolveHome(value, eeHome);
+					if (value.indexOf(' ') > -1) {
 						arguments.append('"').append(value).append('"');
 					} else {
 						arguments.append(value);
@@ -320,7 +307,7 @@ public final class ExecutionEnvironmentDescription {
 				}
 				arguments.append(' ');
 			}
-		}
+		});
 		if (arguments.charAt(arguments.length()-1) == ' '){
 			arguments.deleteCharAt(arguments.length()-1);
 		}
@@ -362,61 +349,36 @@ public final class ExecutionEnvironmentDescription {
 	}
 
 	/**
-	 * Initializes the properties in the given execution environment
-	 * description file.
+	 * Loads the properties from the given execution environment description file.
 	 *
 	 * @param eeFile the EE file
 	 * @exception CoreException if unable to read the file
 	 */
-	private void initProperties(File eeFile) throws CoreException {
+	private static Map<String, String> loadProperties(File eeFile) throws CoreException {
 		Map<String, String> properties = new LinkedHashMap<>();
-		String eeHome = eeFile.getParentFile().getAbsolutePath();
-		try (FileReader reader = new FileReader(eeFile); BufferedReader bufferedReader = new BufferedReader(reader);) {
-			String line = bufferedReader.readLine();
-			while (line != null) {
-				if (!line.startsWith("#")) { //$NON-NLS-1$
-					if (line.trim().length() > 0){
-						int eq = line.indexOf('=');
-						if (eq > 0) {
-							String key = line.substring(0, eq);
-							String value = null;
-							if (line.length() > eq + 1) {
-								value = line.substring(eq + 1).trim();
-							}
-							properties.put(key, value);
-						} else {
-							properties.put(line, ""); //$NON-NLS-1$
-						}
+		try (Stream<String> lines = Files.lines(eeFile.toPath(), Charset.defaultCharset())) {
+			lines.filter(l -> !l.startsWith("#") && !l.isBlank()).forEach(line -> { //$NON-NLS-1$
+				int eq = line.indexOf('=');
+				if (eq > 0) {
+					String key = line.substring(0, eq);
+					String value = null;
+					if (line.length() > eq + 1) {
+						value = line.substring(eq + 1).trim();
 					}
+					properties.put(key, value);
+				} else {
+					properties.put(line, ""); //$NON-NLS-1$
 				}
-				line = bufferedReader.readLine();
-			}
-		} catch (FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-					NLS.bind(LaunchingMessages.ExecutionEnvironmentDescription_0,new String[]{eeFile.getPath()}), e));
+			});
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-					NLS.bind(LaunchingMessages.ExecutionEnvironmentDescription_1,new String[]{eeFile.getPath()}), e));
+			throw new CoreException(Status.error(NLS.bind(LaunchingMessages.ExecutionEnvironmentDescription_1, new String[] {
+					eeFile.getPath() }), e));
 		}
-		if (!properties.containsKey(EE_HOME)) {
-			properties.put(EE_HOME, eeHome);
-		}
+		properties.putIfAbsent(EE_HOME, eeFile.getParentFile().getAbsolutePath());
 		// resolve things with ${ee.home} in them
-		fProperties = properties; // needs to be done to resolve
-		Iterator<Entry<String, String>> entries = properties.entrySet().iterator();
-		Map<String, String> resolved = new LinkedHashMap<>(properties.size());
-		while (entries.hasNext()) {
-			Entry<String, String> entry = entries.next();
-			String key = entry.getKey();
-			String value = entry.getValue();
-			if (value != null) {
-				value = resolveHome(value);
-				resolved.put(key, value);
-			} else {
-				resolved.put(key, ""); //$NON-NLS-1$
-			}
-		}
-		fProperties = resolved;
+		String eeHome = properties.get(EE_HOME);
+		properties.replaceAll((k, value) -> value != null ? resolveHome(value, eeHome) : ""); //$NON-NLS-1$
+		return properties;
 	}
 
 	/**
@@ -426,11 +388,10 @@ public final class ExecutionEnvironmentDescription {
 	 * @param value string to process
 	 * @return resolved string
 	 */
-	private String resolveHome(String value) {
+	private static String resolveHome(String value, String eeHome) {
 		int start = 0;
 		int index = value.indexOf(VAR_EE_HOME, start);
 		StringBuilder replaced = null;
-		String eeHome = getProperty(EE_HOME);
 		while (index >= 0) {
 			if (replaced == null) {
 				replaced = new StringBuilder();
@@ -578,26 +539,24 @@ public final class ExecutionEnvironmentDescription {
 	 * @see #getSourceMap()
 	 */
 	private void addSourceLocationsToLibraries(Map<String, String> srcMap, List<LibraryLocation> libraries){
-		for (Iterator<String> patternIterator = srcMap.keySet().iterator(); patternIterator.hasNext();) {
+		srcMap.forEach((currentKey, value) -> {
 			// Try each library regex pattern and see what libraries apply.
-			String currentKey = patternIterator.next();
 			Pattern currentPattern = Pattern.compile(currentKey);
 			Matcher matcher = currentPattern.matcher(""); //$NON-NLS-1$
-			for (Iterator<LibraryLocation> locationIterator = libraries.iterator(); locationIterator.hasNext();) {
-				LibraryLocation currentLibrary = locationIterator.next();
+			for (LibraryLocation currentLibrary : libraries) {
 				matcher.reset(currentLibrary.getSystemLibraryPath().toOSString());
-				if (matcher.find()){
+				if (matcher.find()) {
 					// Found a file that the pattern applies to, use the map to get the source location
-					String sourceLocation = matcher.replaceAll(srcMap.get(currentKey));
+					String sourceLocation = matcher.replaceAll(value);
 					IPath sourcePath = new Path(sourceLocation);
 					// Only add the source archive if it exists
-					if (sourcePath.toFile().exists()){
+					if (sourcePath.toFile().exists()) {
 						currentLibrary.setSystemLibrarySource(sourcePath);
 					}
 
 				}
 			}
-		}
+		});
 	}
 
 	/**
