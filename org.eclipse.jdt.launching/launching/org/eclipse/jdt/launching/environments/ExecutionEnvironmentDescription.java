@@ -195,7 +195,19 @@ public final class ExecutionEnvironmentDescription {
 	 * @throws CoreException if unable to read or parse the file
 	 */
 	public ExecutionEnvironmentDescription(File eeFile) throws CoreException {
-		this.fProperties = loadProperties(eeFile);
+		this.fProperties = resolveEEHome(loadProperties(eeFile));
+	}
+
+	/**
+	 * Creates an execution environment description based on the given execution environment description properties. The contained properties are
+	 * defined in <code>https://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
+	 *
+	 * @param eeProperties execution environment description properties
+	 * @throws CoreException if unable to read or parse the file
+	 * @since 3.21
+	 */
+	public ExecutionEnvironmentDescription(Map<String, String> eeProperties) {
+		this.fProperties = resolveEEHome(new LinkedHashMap<>(eeProperties)); // defensive copy
 	}
 
 	/**
@@ -375,10 +387,13 @@ public final class ExecutionEnvironmentDescription {
 					eeFile.getPath() }), e));
 		}
 		properties.putIfAbsent(EE_HOME, eeFile.getParentFile().getAbsolutePath());
-		// resolve things with ${ee.home} in them
-		String eeHome = properties.get(EE_HOME);
-		properties.replaceAll((k, value) -> value != null ? resolveHome(value, eeHome) : ""); //$NON-NLS-1$
 		return properties;
+	}
+
+	private static Map<String, String> resolveEEHome(Map<String, String> eeProperties) { // resolve things with ${ee.home} in them
+		String eeHome = eeProperties.get(EE_HOME);
+		eeProperties.replaceAll((k, value) -> value != null ? resolveHome(value, eeHome) : ""); //$NON-NLS-1$
+		return eeProperties;
 	}
 
 	/**
