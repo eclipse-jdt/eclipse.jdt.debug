@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2022 IBM Corporation and others.
+     Copyright (c) 2005, 2023 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
      which accompanies this distribution, and is available at
      https://www.eclipse.org/legal/epl-2.0/
-
+     
  	 SPDX-License-Identifier: EPL-2.0
  
      Contributors:
@@ -372,6 +372,11 @@
             description="%environment.description.23"
             id="JavaSE-19"
             compliance="19">
+      </environment>
+      <environment
+            description="%environment.description.24"
+            id="JavaSE-20"
+            compliance="20">
       </environment>         
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"

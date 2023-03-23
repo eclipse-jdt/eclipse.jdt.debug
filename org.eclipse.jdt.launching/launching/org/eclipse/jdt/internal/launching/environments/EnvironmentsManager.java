@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2022 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *
@@ -195,7 +196,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
 		String desc = executionEnvironment.getId();
-		if (desc.indexOf(JavaCore.VERSION_19) != -1) {
+		if (desc.indexOf(JavaCore.VERSION_20) != -1) {
+			return JavaCore.VERSION_20;
+		} else if (desc.indexOf(JavaCore.VERSION_19) != -1) {
 			return JavaCore.VERSION_19;
 		} else if (desc.indexOf(JavaCore.VERSION_18) != -1) {
 			return JavaCore.VERSION_18;
