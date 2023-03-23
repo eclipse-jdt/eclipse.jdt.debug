@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,6 +40,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 
+	private static final String JavaSE_20 = "JavaSE-20"; //$NON-NLS-1$
 	private static final String JavaSE_19 = "JavaSE-19"; //$NON-NLS-1$
 	private static final String JavaSE_18 = "JavaSE-18"; //$NON-NLS-1$
 	private static final String JavaSE_17 = "JavaSE-17"; //$NON-NLS-1$
@@ -92,7 +93,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
-		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_19 });
+		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_20 });
 		mappings.put(JavaSE_11, new String[] { JavaSE_10 });
 		mappings.put(JavaSE_12, new String[] { JavaSE_11 });
 		mappings.put(JavaSE_13, new String[] { JavaSE_12 });
@@ -102,6 +103,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_17, new String[] { JavaSE_16 });
 		mappings.put(JavaSE_18, new String[] { JavaSE_17 });
 		mappings.put(JavaSE_19, new String[] { JavaSE_18 });
+		mappings.put(JavaSE_20, new String[] { JavaSE_19 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -127,7 +129,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("19")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("20")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_20);
+				} else if (javaVersion.startsWith("19")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_19);
 				} else if (javaVersion.startsWith("18")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_18);
