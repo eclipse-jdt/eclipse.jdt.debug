@@ -40,7 +40,7 @@ import org.eclipse.jdt.launching.sourcelookup.PackageFragmentRootSourceLocation;
 public class SourceLocationTests extends AbstractDebugTest {
 
 	public static final String JRE_CONTAINER_1_4_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4";
-	public static final String JRE_CONTAINER_1_7_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7";
+	public static final String JRE_CONTAINER_1_8_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8";
 
 	public SourceLocationTests(String name) {
 		super(name);
@@ -165,7 +165,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_7_CPE_NAME))) {
+				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_8_CPE_NAME))) {
 					lib = cpes[i];
 					break;
 				}
@@ -206,7 +206,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_7_CPE_NAME))) {
+				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_8_CPE_NAME))) {
 					lib = cpes[i];
 					break;
 				}
