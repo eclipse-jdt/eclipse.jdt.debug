@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.debug.ui" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="For Beta" id="931135546">
-            <message_arguments>
-                <message_argument value="3.12.1050"/>
-                <message_argument value="3.12.900"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="ui/org/eclipse/jdt/debug/ui/launchConfigurations/JavaClasspathTab.java" type="org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab">
         <filter comment="Known illegal extension" id="576720909">
             <message_arguments>

@@ -36,7 +36,7 @@
 		<!-- Keep target level as low as possible!
 			snippetsupport.jar is used on the classpath of a separate VM that
 			uses the JRE that's on the build path of the scrapbook file's project. -->
-		<javac target="jsr14" source="1.5" destdir="${destdir}"
+		<javac target="1.7" source="1.7" destdir="${destdir}"
 			failonerror="true"
 			verbose="false"
 			debug="on"
@@ -45,7 +45,7 @@
 			<src path="Snippet Support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}"/>
-		<jar destfile="${build.result.folder}/snippetsupport.jar" basedir="${destdir}"/>
+		<zip destfile="${build.result.folder}/snippetsupport.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
