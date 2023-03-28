@@ -29,5 +29,13 @@ public class ScrapbookMain1 {
 	public static void eval(Class<?> clazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		Method method=clazz.getDeclaredMethod("nop", new Class[0]); //$NON-NLS-1$
 		method.invoke(null, new Object[0]);
+		// XXX: if changing this class, make sure to check if
+		// org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor.SCRAPBOOK_MAIN1_LAST_LINE is still valid
+		// and points to the last line of this method with "method.invoke()" call.
+		// This class is (as of today) MANUALLY compiled and built into org.eclipse.jdt.debug.ui/snippetsupport.jar
+		// which is (as of today) checked into git and NOT rebuilt automatically.
+
+		// See also org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest.testEvaluation()
+		// that should catch the inconsistency between JavaSnippetEditor and this code
 	}
 }
