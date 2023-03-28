@@ -155,11 +155,13 @@ public class EventDispatcher implements Runnable {
 				}
 				vote = true;
 				try {
-					resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
+					try {
+						resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
+					} finally {
+						enableGCForExceptionEvent(event);
+					}
 				} catch (Throwable t) {
 					logHandleEventError(listener, event, t);
-				} finally {
-					enableGCForExceptionEvent(event);
 				}
 				continue;
 			}
@@ -424,10 +426,16 @@ public class EventDispatcher implements Runnable {
 		}
 	}
 
-	private static void enableGCForExceptionEvent(Event event) {
+	private void enableGCForExceptionEvent(Event event) {
 		if (event instanceof ExceptionEventImpl) {
 			try {
-				((ExceptionEventImpl) event).enableExceptionGC();
+				if (fTarget.isAvailable()) {
+					((ExceptionEventImpl) event).enableExceptionGC();
+				}
+			} catch (VMDisconnectedException e) {
+				if (fTarget.isAvailable()) {
+					JDIDebugPlugin.logError("Failed to enable GC for event: " + event, e); //$NON-NLS-1$
+				}
 			} catch (Throwable t) {
 				JDIDebugPlugin.logError("Failed to enable GC for event: " + event, t); //$NON-NLS-1$
 			}
