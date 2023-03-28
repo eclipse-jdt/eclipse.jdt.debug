@@ -133,6 +133,16 @@ import com.sun.jdi.ObjectReference;
  * An editor for Java snippets.
  */
 public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener {
+
+	private static final String SCRAPBOOK_MAIN1_TYPE = "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"; //$NON-NLS-1$
+	private static final String SCRAPBOOK_MAIN1_METHOD = "eval"; //$NON-NLS-1$
+
+	/**
+	 * Last instruction line in org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1.eval() 
+	 * method that corresponds to the code compiled and checked into org.eclipse.jdt.debug.ui/snippetsupport.jar
+	 */
+	private static final int SCRAPBOOK_MAIN1_LAST_LINE = 28;
+
 	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
 
 	public final static int RESULT_DISPLAY= 1;
@@ -1108,23 +1118,26 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 								IBreakpoint[] bps = jt.getBreakpoints();
 								//last line of the eval method in ScrapbookMain1?
 								int lineNumber = f.getLineNumber();
-								if (e.getDetail() == DebugEvent.STEP_END && (lineNumber == 28)
-									&& f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") //$NON-NLS-1$
+								if (e.getDetail() == DebugEvent.STEP_END && (lineNumber >= SCRAPBOOK_MAIN1_LAST_LINE)
+										&& f.getDeclaringTypeName().equals(SCRAPBOOK_MAIN1_TYPE)
 									&& jt.getDebugTarget() == fVM) {
 									// restore step filters
 									target.setStepFiltersEnabled(fStepFiltersSetting);
 									setThread(jt);
 									return null;
-								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bps.length > 0 && bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
-									// locate the 'eval' method and step over
-									for (IStackFrame stackframe :  jt.getStackFrames()) {
-										IJavaStackFrame frame = (IJavaStackFrame) stackframe;
-										if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
-											// ignore step filters for this step
-											fStepFiltersSetting = target.isStepFiltersEnabled();
-											target.setStepFiltersEnabled(false);
-											frame.stepOver();
-											return null;
+								} else if (e.getDetail() == DebugEvent.BREAKPOINT && bps.length > 0) {
+									if (bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
+										// locate the 'eval' method and step over
+										for (IStackFrame stackframe : jt.getStackFrames()) {
+											IJavaStackFrame frame = (IJavaStackFrame) stackframe;
+											if (frame.getReceivingTypeName().equals(SCRAPBOOK_MAIN1_TYPE)
+													&& frame.getName().equals(SCRAPBOOK_MAIN1_METHOD)) {
+												// ignore step filters for this step
+												fStepFiltersSetting = target.isStepFiltersEnabled();
+												target.setStepFiltersEnabled(false);
+												frame.stepOver();
+												return null;
+											}
 										}
 									}
 								}
