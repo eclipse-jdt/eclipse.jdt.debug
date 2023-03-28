@@ -205,6 +205,9 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 			catch (Exception t) {
 				error.set(t);
 			}
+			catch (Throwable t) {
+				error.set(new RuntimeException(t));
+			}
 		});
 		if (error.get() != null) {
 			throwException(error.get());
@@ -273,7 +276,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 		if (Display.getCurrent() != null) {
 			try {
 				return callable.call();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				throwException(e);
 			}
 		}

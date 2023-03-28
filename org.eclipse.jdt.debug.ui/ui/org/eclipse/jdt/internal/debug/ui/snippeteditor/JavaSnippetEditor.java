@@ -139,7 +139,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public final static int RESULT_RUN= 2;
 	public final static int RESULT_INSPECT= 3;
 
-	private int fResultMode; // one of the RESULT_* constants
+	private volatile int fResultMode; // one of the RESULT_* constants
 
 	private IJavaProject fJavaProject;
 	private IEvaluationContext fEvaluationContext;
@@ -150,9 +150,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private IVMInstall fLaunchedVM;
 	private List<ISnippetStateChangedListener> fSnippetStateListeners;
 
-	private boolean fEvaluating;
+	private volatile boolean fEvaluating;
 	private IJavaThread fThread;
-	private boolean fStepFiltersSetting;
+	private volatile boolean fStepFiltersSetting;
 
 	private int fSnippetStart;
 	private int fSnippetEnd;

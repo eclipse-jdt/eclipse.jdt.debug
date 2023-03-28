@@ -25,7 +25,7 @@ Export-Package: org.eclipse.jdt.debug.ui,
  org.eclipse.jdt.internal.debug.ui.monitors;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui.propertypages;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui.search;x-internal:=true,
- org.eclipse.jdt.internal.debug.ui.snippeteditor;x-internal:=true,
+ org.eclipse.jdt.internal.debug.ui.snippeteditor;x-friends:="org.eclipse.jdt.debug.tests",
  org.eclipse.jdt.internal.debug.ui.sourcelookup;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui.threadgroups;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui.variables;x-internal:=true
