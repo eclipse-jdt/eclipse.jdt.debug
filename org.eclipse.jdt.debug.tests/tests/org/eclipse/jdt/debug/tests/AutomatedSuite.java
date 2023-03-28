@@ -142,6 +142,7 @@ import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DebugHoverTests;
 import org.eclipse.jdt.debug.tests.ui.DebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
+import org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
@@ -321,6 +322,9 @@ public class AutomatedSuite extends DebugSuite {
 	// Debug view tests
 		// Test was not stable, see bug 516024, the hope is that fix for bug 535686 helps
 		addTest(new TestSuite(DebugViewTests.class));
+
+	// Scrapbook editor tests
+		addTest(new TestSuite(JavaSnippetEditorTest.class));
 
 	// Debug hover tests
 		addTest(new TestSuite(DebugHoverTests.class));
