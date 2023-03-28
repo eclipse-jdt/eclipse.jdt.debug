@@ -14,19 +14,22 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
 /**
  * Support class for launching a snippet evaluation.
  * <p>
- * CAUTION: This class gets compiled with target=jsr14, see scripts/buildExtraJAR.xml. Don't use URLClassLoader#close() or other post-1.4 APIs!
+ * CAUTION: This class gets compiled with target=1.7, see scripts/buildExtraJAR.xml.
  */
 public class ScrapbookMain {
 
@@ -40,25 +43,19 @@ public class ScrapbookMain {
 		while (true) {
 			try {
 				evalLoop(urls);
-			} catch (ClassNotFoundException e) {
-				return;
-			} catch (NoSuchMethodException e) {
-				return;
-			} catch (InvocationTargetException e) {
-				return;
-			} catch (IllegalAccessException e) {
+			} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | IOException e) {
 				return;
 			}
 		}
 
 	}
 
-	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		@SuppressWarnings("resource")
-		ClassLoader cl= new URLClassLoader(urls, null);
-		Class<?> clazz= cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
-		Method method= clazz.getDeclaredMethod("eval", new Class[] {Class.class}); //$NON-NLS-1$
-		method.invoke(null, new Object[] {ScrapbookMain.class});
+	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
+		try (URLClassLoader cl = new URLClassLoader(urls, null)) {
+			Class<?> clazz = cl.loadClass(JavaSnippetEditor.SCRAPBOOK_MAIN1_TYPE);
+			Method method = clazz.getDeclaredMethod(JavaSnippetEditor.SCRAPBOOK_MAIN1_METHOD, new Class[] { Class.class });
+			method.invoke(null, new Object[] {ScrapbookMain.class});
+		}
 	}
 
 	/**
@@ -77,13 +74,13 @@ public class ScrapbookMain {
 	static URL[] getClasspath(String[] urlStrings) {
 
 		//The URL Strings MUST be properly encoded
-		//using URLEncoder...see ScrapbookLauncher for details
+		// using URLEncoder...see ScrapbookLauncher.getEncodedURL(File)
 		URL[] urls= new URL[urlStrings.length + 1];
 
 		for (int i = 0; i < urlStrings.length; i++) {
 			try {
-				urls[i + 1] = new URL(URLDecoder.decode(urlStrings[i]));
-			} catch (MalformedURLException e) {
+				urls[i + 1] = new URL(URLDecoder.decode(urlStrings[i], StandardCharsets.UTF_8.name()));
+			} catch (MalformedURLException | UnsupportedEncodingException e) {
 				return null;
 			}
 		}
