@@ -361,11 +361,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		while (tokenizer.hasMoreElements()) {
 			encoded.append(urlDelimiter);
 			String token= tokenizer.nextToken();
-			try {
-				encoded.append(URLEncoder.encode(token, ResourcesPlugin.getEncoding()));
-			} catch (UnsupportedEncodingException e) {
-				encoded.append(URLEncoder.encode(token, "UTF-8")); //$NON-NLS-1$
-			}
+			// should use same encoding as org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain.getClasspath(String[])
+			encoded.append(URLEncoder.encode(token, "UTF-8")); //$NON-NLS-1$
 		}
 		if (file.isDirectory()) {
 			encoded.append(urlDelimiter);

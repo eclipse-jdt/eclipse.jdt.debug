@@ -134,14 +134,14 @@ import com.sun.jdi.ObjectReference;
  */
 public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener {
 
-	private static final String SCRAPBOOK_MAIN1_TYPE = "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"; //$NON-NLS-1$
-	private static final String SCRAPBOOK_MAIN1_METHOD = "eval"; //$NON-NLS-1$
+	static final String SCRAPBOOK_MAIN1_TYPE = "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"; //$NON-NLS-1$
+	static final String SCRAPBOOK_MAIN1_METHOD = "eval"; //$NON-NLS-1$
 
 	/**
-	 * Last instruction line in org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1.eval() 
+	 * Last instruction line in org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1.eval()
 	 * method that corresponds to the code compiled and checked into org.eclipse.jdt.debug.ui/snippetsupport.jar
 	 */
-	private static final int SCRAPBOOK_MAIN1_LAST_LINE = 28;
+	private static final int SCRAPBOOK_MAIN1_LAST_LINE = 31;
 
 	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
 
