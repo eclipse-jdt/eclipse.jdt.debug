@@ -292,6 +292,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		File file;
 		try {
 			File argFile = JavaLaunchingUtils.createFileForArgument(launch, processTempFilesDir);
+
 			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
 			Charset systemCharset = Platform.getSystemCharset();
 			if (!systemCharset.newEncoder().canEncode(arg)) {
@@ -376,6 +377,10 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 
 	protected String getLaunchConfigurationName() {
 		return launch.getLaunchConfiguration().getName();
+	}
+
+	protected String getLaunchTimeStamp() {
+		return JavaLaunchingUtils.getLaunchTimeStamp(launch);
 	}
 
 	private String[] getEnvpFromNativeEnvironment() {
