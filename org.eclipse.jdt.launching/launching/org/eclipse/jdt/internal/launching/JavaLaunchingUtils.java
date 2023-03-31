@@ -15,6 +15,9 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 
@@ -34,11 +37,15 @@ public class JavaLaunchingUtils {
 	 *            The processing file directory
 	 * @return Created file
 	 */
-	public static File createFileForArgument(ILaunch launch, File processTempFilesDir) {
-		String timeStamp = getLaunchTimeStamp(launch);
-		File argumentsFile = new File(processTempFilesDir, String.format(org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX
-				+ "%s-args-%s.txt", getLaunchConfigurationName(launch), timeStamp)); //$NON-NLS-1$
-		return argumentsFile;
+	public static File createFileForArgument(ILaunch launch, File processTempFilesDir) throws CoreException {
+		try {
+			String timeStamp = getLaunchTimeStamp(launch);
+			File argumentsFile = new File(processTempFilesDir, String.format(org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX
+					+ "%s-args-%s.txt", getLaunchConfigurationName(launch), timeStamp)); //$NON-NLS-1$
+			return argumentsFile;
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create argument file", e)); //$NON-NLS-1$
+		}
 	}
 
 	public static String getLaunchTimeStamp(ILaunch launch) {
