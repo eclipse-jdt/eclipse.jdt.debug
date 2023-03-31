@@ -291,7 +291,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		String path = cmdLine.get(modulePathArgumentIndex);
 		File file;
 		try {
-			File argFile = JavaLaunchingUtils.createFileForArgument(launch, processTempFilesDir);
+			File argFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName());
 
 			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
 			Charset systemCharset = Platform.getSystemCharset();
@@ -339,7 +339,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 
 	private File createClasspathOnlyJar(String classpath) throws CoreException {
 		try {
-			File jarFile = JavaLaunchingUtils.createFileForArgument(launch, processTempFilesDir);
+			File jarFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName());
 			URI workingDirUri = processTempFilesDir.toURI();
 			StringBuilder manifestClasspath = new StringBuilder();
 			String[] classpathArray = getClasspathAsArray(classpath);
