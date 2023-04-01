@@ -91,7 +91,7 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	protected File createArgumentFile(String[] cmdLine) throws CoreException {
 		Charset systemCharset = Platform.getSystemCharset();
 		try {
-			File argumentsFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName());
+			File argumentsFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName(), null);
 			cmdLine = quoteForArgfile(cmdLine);
 
 			Files.write(argumentsFile.toPath(), Arrays.asList(cmdLine), systemCharset);
