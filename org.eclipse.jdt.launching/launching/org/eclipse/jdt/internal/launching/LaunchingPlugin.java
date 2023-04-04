@@ -58,6 +58,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -153,6 +154,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	private boolean fIgnoreVMDefPropertyChangeEvents = false;
 
 	private static final String EMPTY_STRING = "";    //$NON-NLS-1$
+	public static final String PREF_DETECT_VMS_AT_STARTUP = "detectVMsAtStartup"; //$NON-NLS-1$
 
 	/**
 	 * Mapping of top-level VM installation directories to library info for that
@@ -582,6 +584,13 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		boolean forcedDisableVMDetection = Boolean.getBoolean(DetectVMInstallationsJob.class.getSimpleName() + ".disabled"); //$NON-NLS-1$
+		IEclipsePreferences instanceNode = InstanceScope.INSTANCE.getNode(getBundle().getSymbolicName());
+		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(getBundle().getSymbolicName());
+		boolean defaultValue = defaultNode.getBoolean(PREF_DETECT_VMS_AT_STARTUP, true);
+		if (!forcedDisableVMDetection && instanceNode.getBoolean(PREF_DETECT_VMS_AT_STARTUP, defaultValue)) {
+			new DetectVMInstallationsJob().schedule();
+		}
 
 		AdvancedSourceLookupSupport.start();
 	}
@@ -1351,4 +1360,5 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	public static void trace(String message) {
 		trace(null, message, null);
 	}
+
 }

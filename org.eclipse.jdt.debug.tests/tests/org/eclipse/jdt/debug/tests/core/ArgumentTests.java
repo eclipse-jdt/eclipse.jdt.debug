@@ -364,9 +364,9 @@ public class ArgumentTests extends AbstractDebugTest {
 		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
 
 		IVMInstall vm = JavaRuntime.getVMInstall(get14Project());
-		assertNotNull("shold be able to get the default VM install from the 1.4 project", vm);
+		assertNotNull("should be able to get a VM install from the 1.4 project", vm);
 		if (fUseArgfile) {
-			assertTrue("test requires a JVM >= 9", JavaRuntime.isModularJava(vm));
+			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-9")).toString());
 		}
 		//workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(vm).toPortableString());
 

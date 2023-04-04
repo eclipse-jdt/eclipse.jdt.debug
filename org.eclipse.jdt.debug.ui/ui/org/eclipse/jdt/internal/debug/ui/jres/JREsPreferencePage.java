@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -49,6 +50,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
@@ -56,6 +58,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * The Installed JREs preference page.
@@ -75,6 +78,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	private InstalledJREsBlock fJREBlock;
 	private Link fCompliance;
 
+	private Button detectAtStartupCheckbox;
+
 	/**
 	 * Constructor
 	 */
@@ -87,6 +92,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
+		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE,
+							LaunchingPlugin.getDefault().getBundle().getSymbolicName()));
 	}
 
 	/**
@@ -122,6 +129,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		ancestor.setLayout(layout);
 
 		SWTFactory.createWrapLabel(ancestor, JREMessages.JREsPreferencePage_2, 1, 300);
+		SWTFactory.createVerticalSpacer(ancestor, 1);
+
+		detectAtStartupCheckbox = SWTFactory.createCheckButton(ancestor, JREMessages.detectJREsAtStartup, null, getPreferenceStore().getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP), 1);
 		SWTFactory.createVerticalSpacer(ancestor, 1);
 
 		fJREBlock = new InstalledJREsBlock();
@@ -167,6 +177,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				}
 			}
 		});
+
 		applyDialogFont(ancestor);
 		return ancestor;
 	}
@@ -295,6 +306,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				}
 			}
 		});
+		getPreferenceStore().setValue(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, detectAtStartupCheckbox.getSelection());
 
 		if(canceled[0]) {
 			return false;
