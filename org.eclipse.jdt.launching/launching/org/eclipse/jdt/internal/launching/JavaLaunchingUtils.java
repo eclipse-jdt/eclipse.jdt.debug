@@ -32,19 +32,13 @@ public class JavaLaunchingUtils {
 	 *            The launch
 	 * @param processTempFilesDir
 	 *            The processing file directory
-	 * @param option
-	 *            Option for argument file - classpath or modulepath
+	 * @param optionalString
+	 *            Optional string to be formatted and used for creating file
 	 * @return Created file
 	 */
-	public static File createFileForArgument(String timeStamp, File processTempFilesDir, String launchConfigName, String option) {
-		String child;
-		if (option == null || option.isEmpty()) {
-			child = String.format(org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX
-					+ "%s-args-%s.txt", launchConfigName, timeStamp);//$NON-NLS-1$
-		} else {
-			child = String.format(org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX + "%s" + option //$NON-NLS-1$
-					+ "-arg-%s.txt", launchConfigName, timeStamp); //$NON-NLS-1$
-		}
+	public static File createFileForArgument(String timeStamp, File processTempFilesDir, String launchConfigName, String optionalString) {
+		String child = String.format(org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX
+				+ optionalString, launchConfigName, timeStamp);
 		File argumentsFile = new File(processTempFilesDir, child);
 		return argumentsFile;
 	}
