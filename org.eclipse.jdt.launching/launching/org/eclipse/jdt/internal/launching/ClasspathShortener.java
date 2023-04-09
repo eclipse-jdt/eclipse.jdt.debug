@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Cedric Chabanois and others.
+ * Copyright (c) 2018, 2023 Cedric Chabanois and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,6 @@
  *     IBM Corporation - Launching command line exceeds the process creation command limit on Windows - https://bugs.eclipse.org/bugs/show_bug.cgi?id=327193
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
-
-import static org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -293,9 +291,8 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		String path = cmdLine.get(modulePathArgumentIndex);
 		File file;
 		try {
-			String timeStamp = getLaunchTimeStamp();
-			File argFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX + "%s" + option //$NON-NLS-1$
-					+ "-arg-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
+			File argFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName(), "%s" //$NON-NLS-1$
+					+ option + "-arg-%s.txt"); //$NON-NLS-1$
 
 			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
 			Charset systemCharset = Platform.getSystemCharset();
@@ -343,9 +340,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 
 	private File createClasspathOnlyJar(String classpath) throws CoreException {
 		try {
-			String timeStamp = getLaunchTimeStamp();
-			File jarFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
-					+ "%s-classpathOnly-%s.jar", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
+			File jarFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName(), "%s-classpathOnly-%s.jar"); //$NON-NLS-1$
 			URI workingDirUri = processTempFilesDir.toURI();
 			StringBuilder manifestClasspath = new StringBuilder();
 			String[] classpathArray = getClasspathAsArray(classpath);
@@ -386,11 +381,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 	}
 
 	protected String getLaunchTimeStamp() {
-		String timeStamp = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
-		if (timeStamp == null) {
-			timeStamp = Long.toString(System.currentTimeMillis());
-		}
-		return timeStamp;
+		return JavaLaunchingUtils.getLaunchTimeStamp(launch);
 	}
 
 	private String[] getEnvpFromNativeEnvironment() {

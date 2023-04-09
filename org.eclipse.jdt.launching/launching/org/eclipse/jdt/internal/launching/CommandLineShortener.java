@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Gunnar Wagenknecht and others.
+ * Copyright (c) 2020, 2023 Gunnar Wagenknecht and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,6 @@
  *     Gunnar Wagenknecht - copied from ClasspathShortener and simplified to shorten all arguments
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
-
-import static org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.JavaCore;
@@ -94,10 +91,7 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	protected File createArgumentFile(String[] cmdLine) throws CoreException {
 		Charset systemCharset = Platform.getSystemCharset();
 		try {
-			String timeStamp = getLaunchTimeStamp();
-			File argumentsFile = new File(processTempFilesDir, String.format(LAUNCH_TEMP_FILE_PREFIX
-					+ "%s-args-%s.txt", getLaunchConfigurationName(), timeStamp)); //$NON-NLS-1$
-
+			File argumentsFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName(), "%s-args-%s.txt"); //$NON-NLS-1$
 			cmdLine = quoteForArgfile(cmdLine);
 
 			Files.write(argumentsFile.toPath(), Arrays.asList(cmdLine), systemCharset);
@@ -146,11 +140,7 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	}
 
 	protected String getLaunchTimeStamp() {
-		String timeStamp = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
-		if (timeStamp == null) {
-			timeStamp = Long.toString(System.currentTimeMillis());
-		}
-		return timeStamp;
+		return JavaLaunchingUtils.getLaunchTimeStamp(launch);
 	}
 
 	@Override
