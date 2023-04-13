@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunch;
  */
 public class JavaLaunchingUtils {
 
+	public static final int MAX_LAUNCH_CONFIG_NAME_LENGTH = 10;
 
 	/**
 	 * Returns the argument file for a launch within the given temp directory
@@ -37,6 +38,9 @@ public class JavaLaunchingUtils {
 	 * @return Created file
 	 */
 	public static File createFileForArgument(String timeStamp, File processTempFilesDir, String launchConfigName, String optionalString) {
+		if (launchConfigName.length() > MAX_LAUNCH_CONFIG_NAME_LENGTH) {
+			launchConfigName = launchConfigName.substring(0, MAX_LAUNCH_CONFIG_NAME_LENGTH);
+		}
 		String child = String.format(org.eclipse.jdt.internal.launching.LaunchingPlugin.LAUNCH_TEMP_FILE_PREFIX
 				+ optionalString, launchConfigName, timeStamp);
 		File argumentsFile = new File(processTempFilesDir, child);
