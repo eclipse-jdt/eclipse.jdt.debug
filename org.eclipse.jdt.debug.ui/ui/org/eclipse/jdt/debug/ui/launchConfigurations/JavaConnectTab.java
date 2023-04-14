@@ -349,6 +349,9 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			} catch (InvocationTargetException ite) {
 				JDIDebugUIPlugin.log(ite);
 			}
+			if (name.isEmpty()) {
+				name = javaElement.getElementName();
+			}
 		}
 		if (name.length() > 0) {
 			IPreferenceStore preferenceStore = PreferenceConstants.getPreferenceStore();
