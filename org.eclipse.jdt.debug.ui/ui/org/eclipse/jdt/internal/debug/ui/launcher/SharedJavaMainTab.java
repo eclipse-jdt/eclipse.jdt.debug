@@ -149,11 +149,11 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 			IPreferenceStore preferenceStore = JavaPlugin.getDefault().getPreferenceStore();
 			boolean useQualification = false;
 			if (category.equals("org.eclipse.jdt.launching.localJavaApplication")) { //$NON-NLS-1$ {
-				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATIONS);
+				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATION);
 			} else if (category.equals("org.eclipse.jdt.launching.javaApplet")) { //$NON-NLS-1$
 				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLET);
 			} else if (category.equals("org.eclipse.jdt.junit.launchconfig")) { //$NON-NLS-1$
-				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_JUNIT_TESTS);
+				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_JUNIT_TEST);
 			}
 			if (!useQualification) {
 				int index = name.lastIndexOf('.');

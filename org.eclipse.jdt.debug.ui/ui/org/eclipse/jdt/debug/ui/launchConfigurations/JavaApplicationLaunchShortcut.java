@@ -117,7 +117,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		try {
 			ILaunchConfigurationType configType = getConfigurationType();
 			IPreferenceStore preferenceStore = JavaPlugin.getDefault().getPreferenceStore();
-			boolean useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATIONS);
+			boolean useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATION);
 			String prefix = useQualification ? type.getFullyQualifiedName('.') : type.getTypeQualifiedName('.');
 			wc = configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(prefix));
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());

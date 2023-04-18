@@ -355,7 +355,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		}
 		if (name.length() > 0) {
 			IPreferenceStore preferenceStore = PreferenceConstants.getPreferenceStore();
-			boolean useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATIONS);
+			boolean useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATION);
 			if (!useQualification) {
 				int index = name.lastIndexOf('.');
 				if (index > 0) {
