@@ -7,6 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *
@@ -40,6 +45,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 
+	private static final String JavaSE_21 = "JavaSE-21"; //$NON-NLS-1$
 	private static final String JavaSE_20 = "JavaSE-20"; //$NON-NLS-1$
 	private static final String JavaSE_19 = "JavaSE-19"; //$NON-NLS-1$
 	private static final String JavaSE_18 = "JavaSE-18"; //$NON-NLS-1$
@@ -104,6 +110,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_18, new String[] { JavaSE_17 });
 		mappings.put(JavaSE_19, new String[] { JavaSE_18 });
 		mappings.put(JavaSE_20, new String[] { JavaSE_19 });
+		mappings.put(JavaSE_21, new String[] { JavaSE_20 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -129,7 +136,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("20")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("21")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_21);
+				} else if (javaVersion.startsWith("20")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_20);
 				} else if (javaVersion.startsWith("19")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_19);
