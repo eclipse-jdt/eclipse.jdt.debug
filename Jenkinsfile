@@ -18,14 +18,14 @@ pipeline {
 				wrap([$class: 'Xvnc', useXauthority: true]) {
 					sh """
 					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						-Pbuild-individual-bundles -Ptest-on-javase-21 -Pbree-libs -Papi-check\
+						-Ptest-on-javase-21 -Pbree-libs -Papi-check\
 						-Dcompare-version-with-baselines.skip=false \
 						-Dproject.build.sourceEncoding=UTF-8 \
 						-DDetectVMInstallationsJob.disabled=true \
 						-Dtycho.apitools.debug \
 						-DtrimStackTrace=false
 					"""
-				}
+				} 
 			}
 			post {
 				always {
