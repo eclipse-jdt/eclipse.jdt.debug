@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,9 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -415,6 +418,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 	public String showCommandLine(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 
+		String tempOutputDir = createOutputDir();
+		configuration.setWorkingDirectory(tempOutputDir);
+
 		CommandDetails cmd = getCommandLine(configuration, launch, subMonitor);
 		if (subMonitor.isCanceled() || cmd == null) {
 			return ""; //$NON-NLS-1$
@@ -422,6 +428,18 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] cmdLine = cmd.getCommandLine();
 		cmdLine = quoteWindowsArgs(cmdLine);
 		return getCmdLineAsString(cmdLine);
+	}
+
+	protected String createOutputDir() {
+		String homeDir = System.getProperty("user.home"); //$NON-NLS-1$
+		String tempOutputDir = homeDir + File.separator + "eclipse-temp"; //$NON-NLS-1$
+		try {
+			Path tmpDir = Files.createDirectories(Paths.get(tempOutputDir));
+			tempOutputDir = tmpDir.toAbsolutePath().toString();
+		} catch (IOException e) {
+			tempOutputDir = null;
+		}
+		return tempOutputDir;
 	}
 
 	private CommandDetails getCommandLine(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
