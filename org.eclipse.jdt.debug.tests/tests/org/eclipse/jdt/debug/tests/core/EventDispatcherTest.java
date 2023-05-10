@@ -44,7 +44,7 @@ public class EventDispatcherTest extends AbstractDebugTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		jobs = Collections.synchronizedMap(new IdentityHashMap<AbstractDispatchJob, Object>());
+		jobs = Collections.synchronizedMap(new IdentityHashMap<>());
 		jobListener = new JobChangeAdapter() {
 			@Override
 			public void aboutToRun(IJobChangeEvent event) {

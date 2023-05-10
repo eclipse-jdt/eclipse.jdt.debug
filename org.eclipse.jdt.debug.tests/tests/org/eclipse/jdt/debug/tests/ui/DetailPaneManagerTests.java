@@ -66,7 +66,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	 * one or more detail panes are available.
 	 */
 	public void testGetUserPreferredDetailPane() {
-		String id = fManager.getUserPreferredDetailPane(new HashSet<String>());
+		String id = fManager.getUserPreferredDetailPane(new HashSet<>());
 		assertNull("Incorrect pane ID", id);
 
 		Set<String> detailPanes = new HashSet<>();

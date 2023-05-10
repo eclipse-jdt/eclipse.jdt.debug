@@ -65,7 +65,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
 		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<DebugEvent>());
+		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<>());
 		IDebugEventSetListener listener = new IDebugEventSetListener() {
 			@Override
 			public void handleDebugEvents(DebugEvent[] e) {
@@ -116,7 +116,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
 		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<DebugEvent>());
+		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<>());
 		IDebugEventSetListener listener = new IDebugEventSetListener() {
 			@Override
 			public void handleDebugEvents(DebugEvent[] e) {
