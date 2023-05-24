@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,13 +56,13 @@ import org.xml.sax.SAXException;
  */
 public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMInstall3 {
 
-	private IVMInstallType fType;
-	private String fId;
-	private String fName;
-	private File fInstallLocation;
-	private LibraryLocation[] fSystemLibraryDescriptions;
-	private URL fJavadocLocation;
-	private String fVMArgs;
+	private final IVMInstallType fType;
+	private final String fId;
+	private volatile String fName;
+	private volatile File fInstallLocation;
+	private volatile LibraryLocation[] fSystemLibraryDescriptions;
+	private volatile URL fJavadocLocation;
+	private volatile String fVMArgs;
 	/**
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
