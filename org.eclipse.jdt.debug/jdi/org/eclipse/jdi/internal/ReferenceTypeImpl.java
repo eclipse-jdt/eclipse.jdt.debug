@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2066,7 +2067,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 					List<int[]> lineInfos = stratum.getInputLineInfos(javaStratumLineNumberTable[i]);
 					if (lineInfos != null) {
 						int[] lineInfo = lineInfos.get(0);
-						if (!lineInfo.equals(lineInfoTable[lastIndex])) {
+						if (!Arrays.equals(lineInfo, lineInfoTable[lastIndex])) {
 							lineInfoTable[i] = lineInfo;
 							lastIndex = i;
 						}
@@ -2084,7 +2085,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 					if (lineInfos != null) {
 						for (int[] lineInfo : lineInfos) {
 							if (lineInfo[0] == fileId) {
-								if (!lineInfo.equals(lineInfoTable[lastIndex])) {
+								if (!Arrays.equals(lineInfo, lineInfoTable[lastIndex])) {
 									lineInfoTable[i] = lineInfo;
 									lastIndex = i;
 								}
