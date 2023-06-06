@@ -79,8 +79,7 @@ public class ExceptionFilterEditor {
 			public void setStoredFilters(IPreferenceStore store, Filter[] filters) {
 				List<String> inclusionFilters = new ArrayList<>(filters.length);
 				List<String> exclusionFilters = new ArrayList<>(filters.length);
-				for (Object f : filters) {
-					Filter filter = (Filter) f;
+				for (Filter filter : filters) {
 					String name = filter.getName();
 					if (name.equals(DEFAULT_PACKAGE)) {
 						name = ""; //$NON-NLS-1$
