@@ -161,6 +161,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private List<ISnippetStateChangedListener> fSnippetStateListeners;
 
 	private volatile boolean fEvaluating;
+	/** access synchronized by getter, setter, evaluationStarts **/
 	private IJavaThread fThread;
 	private volatile boolean fStepFiltersSetting;
 
@@ -609,7 +610,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	protected void vmTerminated() {
 		fVM= null;
-		fThread= null;
+		setThread(null);
 		fEvaluationContext= null;
 		fLaunchedClassPath= null;
 		if (fEngine != null) {
@@ -1184,7 +1185,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 	}
 
-	protected IJavaThread getThread() {
+	protected synchronized IJavaThread getThread() {
 		return fThread;
 	}
 
@@ -1249,7 +1250,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		if(isVMLaunched()) {
 			shutDownVM();
 		} else {
-			fThread= null;
+			setThread(null);
 			fEvaluationContext= null;
 			fLaunchedClassPath= null;
 
