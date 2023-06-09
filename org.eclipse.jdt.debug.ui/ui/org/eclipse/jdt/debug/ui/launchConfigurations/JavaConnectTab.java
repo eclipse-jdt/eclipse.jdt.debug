@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -27,19 +27,27 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdi.internal.connect.ConnectMessages;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -318,22 +326,45 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 */
 	private void initializeName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = EMPTY_STRING;
-		try {
-			IResource resource = javaElement.getUnderlyingResource();
-			if (resource != null) {
-				name = resource.getName();
-				int index = name.lastIndexOf('.');
-				if (index > 0) {
-					name = name.substring(0, index);
-				}
+		if (javaElement instanceof IMember) {
+			IMember member = (IMember)javaElement;
+			if (member.isBinary()) {
+				javaElement = member.getClassFile();
 			}
 			else {
-				name= javaElement.getElementName();
+				javaElement = member.getCompilationUnit();
+			}
+		}
+		if (javaElement instanceof ICompilationUnit || javaElement instanceof IClassFile) {
+			try {
+				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(new IJavaElement[] { javaElement }, false);
+				MainMethodSearchEngine engine = new MainMethodSearchEngine();
+				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);
+				if (types != null && (types.length > 0)) {
+					// Simply grab the first main type found in the searched element and set the module name
+					name = types[0].getFullyQualifiedName('.');
+				}
+			} catch (InterruptedException ie) {
+				JDIDebugUIPlugin.log(ie);
+			} catch (InvocationTargetException ite) {
+				JDIDebugUIPlugin.log(ite);
+			}
+			if (name.isEmpty()) {
+				name = javaElement.getElementName();
+			}
+		}
+		if (name.length() > 0) {
+			IPreferenceStore preferenceStore = PreferenceConstants.getPreferenceStore();
+			boolean useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATION);
+			if (!useQualification) {
+				int index = name.lastIndexOf('.');
+				if (index > 0) {
+					name = name.substring(index + 1);
+				}
 			}
 			name = getLaunchConfigurationDialog().generateName(name);
+			config.rename(name);
 		}
-		catch (JavaModelException jme) {JDIDebugUIPlugin.log(jme);}
-		config.rename(name);
 	}
 
 	/**

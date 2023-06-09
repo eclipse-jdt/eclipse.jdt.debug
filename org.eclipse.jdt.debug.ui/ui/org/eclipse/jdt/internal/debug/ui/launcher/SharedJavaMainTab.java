@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,10 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -123,7 +126,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);
 				if (types != null && (types.length > 0)) {
 					// Simply grab the first main type found in the searched element and set the module name
-					name = types[0].getFullyQualifiedName();
+					name = types[0].getFullyQualifiedName('.');
 					moduleName = getModuleName(types[0]);
 
 				}
@@ -137,9 +140,26 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, moduleName);
 		if (name.length() > 0) {
-			int index = name.lastIndexOf('.');
-			if (index > 0) {
-				name = name.substring(index + 1);
+			String category = ""; //$NON-NLS-1$
+			try {
+				category = config.getType().getIdentifier();
+			} catch (CoreException e) {
+				// do nothing...we won't use qualified name in such a case
+			}
+			IPreferenceStore preferenceStore = JavaPlugin.getDefault().getPreferenceStore();
+			boolean useQualification = false;
+			if (category.equals("org.eclipse.jdt.launching.localJavaApplication")) { //$NON-NLS-1$ {
+				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLICATION);
+			} else if (category.equals("org.eclipse.jdt.launching.javaApplet")) { //$NON-NLS-1$
+				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_APPLET);
+			} else if (category.equals("org.eclipse.jdt.junit.launchconfig")) { //$NON-NLS-1$
+				useQualification = preferenceStore.getBoolean(PreferenceConstants.LAUNCH_NAME_FULLY_QUALIFIED_FOR_JUNIT_TEST);
+			}
+			if (!useQualification) {
+				int index = name.lastIndexOf('.');
+				if (index > 0) {
+					name = name.substring(index + 1);
+				}
 			}
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);
