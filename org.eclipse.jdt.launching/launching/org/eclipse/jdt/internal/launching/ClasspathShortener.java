@@ -312,7 +312,6 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 			Files.writeString(argFile.toPath(), arg, systemCharset);
 			argFile.deleteOnExit();
 			file = argFile;
-			// createOrUpdateGitIgnore();
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create " + option //$NON-NLS-1$
 					+ " argument file", e)); //$NON-NLS-1$
