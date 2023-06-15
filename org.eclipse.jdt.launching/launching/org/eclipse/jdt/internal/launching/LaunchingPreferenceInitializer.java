@@ -41,6 +41,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		dnode.put(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, JavaCore.WARNING);
 		dnode.put(JavaRuntime.PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE, JavaCore.WARNING);
 		dnode.putBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false);
+		dnode.putBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, true);
 		try {
 			dnode.flush();
 		} catch (BackingStoreException e) {

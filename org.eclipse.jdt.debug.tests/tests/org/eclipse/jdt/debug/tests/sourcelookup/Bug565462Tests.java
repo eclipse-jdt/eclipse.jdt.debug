@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.sourcelookup;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
@@ -29,6 +33,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.junit.After;
 
 /**
  * Tests for bug 565462.
@@ -38,8 +46,31 @@ public class Bug565462Tests extends AbstractDebugTest {
 	private static final String MODULE_JRE_PROJECT_NAME = "ModuleJREProject";
 	private static final String NON_MODULE_JRE_PROJECT_NAME = "NonModuleJREProject";
 
+	private IExecutionEnvironment javaSE11;
+	private IVMInstall defaultJavaSE11VM;
+
 	public Bug565462Tests(String name) {
 		super(name);
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		this.javaSE11 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11");
+		this.defaultJavaSE11VM = javaSE11.getDefaultVM();
+		Predicate<IVMInstall> hasSource = vm -> vm != null && vm.getInstallLocation() != null && new File(vm.getInstallLocation(), "lib/src.zip").isFile();
+		if (!hasSource.test(defaultJavaSE11VM)) {
+			Stream.of(javaSE11.getCompatibleVMs()).filter(Objects::nonNull).filter(hasSource)
+				.findAny()
+				.ifPresent(javaSE11::setDefaultVM);
+		}
+		assertTrue("Default VM doesn't have source", hasSource.test(javaSE11.getDefaultVM()));
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		javaSE11.setDefaultVM(defaultJavaSE11VM);
+		super.tearDown();
 	}
 
 	/**
@@ -78,8 +109,11 @@ public class Bug565462Tests extends AbstractDebugTest {
 		director.setFindDuplicates(true);
 
 		String className = "java/lang/Class.java";
+		File srcFile = new File(JavaRuntime.computeVMInstall(configuration).getInstallLocation(), "lib/src.zip");
+		assertTrue(srcFile.getAbsolutePath() + " doesn't exist", srcFile.isFile());
 		Object[] foundElements = director.findSourceElements(className);
-		assertEquals("Expected only 1 match for class " + className + ", but found: " + Arrays.toString(foundElements), 1, foundElements.length);
+		assertEquals("Expected only 1 match for class " + className + " in " + JavaRuntime.computeVMInstall(configuration).getInstallLocation() + " but found: " + Arrays.toString(foundElements), 1, foundElements.length);
+
 	}
 
 	private static void removeModuleAttribute(IJavaProject javaProject) throws JavaModelException {
