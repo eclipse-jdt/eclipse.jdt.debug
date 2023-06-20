@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -955,8 +955,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		libPath = libPath.append("libraryInfos.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
 		if (file.exists()) {
-			try {
-				InputStream stream = new BufferedInputStream(new FileInputStream(file));
+			try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
@@ -1049,8 +1048,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		libPath = libPath.append(".install.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
 		if (file.exists()) {
-			try {
-				InputStream stream = new BufferedInputStream(new FileInputStream(file));
+			try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
