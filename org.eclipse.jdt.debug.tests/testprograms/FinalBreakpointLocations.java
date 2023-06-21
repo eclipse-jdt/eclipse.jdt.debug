@@ -14,7 +14,7 @@
 
 public class FinalBreakpointLocations {
 	public int bar = 0;
-	public final int foo = 0;
+	public static final int foo = 0;
     public final FinalBreakpointLocations ft1 = new FinalBreakpointLocations() {
     	public void method() {
     		System.out.println("ft1"); //bp here

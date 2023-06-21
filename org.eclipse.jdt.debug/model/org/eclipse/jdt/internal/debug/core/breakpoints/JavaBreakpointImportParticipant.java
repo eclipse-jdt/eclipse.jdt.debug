@@ -64,9 +64,9 @@ public class JavaBreakpointImportParticipant implements
 	CompilationUnit lastCompilationUnit = null;
 
 	class BreakpointVerifier extends ASTVisitor {
-		final int TYPE = 0;
-		final int METHOD = 1;
-		final int FIELD = 2;
+		static final int TYPE = 0;
+		static final int METHOD = 1;
+		static final int FIELD = 2;
 
 		String fTypename = null;
 		String fName = null;
@@ -580,8 +580,9 @@ public class JavaBreakpointImportParticipant implements
 				int newline = locator.getLineLocation();
 				if (locator.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
 					if (currentline != newline) {
-						if (locator.getFullyQualifiedTypeName() == null)
+						if (locator.getFullyQualifiedTypeName() == null) {
 							throw new CoreException(Status.CANCEL_STATUS);
+						}
 						bp.getMarker().setAttribute(JavaBreakpoint.TYPE_NAME,
 								locator.getFullyQualifiedTypeName());
 						bp.getMarker().setAttribute(IMarker.LINE_NUMBER,
