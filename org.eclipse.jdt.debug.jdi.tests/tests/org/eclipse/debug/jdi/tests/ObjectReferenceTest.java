@@ -260,7 +260,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		Method inv = ct.concreteMethodByName("invoke4", "()J");
 		Exception good = null, oops = null;
 		try {
-			fObject.invokeMethod(thread, inv, new ArrayList<Value>(), 0);
+			fObject.invokeMethod(thread, inv, new ArrayList<>(), 0);
 		} catch (ClassNotLoadedException exc) {
 			oops = exc;
 		} catch (IncompatibleThreadStateException exc) {
