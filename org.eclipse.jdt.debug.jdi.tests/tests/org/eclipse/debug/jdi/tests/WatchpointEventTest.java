@@ -20,7 +20,6 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.event.AccessWatchpointEvent;
 import com.sun.jdi.event.ModificationWatchpointEvent;
 import com.sun.jdi.event.WatchpointEvent;
-import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 /**
@@ -80,9 +79,9 @@ public class WatchpointEventTest extends AbstractJDITest {
 		// Delete the event requests we created in this test
 		EventRequestManager requestManager = fVM.eventRequestManager();
 		requestManager.deleteEventRequests(
-			new ArrayList<EventRequest>(requestManager.accessWatchpointRequests()));
+			new ArrayList<>(requestManager.accessWatchpointRequests()));
 		requestManager.deleteEventRequests(
-			new ArrayList<EventRequest>(requestManager.modificationWatchpointRequests()));
+			new ArrayList<>(requestManager.modificationWatchpointRequests()));
 
 		// Set the value of the "fBool" field back to its original value
 		resetField();
