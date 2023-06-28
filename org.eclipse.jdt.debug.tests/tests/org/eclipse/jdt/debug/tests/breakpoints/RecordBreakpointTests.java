@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 IBM Corporation and others.
+ * Copyright (c) 2021, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,6 +51,20 @@ public class RecordBreakpointTests extends AbstractDebugTest {
 			// create a classLoad breakpoint to test
 			IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(17, "a.b.c.RecordTests");
 			assertEquals("wrong type name", "a.b.c.RecordTests", lineBreakpoint.getTypeName());
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testInnerRecordLineBreakpoint() throws Exception {
+
+		try {
+			// create a classLoad breakpoint to test
+			IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(18, "a.b.c.RecordInnerTests");
+			assertEquals("wrong type name", "a.b.c.RecordInnerTests", lineBreakpoint.getTypeName());
+			assertEquals("Breakpoint not at line number 18", 18, lineBreakpoint.getLineNumber());
 		} catch (Exception e) {
 			throw e;
 		} finally {
