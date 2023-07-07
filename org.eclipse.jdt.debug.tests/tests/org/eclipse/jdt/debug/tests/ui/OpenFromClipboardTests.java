@@ -133,20 +133,16 @@ public class OpenFromClipboardTests {
 		JavaProjectHelper.removeSourceContainer(fJProject, "src");
 	}
 
-	private int getMatachingPattern(String s) {
+	private int getMatachingPattern(String s) throws Exception {
 		Object returnValue = fAccessor.invoke("getMatchingPattern", new Object[] { s });
 		return ((Integer) returnValue).intValue();
 	}
 
-	private List<?> getJavaElementMatches(final String textData) {
+	private List<?> getJavaElementMatches(final String textData) throws Exception {
 		JavaModelManager.getIndexManager().waitForIndex(false, null);
 		final List<?> matches = new ArrayList<>();
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] { textData, matches });
-			}
-		});
+		Display.getDefault().syncCall(() -> fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] {
+				textData, matches }));
 		return matches;
 	}
 
@@ -624,13 +620,13 @@ public class OpenFromClipboardTests {
 
 	// invalid pattern tests
 	@Test
-	public void testInvalidPattern_1() {
+	public void testInvalidPattern_1() throws Exception {
 		String s = "(Collection)";
 		assertEquals(INVALID, getMatachingPattern(s));
 	}
 
 	@Test
-	public void testInvalidPattern_2() {
+	public void testInvalidPattern_2() throws Exception {
 		String s = "()";
 		assertEquals(INVALID, getMatachingPattern(s));
 	}
