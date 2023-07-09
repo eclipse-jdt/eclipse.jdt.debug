@@ -465,6 +465,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         try {
 	        if (!loaded18) {
 	        	jp = createProject(ONE_EIGHT_PROJECT_NAME, JavaProjectHelper.TEST_1_8_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
+				IPath lib = new Path(JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars").append("gh275").append("debug-lib.jar")).getAbsolutePath());
+				JavaProjectHelper.addLibrary(jp, lib);
+	
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTest18"));
 	    		cfgs.add(createLaunchConfiguration(jp, "FunctionalCaptureTest18"));
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
@@ -503,6 +506,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaInAnonymous"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaOnChainCalls"));
 				cfgs.add(createLaunchConfiguration(jp, "LambdaBreakpoints1"));
+				cfgs.add(createLaunchConfiguration(jp, "GH275"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
