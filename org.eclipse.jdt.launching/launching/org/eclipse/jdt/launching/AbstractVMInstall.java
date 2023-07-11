@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -62,6 +64,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private volatile LibraryLocation[] fSystemLibraryDescriptions;
 	private volatile URL fJavadocLocation;
 	private volatile String fVMArgs;
+	final Map<String, Set<String>> systemPackages = new ConcurrentHashMap<>();
 	/**
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
