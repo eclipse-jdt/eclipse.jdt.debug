@@ -13,6 +13,7 @@
  *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *     Ole Osterhagen - Issue 327 - Attribute "Without test code" is ignored in the launcher
+ *     Hannes Wellmann - Add API to obtain system-packages provided by a VMInstall
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -34,12 +35,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -334,7 +339,7 @@ public final class JavaRuntime {
 	private static final Object fgVMLock = new Object();
 	private static boolean fgInitializingVMs = false;
 
-	private static HashSet<Object> fgVMTypes = null;
+	private static Set<Object> fgVMTypes = null;
 	private static String fgDefaultVMId = null;
 	private static String fgDefaultVMConnectorId = null;
 
@@ -3460,6 +3465,118 @@ public final class JavaRuntime {
 		throw new CoreException(status);
 	}
 
+	/**
+	 * Returns the names of all packages publicly exported by the given {@link IVMInstall vmInstall}, optionally restricted to the given release
+	 * version.
+	 * <p>
+	 * The returned set contains the distinct names sorted in alphabetical order.<br>
+	 * The specified release is only considered for {@link #isModularJava(IVMInstall) modular} VM-Installs, for non-modular installs it is ignored,
+	 * and then must correspond to Java version 9 or higher.
+	 * </p>
+	 *
+	 * @param vm
+	 *            the vm-install to query
+	 * @param release
+	 *            the release to restrict the packages to, ignored for non-modular VMs. Supported values are the constants defined in
+	 *            {@link JavaCore#VERSION_9 JavaCore.VERSION_X}, e.g. {@code "9"}, {@code "10"}, {@code "11"} or so on. If {@code null}, the
+	 *            VMInstall's release is used.
+	 * @return the distinct and alphabetically sorted immutable set of names of all packages in the VM
+	 * @throws CoreException
+	 *             if an error occurs or a modular VM is queried for packages of Java-8 or lower
+	 * @since 3.22
+	 */
+	public static Set<String> getProvidedVMPackages(IVMInstall vm, String release) throws CoreException {
+		boolean isModular = JavaRuntime.isModularJava(vm);
+		release = normalizeRelease(release, isModular);
+		if (vm instanceof AbstractVMInstall vmInstall) {
+			try {
+				release = String.valueOf(release); // ConcurrentHashMap does not support null keys -> use "null" instead of null
+				Set<String> packages = vmInstall.systemPackages.computeIfAbsent(release, r -> {
+					try {
+						return querySystemPackages(vmInstall, "null".equals(r) ? null : r, isModular); //$NON-NLS-1$
+					} catch (CoreException e) {
+						throw new IllegalArgumentException(e);
+					}
+				});
+				return packages;
+			} catch (IllegalArgumentException e) {
+				if (e.getCause() instanceof CoreException coreException) {
+					throw coreException; // throw passed through exception
+				}
+				throw e;
+			}
+		}
+		return querySystemPackages(vm, release, isModular);
+	}
+
+	private static String normalizeRelease(String release, boolean isModularVM) throws CoreException {
+		if (release == null || !isModularVM) {
+			// pre-Java9 JVMs can't distinguish between releases -> cache the packages only once as the 'default' release
+			return null;
+		}
+		@SuppressWarnings("restriction")
+		long releaseJdkLevel = org.eclipse.jdt.internal.compiler.impl.CompilerOptions.versionToJdkLevel(release);
+		if (releaseJdkLevel == 0) {
+			// Ensure the specified release is a version (which may have minor or micro segments).
+			// Note that versionToJdkLevel limits the version to the latest one supported by ECJ, which can be less than the JDK provides.
+			throw new CoreException(Status.error("Invalid release: " + release)); //$NON-NLS-1$
+		}
+		if (JavaCore.compareJavaVersions(release, JavaCore.VERSION_1_8) <= 0) {
+			throw new CoreException(Status.error("Cannot query a modular VM (JavaSE-9 or higher) for packages of release: " + release)); //$NON-NLS-1$
+		}
+		// normalize release (e.g. from 17.0.6 to 17)
+		int firstDotIndex = release.indexOf('.');
+		if (firstDotIndex > -1) {
+			release = release.substring(0, firstDotIndex);
+		}
+		if (!release.chars().allMatch(Character::isDigit)) {
+			throw new CoreException(Status.error("Invalid release: " + release)); //$NON-NLS-1$
+		}
+		return release;
+	}
+
+	@SuppressWarnings("restriction")
+	private static final String JRT_PATH = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
+	private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
+
+	@SuppressWarnings("restriction")
+	private static Set<String> querySystemPackages(IVMInstall vm, String release, boolean isModular) throws CoreException {
+		Stream<String> systemPackages;
+		if (!isModular) {
+			Set<String> classFileDirectories = new HashSet<>();
+			for (LibraryLocation libLocation : JavaRuntime.getLibraryLocations(vm)) {
+				IPath path = libLocation.getSystemLibraryPath();
+				if (path != null) {
+					try (ZipFile zip = new ZipFile(path.toFile())) {
+						// Collect names of all directories that contain a .class file
+						zip.stream().filter(e -> !e.isDirectory()).map(ZipEntry::getName) //
+								.filter(n -> n.endsWith(CLASS_EXTENSION)) //
+								.forEach(name -> {
+									int lastIndex = name.lastIndexOf('/');
+									if (lastIndex > -1) {
+										classFileDirectories.add(name.substring(0, lastIndex));
+									}
+								});
+					} catch (Exception e) {
+						throw new CoreException(Status.error("Failed to read packages in JVM library for " + vm + ", at " + path, e)); //$NON-NLS-1$//$NON-NLS-2$
+					}
+				}
+			}
+			systemPackages = classFileDirectories.stream().map(n -> n.replace('/', '.'));
+		} else {
+			String path = new File(vm.getInstallLocation(), JRT_PATH).toString();
+			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
+			systemPackages = jrt.getModuleNames(null).stream().flatMap(moduleName -> {
+				var module = jrt.getModule(moduleName);
+				return Stream.ofNullable(module).flatMap(m -> Arrays.stream(m.exports())) //
+						.filter(e -> !e.isQualified()) //
+						.map(org.eclipse.jdt.internal.compiler.env.IModule.IPackageExport::name).map(String::new);
+			});
+		}
+		Set<String> packagesSet = systemPackages.distinct().sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+		return Collections.unmodifiableSet(packagesSet);
+	}
+
 	private static final String BLANK = " "; //$NON-NLS-1$
 	private static final String COMMA = ","; //$NON-NLS-1$
 	private static final String OPTION_START = "--"; //$NON-NLS-1$
@@ -3654,7 +3771,7 @@ public final class JavaRuntime {
 	}
 
 	private static Set<String> getDefaultModules(List<IPackageFragmentRoot> allSystemRoots) throws JavaModelException {
-		HashMap<String, String[]> moduleDescriptions = new HashMap<>();
+		Map<String, String[]> moduleDescriptions = new HashMap<>();
 		for (IPackageFragmentRoot packageFragmentRoot : allSystemRoots) {
 			IModuleDescription module = packageFragmentRoot.getModuleDescription();
 			if (module != null) {
