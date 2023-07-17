@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -446,7 +445,7 @@ public class VMDefinitionsContainer {
 		Element config= null;
 		// Wrapper the stream for efficient parsing
 		try (InputStream stream = new BufferedInputStream(inputStream)) {
-			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			config = parser.parse(new InputSource(stream)).getDocumentElement();
 		} catch (SAXException e) {

@@ -19,7 +19,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IProject;
@@ -35,6 +34,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.XmlProcessorFactoryJdtDebug;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -177,7 +177,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

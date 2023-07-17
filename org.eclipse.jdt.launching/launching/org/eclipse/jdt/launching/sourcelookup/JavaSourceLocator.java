@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IProject;
@@ -50,17 +49,16 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.XmlProcessorFactoryJdtDebug;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.osgi.framework.Bundle;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -414,7 +412,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		try {
 			Element root = null;
 			DocumentBuilder parser =
-				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+					XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

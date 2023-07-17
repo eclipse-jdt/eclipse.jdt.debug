@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -956,7 +955,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		File file = libPath.toFile();
 		if (file.exists()) {
 			try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
 				if(!root.getNodeName().equals("libraryInfos")) { //$NON-NLS-1$
@@ -1049,7 +1048,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		File file = libPath.toFile();
 		if (file.exists()) {
 			try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
 				if(root.getNodeName().equalsIgnoreCase("dirs")) { //$NON-NLS-1$
@@ -1237,7 +1236,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	public static DocumentBuilder getParser() throws CoreException {
 		if (fgXMLParser == null) {
 			try {
-				fgXMLParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				fgXMLParser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
 				fgXMLParser.setErrorHandler(new DefaultHandler());
 			} catch (ParserConfigurationException e) {
 				abort(LaunchingMessages.LaunchingPlugin_34, e);
