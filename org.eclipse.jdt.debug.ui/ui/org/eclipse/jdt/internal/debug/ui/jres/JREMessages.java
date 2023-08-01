@@ -210,4 +210,6 @@ public class JREMessages extends NLS {
 	public static String LibraryLabelProvider_0;
 
 	public static String VMDetailsDialog_0;
+
+	public static String detectJREsAtStartup;
 }

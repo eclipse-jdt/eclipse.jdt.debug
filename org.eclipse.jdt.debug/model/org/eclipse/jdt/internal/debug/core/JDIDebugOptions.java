@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Hashtable;
 
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -61,7 +61,7 @@ public class JDIDebugOptions implements DebugOptionsListener {
 	}
 
 	// used to format debug messages
-	public static final DateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+	public static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)

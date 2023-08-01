@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,11 +18,10 @@ package org.eclipse.jdt.internal.launching;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IAccessRule;
@@ -62,7 +61,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * Cache of classpath entries per VM install. Cleared when a VM changes.
 	 */
-	private static Map<IVMInstall, IClasspathEntry[]> fgClasspathEntries = new HashMap<>(10);
+	private static Map<IVMInstall, IClasspathEntry[]> fgClasspathEntries = new ConcurrentHashMap<>();
 
 	/**
 	 * Variable to return an empty array of <code>IAccessRule</code>s
@@ -72,7 +71,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * Map of {IVMInstall -> Map of {{IExeuctionEnvironment, IAccessRule[][]} -> {IClasspathEntry[]}}
 	 */
-	private static Map<RuleKey, RuleEntry> fgClasspathEntriesWithRules = new HashMap<>(10);
+	private static Map<RuleKey, RuleEntry> fgClasspathEntriesWithRules = new ConcurrentHashMap<>();
 
 	/**
 	 * A single key entry for the cache of access rules and classpath entries
@@ -80,8 +79,8 @@ public class JREContainer implements IClasspathContainer {
 	 * @since 3.3
 	 */
 	static class RuleKey {
-		private String fEnvironmentId = null;
-		private IVMInstall fInstall = null;
+		private final String fEnvironmentId;
+		private final IVMInstall fInstall;
 
 		/**
 		 * Constructor
@@ -215,9 +214,10 @@ public class JREContainer implements IClasspathContainer {
 			 */
 			@Override
 			public void vmChanged(PropertyChangeEvent event) {
-				if (event.getSource() != null) {
-					fgClasspathEntries.remove(event.getSource());
-					removeRuleEntry(event.getSource());
+				Object source = event.getSource();
+				if (source != null) {
+					fgClasspathEntries.remove(source);
+					removeRuleEntry(source);
 				}
 			}
 
@@ -238,17 +238,7 @@ public class JREContainer implements IClasspathContainer {
 			private void removeRuleEntry(Object obj) {
 				if(obj instanceof IVMInstall) {
 					IVMInstall install = (IVMInstall) obj;
-					RuleKey key = null;
-					ArrayList<RuleKey> list = new ArrayList<>();
-					for(Iterator<RuleKey> iter = fgClasspathEntriesWithRules.keySet().iterator(); iter.hasNext();) {
-						key  = iter.next();
-						if(key.fInstall.equals(install)) {
-							list.add(key);
-						}
-					}
-					for(int i = 0; i < list.size(); i++) {
-						fgClasspathEntriesWithRules.remove(list.get(i));
-					}
+					fgClasspathEntriesWithRules.keySet().removeIf(key -> key.fInstall.equals(install));
 				}
 			}
 		};

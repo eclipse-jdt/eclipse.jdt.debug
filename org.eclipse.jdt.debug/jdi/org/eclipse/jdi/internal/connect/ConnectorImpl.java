@@ -301,7 +301,7 @@ public abstract class ConnectorImpl implements Connector {
 		 */
 		@Override
 		public String stringValueOf(int value) {
-			return Integer.valueOf(value).toString();
+			return Integer.toString(value);
 		}
 	}
 
@@ -355,7 +355,7 @@ public abstract class ConnectorImpl implements Connector {
 		 */
 		@Override
 		public String stringValueOf(boolean value) {
-			return Boolean.valueOf(value).toString();
+			return Boolean.toString(value);
 		}
 	}
 

@@ -32,6 +32,7 @@ import java.util.jar.Manifest;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -66,6 +67,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 	private String[] envp;
 	private File processTempFilesDir;
 	private final List<File> processTempFiles = new ArrayList<>();
+	private static final String ARGFILE_TEMPDIR_NAME = "temp"; //$NON-NLS-1$
 
 	/**
 	 *
@@ -291,7 +293,13 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		String path = cmdLine.get(modulePathArgumentIndex);
 		File file;
 		try {
-			File argFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), processTempFilesDir, getLaunchConfigurationName(), "%s" //$NON-NLS-1$
+			IPath stateLocation = LaunchingPlugin.getDefault().getStateLocation();
+			IPath argFileTmpIPath = stateLocation.append(ARGFILE_TEMPDIR_NAME);
+			File argFileTmpDir = argFileTmpIPath.toFile();
+			if (!argFileTmpDir.exists()) {
+				Files.createDirectory(argFileTmpDir.toPath());
+			}
+			File argFile = JavaLaunchingUtils.createFileForArgument(getLaunchTimeStamp(), argFileTmpDir, getLaunchConfigurationName(), "%s" //$NON-NLS-1$
 					+ option + "-arg-%s.txt"); //$NON-NLS-1$
 
 			String arg = option + " " + quoteWindowsPath(path); //$NON-NLS-1$
@@ -302,6 +310,7 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 						+ systemCharset.displayName() + ".", null)); //$NON-NLS-1$
 			}
 			Files.writeString(argFile.toPath(), arg, systemCharset);
+			argFile.deleteOnExit();
 			file = argFile;
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, "Cannot create " + option //$NON-NLS-1$

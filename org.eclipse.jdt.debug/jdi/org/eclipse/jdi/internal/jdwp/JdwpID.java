@@ -117,7 +117,7 @@ public abstract class JdwpID {
 	 */
 	@Override
 	public String toString() {
-		return Long.valueOf(fValue).toString();
+		return Long.toString(fValue);
 	}
 
 	/**
@@ -160,8 +160,9 @@ public abstract class JdwpID {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fTagMap != null)
+		if (fTagMap != null) {
 			return;
+		}
 
 		java.lang.reflect.Field[] fields = JdwpID.class.getDeclaredFields();
 		fTagMap = new HashMap<>();
@@ -169,8 +170,9 @@ public abstract class JdwpID {
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0
-					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();

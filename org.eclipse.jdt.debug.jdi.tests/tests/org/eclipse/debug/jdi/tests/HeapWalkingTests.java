@@ -75,7 +75,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 	public void testGetInstanceCountsUnsupported() {
 		if(is16OrGreater()) {
 			try {
-				fVM.instanceCounts(new ArrayList<ReferenceType>());
+				fVM.instanceCounts(new ArrayList<>());
 			}
 			catch(UnsupportedOperationException uoe) {
 				fail("Threw unsupported exception in 1.6 VM");
@@ -83,7 +83,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		}
 		else {
 			try {
-				fVM.instanceCounts(new ArrayList<ReferenceType>());
+				fVM.instanceCounts(new ArrayList<>());
 				fail("No exception for non 1.6 VM");
 			}
 			catch(UnsupportedOperationException uoe) {}

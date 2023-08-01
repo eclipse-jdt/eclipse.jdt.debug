@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -333,30 +333,45 @@ public class StandardVMRunner extends AbstractVMRunner {
 	}
 
 	/**
-	 * This method is used to ensure that the JVM file encoding matches that of the console preference for file encoding.
-	 * If the user explicitly declares a file encoding in the launch configuration, then that file encoding is used.
+	 * This method is used to ensure that the JVM file encoding matches that of the console preference for file encoding. If the user explicitly
+	 * declares a file encoding in the launch configuration, then that file encoding is used.
 	 *
-	 * @param launch the {@link Launch}
-	 * @param vmargs the original listing of JVM arguments
+	 * @param launch
+	 *            the {@link Launch}
+	 * @param vmargs
+	 *            the original listing of JVM arguments
 	 * @return the listing of JVM arguments including file encoding if one was not specified
 	 *
 	 * @since 3.4
+	 * @see {@link System#out} for Java >=19 *
+	 * @see {@link System#err} for Java >=19 *
 	 */
 	protected String[] ensureEncoding(ILaunch launch, String[] vmargs) {
-		boolean foundencoding = false;
+		String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
+		// XXX JDKs Javadoc specifies:
+		// "values other than UTF-8 (or COMPAT for file.encoding) leads to unspecified behavior"
+		//
+		// However it works fine on systems that support the specified encoding.
+		vmargs = ensureArgument("-Dfile.encoding=", encoding, vmargs); //$NON-NLS-1$
+		vmargs = ensureArgument("-Dstdout.encoding=", encoding, vmargs); //$NON-NLS-1$
+		vmargs = ensureArgument("-Dstderr.encoding=", encoding, vmargs); //$NON-NLS-1$
+		return vmargs;
+	}
+
+	protected String[] ensureArgument(String argument, String value, String[] vmargs) {
+		boolean foundArgument = false;
 		for (String vmarg : vmargs) {
-			if(vmarg.startsWith("-Dfile.encoding=")) { //$NON-NLS-1$
-				foundencoding = true;
+			if (vmarg.startsWith(argument)) {
+				foundArgument = true;
 			}
 		}
-		if(!foundencoding) {
-			String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
-			if(encoding == null) {
+		if (!foundArgument) {
+			if (value == null) {
 				return vmargs;
 			}
 			String[] newargs = new String[vmargs.length+1];
 			System.arraycopy(vmargs, 0, newargs, 0, vmargs.length);
-			newargs[newargs.length-1] = "-Dfile.encoding="+encoding; //$NON-NLS-1$
+			newargs[newargs.length - 1] = argument + value;
 			return newargs;
 		}
 		return vmargs;
