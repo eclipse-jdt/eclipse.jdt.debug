@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -99,7 +100,15 @@ public class PListParser {
 	 */
 	private Object parseXML(InputStream stream) throws CoreException, ParserConfigurationException, IOException, SAXException {
 		Element root = null;
-		DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderIgnoringDOCTYPE();
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		try {
+			documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+		}
+		catch(ParserConfigurationException pce) {
+			//do nothing the document builder does not support the load-external-dtd feature
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=386188
+		}
+		DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(PLIST_ELEMENT)) {

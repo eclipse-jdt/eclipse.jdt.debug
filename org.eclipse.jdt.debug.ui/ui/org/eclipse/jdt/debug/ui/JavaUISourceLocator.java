@@ -284,7 +284,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	public String getMemento() throws CoreException {
 		String memento = fSourceLocator.getMemento();
 		String handle = fJavaProject.getHandleIdentifier();
-		String findAll = Boolean.toString(isFindAllSourceElements());
+		String findAll = Boolean.valueOf(isFindAllSourceElements()).toString();
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<project>"); //$NON-NLS-1$

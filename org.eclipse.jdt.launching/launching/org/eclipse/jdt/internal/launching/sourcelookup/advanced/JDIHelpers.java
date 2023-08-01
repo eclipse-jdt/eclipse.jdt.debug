@@ -15,7 +15,6 @@ package org.eclipse.jdt.internal.launching.sourcelookup.advanced;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -71,10 +70,10 @@ public final class JDIHelpers implements IJDIHelpers {
 			try {
 				URL url = new URL(locations[1]);
 				if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
-					return new File(url.toURI()).toPath().normalize().toFile();
+					return new File(url.getPath()).toPath().normalize().toFile();
 				}
 			}
-			catch (URISyntaxException | MalformedURLException e) {
+			catch (MalformedURLException e) {
 				// fall through
 			}
 		}

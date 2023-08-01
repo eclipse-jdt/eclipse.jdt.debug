@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -55,16 +53,16 @@ public class FileHashing {
 	}
 
 	private static class CacheKey {
-		public final Object file;
+		public final File file;
 
 		private final long length;
 
 		private final long lastModified;
 
-		public CacheKey(Object fileKey, BasicFileAttributes attributes) {
-			this.file = fileKey;
-			this.length = attributes.size();
-			this.lastModified = attributes.lastModifiedTime().toMillis();
+		public CacheKey(File file) throws IOException {
+			this.file = file.getCanonicalFile();
+			this.length = file.length();
+			this.lastModified = file.lastModified();
 		}
 
 		@Override
@@ -143,17 +141,12 @@ public class FileHashing {
 		}
 
 		@Override
-		public HashCode hash(File file) {
-			if (file == null) {
+		public Object hash(File file) {
+			if (file == null || !file.isFile()) {
 				return null;
 			}
 			try {
-				BasicFileAttributes attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-				if (!attributes.isRegularFile()) {
-					return null;
-				}
-				Object key= file.getAbsoluteFile().toPath().toAbsolutePath().normalize();
-				CacheKey cacheKey = new CacheKey(key, attributes);
+				CacheKey cacheKey = new CacheKey(file);
 				synchronized (cache) {
 					HashCode hashCode = cache.get(cacheKey);
 					if (hashCode != null) {

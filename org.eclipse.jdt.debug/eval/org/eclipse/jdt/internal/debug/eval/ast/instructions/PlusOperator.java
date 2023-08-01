@@ -55,21 +55,21 @@ public class PlusOperator extends BinaryOperator {
 		IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
 		switch (typeId) {
 		case T_boolean:
-			return Boolean.toString(primitiveValue.getBooleanValue());
+			return Boolean.valueOf(primitiveValue.getBooleanValue()).toString();
 		case T_byte:
-			return Integer.toString(primitiveValue.getByteValue());
+			return Integer.valueOf(primitiveValue.getByteValue()).toString();
 		case T_char:
-			return Character.toString(primitiveValue.getCharValue());
+			return Character.valueOf(primitiveValue.getCharValue()).toString();
 		case T_double:
-			return Double.toString(primitiveValue.getDoubleValue());
+			return Double.valueOf(primitiveValue.getDoubleValue()).toString();
 		case T_float:
-			return Float.toString(primitiveValue.getFloatValue());
+			return Float.valueOf(primitiveValue.getFloatValue()).toString();
 		case T_int:
-			return Integer.toString(primitiveValue.getIntValue());
+			return Integer.valueOf(primitiveValue.getIntValue()).toString();
 		case T_long:
-			return Long.toString(primitiveValue.getLongValue());
+			return Long.valueOf(primitiveValue.getLongValue()).toString();
 		case T_short:
-			return Integer.toString(primitiveValue.getShortValue());
+			return Integer.valueOf(primitiveValue.getShortValue()).toString();
 		}
 		return NULL;
 	}
