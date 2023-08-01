@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2021 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -341,6 +341,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		int startPosition = node.getStartPosition();
 		int startLine = lineNumber(startPosition);
 		int endLine = lineNumber(startPosition + node.getLength() - 1);
+		int inputEndLine = fInputOffset != -1 ? lineNumber(fInputOffset) : -1;
 
 		// if we already found a correct location
 		// no need to check the element inside if the line number doesn't match.
@@ -359,7 +360,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		// breakpoint is requested on this line or on a previous line, this is a
 		// valid
 		// location
-		if (isCode && (fLineNumber <= startLine)) {
+		// Need to check also that this Node is within the input boundary - applicable for Record
+		if (isCode && (fLineNumber <= startLine) && (inputEndLine == -1 || startLine <= inputEndLine)) {
 			fLineLocation = startLine;
 			fLocationFound = true;
 			fLocationType = LOCATION_LINE;

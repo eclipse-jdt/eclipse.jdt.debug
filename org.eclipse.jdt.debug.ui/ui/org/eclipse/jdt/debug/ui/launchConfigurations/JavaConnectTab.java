@@ -284,10 +284,10 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 				attrMap.put(key, editor.getPreferenceStore().getString(key));
 			}
 			else if (arg instanceof Connector.BooleanArgument) {
-				attrMap.put(key, Boolean.valueOf(editor.getPreferenceStore().getBoolean(key)).toString());
+				attrMap.put(key, Boolean.toString(editor.getPreferenceStore().getBoolean(key)));
 			}
 			else if (arg instanceof Connector.IntegerArgument) {
-				attrMap.put(key, Integer.valueOf(editor.getPreferenceStore().getInt(key)).toString());
+				attrMap.put(key, Integer.toString(editor.getPreferenceStore().getInt(key)));
 			}
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, attrMap);

@@ -200,7 +200,7 @@ public class ClassTypeTest extends AbstractJDITest {
 		Exception good = null;
 		Exception oops = null;
 		try {
-			fType.invokeMethod(thread, inv2, new ArrayList<Value>(), 0);
+			fType.invokeMethod(thread, inv2, new ArrayList<>(), 0);
 		} catch (InvocationException exc) {
 			good = exc;
 		} catch (Exception exc) {

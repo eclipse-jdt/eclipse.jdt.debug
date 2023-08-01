@@ -79,7 +79,7 @@
          <attribute name="home" type="string" use="required">
             <annotation>
                <documentation>
-                  Path to the home installation directory for this VM install. Paths must be absolute and may use string substitution variables such as ${eclipse_home}. Since 3.4, this attribute may reference a VM definition file in addition to a home directory. The Execution Environment VM type included with the SDK supports &lt;a href=&quot; http://wiki.eclipse.org/Execution_Environment_Descriptions&quot;&gt;execution environment descriptions&lt;/a&gt;. When an execution environment description file is specified, any library elements are ignored. In this case, libraries are defined by the execution environment description file.
+                  Path to the home installation directory for this VM install. Paths must be absolute and may use string substitution variables such as ${eclipse_home}. Since 3.4, this attribute may reference a VM definition file in addition to a home directory. The Execution Environment VM type included with the SDK supports &lt;a href=&quot;http://wiki.eclipse.org/Execution_Environment_Descriptions&quot;&gt;execution environment descriptions&lt;/a&gt;. When an execution environment description file is specified, any library elements are ignored. In this case, libraries are defined by the execution environment description file.
                </documentation>
             </annotation>
          </attribute>

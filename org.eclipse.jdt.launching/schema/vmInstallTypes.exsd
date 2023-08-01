@@ -93,7 +93,7 @@ A UI for managing &lt;code&gt;IVMInstall&lt;/code&gt;s is provided by the Java D
       </appInfo>
       <documentation>
          Abstract implementations of IVMInstall and IVMInstallType are provided.  The Java development tooling defines a VM
-install type for the standard 1.1.* level JRE, and an install type for JREs conforming to standard command line options (1.2, 1.3, 1.4, 5.0, 6.0, and 7.0 level JREs). As well an install type is provided for JREs defined by an &lt;a href=&quot; http://wiki.eclipse.org/Execution_Environment_Descriptions&quot;&gt;execution environment description&lt;/a&gt; file.
+install type for the standard 1.1.* level JRE, and an install type for JREs conforming to standard command line options (1.2, 1.3, 1.4, 5.0, 6.0, and 7.0 level JREs). As well an install type is provided for JREs defined by an &lt;a href=&quot;http://wiki.eclipse.org/Execution_Environment_Descriptions&quot;&gt;execution environment description&lt;/a&gt; file.
       </documentation>
    </annotation>
 
