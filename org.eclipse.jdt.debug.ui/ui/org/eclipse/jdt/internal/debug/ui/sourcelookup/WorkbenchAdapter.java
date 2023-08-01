@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.internal.core.JrtPackageFragmentRoot;
 import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourceContainer;
 import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathVariableSourceContainer;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer;
@@ -37,7 +36,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  *
  * @since 3.0
  */
-@SuppressWarnings("restriction")
 public class WorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
@@ -95,38 +93,21 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 			PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) o;
 			IPackageFragmentRoot fragmentRoot = container.getPackageFragmentRoot();
 			IPath path = fragmentRoot.getPath();
-			if (fragmentRoot instanceof JrtPackageFragmentRoot jrtPackageFragmentRoot) {
+			if (path.segmentCount() > 0) {
 				StringBuilder buffer = new StringBuilder();
-				buffer.append(jrtPackageFragmentRoot.getElementName());
-				if (path.segmentCount() > 0) {
+				buffer.append(path.lastSegment());
+				if (path.segmentCount() > 1) {
 					buffer.append(" - "); //$NON-NLS-1$
 					if (path.getDevice() != null) {
 						buffer.append(path.getDevice());
 					}
 					String[] segments = path.segments();
-					for (String segment : segments) {
+					for (int i = 0; i < segments.length - 1; i++) {
 						buffer.append(File.separatorChar);
-						buffer.append(segment);
+						buffer.append(segments[i]);
 					}
-					return buffer.toString();
 				}
-			} else {
-				if (path.segmentCount() > 0) {
-					StringBuilder buffer = new StringBuilder();
-					buffer.append(path.lastSegment());
-					if (path.segmentCount() > 1) {
-						buffer.append(" - "); //$NON-NLS-1$
-						if (path.getDevice() != null) {
-							buffer.append(path.getDevice());
-						}
-						String[] segments = path.segments();
-						for (int i = 0; i < segments.length - 1; i++) {
-							buffer.append(File.separatorChar);
-							buffer.append(segments[i]);
-						}
-					}
-					return buffer.toString();
-				}
+				return buffer.toString();
 			}
 		}
 		return ""; //$NON-NLS-1$

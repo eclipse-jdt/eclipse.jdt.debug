@@ -170,7 +170,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		}
 		if (parentElement == null) {
 			List<Object> all= new ArrayList<>();
-			for (IClasspathEntry object : model.getEntries()) {
+			for (Object object : model.getEntries()) {
 				if (object instanceof ClasspathEntry) {
 					all.add(object);
 				} else if (object instanceof ClasspathGroup) {

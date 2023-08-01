@@ -69,7 +69,7 @@ public class RequestID {
 	 */
 	@Override
 	public String toString() {
-		return Long.toString(fRequestID);
+		return Long.valueOf(fRequestID).toString();
 	}
 
 	/**

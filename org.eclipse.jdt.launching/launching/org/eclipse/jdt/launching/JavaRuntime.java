@@ -1620,8 +1620,8 @@ public final class JavaRuntime {
 		} finally {
 			intCount--;
 			if (intCount == 0) {
-				fgProjects.remove();
-				fgEntryCount.remove();
+				fgProjects.set(null);
+				fgEntryCount.set(null);
 			} else {
 				fgEntryCount.set(Integer.valueOf(intCount));
 			}

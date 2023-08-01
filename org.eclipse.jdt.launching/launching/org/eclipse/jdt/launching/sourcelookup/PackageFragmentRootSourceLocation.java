@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +34,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-import org.eclipse.jdt.internal.launching.XmlProcessorFactoryJdtDebug;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -144,7 +144,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		try {
 			Element root = null;
 			DocumentBuilder parser =
-					XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

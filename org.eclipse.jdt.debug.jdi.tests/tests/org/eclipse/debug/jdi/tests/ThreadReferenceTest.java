@@ -26,6 +26,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
 import com.sun.jdi.event.ThreadDeathEvent;
 import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.request.ThreadDeathRequest;
@@ -193,7 +194,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 				threadDeathClass.newInstance(
 					thread,
 					constructor,
-					new java.util.LinkedList<>(),
+					new java.util.LinkedList<Value>(),
 					ClassType.INVOKE_SINGLE_THREADED);
 			threadDeath.disableCollection();
 			// This object is going to be used for the lifetime of the VM.

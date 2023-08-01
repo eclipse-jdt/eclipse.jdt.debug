@@ -192,7 +192,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			enabled = true;
 			int hitCount = breakpoint.getHitCount();
 			if (hitCount > 0) {
-				text = Integer.toString(hitCount);
+				text = Integer.valueOf(hitCount).toString();
 				hasHitCount = true;
 			}
 			suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;

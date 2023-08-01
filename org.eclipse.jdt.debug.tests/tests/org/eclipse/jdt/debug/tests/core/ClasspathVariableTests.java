@@ -65,6 +65,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertNotNull("no default JRE", vm);
 		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
 		assertTrue("no default libs", libs.length > 0);
+		assertEquals("Should resolve to location of local JRE", libs[0].getSystemLibraryPath().toOSString().toLowerCase(), resolved[0].getPath().toOSString().toLowerCase());
 	}
 
 	/**

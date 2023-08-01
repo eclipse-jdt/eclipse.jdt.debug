@@ -249,8 +249,4 @@ public class LaunchingMessages extends NLS {
 
 	public static String RunnerBootpathPError;
 
-	public static String lookupInstalledJVMs;
-
-	public static String configuringJVM;
-
 }

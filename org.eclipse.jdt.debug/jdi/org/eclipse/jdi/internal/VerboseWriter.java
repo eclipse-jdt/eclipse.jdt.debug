@@ -179,7 +179,7 @@ public class VerboseWriter {
 	public synchronized void println(String description, boolean value) {
 		printDescription(description);
 		printHex(value);
-		print(Boolean.toString(value));
+		print(Boolean.valueOf(value).toString());
 		println();
 	}
 
@@ -199,7 +199,7 @@ public class VerboseWriter {
 	public synchronized void println(String description, double value) {
 		printDescription(description);
 		printHex(value);
-		print(Double.toString(value));
+		print(Double.valueOf(value).toString());
 		println();
 	}
 
@@ -209,7 +209,7 @@ public class VerboseWriter {
 	public synchronized void println(String description, float value) {
 		printDescription(description);
 		printHex(value);
-		print(Float.toString(value));
+		print(Float.valueOf(value).toString());
 		println();
 	}
 
