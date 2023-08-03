@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,7 +63,7 @@ class DetectVMInstallationsJob extends Job {
 		// for MacOS, system installed VMs need a special command to locate
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
 			try {
-				systemVMs = Arrays.asList(MacInstalledJREs.getInstalledJREs(monitor));
+				systemVMs = new ArrayList<>(Arrays.asList(MacInstalledJREs.getInstalledJREs(monitor)));
 				systemVMs.removeIf(t -> knownVMs.contains(t.getInstallLocation()));
 				for (VMStandin systemVM : systemVMs) {
 					candidates.removeIf(t -> t.equals(systemVM.getInstallLocation()));
