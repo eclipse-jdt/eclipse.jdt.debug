@@ -29,6 +29,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -40,20 +43,18 @@ import org.eclipse.jdt.launching.VMStandin;
  * are not yet known by JDT to the VM registry (usually visible in the "Installed JREs"
  * preference page)
  */
-class DetectVMInstallationsJob extends Job {
+public class DetectVMInstallationsJob extends Job {
 
 	private static final Object FAMILY = DetectVMInstallationsJob.class;
 
-	private final StandardVMType standardType;
-
-	DetectVMInstallationsJob() {
+	private DetectVMInstallationsJob() {
 		super(LaunchingMessages.lookupInstalledJVMs);
-		this.standardType = (StandardVMType)JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		Collection<File> candidates = computeCandidateVMs();
+		StandardVMType standardType = (StandardVMType) JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+		Collection<File> candidates = computeCandidateVMs(standardType);
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
@@ -125,7 +126,7 @@ class DetectVMInstallationsJob extends Job {
 			.anyMatch(name::equals);
 	}
 
-	private Collection<File> computeCandidateVMs() {
+	private Collection<File> computeCandidateVMs(StandardVMType standardType) {
 		// parent directories containing a collection of VM installations
 		Collection<File> rootDirectories = new HashSet<>();
 		if (!Platform.OS_WIN32.equals(Platform.getOS())) {
@@ -182,6 +183,16 @@ class DetectVMInstallationsJob extends Job {
 	@Override
 	public boolean belongsTo(Object family) {
 		return family.equals(FAMILY);
+	}
+
+	public static void initialize() {
+		boolean forcedDisableVMDetection = Boolean.getBoolean("DetectVMInstallationsJob.disabled"); //$NON-NLS-1$
+		IEclipsePreferences instanceNode = InstanceScope.INSTANCE.getNode(LaunchingPlugin.getDefault().getBundle().getSymbolicName());
+		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(LaunchingPlugin.getDefault().getBundle().getSymbolicName());
+		boolean defaultValue = defaultNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, true);
+		if (!forcedDisableVMDetection && instanceNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, defaultValue)) {
+			new DetectVMInstallationsJob().schedule();
+		}
 	}
 
 }
