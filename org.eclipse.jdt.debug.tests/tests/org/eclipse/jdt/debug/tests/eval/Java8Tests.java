@@ -239,6 +239,23 @@ public class Java8Tests extends AbstractDebugTest {
 		}
 	}
 
+	public void testEvaluate_GH275_InstanceBinaryMethod_EvaluateConstructWithImportedTypes() throws Exception {
+		IJavaThread javaThread = null;
+		try {
+			IJavaLineBreakpoint bp = createLineBreakpoint(getType("com.debug.test.Observation"), 19);
+			javaThread = launchToLineBreakpoint("GH275", bp);
+			assertNotNull("The program did not suspend", javaThread);
+
+			String snippet = "new Observation((Object) subject, (Consumer) action)";
+			IValue value = doEval(javaThread, snippet);
+
+			assertNotNull("value is null", value);
+		} finally {
+			removeAllBreakpoints();
+			terminateAndRemove(javaThread);
+		}
+	}
+
 	public void testEvaluate_GH275_InstanceBinaryMethod_EvaluateSnippetWithImportedTypes() throws Exception {
 		IJavaThread javaThread = null;
 		try {

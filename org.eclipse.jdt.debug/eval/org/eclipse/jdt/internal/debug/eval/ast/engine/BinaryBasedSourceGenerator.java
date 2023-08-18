@@ -417,7 +417,9 @@ public class BinaryBasedSourceGenerator {
 			source.append("protected "); //$NON-NLS-1$
 		}
 
-		source.append(getDotName(field.typeName())).append(' ')
+		String dotName = getDotName(field.typeName());
+		addToImports(dotName);
+		source.append(dotName).append(' ')
 				.append(field.name()).append(';').append('\n');
 
 		return source;
