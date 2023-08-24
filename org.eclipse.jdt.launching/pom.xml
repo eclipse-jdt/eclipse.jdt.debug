@@ -51,11 +51,6 @@
           <plugin>
              <groupId>org.eclipse.tycho</groupId>
              <artifactId>tycho-surefire-plugin</artifactId>
-             <configuration>
-               <systemProperties>
-                 <DetectVMInstallationsJob.disabled>true</DetectVMInstallationsJob.disabled>
-               </systemProperties>
-             </configuration>
           </plugin>
         </plugins>
       </build>
