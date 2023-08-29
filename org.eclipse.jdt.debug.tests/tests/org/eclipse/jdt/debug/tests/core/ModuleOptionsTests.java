@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2022 GK Software SE and others.
+ * Copyright (c) 2019, 2023 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -109,6 +109,17 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 	private static final String ASSUMED_DEFAULT_MODULES_19 = "java.se," //
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
 			+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+	private static final String ASSUMED_DEFAULT_MODULES_21 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.vector," // jdk.incubator removed in 21
 			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
 			+ "jdk.jfr," //
 			+ "jdk.jshell,jdk.jsobject,jdk.management," //
@@ -285,6 +296,20 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
 						+ "jdk.jsobject," //
 						+ "jdk.management.jfr," //
+						+ "jdk.net," //
+						+ "jdk.nio.mapmode," //
+						+ "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.unsupported.desktop," //
+						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_21:
+				expectedModules = "java.se," //
+						+ "jdk.accessibility," //
+						+ "jdk.dynalink," + "jdk.httpserver," //
+						+ "jdk.incubator.vector," //
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+						+ "jdk.jsobject," //
+						+ "jdk.management.jfr,"
 						+ "jdk.net," //
 						+ "jdk.nio.mapmode," //
 						+ "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
