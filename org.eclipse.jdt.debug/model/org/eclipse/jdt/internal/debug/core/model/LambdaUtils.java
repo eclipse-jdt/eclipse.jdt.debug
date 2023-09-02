@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +42,7 @@ import com.sun.jdi.Method;
 public class LambdaUtils {
 
 	private static final String LAMBDA_METHOD_PREFIX = "lambda$"; //$NON-NLS-1$
+	private static final Pattern LAMBDA_TYPE_PATTERN = Pattern.compile(".*\\$\\$Lambda[\\$,\\.].*"); //$NON-NLS-1$
 
 	/**
 	 * Inspects the top stack frame of the context; if that frame is a lambda frame, looks for a variable with the specified name in that frame and
@@ -205,7 +207,8 @@ public class LambdaUtils {
 	 * @since 3.15
 	 */
 	public static boolean isLambdaField(IVariable variable) throws DebugException {
-		return (variable instanceof IJavaFieldVariable) && ((IJavaFieldVariable) variable).getDeclaringType().getName().contains("$Lambda$"); //$NON-NLS-1$
+		return (variable instanceof IJavaFieldVariable) && 
+			LAMBDA_TYPE_PATTERN.matcher(((IJavaFieldVariable) variable).getDeclaringType().getName()).matches();
 	}
 
 	/**
