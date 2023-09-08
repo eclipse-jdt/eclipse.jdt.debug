@@ -54,12 +54,22 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
     @Override
-	public void matchFound(PatternMatchEvent event) {
+    public void matchFound(PatternMatchEvent event) {
         try {
-            int offset = event.getOffset();
-            int length = event.getLength();
+            int offset = event.getOffset() + 1; // skip the leading (
+            int length = event.getLength() - 2; // don't count the leading ( and trailing )
+
+            String text = fConsole.getDocument().get(offset, length);
+            // Remove the ANSI escape sequences
+            String textNew = text.replaceAll(JavaStackTraceHyperlink.ANSI_ESCAPE_REGEX, ""); //$NON-NLS-1$
+            int delta = text.indexOf(textNew);
+            if (delta != -1) {
+                offset += delta;
+                length = textNew.length();
+            }
+
             IHyperlink link = new JavaStackTraceHyperlink(fConsole);
-            fConsole.addHyperlink(link, offset+1, length-2);
+            fConsole.addHyperlink(link, offset, length);
         } catch (BadLocationException e) {
         }
     }

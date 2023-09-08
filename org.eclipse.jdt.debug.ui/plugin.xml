@@ -3503,7 +3503,7 @@ M4 = Platform-specific fourth key
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            regex="\([\w\.\\/@]*${java_extensions_regex}\S*\)"
+            regex="\(${ansi_escape_regex}[\w\.\\/@]*${java_extensions_regex}\S*${ansi_escape_regex}\)"
             qualifier="${java_extensions_regex}"
             flags="UNICODE_CHARACTER_CLASS"
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
@@ -3517,7 +3517,7 @@ M4 = Platform-specific fourth key
       </consolePatternMatchListener>
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaNativeConsoleTracker"
-            regex="\(Native Method\)"
+            regex="\(${ansi_escape_regex}Native Method${ansi_escape_regex}\)"
             qualifier="Native Method"
             id="org.eclipse.jdt.debug.ui.JavaNativeConsoleTracker">
          <enablement>
@@ -3890,4 +3890,15 @@ M4 = Platform-specific fourth key
        </enabledWhen>
     </handler>
  </extension>
+
+ <extension
+       point="org.eclipse.core.variables.valueVariables">
+    <!-- For convenience, to use when we detect stack-trace links -->
+    <variable
+          initialValue="(\033\[[\d;]*[A-HJKSTfimnsu])*"
+          name="ansi_escape_regex"
+          readOnly="true">
+    </variable>
+ </extension>
+
 </plugin>

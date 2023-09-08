@@ -55,7 +55,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * A hyper-link from a stack trace line of the form "*(*.java:*)"
  */
 public class JavaStackTraceHyperlink implements IHyperlink {
-
+	final static String ANSI_ESCAPE_REGEX = "\033\\[[\\d;]*[A-HJKSTfimnsu]"; //$NON-NLS-1$
 	private TextConsole fConsole;
 
 	/**
@@ -89,6 +89,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
         int lineNumber;
         try {
             String linkText = getLinkText();
+            linkText = linkText.replaceAll(ANSI_ESCAPE_REGEX, ""); //$NON-NLS-1$
             typeName = getTypeName(linkText);
             lineNumber = getLineNumber(linkText);
         } catch (CoreException e1) {
