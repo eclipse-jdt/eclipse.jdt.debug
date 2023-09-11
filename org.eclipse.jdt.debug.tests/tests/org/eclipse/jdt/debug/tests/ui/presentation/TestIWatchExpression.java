@@ -21,8 +21,8 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IWatchExpression;
 
 public class TestIWatchExpression implements IWatchExpression {
-	private IValue value;
-	private String expressionText;
+	private final IValue value;
+	private final String expressionText;
 
 	public TestIWatchExpression(String expressionText, IValue value) {
 		this.expressionText = expressionText;

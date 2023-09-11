@@ -139,27 +139,27 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	private static boolean VERBOSE = false;
 
-	private InstructionSequence fInstructions;
+	private final InstructionSequence fInstructions;
 
 	/**
 	 * The list of pending break and continue instruction.
 	 */
-	private List<CompleteInstruction> fCompleteInstructions;
+	private final List<CompleteInstruction> fCompleteInstructions;
 
-	private int fStartPosition;
+	private final int fStartPosition;
 
 	private boolean fActive;
 
 	private boolean fHasErrors;
 
-	private Stack<Instruction> fStack;
+	private final Stack<Instruction> fStack;
 
 	private int fCounter;
 
 	// internal index used to create unique variable name
 	private int fUniqueIdIndex = 0;
 
-	private IJavaProject fJavaProject;
+	private final IJavaProject fJavaProject;
 
 	/**
 	 * Create a new AST instruction compiler

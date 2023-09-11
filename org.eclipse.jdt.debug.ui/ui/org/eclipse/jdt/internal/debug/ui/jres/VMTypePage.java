@@ -56,7 +56,7 @@ public class VMTypePage extends WizardPage {
 	/**
 	 * Keep track of pages created, so we can dispose of them.
 	 */
-	private Set<AbstractVMInstallPage> fPages = new HashSet<>();
+	private final Set<AbstractVMInstallPage> fPages = new HashSet<>();
 
 	/**
 	 * Label provider for VM types

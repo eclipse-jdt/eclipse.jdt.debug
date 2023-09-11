@@ -130,20 +130,20 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	private static final String EVAL_METHOD_NAME = "___eval"; //$NON-NLS-1$
 	private static final String EVAL_FIELD_NAME = "___field"; //$NON-NLS-1$
 
-	private String[] fLocalVariableTypeNames;
-	private String[] fLocalVariableNames;
-	private String fCodeSnippet;
+	private final String[] fLocalVariableTypeNames;
+	private final String[] fLocalVariableNames;
+	private final String fCodeSnippet;
 
 	private boolean fRightTypeFound;
 
-	private boolean fCreateInAStaticMethod;
+	private final boolean fCreateInAStaticMethod;
 
 	private boolean fEvaluateNextEndTypeDeclaration;
 
 	private String fError;
 
-	private IType fType;
-	private int fLine;
+	private final IType fType;
+	private final int fLine;
 
 	private StringBuilder fSource;
 
@@ -159,17 +159,17 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * Level of source code to generate (major, minor). For example 1 and 4
 	 * indicates 1.4.
 	 */
-	private int fSourceMajorLevel;
+	private final int fSourceMajorLevel;
 	private int fSourceMinorLevel;
 
-	private Stack<Map<String, String>> fTypeParameterStack = new Stack<>();
+	private final Stack<Map<String, String>> fTypeParameterStack = new Stack<>();
 	private Map<String, String> fMatchingTypeParameters = null;
 
 	private enum TypeParameterLocation {
 		TYPE, METHOD, EMPTY;
 	}
 
-	private Stack<TypeParameterLocation> fTypeParameterTypeStack = new Stack<>();
+	private final Stack<TypeParameterLocation> fTypeParameterTypeStack = new Stack<>();
 	private CompilationUnit fCompilationUnit;
 	{
 		fTypeParameterStack.push(Collections.<String,String>emptyMap());

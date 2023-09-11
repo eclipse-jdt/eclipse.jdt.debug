@@ -38,19 +38,19 @@ public class ValueCache {
 	 * Map to store <key, Reference> pairs, where Reference is a soft reference
 	 * to an Object.
 	 */
-	private Map<Object, SoftReference<Object>> cacheTable = new Hashtable<>();
+	private final Map<Object, SoftReference<Object>> cacheTable = new Hashtable<>();
 	/**
 	 * Map to store <Reference, key> pairs, to find the cacheTable-key of a
 	 * garbage collected Reference.
 	 */
-	private Map<SoftReference<Object>, Object> refTable = new Hashtable<>();
+	private final Map<SoftReference<Object>, Object> refTable = new Hashtable<>();
 
 	/**
 	 * The reference-queue that is registered with the soft references. The
 	 * garbage collector will enqueue soft references that are garbage
 	 * collected.
 	 */
-	private ReferenceQueue<Object> refQueue = new ReferenceQueue<>();
+	private final ReferenceQueue<Object> refQueue = new ReferenceQueue<>();
 
 	/**
 	 * Clean up all entries from the table for which the values were garbage

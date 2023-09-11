@@ -41,10 +41,10 @@ import org.eclipse.swt.widgets.Text;
  */
 public class RuntimeClasspathAdvancedDialog extends Dialog {
 
-	private IAction[] fActions;
+	private final IAction[] fActions;
 	private Button[] fButtons;
 
-	private IClasspathViewer fViewer;
+	private final IClasspathViewer fViewer;
 	private Button fAddVariableStringButton;
 	private Text fVariableString;
 

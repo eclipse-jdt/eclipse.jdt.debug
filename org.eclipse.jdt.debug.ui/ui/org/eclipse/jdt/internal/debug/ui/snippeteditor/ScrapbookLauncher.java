@@ -86,9 +86,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 
 	private IJavaLineBreakpoint fMagicBreakpoint;
 
-	private HashMap<IFile, IDebugTarget> fScrapbookToVMs = new HashMap<>(10);
-	private HashMap<IDebugTarget, IBreakpoint> fVMsToBreakpoints = new HashMap<>(10);
-	private HashMap<IDebugTarget, IFile> fVMsToScrapbooks = new HashMap<>(10);
+	private final HashMap<IFile, IDebugTarget> fScrapbookToVMs = new HashMap<>(10);
+	private final HashMap<IDebugTarget, IBreakpoint> fVMsToBreakpoints = new HashMap<>(10);
+	private final HashMap<IDebugTarget, IFile> fVMsToScrapbooks = new HashMap<>(10);
 
 	private static ScrapbookLauncher fgDefault = null;
 

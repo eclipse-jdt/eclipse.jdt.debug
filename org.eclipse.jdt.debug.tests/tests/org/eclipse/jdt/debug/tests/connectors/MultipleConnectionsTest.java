@@ -42,7 +42,7 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 		super(name);
 	}
 
-	private ILaunch launch = new MockLaunch();
+	private final ILaunch launch = new MockLaunch();
 
 	private SocketListenConnector connector;
 

@@ -24,7 +24,7 @@ import com.sun.jdi.connect.spi.Connection;
  */
 public abstract class PacketManager implements Runnable {
 	/** Connector that performs IO to Virtual Machine. */
-	private Connection fConnection;
+	private final Connection fConnection;
 	/**
 	 * Thread that handles the communication the other way (e.g. if we are
 	 * sending, the receiving thread).

@@ -33,7 +33,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	/**
 	 * The monitor object in the threads and monitors model.
 	 */
-	private JavaMonitor fMonitor;
+	private final JavaMonitor fMonitor;
 	/**
 	 * The thread which owns this monitor.
 	 */
@@ -41,7 +41,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	/**
 	 * The parent, in the debug view tree.
 	 */
-	private JavaOwningThread fParent;
+	private final JavaOwningThread fParent;
 
 	/**
 	 * Constructor

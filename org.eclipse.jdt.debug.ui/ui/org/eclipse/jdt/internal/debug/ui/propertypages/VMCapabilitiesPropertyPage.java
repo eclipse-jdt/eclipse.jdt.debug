@@ -65,7 +65,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		}
 	}
 
-	private List<ExpandableComposite> fExpandedComps;
+	private final List<ExpandableComposite> fExpandedComps;
 	private static final String EXPANDED_STATE = "vmc_expanded_state"; //$NON-NLS-1$
 	private static Font fHeadingFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 

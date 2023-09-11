@@ -33,7 +33,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * The monitor object in the thread and monitor model.
 	 */
-	private JavaMonitor fMonitor;
+	private final JavaMonitor fMonitor;
 
 	/**
 	 * The threads waiting for this monitor.
@@ -42,7 +42,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * The parent, in the debug view tree.
 	 */
-	private JavaWaitingThread fParent;
+	private final JavaWaitingThread fParent;
 
 	/**
 	 * Constructor

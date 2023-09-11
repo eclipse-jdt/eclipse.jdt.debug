@@ -25,7 +25,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
  */
 public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 
-	private IConfigurationElement fConfigurationElement;
+	private final IConfigurationElement fConfigurationElement;
 
 	private IRuntimeClasspathProvider fDelegate;
 

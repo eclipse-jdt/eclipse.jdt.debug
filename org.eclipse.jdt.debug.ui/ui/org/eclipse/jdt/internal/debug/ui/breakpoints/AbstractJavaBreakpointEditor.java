@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPartConstants;
  */
 public abstract class AbstractJavaBreakpointEditor {
 
-	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
+	private final ListenerList<IPropertyListener> fListeners = new ListenerList<>();
     private boolean fDirty = false;
     private boolean fMnemonics = true;
     private boolean fSuppressPropertyChanges = false;

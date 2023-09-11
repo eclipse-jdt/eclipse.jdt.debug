@@ -47,17 +47,17 @@ import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
  */
 public class EvaluationSourceGenerator {
 
-	private String fCodeSnippet;
+	private final String fCodeSnippet;
 
-	private String[] fLocalVariableTypeNames;
-	private String[] fLocalVariableNames;
+	private final String[] fLocalVariableTypeNames;
+	private final String[] fLocalVariableNames;
 
 	private String fSource;
 	private String fCompilationUnitName;
 	private int fSnippetStartPosition;
 	private int fRunMethodStartPosition;
 	private int fRunMethodLength;
-	private IJavaProject fJavaProject;
+	private final IJavaProject fJavaProject;
 
 	/**
 	 * Rebuild source in presence of external local variables

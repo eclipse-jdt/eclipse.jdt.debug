@@ -51,7 +51,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 * A set of projects that have been cleaned. When the build finishes for
 	 * a project that has been cleaned, we check for EE problems.
 	 */
-	private Set<IJavaProject> fCleaned = new HashSet<>();
+	private final Set<IJavaProject> fCleaned = new HashSet<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#isActive(org.eclipse.jdt.core.IJavaProject)

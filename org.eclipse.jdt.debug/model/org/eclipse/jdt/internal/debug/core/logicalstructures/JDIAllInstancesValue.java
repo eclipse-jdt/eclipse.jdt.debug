@@ -41,7 +41,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 public class JDIAllInstancesValue extends JDIArrayValue {
 
 	private IJavaObject[] fInstances;
-	private JDIReferenceType fRoot;
+	private final JDIReferenceType fRoot;
 	private IJavaArrayType fType;
 	private boolean fIsMoreThanPreference;
 

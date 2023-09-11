@@ -47,7 +47,7 @@ public class SourceDebugExtensionParser {
 		static final int SHARP = 16;
 		static final int PLUS = 17;
 
-		private char[] fSmap;
+		private final char[] fSmap;
 		private int fPointer;
 		private char fChar;
 
@@ -251,9 +251,9 @@ public class SourceDebugExtensionParser {
 	/**
 	 * The reference type to which this source debug extension is associated.
 	 */
-	private ReferenceTypeImpl fReferenceType;
+	private final ReferenceTypeImpl fReferenceType;
 
-	private List<String> fDefinedStrata;
+	private final List<String> fDefinedStrata;
 
 	// parser data;
 	private ReferenceTypeImpl.Stratum fCurrentStratum;

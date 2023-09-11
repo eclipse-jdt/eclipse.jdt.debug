@@ -360,11 +360,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 
 	class FormatterListViewerContentProvider implements IStructuredContentProvider {
 
-		private Set<DetailFormatter> fDetailFormattersSet;
+		private final Set<DetailFormatter> fDetailFormattersSet;
 
-		private List<String> fDefinedTypes;
+		private final List<String> fDefinedTypes;
 
-		private CheckboxTableViewer fViewer;
+		private final CheckboxTableViewer fViewer;
 
 		/**
 		 * FormatterListViewerContentProvider constructor.

@@ -50,7 +50,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 
-	private WorkbenchLabelProvider lp = new WorkbenchLabelProvider();
+	private final WorkbenchLabelProvider lp = new WorkbenchLabelProvider();
 
 	/**
 	 * Context in which to render containers, or <code>null</code>

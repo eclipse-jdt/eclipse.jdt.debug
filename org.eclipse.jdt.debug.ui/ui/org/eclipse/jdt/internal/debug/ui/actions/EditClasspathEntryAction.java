@@ -32,7 +32,7 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public class EditClasspathEntryAction extends RuntimeClasspathAction {
 
-	private ILaunchConfiguration fConfiguration;
+	private final ILaunchConfiguration fConfiguration;
 
 	public EditClasspathEntryAction(IClasspathViewer viewer, ILaunchConfiguration configuration) {
 		super(ActionMessages.EditClasspathEntryAction_0, viewer);

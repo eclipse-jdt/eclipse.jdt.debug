@@ -66,7 +66,7 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * The debug target this event dispatcher belongs to.
 	 */
-	private JDIDebugTarget fTarget;
+	private final JDIDebugTarget fTarget;
 	/**
 	 * Whether this dispatcher is shutdown.
 	 */
@@ -75,13 +75,13 @@ public class EventDispatcher implements Runnable {
 	 * Table of event listeners. Table is a mapping of <code>EventRequest</code>
 	 * to <code>IJDIEventListener</code>.
 	 */
-	private HashMap<EventRequest, IJDIEventListener> fEventHandlers;
+	private final HashMap<EventRequest, IJDIEventListener> fEventHandlers;
 
 	/**
 	 * Queue of debug model events to fire, created when processing events on
 	 * the target VM. Keyed by event sets, processed independently.
 	 */
-	private Map<EventSet, List<DebugEvent>> fSetToQueue = new HashMap<>();
+	private final Map<EventSet, List<DebugEvent>> fSetToQueue = new HashMap<>();
 
 	/**
 	 * Constructs a new event dispatcher listening for events originating from

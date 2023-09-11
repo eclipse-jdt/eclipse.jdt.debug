@@ -63,7 +63,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Add a VM changed listener to clear cached values when a VM changes or is removed
 	 */
-	private IVMInstallChangedListener fListener = new IVMInstallChangedListener() {
+	private final IVMInstallChangedListener fListener = new IVMInstallChangedListener() {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
@@ -102,7 +102,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * The backing <code>IConfigurationElement</code>
 	 */
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 
 	/**
 	 * Environment specific rule participant or <code>null</code> if none.
@@ -122,12 +122,12 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Set of compatible vm's - just the strictly compatible ones
 	 */
-	private Set<IVMInstall> fStrictlyCompatible = new HashSet<>();
+	private final Set<IVMInstall> fStrictlyCompatible = new HashSet<>();
 
 	/**
 	 * All compatible vm's
 	 */
-	private List<IVMInstall> fCompatibleVMs = new ArrayList<>();
+	private final List<IVMInstall> fCompatibleVMs = new ArrayList<>();
 
 	/**
 	 * default VM install or <code>null</code> if none
@@ -144,7 +144,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * Caches access rules returned by each participant for a given VM.
 	 * @since 3.3
 	 */
-	private Map<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>> fParticipantMap = new HashMap<>();
+	private final Map<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>> fParticipantMap = new HashMap<>();
 
 	/**
 	 * Cache of VM -> IAccessRule[][] based on the current state of the participant
@@ -152,7 +152,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * for a specific VM.
 	 * @since 3.3
 	 */
-	private Map<IVMInstall, IAccessRule[][]> fRuleCache = new HashMap<>();
+	private final Map<IVMInstall, IAccessRule[][]> fRuleCache = new HashMap<>();
 
 	/**
 	 * Wild card pattern matching all files

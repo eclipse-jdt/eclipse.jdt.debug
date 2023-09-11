@@ -41,7 +41,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class VMDetailsDialog extends Dialog {
 
-	private IVMInstall fVM;
+	private final IVMInstall fVM;
 
 	public VMDetailsDialog(Shell shell, IVMInstall vm) {
 		super(shell);

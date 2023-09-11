@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
  */
 
 public class NullConsoleReader extends AbstractReader {
-	private InputStream fInput;
+	private final InputStream fInput;
 	/**
 	 * Constructor
 	 * @param name

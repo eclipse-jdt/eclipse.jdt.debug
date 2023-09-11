@@ -18,7 +18,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 public class PushLong extends SimpleInstruction {
 
-	private long fValue;
+	private final long fValue;
 
 	public PushLong(long value) {
 		fValue = value;

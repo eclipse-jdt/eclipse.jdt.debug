@@ -49,9 +49,9 @@ import java.util.Map;
 public class TcpipSpy extends Thread {
 
 	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes(); //$NON-NLS-1$
-	private boolean fVMtoDebugger;
-	private DataInputStream fDataIn;
-	private DataOutputStream fDataOut;
+	private final boolean fVMtoDebugger;
+	private final DataInputStream fDataIn;
+	private final DataOutputStream fDataOut;
 
 	private static VerbosePacketStream out = new VerbosePacketStream(System.out);
 	private static Map<Integer, JdwpConversation> fPackets = new HashMap<>();

@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ClasspathLabelProvider implements ILabelProvider {
 
-	private RuntimeClasspathEntryLabelProvider runtimeClasspathLabelProvider= new RuntimeClasspathEntryLabelProvider();
+	private final RuntimeClasspathEntryLabelProvider runtimeClasspathLabelProvider= new RuntimeClasspathEntryLabelProvider();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)

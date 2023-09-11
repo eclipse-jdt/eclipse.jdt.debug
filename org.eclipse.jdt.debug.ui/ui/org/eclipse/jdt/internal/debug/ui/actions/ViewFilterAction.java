@@ -36,7 +36,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 
 	private IViewPart fView;
 	private IAction fAction;
-	private IPropertyChangeListener fListener = new Updater();
+	private final IPropertyChangeListener fListener = new Updater();
 
 	class Updater implements IPropertyChangeListener {
 

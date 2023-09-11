@@ -68,12 +68,12 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 		/**
 		 * Lock for synchronizing evaluation
 		 */
-		private Object fLock = new Object();
+		private final Object fLock = new Object();
 
 		/**
 		 * The breakpoint that was hit
 		 */
-		private JavaLineBreakpoint fBreakpoint;
+		private final JavaLineBreakpoint fBreakpoint;
 
 		/**
 		 * Result of the vote

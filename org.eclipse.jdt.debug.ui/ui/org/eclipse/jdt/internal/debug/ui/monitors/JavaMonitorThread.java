@@ -38,7 +38,7 @@ public class JavaMonitorThread extends PlatformObject {
 	/**
 	 * The underlying thread.
 	 */
-	private IJavaThread fThread;
+	private final IJavaThread fThread;
 
 	private IThread fOriginalThread;
 
@@ -63,7 +63,7 @@ public class JavaMonitorThread extends PlatformObject {
 	/**
 	 * List of JavaOwningThread and JavaWaitingThread associated with this thread.
 	 */
-	private List<IDebugElement> fElements= new ArrayList<>();
+	private final List<IDebugElement> fElements= new ArrayList<>();
 
 	/**
 	 * JavaWaitingThread object used to return the JavaOwnedMonitor for this

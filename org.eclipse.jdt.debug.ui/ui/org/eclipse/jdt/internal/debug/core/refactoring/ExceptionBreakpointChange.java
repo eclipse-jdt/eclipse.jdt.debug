@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
  */
 public abstract class ExceptionBreakpointChange extends BreakpointChange {
 
-	private String[] fExclusionFilters, fInclusionFilters;
+	private final String[] fExclusionFilters, fInclusionFilters;
 	boolean fCaught, fUncaught, fChecked;
 
 	public ExceptionBreakpointChange(IJavaExceptionBreakpoint breakpoint) throws CoreException {

@@ -30,11 +30,11 @@ public class Cast extends CompoundInstruction {
 	public static final String IS_INSTANCE = "isInstance"; //$NON-NLS-1$
 	public static final String IS_INSTANCE_SIGNATURE = "(Ljava/lang/Object;)Z"; //$NON-NLS-1$
 
-	private int fTypeTypeId;
+	private final int fTypeTypeId;
 
-	private String fBaseTypeName;
+	private final String fBaseTypeName;
 
-	private int fDimension;
+	private final int fDimension;
 
 	/**
 	 * Cast instruction constructor.

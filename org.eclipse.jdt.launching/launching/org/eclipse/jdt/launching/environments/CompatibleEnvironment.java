@@ -33,8 +33,8 @@ package org.eclipse.jdt.launching.environments;
  */
 public class CompatibleEnvironment {
 
-	private IExecutionEnvironment fEnvironment;
-	private boolean fIsStrictlyCompatible;
+	private final IExecutionEnvironment fEnvironment;
+	private final boolean fIsStrictlyCompatible;
 
 	/**
 	 * Constructs a new compatible environment result from an execution environment

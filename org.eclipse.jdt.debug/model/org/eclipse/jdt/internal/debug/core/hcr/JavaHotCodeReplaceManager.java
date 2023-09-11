@@ -108,8 +108,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * The lists of hot swap targets which support HCR and those which don't
 	 */
-	private ArrayList<JDIDebugTarget> fHotSwapTargets = new ArrayList<>(1);
-	private ArrayList<JDIDebugTarget> fNoHotSwapTargets = new ArrayList<>(1);
+	private final ArrayList<JDIDebugTarget> fHotSwapTargets = new ArrayList<>(1);
+	private final ArrayList<JDIDebugTarget> fNoHotSwapTargets = new ArrayList<>(1);
 
 	/**
 	 * A mapping of the last time projects were built.
@@ -118,13 +118,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * <li>value: build date (ProjectBuildTime)</li>
 	 * </ol>
 	 */
-	private Map<IProject, ProjectBuildTime> fProjectBuildTimes = new HashMap<>();
+	private final Map<IProject, ProjectBuildTime> fProjectBuildTimes = new HashMap<>();
 	private static Date fStartupDate = new Date();
 
 	/**
 	 * Cache of compilation unit deltas renewed on each HCR attempt.
 	 */
-	private Map<ICompilationUnit, CompilationUnitDelta> fDeltaCache = new HashMap<>();
+	private final Map<ICompilationUnit, CompilationUnitDelta> fDeltaCache = new HashMap<>();
 
 	/**
 	 * Utility object used for tracking build times of projects. The HCR manager

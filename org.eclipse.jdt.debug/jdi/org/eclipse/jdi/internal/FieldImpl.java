@@ -30,7 +30,7 @@ import com.sun.jdi.Type;
  */
 public class FieldImpl extends TypeComponentImpl implements Field {
 	/** ID that corresponds to this reference. */
-	private JdwpFieldID fFieldID;
+	private final JdwpFieldID fFieldID;
 	private Type fType;
 	private String fTypeName;
 

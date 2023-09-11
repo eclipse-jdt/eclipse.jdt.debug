@@ -79,7 +79,7 @@ public class OpenFromClipboardTests {
 
 	private IPackageFragmentRoot fSourceFolder;
 
-	private Accessor fAccessor = new Accessor(OpenFromClipboardAction.class);
+	private final Accessor fAccessor = new Accessor(OpenFromClipboardAction.class);
 
 	public static IJavaProject fJProject;
 

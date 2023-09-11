@@ -31,7 +31,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  *
  */
 public final class LibraryStandin {
-	private IPath fSystemLibrary;
+	private final IPath fSystemLibrary;
 	private IPath fSystemLibrarySource;
 	private IPath fExternalAnnotations;
 	private IPath fPackageRootPath;

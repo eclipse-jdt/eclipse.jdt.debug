@@ -22,13 +22,13 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 
 public class InstructionSequence implements ICompiledExpression {
 
-	private List<Instruction> fInstructions;
+	private final List<Instruction> fInstructions;
 	/**
 	 * A collection of error messages (<code>String</code>) that occurred while
 	 * creating this expression
 	 */
-	private List<String> fErrors;
-	private String fSnippet;
+	private final List<String> fErrors;
+	private final String fSnippet;
 	private CoreException fException;
 
 	public InstructionSequence(String snippet) {

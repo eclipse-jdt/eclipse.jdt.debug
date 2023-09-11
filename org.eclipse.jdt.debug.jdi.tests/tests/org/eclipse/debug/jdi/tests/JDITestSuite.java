@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
  * tearDown method once after.
  */
 public class JDITestSuite extends TestSuite {
-	private AbstractJDITest fTest;
+	private final AbstractJDITest fTest;
 	/**
 	 * Creates a new test suite for the given JDI test.
 	 * @param test

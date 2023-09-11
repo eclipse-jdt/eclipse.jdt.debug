@@ -46,7 +46,7 @@ import com.sun.jdi.VoidValue;
  */
 public class JDIValue extends JDIDebugElement implements IJavaValue {
 
-	private Value fValue;
+	private final Value fValue;
 	private List<IJavaVariable> fVariables;
 
 	/**

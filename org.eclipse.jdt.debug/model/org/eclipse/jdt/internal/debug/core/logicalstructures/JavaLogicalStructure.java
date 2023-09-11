@@ -93,10 +93,10 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 	 */
 	private class EvaluationBlock implements IEvaluationListener {
 
-		private IJavaObject fEvaluationValue;
-		private IJavaReferenceType fEvaluationType;
-		private IJavaThread fThread;
-		private IAstEvaluationEngine fEvaluationEngine;
+		private final IJavaObject fEvaluationValue;
+		private final IJavaReferenceType fEvaluationType;
+		private final IJavaThread fThread;
+		private final IAstEvaluationEngine fEvaluationEngine;
 		private IEvaluationResult fResult;
 
 		/**

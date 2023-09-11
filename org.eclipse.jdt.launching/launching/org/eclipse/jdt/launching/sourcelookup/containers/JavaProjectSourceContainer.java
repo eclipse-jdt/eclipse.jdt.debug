@@ -45,7 +45,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 public class JavaProjectSourceContainer extends CompositeSourceContainer {
 
 	// Java project
-	private IJavaProject fProject;
+	private final IJavaProject fProject;
 	// Source folders
 	private ISourceContainer[] fSourceFolders;
 	// Generic project container

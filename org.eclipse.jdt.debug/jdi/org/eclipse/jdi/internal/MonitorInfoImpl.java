@@ -26,9 +26,9 @@ import com.sun.jdi.ThreadReference;
  */
 public class MonitorInfoImpl extends MirrorImpl implements MonitorInfo {
 
-	private ThreadReference fThread;
-	private ObjectReference fMonitor;
-	private int fDepth;
+	private final ThreadReference fThread;
+	private final ObjectReference fMonitor;
+	private final int fDepth;
 
 	/** constructor **/
 	public MonitorInfoImpl(ThreadReference thread, int depth,

@@ -53,9 +53,9 @@ import org.eclipse.swt.widgets.Shell;
 @Deprecated
 public class JavaSourceLookupDialog extends Dialog {
 
-	private SourceLookupBlock fSourceLookupBlock;
+	private final SourceLookupBlock fSourceLookupBlock;
 	private ILaunchConfiguration fConfiguration;
-	private String fMessage;
+	private final String fMessage;
 	private boolean fNotAskAgain;
 	private Button fAskAgainCheckBox;
 

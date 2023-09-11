@@ -33,8 +33,8 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 
 public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 
-	private RefactoringProcessor fProcessor;
-	private RenameTypeArguments fArguments;
+	private final RefactoringProcessor fProcessor;
+	private final RenameTypeArguments fArguments;
 
 	public WatchpointTypeRenameChange(IJavaWatchpoint watchpoint, IType destType, IType originalType, RefactoringProcessor processor, RenameTypeArguments arguments) throws CoreException {
 		super(watchpoint, destType, originalType);

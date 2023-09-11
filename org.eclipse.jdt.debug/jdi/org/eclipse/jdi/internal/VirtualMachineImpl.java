@@ -84,9 +84,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	private static Map<Integer, String> fgHCRResultMap = null;
 
 	/** EventRequestManager that creates event objects on request. */
-	private EventRequestManagerImpl fEventReqMgr;
+	private final EventRequestManagerImpl fEventReqMgr;
 	/** EventQueue that returns EventSets from the Virtual Manager. */
-	private EventQueueImpl fEventQueue;
+	private final EventQueueImpl fEventQueue;
 
 	/** If a launching connector is used, we store the process. */
 	private Process fLaunchedProcess;
@@ -96,8 +96,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * optional: their only purpose is to speed up the debugger by being able to
 	 * use the stored results of JDWP calls.
 	 */
-	private ValueCache fCachedReftypes = new ValueCache();
-	private ValueCache fCachedObjects = new ValueCache();
+	private final ValueCache fCachedReftypes = new ValueCache();
+	private final ValueCache fCachedObjects = new ValueCache();
 
 	/** The following are the stored results of JDWP calls. */
 	private String fVersionDescription = null; // Text information on the VM
@@ -159,8 +159,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * The name of the current default stratum.
 	 */
 	private String fDefaultStratum;
-	private PacketReceiveManager fPacketReceiveManager;
-	private PacketSendManager fPacketSendManager;
+	private final PacketReceiveManager fPacketReceiveManager;
+	private final PacketSendManager fPacketSendManager;
 
 	/**
 	 * Creates a new Virtual Machine.

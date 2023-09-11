@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PushType extends SimpleInstruction {
 
-	private String fTypeName;
+	private final String fTypeName;
 
 	public PushType(String signature) {
 		fTypeName = signature;

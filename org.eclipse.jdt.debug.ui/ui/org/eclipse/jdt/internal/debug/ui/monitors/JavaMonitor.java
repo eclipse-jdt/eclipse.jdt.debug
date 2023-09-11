@@ -33,7 +33,7 @@ public class JavaMonitor {
 	/**
 	 * The underlying object.
 	 */
-	private IJavaObject fMonitor;
+	private final IJavaObject fMonitor;
 
 	/**
 	 * The thread which owns this monitor
@@ -57,7 +57,7 @@ public class JavaMonitor {
 	 * The List of JavaContendedMonitor and JavaOwnedMonitor associated with this
 	 * monitor.
 	 */
-	private List<PlatformObject> fElements= new ArrayList<>();
+	private final List<PlatformObject> fElements= new ArrayList<>();
 
 	public JavaMonitor(IJavaObject monitor) {
 		fMonitor= monitor;

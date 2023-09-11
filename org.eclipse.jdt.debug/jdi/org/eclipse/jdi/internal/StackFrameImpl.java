@@ -49,11 +49,11 @@ import com.sun.jdi.Value;
  */
 public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable {
 	/** FrameID that corresponds to this reference. */
-	private JdwpFrameID fFrameID;
+	private final JdwpFrameID fFrameID;
 	/** Thread under which this frame's method is running. */
-	private ThreadReferenceImpl fThread;
+	private final ThreadReferenceImpl fThread;
 	/** Location of the current instruction in the frame. */
-	private LocationImpl fLocation;
+	private final LocationImpl fLocation;
 
 	/**
 	 * Creates new StackFrameImpl.

@@ -22,8 +22,8 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
  */
 public abstract class MethodBreakpointChange extends LineBreakpointChange {
 
-	private String fMethodName, fSignature;
-	private boolean fEntry, fExit, fNativeOnly;
+	private final String fMethodName, fSignature;
+	private final boolean fEntry, fExit, fNativeOnly;
 
 	/**
 	 * Constructor

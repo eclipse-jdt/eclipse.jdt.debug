@@ -96,7 +96,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Underlying source locator.
 	 */
-	private JavaSourceLocator fSourceLocator;
+	private final JavaSourceLocator fSourceLocator;
 
 	/**
 	 * Whether the user should be prompted for source.

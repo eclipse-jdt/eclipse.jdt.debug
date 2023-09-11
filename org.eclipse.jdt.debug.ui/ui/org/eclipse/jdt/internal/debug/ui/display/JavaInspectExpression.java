@@ -42,12 +42,12 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * The value of this expression
 	 */
-	private IJavaValue fValue;
+	private final IJavaValue fValue;
 
 	/**
 	 * The code snippet for this expression.
 	 */
-	private String fExpression;
+	private final String fExpression;
 
 	private IEvaluationResult fResult;
 

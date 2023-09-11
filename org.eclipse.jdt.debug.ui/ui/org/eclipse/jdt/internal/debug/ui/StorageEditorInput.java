@@ -28,7 +28,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * Storage associated with this editor input
 	 */
-	private IStorage fStorage;
+	private final IStorage fStorage;
 
 	/**
 	 * Constructs an editor input on the given storage

@@ -35,7 +35,7 @@ public class PushLocalVariable extends SimpleInstruction {
 	/**
 	 * Name of variable to push.
 	 */
-	private String fName;
+	private final String fName;
 
 	public PushLocalVariable(String name) {
 		fName = name;

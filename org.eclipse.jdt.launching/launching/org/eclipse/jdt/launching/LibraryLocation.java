@@ -30,11 +30,11 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * </p>
  */
 public final class LibraryLocation {
-	private IPath fSystemLibrary;
+	private final IPath fSystemLibrary;
 	private IPath fSystemLibrarySource;
-	private IPath fExternalAnnotations;
-	private IPath fPackageRootPath;
-	private URL fJavadocLocation;
+	private final IPath fExternalAnnotations;
+	private final IPath fPackageRootPath;
+	private final URL fJavadocLocation;
 	private URL fIndexLocation;
 
 	/**

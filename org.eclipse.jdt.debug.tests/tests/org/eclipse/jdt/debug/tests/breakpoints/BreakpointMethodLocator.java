@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  */
 public class BreakpointMethodLocator extends ASTVisitor {
 
-	private int fPosition;
+	private final int fPosition;
 
 	private String fTypeName;
 

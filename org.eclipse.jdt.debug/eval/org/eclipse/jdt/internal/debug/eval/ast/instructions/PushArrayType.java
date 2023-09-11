@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 
 public class PushArrayType extends ArrayInstruction {
 
-	private String fTypeSignature;
+	private final String fTypeSignature;
 
-	private int fDimension;
+	private final int fDimension;
 
 	public PushArrayType(String typeSignature, int dimension, int start) {
 		super(start);

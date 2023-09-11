@@ -27,8 +27,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
  */
 public class TypeContext implements IJavaDebugContentAssistContext {
 
-	private IType fType;
-	private int fPosition;
+	private final IType fType;
+	private final int fPosition;
 
 	/**
 	 * Constructs a completion context on the given type.

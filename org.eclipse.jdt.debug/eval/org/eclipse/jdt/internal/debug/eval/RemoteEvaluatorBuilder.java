@@ -43,8 +43,8 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.EvaluationEngineMessages;
 @SuppressWarnings("rawtypes")
 public class RemoteEvaluatorBuilder {
 
-	private IJavaProject javaProject;
-	private ExpressionBinder binder;
+	private final IJavaProject javaProject;
+	private final ExpressionBinder binder;
 	private final String enclosingTypeName;
 	private final String packageName;
 	private final boolean isStatic;
@@ -55,7 +55,7 @@ public class RemoteEvaluatorBuilder {
 	/**
 	 * The names and bytecodes of the code snippet class to instantiate
 	 */
-	private LinkedHashMap<String, byte[]> classFiles = new LinkedHashMap<>();
+	private final LinkedHashMap<String, byte[]> classFiles = new LinkedHashMap<>();
 
 	/**
 	 * The name of the code snippet class to instantiate
@@ -240,7 +240,7 @@ public class RemoteEvaluatorBuilder {
 
 		private int indent = 2;
 
-		private Map<IBinding, String> localBindings = new HashMap<>();
+		private final Map<IBinding, String> localBindings = new HashMap<>();
 
 		public FunctionalEvalVisitor() {
 		}

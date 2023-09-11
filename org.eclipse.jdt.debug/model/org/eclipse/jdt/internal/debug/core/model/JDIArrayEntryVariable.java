@@ -39,12 +39,12 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	/**
 	 * The index of the variable entry
 	 */
-	private int fIndex;
+	private final int fIndex;
 
 	/**
 	 * The array object
 	 */
-	private ArrayReference fArray;
+	private final ArrayReference fArray;
 
 	/**
 	 * The reference type name of this variable. Cached lazily.
@@ -58,7 +58,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 *
 	 * This is <code>null</code> when not created for a logical structure.
 	 */
-	private IJavaValue fLogicalParent;
+	private final IJavaValue fLogicalParent;
 
 	/**
 	 * Constructs an array entry at the given index in an array.

@@ -61,7 +61,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 	private Text fVMArgs;
 	private Text fEEFile;
 	private VMLibraryBlock fLibraryBlock;
-	private IStatus[] fFieldStatus = new IStatus[1];
+	private final IStatus[] fFieldStatus = new IStatus[1];
 	private boolean fIgnoreCallbacks = false;
 
 	/**

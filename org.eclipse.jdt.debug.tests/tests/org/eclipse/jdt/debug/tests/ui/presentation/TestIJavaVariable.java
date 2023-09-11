@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public class TestIJavaVariable implements IJavaVariable {
 
-	private String name;
+	private final String name;
 	private IValue value;
 
 	public TestIJavaVariable(String name, IValue value) {

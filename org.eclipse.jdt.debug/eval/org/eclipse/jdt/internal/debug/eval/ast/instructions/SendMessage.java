@@ -28,10 +28,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class SendMessage extends CompoundInstruction {
 
-	private int fArgCount;
-	private String fSelector;
-	private String fSignature;
-	private String fDeclaringType;
+	private final int fArgCount;
+	private final String fSelector;
+	private final String fSignature;
+	private final String fDeclaringType;
 
 	public SendMessage(String selector, String signature, int argCount,
 			String declaringType, int start) {

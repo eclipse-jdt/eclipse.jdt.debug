@@ -82,8 +82,8 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 
 	private static class EventRequestType<RT extends EventRequest> {
 
-		private ArrayList<RT> requests;
-		private Hashtable<RequestID, RT> enabledrequests;
+		private final ArrayList<RT> requests;
+		private final Hashtable<RequestID, RT> enabledrequests;
 
 		private EventRequestType() {
 			requests= new ArrayList<>();
@@ -100,22 +100,22 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		}
 	}
 
-	private EventRequestType<AccessWatchpointRequest> ACCESS_WATCHPOINT_TYPE= new EventRequestType<>();
-	private EventRequestType<BreakpointRequest> BREAKPOINT_TYPE= new EventRequestType<>();
-	private EventRequestType<ClassPrepareRequest> CLASS_PREPARE_TYPE= new EventRequestType<>();
-	private EventRequestType<ClassUnloadRequest> CLASS_UNLOAD_TYPE= new EventRequestType<>();
-	private EventRequestType<MethodEntryRequest> METHOD_ENTRY_TYPE= new EventRequestType<>();
-	private EventRequestType<MethodExitRequest> METHOD_EXIT_TYPE= new EventRequestType<>();
-	private EventRequestType<ExceptionRequest> EXCEPTION_TYPE= new EventRequestType<>();
-	private EventRequestType<ModificationWatchpointRequest> MODIFICATION_WATCHPOINT_TYPE= new EventRequestType<>();
-	private EventRequestType<StepRequest> STEP_TYPE= new EventRequestType<>();
-	private EventRequestType<ThreadDeathRequest> THREAD_DEATH_TYPE= new EventRequestType<>();
-	private EventRequestType<ThreadStartRequest> THREAD_START_TYPE= new EventRequestType<>();
-	private EventRequestType<VMDeathRequest> VM_DEATH_TYPE= new EventRequestType<>();
-	private EventRequestType<MonitorContendedEnteredRequest> MONITOR_CONTENDED_ENTERED_TYPE= new EventRequestType<>();
-	private EventRequestType<MonitorContendedEnterRequest> MONITOR_CONTENDED_ENTER_TYPE= new EventRequestType<>();
-	private EventRequestType<MonitorWaitedRequest> MONITOR_WAITED_TYPE= new EventRequestType<>();
-	private EventRequestType<MonitorWaitRequest> MONITOR_WAIT_TYPE= new EventRequestType<>();
+	private final EventRequestType<AccessWatchpointRequest> ACCESS_WATCHPOINT_TYPE= new EventRequestType<>();
+	private final EventRequestType<BreakpointRequest> BREAKPOINT_TYPE= new EventRequestType<>();
+	private final EventRequestType<ClassPrepareRequest> CLASS_PREPARE_TYPE= new EventRequestType<>();
+	private final EventRequestType<ClassUnloadRequest> CLASS_UNLOAD_TYPE= new EventRequestType<>();
+	private final EventRequestType<MethodEntryRequest> METHOD_ENTRY_TYPE= new EventRequestType<>();
+	private final EventRequestType<MethodExitRequest> METHOD_EXIT_TYPE= new EventRequestType<>();
+	private final EventRequestType<ExceptionRequest> EXCEPTION_TYPE= new EventRequestType<>();
+	private final EventRequestType<ModificationWatchpointRequest> MODIFICATION_WATCHPOINT_TYPE= new EventRequestType<>();
+	private final EventRequestType<StepRequest> STEP_TYPE= new EventRequestType<>();
+	private final EventRequestType<ThreadDeathRequest> THREAD_DEATH_TYPE= new EventRequestType<>();
+	private final EventRequestType<ThreadStartRequest> THREAD_START_TYPE= new EventRequestType<>();
+	private final EventRequestType<VMDeathRequest> VM_DEATH_TYPE= new EventRequestType<>();
+	private final EventRequestType<MonitorContendedEnteredRequest> MONITOR_CONTENDED_ENTERED_TYPE= new EventRequestType<>();
+	private final EventRequestType<MonitorContendedEnterRequest> MONITOR_CONTENDED_ENTER_TYPE= new EventRequestType<>();
+	private final EventRequestType<MonitorWaitedRequest> MONITOR_WAITED_TYPE= new EventRequestType<>();
+	private final EventRequestType<MonitorWaitRequest> MONITOR_WAIT_TYPE= new EventRequestType<>();
 
 	/**
 	 * Creates new EventRequestManager.

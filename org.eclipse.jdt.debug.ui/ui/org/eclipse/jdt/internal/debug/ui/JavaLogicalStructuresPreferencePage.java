@@ -99,7 +99,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 
     public class LogicalStructuresListViewerContentProvider implements IStructuredContentProvider {
 
-        private List<JavaLogicalStructure> fLogicalStructures;
+        private final List<JavaLogicalStructure> fLogicalStructures;
 
         LogicalStructuresListViewerContentProvider() {
 			fLogicalStructures = new ArrayList<>();

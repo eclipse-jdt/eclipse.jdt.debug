@@ -18,7 +18,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 public class PushInt extends SimpleInstruction {
 
-	private int fValue;
+	private final int fValue;
 
 	public PushInt(int value) {
 		fValue = value;

@@ -26,7 +26,7 @@ import com.sun.jdi.connect.Transport;
  */
 public abstract class TransportImpl implements Transport {
 	/** Name of Transport. */
-	private String fName;
+	private final String fName;
 
 	/**
 	 * Constructs new SocketTransportImpl.

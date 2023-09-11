@@ -22,8 +22,8 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
  */
 public abstract class WatchpointChange extends LineBreakpointChange {
 
-	private String fFieldName;
-	private boolean fAccess, fModification;
+	private final String fFieldName;
+	private final boolean fAccess, fModification;
 
 	public WatchpointChange(IJavaWatchpoint watchpoint) throws CoreException {
 		super(watchpoint);

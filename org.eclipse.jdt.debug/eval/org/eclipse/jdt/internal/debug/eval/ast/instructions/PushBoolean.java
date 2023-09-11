@@ -17,7 +17,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * Pushes a boolean literal onto the stack.
  */
 public class PushBoolean extends SimpleInstruction {
-	private boolean fValue;
+	private final boolean fValue;
 
 	public PushBoolean(boolean value) {
 		fValue = value;
