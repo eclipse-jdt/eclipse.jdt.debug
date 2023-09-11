@@ -28,7 +28,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDeleg
  */
 class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 
 	private IExecutionEnvironmentAnalyzerDelegate fDelegate;
 

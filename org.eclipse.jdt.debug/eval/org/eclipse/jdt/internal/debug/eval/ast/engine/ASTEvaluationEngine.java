@@ -750,19 +750,19 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	class EvalRunnable implements Runnable {
 
-		private InstructionSequence fExpression;
+		private final InstructionSequence fExpression;
 
-		private IJavaThread fThread;
+		private final IJavaThread fThread;
 
-		private int fEvaluationDetail;
+		private final int fEvaluationDetail;
 
-		private boolean fHitBreakpoints;
+		private final boolean fHitBreakpoints;
 
-		private IRuntimeContext fContext;
+		private final IRuntimeContext fContext;
 
-		private IEvaluationListener fListener;
+		private final IEvaluationListener fListener;
 
-		private boolean fDisableGcOnResult;
+		private final boolean fDisableGcOnResult;
 
 		public EvalRunnable(InstructionSequence expression, IJavaThread thread,
 				IRuntimeContext context, IEvaluationListener listener,

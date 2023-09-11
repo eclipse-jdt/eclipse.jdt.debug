@@ -29,7 +29,7 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 
-	private JavaClasspathTab fTab;
+	private final JavaClasspathTab fTab;
 
 	/**
 	 * Constructor

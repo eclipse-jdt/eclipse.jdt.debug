@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
  */
 public abstract class LineBreakpointChange extends BreakpointChange {
 
-	private int fCharEnd, fCharStart, fLineNumber;
+	private final int fCharEnd, fCharStart, fLineNumber;
 	private boolean fConditionEnabled, fConditionSuspendOnTrue;
 	private String fCondition;
 

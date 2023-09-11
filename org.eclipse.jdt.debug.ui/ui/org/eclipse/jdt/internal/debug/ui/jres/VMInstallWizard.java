@@ -34,8 +34,8 @@ import org.eclipse.jface.wizard.Wizard;
  */
 public abstract class VMInstallWizard extends Wizard {
 
-	private VMStandin fEditVM;
-	private String[] fExistingNames;
+	private final VMStandin fEditVM;
+	private final String[] fExistingNames;
 
 	/**
 	 * Constructs a new wizard to add/edit a vm install.

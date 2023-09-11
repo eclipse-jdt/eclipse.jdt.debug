@@ -33,8 +33,8 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 public class JDIPlaceholderVariable extends PlatformObject implements
 		IJavaVariable {
 
-	private String fName;
-	private IJavaValue fValue;
+	private final String fName;
+	private final IJavaValue fValue;
 
 	/**
 	 * When created for a logical structure we hold onto the original

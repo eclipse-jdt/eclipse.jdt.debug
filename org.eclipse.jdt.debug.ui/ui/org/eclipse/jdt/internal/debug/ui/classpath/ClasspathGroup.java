@@ -17,7 +17,7 @@ package org.eclipse.jdt.internal.debug.ui.classpath;
 import java.util.Iterator;
 
 public class ClasspathGroup extends AbstractClasspathEntry {
-	private String name;
+	private final String name;
 
 	private boolean canBeRemoved= true;
 

@@ -19,11 +19,11 @@ import org.eclipse.jdt.debug.core.IJavaArrayType;
 
 public class ArrayInitializerInstruction extends ArrayInstruction {
 
-	private String fTypeSignature;
+	private final String fTypeSignature;
 
-	private int fDimensions;
+	private final int fDimensions;
 
-	private int fLength;
+	private final int fLength;
 
 	/**
 	 * Constructor for ArrayInitializerInstruction.

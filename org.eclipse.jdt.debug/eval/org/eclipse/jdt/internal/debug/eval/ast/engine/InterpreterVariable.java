@@ -28,19 +28,19 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * The reference type of this variable.
 	 */
-	private IJavaType fReferenceType;
+	private final IJavaType fReferenceType;
 
 	/**
 	 * The variable name.
 	 */
-	private String fName;
+	private final String fName;
 
 	/**
 	 * The variable value.
 	 */
 	private IValue fValue;
 
-	private IDebugTarget fDebugTarget;
+	private final IDebugTarget fDebugTarget;
 
 	public InterpreterVariable(String name, IJavaType referenceType,
 			IDebugTarget debugTarget) {

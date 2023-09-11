@@ -18,7 +18,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 public class PushDouble extends SimpleInstruction {
 
-	private double fValue;
+	private final double fValue;
 
 	public PushDouble(double value) {
 		fValue = value;

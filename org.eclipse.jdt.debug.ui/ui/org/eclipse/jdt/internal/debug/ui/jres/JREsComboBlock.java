@@ -71,7 +71,7 @@ public class JREsComboBlock {
 	/**
 	 * VMs being displayed
 	 */
-	private List<Object> fVMs = new ArrayList<>();
+	private final List<Object> fVMs = new ArrayList<>();
 
 	/**
 	 * The main control
@@ -84,12 +84,12 @@ public class JREsComboBlock {
 	/**
 	 * JRE change listeners
 	 */
-	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
+	private final ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
 
 	/**
 	 * Whether the default JRE should be in first position (if <code>false</code>, it becomes last).
 	 */
-	private boolean fDefaultFirst;
+	private final boolean fDefaultFirst;
 
 	/**
 	 * Default JRE descriptor or <code>null</code> if none.
@@ -134,7 +134,7 @@ public class JREsComboBlock {
 	/**
 	 * List of execution environments
 	 */
-	private List<Object> fEnvironments = new ArrayList<>();
+	private final List<Object> fEnvironments = new ArrayList<>();
 
 	private IStatus fStatus = OK_STATUS;
 

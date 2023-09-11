@@ -58,7 +58,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * List of <code>String</code>s describing compilation problems.
 	 */
-	private List<String> fErrors;
+	private final List<String> fErrors;
 
 	/**
 	 * Whether the evaluation was terminated.

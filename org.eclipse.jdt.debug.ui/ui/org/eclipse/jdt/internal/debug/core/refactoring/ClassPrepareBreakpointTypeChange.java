@@ -34,7 +34,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChange {
 
-	private IType fDestType;
+	private final IType fDestType;
 
 	public ClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);

@@ -33,7 +33,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class WatchpointFieldChange extends WatchpointChange {
 
-	private IField fDestField;
+	private final IField fDestField;
 
 	public WatchpointFieldChange(IJavaWatchpoint watchpoint, IField destField) throws CoreException {
 		super(watchpoint);

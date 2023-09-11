@@ -26,15 +26,15 @@ import com.sun.jdi.VMMismatchException;
  */
 public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comparable<LocalVariable> {
 	/** Method that holds local variable. */
-	private MethodImpl fMethod;
+	private final MethodImpl fMethod;
 	/** First code index at which the variable is visible (unsigned). */
-	private long fCodeIndex;
+	private final long fCodeIndex;
 	/** The variable's name. */
-	private String fName;
+	private final String fName;
 	/** The variable type's JNI signature. */
-	private String fSignature;
+	private final String fSignature;
 	/** The variable type generic signature. */
-	private String fGenericSignature;
+	private final String fGenericSignature;
 	/** The variable's type */
 	private Type fType;
 	/** The variables type name */
@@ -49,11 +49,11 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	 * arguments are visible for the entire method.
 	 * </p>
 	 * */
-	private int fLength;
+	private final int fLength;
 	/** The local variable's index in its frame. */
-	private int fSlot;
+	private final int fSlot;
 	/** Is the local variable an argument of its method? */
-	private boolean fIsArgument;
+	private final boolean fIsArgument;
 
 	public LocalVariableImpl(VirtualMachineImpl vmImpl, MethodImpl method,
 			long codeIndex, String name, String signature,

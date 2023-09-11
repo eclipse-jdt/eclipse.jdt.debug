@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
 public class Accessor {
 
 	/** The class to access. */
-	private Class<?> fClass;
+	private final Class<?> fClass;
 	/** The instance to access. */
 	private Object fInstance;
 

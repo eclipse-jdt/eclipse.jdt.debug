@@ -176,7 +176,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/**
 	 * The debug model presentation used for computing toString
 	 */
-	private IDebugModelPresentation fPresentation= DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
+	private final IDebugModelPresentation fPresentation= DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
 	/**
 	 * The result of a toString evaluation returned asynchronously by the
 	 * debug model.
@@ -191,14 +191,14 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		/**
 		 * The display used for event dispatching.
 		 */
-		private Display fDisplay;
+		private final Display fDisplay;
 
 		/**
 		 * Indicates whether to continue event queue dispatching.
 		 */
 		private volatile boolean fContinueEventDispatching = true;
 
-		private Object fLock;
+		private final Object fLock;
 		/**
 		 * Creates a "wait" thread
 		 *
@@ -255,7 +255,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 * Listens for part activation to set scrapbook active system property
 	 * for action enablement.
 	 */
-	private IPartListener2 fActivationListener = new IPartListener2() {
+	private final IPartListener2 fActivationListener = new IPartListener2() {
 
 		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {

@@ -30,10 +30,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class SendStaticMessage extends CompoundInstruction {
 
-	private int fArgCount;
-	private String fSelector;
-	private String fSignature;
-	private String fTypeName;
+	private final int fArgCount;
+	private final String fSelector;
+	private final String fSignature;
+	private final String fTypeName;
 
 	public SendStaticMessage(String typeName, String selector,
 			String signature, int argCount, int start) {

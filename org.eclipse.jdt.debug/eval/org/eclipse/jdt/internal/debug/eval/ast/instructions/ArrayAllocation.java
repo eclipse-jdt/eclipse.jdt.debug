@@ -21,11 +21,11 @@ import org.eclipse.jdt.debug.core.IJavaType;
 
 public class ArrayAllocation extends ArrayInstruction {
 
-	private int fDimension;
+	private final int fDimension;
 
-	private int fExprDimension;
+	private final int fExprDimension;
 
-	private boolean fHasInitializer;
+	private final boolean fHasInitializer;
 
 	private IJavaArrayType[] fCachedArrayTypes;
 

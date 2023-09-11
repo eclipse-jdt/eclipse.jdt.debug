@@ -18,7 +18,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 public class PushFloat extends SimpleInstruction {
 
-	private float fValue;
+	private final float fValue;
 
 	public PushFloat(float value) {
 		fValue = value;

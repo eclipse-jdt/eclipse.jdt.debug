@@ -25,7 +25,7 @@ import com.sun.jdi.request.StepRequest;
  */
 public class EventRequestTest extends AbstractJDITest {
 
-	private List<EventRequest> fRequests = new LinkedList<>();
+	private final List<EventRequest> fRequests = new LinkedList<>();
 	/**
 	 * Creates a new test.
 	 */

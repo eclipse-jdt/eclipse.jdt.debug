@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Label;
 public class ExceptionFilterEditor {
 
 	protected static final String DEFAULT_PACKAGE = "(default package)"; //$NON-NLS-1$
-	private IJavaExceptionBreakpoint fBreakpoint;
+	private final IJavaExceptionBreakpoint fBreakpoint;
 
 	private JavaFilterTable fJavaFilterTable;
 

@@ -32,7 +32,7 @@ public class JDIThisVariable extends JDIVariable {
 	/**
 	 * The wrapped object
 	 */
-	private ObjectReference fObject;
+	private final ObjectReference fObject;
 
 	/**
 	 * Constructs a variable representing 'this' in a stack frame.

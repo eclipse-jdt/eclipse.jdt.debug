@@ -36,8 +36,8 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	class MyFilter implements IDebugEventFilter {
 
 		private IJavaThread fThread = null;
-		private Object fLock;
-		private DebugEvent[] EMPTY = new DebugEvent[0];
+		private final Object fLock;
+		private final DebugEvent[] EMPTY = new DebugEvent[0];
 
 		/**
 		 * Constructor

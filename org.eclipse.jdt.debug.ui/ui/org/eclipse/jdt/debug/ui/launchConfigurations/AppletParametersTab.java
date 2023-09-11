@@ -100,7 +100,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 
 	}
 
-	private AppletTabListener fListener= new AppletTabListener();
+	private final AppletTabListener fListener= new AppletTabListener();
 
 	private static final String EMPTY_STRING = "";	 //$NON-NLS-1$
 

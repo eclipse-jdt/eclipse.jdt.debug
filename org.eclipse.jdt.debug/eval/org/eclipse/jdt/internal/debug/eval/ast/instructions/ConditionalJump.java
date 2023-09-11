@@ -20,7 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class ConditionalJump extends Jump {
-	private boolean fJumpOnTrue;
+	private final boolean fJumpOnTrue;
 
 	public ConditionalJump(boolean jumpOnTrue) {
 		fJumpOnTrue = jumpOnTrue;

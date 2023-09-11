@@ -31,7 +31,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/**
 	 * The thread object in the thread and monitor model.
 	 */
-	private JavaMonitorThread fThread;
+	private final JavaMonitorThread fThread;
 
 	/**
 	 * The monitors this thread owns.
@@ -40,7 +40,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/**
 	 * The parent, in the debug view tree.
 	 */
-	private JavaOwnedMonitor fParent;
+	private final JavaOwnedMonitor fParent;
 
 	public JavaWaitingThread(JavaMonitorThread thread, JavaOwnedMonitor parent) {
 		fThread= thread;

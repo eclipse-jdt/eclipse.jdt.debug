@@ -179,7 +179,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * VMs being displayed
 	 */
-	private List<IVMInstall> fVMs = new ArrayList<>();
+	private final List<IVMInstall> fVMs = new ArrayList<>();
 
 	/**
 	 * The main list control
@@ -199,7 +199,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * Selection listeners (checked JRE changes)
 	 */
-	private ListenerList<ISelectionChangedListener> fSelectionListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> fSelectionListeners = new ListenerList<>();
 
 	/**
 	 * Previous selection

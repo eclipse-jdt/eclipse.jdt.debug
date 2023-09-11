@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 public class JREsUpdater {
 
 	// the VMs defined when this updated is instantiated
-	private VMDefinitionsContainer fOriginalVMs;
+	private final VMDefinitionsContainer fOriginalVMs;
 
 	/**
 	 * Contstructs a new VM updater to update VM install settings.

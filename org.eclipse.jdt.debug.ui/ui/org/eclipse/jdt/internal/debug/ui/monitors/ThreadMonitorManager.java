@@ -45,11 +45,11 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	/**
 	 * HashMap IJavaThread -> JavaMonitorThread
 	 */
-	private HashMap<IDebugElement, Object> fJavaMonitorThreads;
+	private final HashMap<IDebugElement, Object> fJavaMonitorThreads;
 	/**
 	 * HashMap IJavaObject -> JavaMonitor
 	 */
-	private HashMap<IDebugElement, Object> fJavaMonitors;
+	private final HashMap<IDebugElement, Object> fJavaMonitors;
 
 	private boolean fIsEnabled;
 

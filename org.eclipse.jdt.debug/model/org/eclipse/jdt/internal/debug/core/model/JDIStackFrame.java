@@ -452,9 +452,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	private final static class LambdaASTVisitor extends ASTVisitor {
 		private final ObjectReference underlyingThisObject;
-		private boolean methodIsStatic;
-		private CompilationUnit cu;
-		private int lineNo;
+		private final boolean methodIsStatic;
+		private final CompilationUnit cu;
+		private final int lineNo;
 
 		private LambdaASTVisitor(boolean visitDocTags, ObjectReference underlyingThisObject, boolean methodIsStatic, CompilationUnit cu, int lineNo) {
 			super(visitDocTags);

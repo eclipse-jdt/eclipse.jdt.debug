@@ -24,7 +24,7 @@ public class UnableToParseDataException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private byte[] fRemainingData;
+	private final byte[] fRemainingData;
 
 	public UnableToParseDataException(String message, byte[] remainingData) {
 		super(message);

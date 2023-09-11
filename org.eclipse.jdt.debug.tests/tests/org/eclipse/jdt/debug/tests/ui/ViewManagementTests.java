@@ -54,17 +54,17 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	 */
 	public static final String VIEW_ONE = "org.eclipse.jdt.debug.tests.context.view.one";
 
-	private Object fEventLock = new Object();
+	private final Object fEventLock = new Object();
 
 	/**
 	 * List of view ids expecting to open.
 	 */
-	private List<String> fExpectingOpenEvents = new ArrayList<>();
+	private final List<String> fExpectingOpenEvents = new ArrayList<>();
 
 	/**
 	 * List of view ids expecting to close.
 	 */
-	private List<String> fExpectingCloseEvents = new ArrayList<>();
+	private final List<String> fExpectingCloseEvents = new ArrayList<>();
 
 	/**
 	 * Constructor

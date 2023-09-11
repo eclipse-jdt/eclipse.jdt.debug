@@ -33,7 +33,7 @@ public class PushFieldVariable extends CompoundInstruction {
 
 	private String fDeclaringTypeSignature;
 
-	private String fName;
+	private final String fName;
 
 	private int fSuperClassLevel;
 

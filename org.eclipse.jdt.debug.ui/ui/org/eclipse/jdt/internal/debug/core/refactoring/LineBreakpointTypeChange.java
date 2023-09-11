@@ -33,7 +33,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class LineBreakpointTypeChange extends LineBreakpointChange {
 
-	private IType fDestType;
+	private final IType fDestType;
 
 	public LineBreakpointTypeChange(IJavaLineBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);

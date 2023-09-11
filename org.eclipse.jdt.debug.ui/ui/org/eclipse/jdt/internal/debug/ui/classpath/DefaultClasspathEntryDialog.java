@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class DefaultClasspathEntryDialog extends MessageDialog {
 
-	private DefaultProjectClasspathEntry fEntry;
+	private final DefaultProjectClasspathEntry fEntry;
 	private Button fButton;
 
 	public DefaultClasspathEntryDialog(Shell parentShell, IRuntimeClasspathEntry entry) {

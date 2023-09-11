@@ -47,10 +47,10 @@ import org.eclipse.swt.widgets.Label;
  */
 public class ThreadFilterEditor {
 
-	private JavaBreakpointAdvancedPage fPage;
+	private final JavaBreakpointAdvancedPage fPage;
 	private CheckboxTreeViewer fThreadViewer;
-	private ThreadFilterContentProvider fContentProvider;
-	private CheckHandler fCheckHandler;
+	private final ThreadFilterContentProvider fContentProvider;
+	private final CheckHandler fCheckHandler;
 	private static String MAIN= "main"; //$NON-NLS-1$
 
 	public ThreadFilterEditor(Composite parent, JavaBreakpointAdvancedPage page) {

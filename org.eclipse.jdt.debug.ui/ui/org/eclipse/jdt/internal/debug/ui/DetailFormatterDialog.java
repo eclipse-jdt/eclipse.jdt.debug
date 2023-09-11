@@ -81,7 +81,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * The detail formatter to edit.
 	 */
-	private DetailFormatter fDetailFormatter;
+	private final DetailFormatter fDetailFormatter;
 
 	// widgets
 	private Text fTypeNameText;
@@ -97,7 +97,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * Indicate if the type can be modified.
 	 */
-	private boolean fEditTypeName;
+	private final boolean fEditTypeName;
 
 	/**
 	 * The type object which corresponds to the given name.
@@ -110,7 +110,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * List of types that have detail formatters already defined.
 	 */
-	private List<?> fDefinedTypes;
+	private final List<?> fDefinedTypes;
 
     /**
      * Activation handler for content assist, must be deactivated on disposal.

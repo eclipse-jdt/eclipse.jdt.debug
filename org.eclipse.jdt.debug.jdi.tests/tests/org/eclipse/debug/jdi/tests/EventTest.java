@@ -25,7 +25,7 @@ import com.sun.jdi.request.EventRequest;
  * Tests for JDI com.sun.jdi.event.Event.
  */
 public class EventTest extends AbstractJDITest {
-	private HashMap<EventRequest, Event> fAllEvents = new HashMap<>();
+	private final HashMap<EventRequest, Event> fAllEvents = new HashMap<>();
 	/**
 	 * Creates a new test.
 	 */

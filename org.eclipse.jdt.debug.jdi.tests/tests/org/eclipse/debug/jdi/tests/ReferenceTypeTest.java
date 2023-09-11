@@ -33,22 +33,22 @@ import com.sun.jdi.ReferenceType;
  */
 public class ReferenceTypeTest extends AbstractJDITest {
 
-	private List<ReferenceType> fTypes = new LinkedList<>();
+	private final List<ReferenceType> fTypes = new LinkedList<>();
 
 	// These must match what is done in localSetUp
-	private boolean[] fSystemClassLoader = { true, true, false, false };
-	private boolean[] fHasMethods = { true, false, true, true };
-	private boolean[] fIsAbstract = { false, false, false, true };
-	private boolean[] fIsFinal = { false, true, false, false };
-	private boolean[] fIsStatic = { false, false, false, false };
-	private String[] fTypeName =
+	private final boolean[] fSystemClassLoader = { true, true, false, false };
+	private final boolean[] fHasMethods = { true, false, true, true };
+	private final boolean[] fIsAbstract = { false, false, false, true };
+	private final boolean[] fIsFinal = { false, true, false, false };
+	private final boolean[] fIsStatic = { false, false, false, false };
+	private final String[] fTypeName =
 		{
 			"java.lang.Object",
 			"java.lang.String[]",
 			"org.eclipse.debug.jdi.tests.program.MainClass",
 			"org.eclipse.debug.jdi.tests.program.Printable" };
-	private int fObjectIndex = 0;
-	private int fMainClassIndex = 2;
+	private final int fObjectIndex = 0;
+	private final int fMainClassIndex = 2;
 
 	/**
 	 * Creates a new test.

@@ -38,8 +38,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class SelectSystemLibraryQuickFix extends JREResolution {
 
-	private IPath fOldPath;
-	private IJavaProject fProject;
+	private final IPath fOldPath;
+	private final IJavaProject fProject;
 
 	public SelectSystemLibraryQuickFix(IPath oldPath, IJavaProject project) {
 		fOldPath = oldPath;

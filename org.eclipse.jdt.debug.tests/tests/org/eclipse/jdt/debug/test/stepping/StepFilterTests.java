@@ -29,8 +29,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class StepFilterTests extends AbstractDebugTest {
 
-	private String fOriginalActiveFilters;
-	private String fOriginalInactiveFilters;
+	private final String fOriginalActiveFilters;
+	private final String fOriginalInactiveFilters;
 
 	/**
 	 * Constructor

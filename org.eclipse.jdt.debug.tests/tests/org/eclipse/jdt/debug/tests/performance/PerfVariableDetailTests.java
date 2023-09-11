@@ -29,7 +29,7 @@ import org.eclipse.test.performance.Dimension;
  */
 public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implements IValueDetailListener {
 
-    private Object fLock = new Object();
+    private final Object fLock = new Object();
 
     /**
      * Constructor

@@ -32,8 +32,8 @@ import com.sun.jdi.request.ModificationWatchpointRequest;
  */
 public class LocatableTest extends AbstractJDITest {
 
-	private List<Mirror> fLocatables = new LinkedList<>();
-	private List<EventRequest> fRequests = new LinkedList<>();
+	private final List<Mirror> fLocatables = new LinkedList<>();
+	private final List<EventRequest> fRequests = new LinkedList<>();
 	/**
 	 * Creates a new test.
 	 */

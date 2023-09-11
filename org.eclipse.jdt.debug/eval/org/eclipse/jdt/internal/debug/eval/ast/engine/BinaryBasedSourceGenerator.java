@@ -36,11 +36,11 @@ public class BinaryBasedSourceGenerator {
 	private static final String EVAL_METHOD_NAME = "___eval"; //$NON-NLS-1$
 	private static final String ANONYMOUS_CLASS_NAME = "___EvalClass"; //$NON-NLS-1$
 
-	private String[] fLocalVariableTypeNames;
+	private final String[] fLocalVariableTypeNames;
 
-	private String[] fLocalVariableNames;
+	private final String[] fLocalVariableNames;
 
-	private boolean fIsInStaticMethod;
+	private final boolean fIsInStaticMethod;
 
 	private StringBuilder fSource;
 
@@ -54,7 +54,7 @@ public class BinaryBasedSourceGenerator {
 	 * Level of source code to generate (major, minor). For example 1 and 4
 	 * indicates 1.4.
 	 */
-	private int fSourceMajorLevel;
+	private final int fSourceMajorLevel;
 	private int fSourceMinorLevel;
 
 	public BinaryBasedSourceGenerator(String[] localTypesNames,

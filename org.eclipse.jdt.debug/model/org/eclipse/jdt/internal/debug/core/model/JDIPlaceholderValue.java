@@ -23,7 +23,7 @@ package org.eclipse.jdt.internal.debug.core.model;
  */
 public class JDIPlaceholderValue extends JDINullValue {
 
-	private String fMessage;
+	private final String fMessage;
 
 	/**
 	 * Constructor, passes the debug target to the super class.

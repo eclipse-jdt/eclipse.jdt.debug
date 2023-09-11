@@ -28,10 +28,10 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 
 public class MockLaunch implements ILaunch {
-	private ConcurrentLinkedDeque<IProcess> processes = new ConcurrentLinkedDeque<>();
-	private ConcurrentLinkedDeque<IDebugTarget> targets = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedDeque<IProcess> processes = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedDeque<IDebugTarget> targets = new ConcurrentLinkedDeque<>();
 	private ISourceLocator sourceLocator;
-	private Map<String, String> attributes = new HashMap<>();
+	private final Map<String, String> attributes = new HashMap<>();
 
 	@Override
 	public boolean canTerminate() {

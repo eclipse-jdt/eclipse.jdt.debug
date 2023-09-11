@@ -27,7 +27,7 @@ import org.eclipse.test.performance.Dimension;
  * Tests performance of conditional breakpoints.
  */
 public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTest {
-    private String fTypeName = "PerfLoop";
+    private final String fTypeName = "PerfLoop";
 
     private int fHitCount = 0;
 
@@ -39,9 +39,9 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
     private boolean fWarmUpComplete = false;
 
-    private int fWarmUpRuns = 2;
+    private final int fWarmUpRuns = 2;
 
-    private int fMeasuredRuns = 10;
+    private final int fMeasuredRuns = 10;
 
     private class BreakpointListener implements IDebugEventSetListener {
         /**

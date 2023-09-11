@@ -44,7 +44,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * The underlying field
 	 */
-	private Field fField;
+	private final Field fField;
 	/**
 	 * The object containing the field, or <code>null</code> for a static field.
 	 */
@@ -52,7 +52,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * The type containing the field.
 	 */
-	private ReferenceType fType;
+	private final ReferenceType fType;
 
 	/**
 	 * When created for a logical structure we hold onto the original

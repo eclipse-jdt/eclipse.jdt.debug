@@ -45,7 +45,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/**
 	 * Entry changed listeners
 	 */
-	private ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
+	private final ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
 
 	/**
 	 * The runtime classpath entries displayed in this viewer

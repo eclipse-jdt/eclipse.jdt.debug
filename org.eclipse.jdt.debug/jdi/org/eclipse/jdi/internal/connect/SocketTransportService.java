@@ -37,7 +37,7 @@ public class SocketTransportService extends TransportService {
 	/** Handshake bytes used just after connecting VM. */
 	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes(); //$NON-NLS-1$
 
-	private Capabilities fCapabilities = new Capabilities() {
+	private final Capabilities fCapabilities = new Capabilities() {
 		@Override
 		public boolean supportsAcceptTimeout() {
 			return true;
@@ -60,7 +60,7 @@ public class SocketTransportService extends TransportService {
 	};
 
 	private static class SocketListenKey extends ListenKey {
-		private String fAddress;
+		private final String fAddress;
 
 		SocketListenKey(String address) {
 			fAddress = address;

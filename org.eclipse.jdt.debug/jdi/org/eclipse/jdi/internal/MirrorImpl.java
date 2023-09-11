@@ -50,7 +50,7 @@ public class MirrorImpl implements Mirror {
 	/** Description of Mirror object. */
 	protected String fDescription;
 	/** Virtual Machine of Mirror object. */
-	private VirtualMachineImpl fVirtualMachineImpl;
+	private final VirtualMachineImpl fVirtualMachineImpl;
 	/**
 	 * VerboseWriter where verbose info is written to, null if no verbose must
 	 * be given.

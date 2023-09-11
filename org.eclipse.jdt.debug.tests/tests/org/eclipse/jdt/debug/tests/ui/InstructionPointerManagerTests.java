@@ -63,14 +63,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class InstructionPointerManagerTests extends AbstractDebugTest {
 
-	private Object fLock = new Object();
+	private final Object fLock = new Object();
 	private Annotation fAddedAnnotation = null;
 	private Annotation fRemovedAnnotation = null;
 
 	private MyPerspectiveListener fPerspectiveListener;
 	private MyAnnotationListener fAnnotationListener;
 	private IPartListener2 fPartListener;
-	private Set<IAnnotationModel> fAnnotationModelsWithListeners = new HashSet<>();
+	private final Set<IAnnotationModel> fAnnotationModelsWithListeners = new HashSet<>();
 
 	private static final String typeThreadStack = "org.eclipse.debug.tests.targets.ThreadStack";
 	private static final String typeClassOne = "org.eclipse.debug.tests.targets.ClassOne";

@@ -39,7 +39,7 @@ public class DynamicTypeContext extends TypeContext {
 		public IType getType() throws CoreException;
 	}
 
-	private ITypeProvider fTypeProvider;
+	private final ITypeProvider fTypeProvider;
 
 	/**
 	 * Constructs a completion context on the given type.

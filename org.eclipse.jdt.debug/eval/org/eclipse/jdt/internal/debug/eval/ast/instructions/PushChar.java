@@ -18,7 +18,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 public class PushChar extends SimpleInstruction {
 
-	private char fValue;
+	private final char fValue;
 
 	public PushChar(char value) {
 		fValue = value;

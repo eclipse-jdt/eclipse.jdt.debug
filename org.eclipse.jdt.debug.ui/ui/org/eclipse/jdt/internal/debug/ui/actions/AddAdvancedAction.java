@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
  */
 public class AddAdvancedAction extends RuntimeClasspathAction {
 
-	private IAction[] fActions;
+	private final IAction[] fActions;
 
 	public AddAdvancedAction(IClasspathViewer viewer, IAction[] actions) {
 		super(ActionMessages.AddAdvancedAction_Ad_vanced____1, viewer);

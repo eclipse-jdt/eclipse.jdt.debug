@@ -28,9 +28,9 @@ public class SocketConnection extends Connection {
 	// for attaching connector
 	private Socket fSocket;
 
-	private InputStream fInput;
+	private final InputStream fInput;
 
-	private OutputStream fOutput;
+	private final OutputStream fOutput;
 
 	SocketConnection(Socket socket, InputStream in, OutputStream out) {
 		fSocket = socket;

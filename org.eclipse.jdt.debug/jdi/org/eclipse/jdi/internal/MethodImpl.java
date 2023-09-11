@@ -56,7 +56,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	private static String[] fgInvokeOptions = null;
 
 	/** MethodTypeID that corresponds to this reference. */
-	private JdwpMethodID fMethodID;
+	private final JdwpMethodID fMethodID;
 
 	/** The following are the stored results of JDWP calls. */
 	private List<LocalVariable> fVariables = null;

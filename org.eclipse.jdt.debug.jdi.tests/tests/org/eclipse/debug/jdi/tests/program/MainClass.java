@@ -50,9 +50,9 @@ public class MainClass extends Date implements Runnable, Printable {
 	private static boolean[] booleanArray = new boolean[0];
 	private static boolean[][] booleanDoubleArray = new boolean[0][0];
 
-	private String string = "";
-	private String[] stringArray = new String[0];
-	private String[][] stringDoubleArray = new String[0][0];
+	private final String string = "";
+	private final String[] stringArray = new String[0];
+	private final String[][] stringDoubleArray = new String[0][0];
 
 	/**
 	 * An integer value
@@ -98,9 +98,9 @@ public class MainClass extends Date implements Runnable, Printable {
 	 */
 	public boolean fBool = false;
 
-	private char fChar = 'a';
+	private final char fChar = 'a';
 
-	private String fString2 = "Hello";
+	private final String fString2 = "Hello";
 
 	protected final String fString3 = "HEY";
 

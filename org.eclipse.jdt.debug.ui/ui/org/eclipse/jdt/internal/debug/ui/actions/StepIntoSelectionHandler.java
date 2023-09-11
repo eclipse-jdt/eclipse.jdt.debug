@@ -37,7 +37,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	/**
 	 * The method to step into
 	 */
-	private IMethod fMethod;
+	private final IMethod fMethod;
 
 	/**
 	 * Resolved signature of the method to step into
@@ -47,7 +47,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	/**
 	 * The thread in which to step
 	 */
-	private IJavaThread fThread;
+	private final IJavaThread fThread;
 
 	/**
 	 * The initial stack frame

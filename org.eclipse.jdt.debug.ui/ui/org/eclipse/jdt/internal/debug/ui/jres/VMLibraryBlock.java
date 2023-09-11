@@ -87,7 +87,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	private Button fSourceButton;
 	protected Button fDefaultButton;
 
-	private IStatus[] fLibStatus;
+	private final IStatus[] fLibStatus;
 
 	private Button fAnnotationsButton;
 

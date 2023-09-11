@@ -46,28 +46,28 @@ public class BreakpointLocationVerifierJob extends Job {
 	 * The temporary breakpoint that has been set. Can be <code>null</code> if the callee was not able
 	 * to check if a breakpoint was already set at this position.
 	 */
-	private IJavaLineBreakpoint fBreakpoint;
+	private final IJavaLineBreakpoint fBreakpoint;
 
 	/**
 	 * The number of the line where the breakpoint has been requested.
 	 */
-	private int fLineNumber;
+	private final int fLineNumber;
 
 	/**
 	 * The qualified type name of the class where the temporary breakpoint as been set.
 	 * Can be <code>null</code> if fBreakpoint is null.
 	 */
-	private String fTypeName;
+	private final String fTypeName;
 
 	/**
 	 * The type in which should be set the breakpoint.
 	 */
-	private IType fType;
+	private final IType fType;
 
 	/**
 	 * The current IEditorPart
 	 */
-	private IEditorPart fEditorPart;
+	private final IEditorPart fEditorPart;
 
 	/**
 	 * The parsed {@link CompilationUnit}
@@ -82,7 +82,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	/**
 	 * The status line to use to display errors
 	 */
-	private IEditorStatusLine fStatusLine;
+	private final IEditorStatusLine fStatusLine;
 
 	/**
 	 * If a best guess should be made at the breakpoint location

@@ -69,7 +69,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 	private static HashMap<Integer, String> fEventKindMap = null;
 
 	/** Request ID of event. */
-	private RequestID fRequestID;
+	private final RequestID fRequestID;
 
 	/** The EventRequest that requested this event. */
 	private EventRequest fRequest;

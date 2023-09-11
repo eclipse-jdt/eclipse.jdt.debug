@@ -28,9 +28,9 @@ import org.eclipse.osgi.util.NLS;
  */
 public class PushStaticFieldVariable extends CompoundInstruction {
 
-	private String fFieldName;
+	private final String fFieldName;
 
-	private String fQualifiedTypeName;
+	private final String fQualifiedTypeName;
 
 	public PushStaticFieldVariable(String fieldName, String qualifiedTypeName,
 			int start) {

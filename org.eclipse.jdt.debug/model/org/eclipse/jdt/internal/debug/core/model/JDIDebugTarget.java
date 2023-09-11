@@ -139,7 +139,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * List of thread groups in this target.
 	 */
-	private List<JDIThreadGroup> fGroups;
+	private final List<JDIThreadGroup> fGroups;
 
 	/**
 	 * Associated system process, or <code>null</code> if not available.
@@ -312,7 +312,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 *
 	 * @since 3.6
 	 */
-	private ListenerList<IJavaHotCodeReplaceListener> fHCRListeners = new ListenerList<>();
+	private final ListenerList<IJavaHotCodeReplaceListener> fHCRListeners = new ListenerList<>();
 
 	/**
 	 * Java scope of the current launch, "null" means everything is in scope
@@ -332,7 +332,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Labels given by the user is stored in this map, where the key is the unique ID of the object.
 	 */
-	private Map<Long, String> objectLabels = new HashMap<>();
+	private final Map<Long, String> objectLabels = new HashMap<>();
 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -2344,7 +2344,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	class ThreadDeathHandler implements IJDIEventListener {
 
 		// terminated threads marked for removal from the fThreads list
-		private Map<Event, JDIThread> toRemove = Collections.synchronizedMap(new HashMap<>());
+		private final Map<Event, JDIThread> toRemove = Collections.synchronizedMap(new HashMap<>());
 
 		protected ThreadDeathHandler() {
 			createRequest();

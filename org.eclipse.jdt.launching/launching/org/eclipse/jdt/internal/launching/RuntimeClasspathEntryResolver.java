@@ -29,7 +29,7 @@ import org.eclipse.jdt.launching.IVMInstall;
  */
 public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver2 {
 
-	private IConfigurationElement fConfigurationElement;
+	private final IConfigurationElement fConfigurationElement;
 
 	private IRuntimeClasspathEntryResolver fDelegate;
 

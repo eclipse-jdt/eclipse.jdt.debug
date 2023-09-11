@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements IFontProvider {
 
-	private IExecutionEnvironmentProvider fProvider;
+	private final IExecutionEnvironmentProvider fProvider;
 	private Font fFont = null;
 
 	/**

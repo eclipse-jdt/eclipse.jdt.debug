@@ -18,7 +18,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 public class PushString extends SimpleInstruction {
 
-	private String fValue;
+	private final String fValue;
 
 	public PushString(String value) {
 		fValue = value;

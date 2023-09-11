@@ -16,7 +16,7 @@ package org.eclipse.jdi.internal.spy;
 import java.text.MessageFormat;
 
 public class JdwpConversation {
-	private int fId;
+	private final int fId;
 	private JdwpCommandPacket fCommand;
 	private JdwpReplyPacket fReply;
 

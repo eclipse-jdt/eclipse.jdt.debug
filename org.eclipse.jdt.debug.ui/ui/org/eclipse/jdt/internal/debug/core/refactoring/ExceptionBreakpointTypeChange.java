@@ -32,7 +32,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 
-	private IType fDestType;
+	private final IType fDestType;
 
 	public ExceptionBreakpointTypeChange(IJavaExceptionBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
