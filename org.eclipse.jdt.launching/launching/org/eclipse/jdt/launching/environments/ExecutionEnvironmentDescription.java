@@ -310,7 +310,7 @@ public final class ExecutionEnvironmentDescription {
 				arguments.append(key);
 				if (!value.isEmpty()) {
 					arguments.append('=');
-					value = resolveHome(value, eeHome);
+					value = resolveHome(value, eeHome); // TODO: remove once getProperties() has been removed
 					if (value.indexOf(' ') > -1) {
 						arguments.append('"').append(value).append('"');
 					} else {
@@ -597,7 +597,7 @@ public final class ExecutionEnvironmentDescription {
 	 * @return javadoc location or <code>null</code> if none
 	 */
 	private URL getJavadocLocation() {
-		return EEVMType.getJavadocLocation(fProperties);
+		return EEVMType.getJavadocLocation(this);
 	}
 
 	/**
@@ -607,6 +607,6 @@ public final class ExecutionEnvironmentDescription {
 	 * @since 3.7.0
 	 */
 	private URL getIndexLocation() {
-		return EEVMType.getIndexLocation(fProperties);
+		return EEVMType.getIndexLocation(this);
 	}
 }

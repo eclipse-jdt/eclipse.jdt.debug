@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -56,11 +55,11 @@ public class EEVMType extends AbstractVMInstallType {
 	 * Returns the default javadoc location specified in the properties or <code>null</code>
 	 * if none.
 	 *
-	 * @param properties properties map
+	 * @param eeDescription the execution-environment to query
 	 * @return javadoc location specified in the properties or <code>null</code> if none
 	 */
-	public static URL getJavadocLocation(Map<String, String> properties) {
-		String javadoc = getProperty(ExecutionEnvironmentDescription.JAVADOC_LOC, properties);
+	public static URL getJavadocLocation(ExecutionEnvironmentDescription eeDescription) {
+		String javadoc = eeDescription.getProperty(ExecutionEnvironmentDescription.JAVADOC_LOC);
 		if (javadoc != null && javadoc.length() > 0){
 			try{
 				URL url = new URL(javadoc);
@@ -77,7 +76,7 @@ public class EEVMType extends AbstractVMInstallType {
 				return null;
 			}
 		}
-		String version = getProperty(ExecutionEnvironmentDescription.LANGUAGE_LEVEL, properties);
+		String version = eeDescription.getProperty(ExecutionEnvironmentDescription.LANGUAGE_LEVEL);
 		if (version != null) {
 			return StandardVMType.getDefaultJavadocLocation(version);
 		}
@@ -88,12 +87,12 @@ public class EEVMType extends AbstractVMInstallType {
 	 * Returns the default index location specified in the properties or <code>null</code>
 	 * if none.
 	 *
-	 * @param properties properties map
+	 * @param eeDescription the execution-environment to query
 	 * @return index location specified in the properties or <code>null</code> if none
 	 * @since 3.7.0
 	 */
-	public static URL getIndexLocation(Map<String, String> properties) {
-		String index = getProperty(ExecutionEnvironmentDescription.INDEX_LOC, properties);
+	public static URL getIndexLocation(ExecutionEnvironmentDescription eeDescription) {
+		String index = eeDescription.getProperty(ExecutionEnvironmentDescription.INDEX_LOC);
 		if (index != null && index.length() > 0){
 			try{
 				URL url = new URL(index);
@@ -129,18 +128,6 @@ public class EEVMType extends AbstractVMInstallType {
 			}
 		}
 		return Status.OK_STATUS;
-	}
-
-	/**
-	 * Returns the specified property value from the given map, as a {@link String},
-	 * or <code>null</code> if none.
-	 *
-	 * @param property the name of the property
-	 * @param properties property map
-	 * @return value or <code>null</code>
-	 */
-	private static String getProperty(String property, Map<String, String> properties) {
-		return properties.get(property);
 	}
 
 	/* (non-Javadoc)
