@@ -17,7 +17,6 @@ package org.eclipse.jdt.debug.tests.core;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -160,7 +159,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
-		URL location = EEVMType.getJavadocLocation(ee.getProperties());
+		URL location = EEVMType.getJavadocLocation(ee);
 		URL expectedLocation = null;
 		try {
 			expectedLocation = new URL("http://a.javadoc.location");
@@ -180,7 +179,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
-		URL location = EEVMType.getIndexLocation(ee.getProperties());
+		URL location = EEVMType.getIndexLocation(ee);
 		URL expectedLocation = null;
 		try {
 			expectedLocation = new URL("http://a.index.location");
@@ -274,18 +273,17 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription desc = new ExecutionEnvironmentDescription(file);
-		Map<String, String> map = desc.getProperties();
 
 		// validate expected properties
-		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE, "jrew.txt" , map);
-		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE_CONSOLE, "jre.txt", map);
-		validateProperty("-XspecialArg:123", "", map);
-		validateProperty("-XspecialArg2", "456", map);
+		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE, "jrew.txt", desc);
+		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE_CONSOLE, "jre.txt", desc);
+		validateProperty("-XspecialArg:123", "", desc);
+		validateProperty("-XspecialArg2", "456", desc);
 
 	}
 
-	protected void validateProperty(String key, String value, Map<String, String> properties) {
-		assertEquals("Unexpeted value for: " + key, value, properties.get(key));
+	protected void validateProperty(String key, String value, ExecutionEnvironmentDescription ee) {
+		assertEquals("Unexpeted value for: " + key, value, ee.getProperty(key));
 	}
 
 	/**
@@ -295,6 +293,6 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
-		validateProperty("-Dee.empty", "", ee.getProperties());
+		validateProperty("-Dee.empty", "", ee);
 	}
 }

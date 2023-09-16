@@ -3431,7 +3431,7 @@ public final class JavaRuntime {
 			standin.setInstallLocation(new File(home));
 			standin.setLibraryLocations(description.getLibraryLocations());
 			standin.setVMArgs(description.getVMArguments());
-			standin.setJavadocLocation(EEVMType.getJavadocLocation(description.getProperties()));
+			standin.setJavadocLocation(EEVMType.getJavadocLocation(description));
 			standin.setAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID, description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
 			File exe = description.getExecutable();
 			if (exe == null) {
