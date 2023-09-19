@@ -87,7 +87,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 
 	protected String fModuleName = EMPTY_STRING;
 
-	private WidgetListener fListener = new WidgetListener();
+	private final WidgetListener fListener = new WidgetListener();
 
 	/**
 	 * chooses a project for the type of java launch config that it is

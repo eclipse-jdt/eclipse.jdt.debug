@@ -46,7 +46,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	private boolean fAddExportedEntries = true;
 	private boolean fAddRequiredProjects = true;
 
-	private List<IJavaProject> fProjects;
+	private final List<IJavaProject> fProjects;
 
 	/**
 	 * @param parentShell the parent {@link Shell}

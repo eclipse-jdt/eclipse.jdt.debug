@@ -52,8 +52,8 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		public static final int SOURCE_PATH= 2;
 		public static final int EXTERNAL_ANNOTATIONS_PATH = 3;
 
-		private LibraryStandin fParent;
-		private int fType;
+		private final LibraryStandin fParent;
+		private final int fType;
 
 		public SubElement(LibraryStandin parent, int type) {
 			fParent= parent;
@@ -84,7 +84,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	private HashMap<LibraryStandin, Object[]> fChildren= new HashMap<>();
+	private final HashMap<LibraryStandin, Object[]> fChildren= new HashMap<>();
 
 	private LibraryStandin[] fLibraries= new LibraryStandin[0];
 

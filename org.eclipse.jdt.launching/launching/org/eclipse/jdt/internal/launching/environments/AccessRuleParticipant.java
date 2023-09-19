@@ -30,7 +30,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
  */
 class AccessRuleParticipant implements IAccessRuleParticipant {
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 
 	private IAccessRuleParticipant fDelegate;
 

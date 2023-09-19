@@ -82,8 +82,8 @@ public class JavaStackTraceConsole extends TextConsole {
 	private static final String INDENT_STR = "    "; //$NON-NLS-1$
 	private static final int INDENT_WIDTH = 4;
 
-    private JavaStackTraceConsolePartitioner partitioner = new JavaStackTraceConsolePartitioner();
-    private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+    private final JavaStackTraceConsolePartitioner partitioner = new JavaStackTraceConsolePartitioner();
+    private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
         @Override
 		public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();

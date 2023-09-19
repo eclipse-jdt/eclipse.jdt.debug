@@ -68,7 +68,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 // the VM install's javadoc location
 	private URL fJavadocLocation = null;
 	private boolean fAutoDetectAttributes = false;
-	private IStatus[] fFieldStatus = new IStatus[1];
+	private final IStatus[] fFieldStatus = new IStatus[1];
 
 	/**
 	 *

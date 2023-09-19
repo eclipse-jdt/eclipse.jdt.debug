@@ -53,7 +53,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 
 	class ContentProvider implements IStructuredContentProvider {
 
-		private List<IJavaProject> fProjects;
+		private final List<IJavaProject> fProjects;
 
 		public ContentProvider(List<IJavaProject> projects) {
 			fProjects = projects;

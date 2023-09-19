@@ -37,7 +37,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  */
 public class PackageFragmentRootSourceContainer extends AbstractSourceContainer {
 
-	private IPackageFragmentRoot fRoot;
+	private final IPackageFragmentRoot fRoot;
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot</code>).

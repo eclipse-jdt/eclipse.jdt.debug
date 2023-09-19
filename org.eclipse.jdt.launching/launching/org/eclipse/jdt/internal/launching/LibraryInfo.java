@@ -19,10 +19,10 @@ package org.eclipse.jdt.internal.launching;
  */
 public class LibraryInfo {
 
-	private String fVersion;
-	private String[] fBootpath;
-	private String[] fExtensionDirs;
-	private String[] fEndorsedDirs;
+	private final String fVersion;
+	private final String[] fBootpath;
+	private final String[] fExtensionDirs;
+	private final String[] fEndorsedDirs;
 
 	public LibraryInfo(String version, String[] bootpath, String[] extDirs, String[] endDirs) {
 		fVersion = version;

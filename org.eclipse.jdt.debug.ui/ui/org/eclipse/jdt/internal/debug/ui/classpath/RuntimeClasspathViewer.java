@@ -56,11 +56,11 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	/**
 	 * Entry changed listeners
 	 */
-	private ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
+	private final ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
 
 	private IClasspathEntry fCurrentParent= null;
 
-	private IPreferenceChangeListener fPrefListeners = new IPreferenceChangeListener() {
+	private final IPreferenceChangeListener fPrefListeners = new IPreferenceChangeListener() {
 
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {

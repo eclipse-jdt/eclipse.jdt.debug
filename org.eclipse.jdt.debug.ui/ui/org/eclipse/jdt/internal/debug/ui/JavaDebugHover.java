@@ -562,7 +562,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		final String snippet = snippetBuilder.toString();
 
 		class Evaluator implements IEvaluationListener {
-			private CompletableFuture<IEvaluationResult> result = new CompletableFuture<>();
+			private final CompletableFuture<IEvaluationResult> result = new CompletableFuture<>();
 
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {

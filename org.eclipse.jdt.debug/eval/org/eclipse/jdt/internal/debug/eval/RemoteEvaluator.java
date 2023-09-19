@@ -57,9 +57,9 @@ public class RemoteEvaluator {
 
 	private final List<String> variableNames;
 
-	private IJavaClassObject loadedClass = null;
+	private final IJavaClassObject loadedClass = null;
 
-	private String enclosingTypeName;
+	private final String enclosingTypeName;
 
 	/**
 	 * Constructs a new evaluation engine for the given VM in the context of the specified project. Class files required for the evaluation will be

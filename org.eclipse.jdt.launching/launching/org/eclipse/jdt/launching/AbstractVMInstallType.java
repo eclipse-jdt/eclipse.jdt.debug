@@ -39,7 +39,7 @@ import org.eclipse.osgi.util.NLS;
  */
 
 public abstract class AbstractVMInstallType implements IVMInstallType, IExecutableExtension {
-	private List<IVMInstall> fVMs;
+	private final List<IVMInstall> fVMs;
 	private String fId;
 
 	/**

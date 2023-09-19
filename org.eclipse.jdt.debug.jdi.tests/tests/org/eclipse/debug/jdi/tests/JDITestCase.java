@@ -23,7 +23,7 @@ import junit.framework.TestCase;
  * starting and shutting down the VM after each test.
  */
 public class JDITestCase extends TestCase {
-	private AbstractJDITest fTest;
+	private final AbstractJDITest fTest;
 	/**
 	 * Creates a new test for the given JDI test.
 	 * @param test

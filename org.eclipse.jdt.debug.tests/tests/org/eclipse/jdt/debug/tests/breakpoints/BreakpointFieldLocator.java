@@ -33,7 +33,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
  */
 public class BreakpointFieldLocator extends ASTVisitor {
 
-	private int fPosition;
+	private final int fPosition;
 
 	private String fTypeName;
 

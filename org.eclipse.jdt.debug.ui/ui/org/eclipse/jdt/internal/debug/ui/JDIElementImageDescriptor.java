@@ -22,8 +22,8 @@ import org.eclipse.swt.graphics.Point;
 
 public class JDIElementImageDescriptor extends CompositeImageDescriptor {
 
-	private ImageDescriptor fBaseImage;
-	private int fFlags;
+	private final ImageDescriptor fBaseImage;
+	private final int fFlags;
 	private Point fSize;
 	public JDIElementImageDescriptor(ImageDescriptor baseImage, int flags, Point size) {
 		fBaseImage = baseImage;

@@ -93,7 +93,7 @@ public class JavaJRETab extends JavaLaunchTab {
 
 
 	// Selection changed listener (checked JRE)
-	private IPropertyChangeListener fCheckListener = new IPropertyChangeListener() {
+	private final IPropertyChangeListener fCheckListener = new IPropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			handleSelectedJREChanged();

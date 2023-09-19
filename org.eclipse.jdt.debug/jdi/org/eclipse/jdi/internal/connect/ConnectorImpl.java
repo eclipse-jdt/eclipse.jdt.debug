@@ -34,7 +34,7 @@ import com.sun.jdi.connect.spi.Connection;
  */
 public abstract class ConnectorImpl implements Connector {
 	/** Virtual machine manager that created this connector. */
-	private VirtualMachineManagerImpl fVirtualMachineManager;
+	private final VirtualMachineManagerImpl fVirtualMachineManager;
 
 	/** Transport that is used for communication. */
 	protected Transport fTransport;
@@ -118,10 +118,10 @@ public abstract class ConnectorImpl implements Connector {
 		 */
 		private static final long serialVersionUID = 8850533280769854833L;
 
-		private String fName;
-		private String fDescription;
-		private String fLabel;
-		private boolean fMustSpecify;
+		private final String fName;
+		private final String fDescription;
+		private final String fLabel;
+		private final boolean fMustSpecify;
 
 		protected ArgumentImpl(String name, String description, String label,
 				boolean mustSpecify) {
@@ -220,8 +220,8 @@ public abstract class ConnectorImpl implements Connector {
 	public static class IntegerArgumentImpl extends ArgumentImpl implements IntegerArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 		private Integer fValue;
-		private int fMin;
-		private int fMax;
+		private final int fMin;
+		private final int fMax;
 
 		protected IntegerArgumentImpl(String name, String description,
 				String label, boolean mustSpecify, int min, int max) {
@@ -361,7 +361,7 @@ public abstract class ConnectorImpl implements Connector {
 
 	public class SelectedArgumentImpl extends StringArgumentImpl implements	SelectedArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
-		private List<String> fChoices;
+		private final List<String> fChoices;
 
 		protected SelectedArgumentImpl(String name, String description,
 				String label, boolean mustSpecify, List<String> choices) {

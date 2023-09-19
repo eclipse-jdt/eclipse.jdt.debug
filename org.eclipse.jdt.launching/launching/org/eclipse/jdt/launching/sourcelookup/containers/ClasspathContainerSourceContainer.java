@@ -42,7 +42,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	/**
 	 * Associated classpath container path.
 	 */
-	private IPath fContainerPath;
+	private final IPath fContainerPath;
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathContainer</code>).

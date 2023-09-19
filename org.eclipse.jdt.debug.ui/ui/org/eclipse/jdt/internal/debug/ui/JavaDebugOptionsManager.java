@@ -919,8 +919,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 
 	private static class UpdateBreakpointMessagesJob extends Job {
 
-		private ISchedulingRule rule;
-		private ICoreRunnable runnable;
+		private final ISchedulingRule rule;
+		private final ICoreRunnable runnable;
 
 		UpdateBreakpointMessagesJob(ISchedulingRule rule, ICoreRunnable runnable) {
 			super("Updating breakpoint messages"); //$NON-NLS-1$

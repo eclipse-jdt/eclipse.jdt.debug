@@ -64,7 +64,7 @@ public class JavaVariablesDetailPane extends DefaultDetailPane {
 	private FocusListener focusListener;
 	private Composite fDetailPaneContainer;
 	private Combo fExpressionHistory;
-	private IDialogSettings fExpressionHistoryDialogSettings;
+	private final IDialogSettings fExpressionHistoryDialogSettings;
 	private static final int MAX_HISTORY_SIZE = 20;
 	private static final String DS_SECTION_EXPRESSION_HISTORY = "expressionHistory"; //$NON-NLS-1$
 	private static final String DS_KEY_HISTORY_ENTRY_COUNT = "expressionHistoryEntryCount"; //$NON-NLS-1$

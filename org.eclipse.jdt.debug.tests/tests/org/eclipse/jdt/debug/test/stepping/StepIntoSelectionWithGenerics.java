@@ -31,10 +31,10 @@ import org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionHandler;
  */
 public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
-	private String qtypename = "a.b.c.StepIntoSelectionWithGenerics";
-	private String pname = "a.b.c";
-	private String jname = "StepIntoSelectionWithGenerics.java";
-	private String mname = "hello";
+	private final String qtypename = "a.b.c.StepIntoSelectionWithGenerics";
+	private final String pname = "a.b.c";
+	private final String jname = "StepIntoSelectionWithGenerics.java";
+	private final String mname = "hello";
 
 	/**
 	 * Constructor

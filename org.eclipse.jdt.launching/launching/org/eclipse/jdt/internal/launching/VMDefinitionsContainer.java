@@ -78,17 +78,17 @@ public class VMDefinitionsContainer {
 	/**
 	 * Map of VMInstallTypes to Lists of corresponding VMInstalls.
 	 */
-	private Map<IVMInstallType, List<IVMInstall>> fVMTypeToVMMap;
+	private final Map<IVMInstallType, List<IVMInstall>> fVMTypeToVMMap;
 
 	/**
 	 * Cached list of VMs in this container
 	 */
-	private List<IVMInstall> fVMList;
+	private final List<IVMInstall> fVMList;
 
 	/**
 	 * VMs managed by this container whose install locations don't actually exist.
 	 */
-	private List<IVMInstall> fInvalidVMList;
+	private final List<IVMInstall> fInvalidVMList;
 
 	/**
 	 * The composite identifier of the default VM.  This consists of the install type ID

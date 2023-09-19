@@ -62,11 +62,11 @@ public class SocketListenConnectorProcess implements IProcess {
 	/**
 	 * The launch this process belongs to
 	 */
-	private ILaunch fLaunch;
+	private final ILaunch fLaunch;
 	/**
 	 * The port this connector will listen on.
 	 */
-	private String fPort;
+	private final String fPort;
 	/**
 	 * The number of incoming connections to accept (0 = unlimited). Setting to 1 mimics previous behaviour.
 	 */
@@ -289,8 +289,8 @@ public class SocketListenConnectorProcess implements IProcess {
 	 */
 	class WaitForConnectionJob extends Job{
 
-		private ListeningConnector fConnector;
-		private Map<String, Connector.Argument> fArguments;
+		private final ListeningConnector fConnector;
+		private final Map<String, Connector.Argument> fArguments;
 		/**
 		 * Flag that can be set to tell this job that waiting
 		 * for incoming connections has been cancelled.  If true,

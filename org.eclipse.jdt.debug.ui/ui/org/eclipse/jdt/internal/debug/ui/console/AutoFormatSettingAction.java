@@ -23,8 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 
 public class AutoFormatSettingAction extends Action {
-	private JavaStackTraceConsolePage fPage;
-	private IPreferenceStore fPreferenceStore;
+	private final JavaStackTraceConsolePage fPage;
+	private final IPreferenceStore fPreferenceStore;
 
 	public AutoFormatSettingAction(JavaStackTraceConsolePage page) {
 		super(ConsoleMessages.AutoFormatSettingAction_0, SWT.TOGGLE);

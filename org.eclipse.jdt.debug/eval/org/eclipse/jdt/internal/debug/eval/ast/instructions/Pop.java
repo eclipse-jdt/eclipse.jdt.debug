@@ -15,7 +15,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 public class Pop extends Instruction {
 
-	private int fSize;
+	private final int fSize;
 
 	/**
 	 * @param start

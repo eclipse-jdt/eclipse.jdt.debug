@@ -63,7 +63,7 @@ public class BreakpointListenerManager {
 	private class JavaBreakpointListenerProxy implements
 			IJavaBreakpointListener {
 
-		private IConfigurationElement fConfigElement;
+		private final IConfigurationElement fConfigElement;
 		private IJavaBreakpointListener fDelegate;
 
 		public JavaBreakpointListenerProxy(IConfigurationElement element) {

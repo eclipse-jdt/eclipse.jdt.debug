@@ -47,15 +47,15 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  */
 public abstract class AbstractDetailPane implements IDetailPane3 {
 
-	private String fName;
-	private String fDescription;
-	private String fId;
+	private final String fName;
+	private final String fDescription;
+	private final String fId;
 	private AbstractJavaBreakpointEditor fEditor;
-	private Set<Integer> fAutoSaveProperties = new HashSet<>();
+	private final Set<Integer> fAutoSaveProperties = new HashSet<>();
 	private IWorkbenchPartSite fSite;
 
 	// property listeners
-	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
+	private final ListenerList<IPropertyListener> fListeners = new ListenerList<>();
 	private Composite fEditorParent;
 
 	/**

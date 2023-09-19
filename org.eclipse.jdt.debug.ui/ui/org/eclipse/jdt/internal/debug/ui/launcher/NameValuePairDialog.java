@@ -34,9 +34,9 @@ public class NameValuePairDialog extends Dialog {
 	private String fName;
 	private String fValue;
 
-	private String fTitle;
-	private String[] fFieldLabels;
-	private String[] fInitialValues;
+	private final String fTitle;
+	private final String[] fFieldLabels;
+	private final String[] fInitialValues;
 
 	private Label fNameLabel;
 	private Text fNameText;

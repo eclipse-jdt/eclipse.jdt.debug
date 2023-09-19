@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class EqualEqualOperator extends BinaryOperator {
 
-	private boolean fIsEquals;
+	private final boolean fIsEquals;
 
 	public EqualEqualOperator(int leftTypeId, int rightTypeId,
 			boolean isEquals, int start) {

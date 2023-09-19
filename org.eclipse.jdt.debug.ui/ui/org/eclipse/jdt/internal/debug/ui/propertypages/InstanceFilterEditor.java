@@ -36,11 +36,11 @@ import org.eclipse.swt.widgets.Label;
  *
  */
 public class InstanceFilterEditor {
-	private IJavaBreakpoint fBreakpoint;
+	private final IJavaBreakpoint fBreakpoint;
 	private CheckboxTableViewer fInstanceViewer;
-	private Composite fParent;
-	private InstanceFilterContentProvider fContentProvider;
-	private CheckHandler fCheckHandler;
+	private final Composite fParent;
+	private final InstanceFilterContentProvider fContentProvider;
+	private final CheckHandler fCheckHandler;
 
 	public InstanceFilterEditor(Composite parent, IJavaBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;

@@ -55,9 +55,9 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 	 */
 	class InstanceFilterDialog extends AbstractDebugCheckboxSelectionDialog {
 
-		private Object fInput;
-		private String fMessage;
-		private IBaseLabelProvider fLabelProvider;
+		private final Object fInput;
+		private final String fMessage;
+		private final IBaseLabelProvider fLabelProvider;
 
 		public InstanceFilterDialog(Shell parentShell, Object input, IBaseLabelProvider labelProvider, String message){
 			super(parentShell);

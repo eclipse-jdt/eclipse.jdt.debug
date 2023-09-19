@@ -130,11 +130,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public static final int LOCATION_LAMBDA_METHOD = 4;
 
 
-	private CompilationUnit fCompilationUnit;
-	private int fLineNumber;
-	private boolean fBindingsResolved;
+	private final CompilationUnit fCompilationUnit;
+	private final int fLineNumber;
+	private final boolean fBindingsResolved;
 	private boolean fNeedBindings = false;
-	private boolean fBestMatch;
+	private final boolean fBestMatch;
 
 	private int fLocationType;
 	private boolean fLocationFound;
@@ -146,8 +146,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	private int fMemberOffset;
 	private int fNodeLength;
 	private List<String> fLabels;
-	private int fInputOffset;
-	private int fInputLength;
+	private final int fInputOffset;
+	private final int fInputLength;
 
 	/**
 	 * @param compilationUnit

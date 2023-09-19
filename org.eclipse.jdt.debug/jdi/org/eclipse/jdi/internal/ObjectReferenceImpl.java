@@ -54,7 +54,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	public static final byte tag = JdwpID.OBJECT_TAG;
 
 	/** ObjectID of object that corresponds to this reference. */
-	private JdwpObjectID fObjectID;
+	private final JdwpObjectID fObjectID;
 	/**
 	 * Cached reference type. This value is safe for caching because the type of
 	 * an object never changes.

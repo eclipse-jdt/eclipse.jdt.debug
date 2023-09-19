@@ -28,11 +28,11 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class VMRunnerConfiguration {
-	private String fClassToLaunch;
+	private final String fClassToLaunch;
 	private String[] fVMArgs;
 	private String[] fProgramArgs;
 	private String[] fEnvironment;
-	private String[] fClassPath;
+	private final String[] fClassPath;
 	private String[] fBootClassPath;
 	private String[] fModulepath;
 	private String fModuleDescription;

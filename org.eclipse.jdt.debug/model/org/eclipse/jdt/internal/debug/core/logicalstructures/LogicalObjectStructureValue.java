@@ -29,8 +29,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  */
 public class LogicalObjectStructureValue implements IJavaObject {
 
-	private IJavaObject fObject;
-	private JDIPlaceholderVariable[] fVariables;
+	private final IJavaObject fObject;
+	private final JDIPlaceholderVariable[] fVariables;
 
 	/**
 	 * Constructs a proxy to the given object, with the given variables as

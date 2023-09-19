@@ -164,7 +164,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 * Whether this plug-in is in trace mode. Extra messages are logged in trace
 	 * mode.
 	 */
-	private boolean fTrace = false;
+	private final boolean fTrace = false;
 
 	/**
 	 * Detected (speculated) JDI interface version

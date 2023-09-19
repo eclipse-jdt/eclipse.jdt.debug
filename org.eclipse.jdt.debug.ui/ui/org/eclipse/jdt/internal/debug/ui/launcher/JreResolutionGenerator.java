@@ -152,7 +152,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	private static class ConfigureSeverityResolution implements IMarkerResolution2, IMarkerResolutionRelevance {
 		private final IJavaProject fProject;
-		private String fOptionId;
+		private final String fOptionId;
 
 		public ConfigureSeverityResolution(IJavaProject project, String optionId) {
 			fProject = project;

@@ -185,7 +185,7 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 
 	static private class JDIDebugTargetProxy {
 
-		private JDIDebugTarget target;
+		private final JDIDebugTarget target;
 
 		public JDIDebugTargetProxy(JDIDebugTarget target) {
 			this.target = target;

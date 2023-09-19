@@ -94,7 +94,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * Cache of compiled expressions.
 	 * Associate a pair type name/debug target to a compiled expression.
 	 */
-	private HashMap<Key, Expression> fCacheMap;
+	private final HashMap<Key, Expression> fCacheMap;
 
 	/**
 	 * JavaDetailFormattersManager constructor.
@@ -527,8 +527,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * expression with a pair type name/debug target
 	 */
 	static private class Key {
-		private String fTypeName;
-		private IJavaDebugTarget fDebugTarget;
+		private final String fTypeName;
+		private final IJavaDebugTarget fDebugTarget;
 
 		Key(String typeName, IJavaDebugTarget debugTarget) {
 			fTypeName= typeName;
@@ -554,8 +554,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * Stores a compiled expression and evaluation engine used to evaluate the expression.
 	 */
 	static private class Expression {
-		private ICompiledExpression fExpression;
-		private IAstEvaluationEngine fEngine;
+		private final ICompiledExpression fExpression;
+		private final IAstEvaluationEngine fEngine;
 
 		Expression(ICompiledExpression expression, IAstEvaluationEngine engine) {
 			fExpression = expression;
@@ -593,11 +593,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		 */
 		private static final String STRING_SIGNATURE = "Ljava/lang/String;"; //$NON-NLS-1$
 
-		private IJavaValue fValue;
+		private final IJavaValue fValue;
 
-		private IValueDetailListener fListener;
+		private final IValueDetailListener fListener;
 
-		private IJavaThread fThread;
+		private final IJavaThread fThread;
 
 		public EvaluationListener(IJavaValue value, IJavaThread thread, IValueDetailListener listener) {
 			fValue= value;

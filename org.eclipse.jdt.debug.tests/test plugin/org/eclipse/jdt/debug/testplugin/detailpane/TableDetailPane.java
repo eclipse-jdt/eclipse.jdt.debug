@@ -67,8 +67,8 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	 */
 	class DetailJob implements Runnable{
 
-		private IValue fValue;
-		private IValueDetailListener fListener;
+		private final IValue fValue;
+		private final IValueDetailListener fListener;
 
 		public DetailJob(IValue value, IValueDetailListener listener){
 			fValue = value;

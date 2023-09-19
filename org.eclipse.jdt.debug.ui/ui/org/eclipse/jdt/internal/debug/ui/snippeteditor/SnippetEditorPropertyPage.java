@@ -41,11 +41,11 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class SnippetEditorPropertyPage extends PropertyPage {
 
-	private WorkingDirectoryBlock fWorkingDirBlock = new JavaWorkingDirectoryBlock();
+	private final WorkingDirectoryBlock fWorkingDirBlock = new JavaWorkingDirectoryBlock();
 
-	private JavaJRETab fJRETab = new JavaJRETab();
+	private final JavaJRETab fJRETab = new JavaJRETab();
 
-	private VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
+	private final VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
 
 	// launch config template for this scrapbook file
 	private ILaunchConfiguration fConfig;

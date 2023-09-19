@@ -42,8 +42,8 @@ import com.sun.jdi.request.EventRequest;
  */
 
 public class EventReader extends AbstractReader {
-	private EventQueue fEventQueue;
-	private Vector<EventListener> fEventListeners = new Vector<>(); // A Vector of EventListener
+	private final EventQueue fEventQueue;
+	private final Vector<EventListener> fEventListeners = new Vector<>(); // A Vector of EventListener
 
 	/**
 	 * Constructor

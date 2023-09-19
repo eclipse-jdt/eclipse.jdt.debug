@@ -34,7 +34,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 
-	private LaunchConfigurationManager fLCM = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	private final LaunchConfigurationManager fLCM = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 
 	public LaunchConfigurationManagerTests(String name) {
 		super(name);

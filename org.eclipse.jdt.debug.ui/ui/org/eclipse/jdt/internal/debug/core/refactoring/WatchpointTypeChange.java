@@ -33,7 +33,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class WatchpointTypeChange extends WatchpointChange {
 
-	private IType fDestType, fOriginalType;
+	private final IType fDestType, fOriginalType;
 
 	public WatchpointTypeChange(IJavaWatchpoint watchpoint, IType destType, IType originalType) throws CoreException {
 		super(watchpoint);

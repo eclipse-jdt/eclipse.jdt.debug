@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PushPrimitiveType extends SimpleInstruction {
 
-	private String fName;
+	private final String fName;
 
 	public PushPrimitiveType(String name) {
 		fName = name;

@@ -36,7 +36,7 @@ import org.eclipse.swt.graphics.Color;
  */
 public class ModelPresentationTests extends AbstractDebugTest {
 
-	private Map<String, Color> colors = new HashMap<>();
+	private final Map<String, Color> colors = new HashMap<>();
 	/**
 	 * Constructor
 	 */

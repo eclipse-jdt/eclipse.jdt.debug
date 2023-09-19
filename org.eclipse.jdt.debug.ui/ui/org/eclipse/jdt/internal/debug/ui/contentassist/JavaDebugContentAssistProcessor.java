@@ -52,8 +52,8 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
     private String fErrorMessage = null;
 
 	private char[] fProposalAutoActivationSet;
-	private CompletionProposalComparator fComparator;
-	private IJavaDebugContentAssistContext fContext;
+	private final CompletionProposalComparator fComparator;
+	private final IJavaDebugContentAssistContext fContext;
 	private ContentAssistant fAssistant;
 
 

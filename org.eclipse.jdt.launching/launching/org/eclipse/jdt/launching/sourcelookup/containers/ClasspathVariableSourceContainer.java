@@ -34,7 +34,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
  */
 public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 
-	private IPath fVariable;
+	private final IPath fVariable;
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathVariable</code>).

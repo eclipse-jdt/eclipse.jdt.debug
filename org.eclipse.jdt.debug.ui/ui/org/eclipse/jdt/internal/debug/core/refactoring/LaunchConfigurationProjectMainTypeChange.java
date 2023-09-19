@@ -38,11 +38,11 @@ import org.eclipse.osgi.util.NLS;
 public class LaunchConfigurationProjectMainTypeChange extends Change {
 
 	private ILaunchConfiguration fLaunchConfiguration;
-	private String fNewMainTypeName;
-	private String fNewProjectName;
+	private final String fNewMainTypeName;
+	private final String fNewProjectName;
 	private String fNewLaunchConfigurationName;
-	private String fOldMainTypeName;
-	private String fOldProjectName;
+	private final String fOldMainTypeName;
+	private final String fOldProjectName;
     private String fNewConfigContainerName;
 
     /**

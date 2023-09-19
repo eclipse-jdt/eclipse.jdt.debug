@@ -56,7 +56,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class JavaStackTraceHyperlink implements IHyperlink {
 
-	private TextConsole fConsole;
+	private final TextConsole fConsole;
 
 	/**
 	 * Constructor

@@ -30,28 +30,28 @@ public class LocalVariableCreation extends CompoundInstruction {
 	/**
 	 * Indicate if the type is a primitive type.
 	 */
-	private boolean fIsPrimitiveType;
+	private final boolean fIsPrimitiveType;
 
 	/**
 	 * The name of the variable to create.
 	 */
-	private String fName;
+	private final String fName;
 
 	/**
 	 * The signature of the type, or of the element type in case of an array
 	 * type.
 	 */
-	private String fTypeSignature;
+	private final String fTypeSignature;
 
 	/**
 	 * The dimension of the array type.
 	 */
-	private int fDimension;
+	private final int fDimension;
 
 	/**
 	 * Indicate if there is an initializer for this variable.
 	 */
-	private boolean fHasInitializer;
+	private final boolean fHasInitializer;
 
 	/**
 	 * Constructor for LocalVariableCreation.

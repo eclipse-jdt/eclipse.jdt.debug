@@ -25,7 +25,7 @@ import com.sun.jdi.event.EventIterator;
  */
 public class EventIteratorImpl implements EventIterator {
 	/** List iterator implementation of iterator. */
-	private ListIterator<Event> fIterator;
+	private final ListIterator<Event> fIterator;
 
 	/**
 	 * Creates new EventIteratorImpl.

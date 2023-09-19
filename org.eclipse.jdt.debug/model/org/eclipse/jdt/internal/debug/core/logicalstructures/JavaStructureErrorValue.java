@@ -26,8 +26,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  */
 public class JavaStructureErrorValue implements IJavaValue {
 
-	private String[] fMessages;
-	private IJavaValue fValue;
+	private final String[] fMessages;
+	private final IJavaValue fValue;
 
 	public JavaStructureErrorValue(String errorMessage, IJavaValue value) {
 		fMessages = new String[] { errorMessage };

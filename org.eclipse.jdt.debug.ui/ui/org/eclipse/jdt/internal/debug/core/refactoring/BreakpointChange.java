@@ -53,14 +53,14 @@ public abstract class BreakpointChange extends Change {
 	 */
 	protected static final int NO_LINE_NUMBER = -1;
 
-	private IJavaBreakpoint fBreakpoint;
-	private String fTypeName;
-	private int fHitCount;
-	private IJavaObject[] fInstanceFilters;
-	private int fSuspendPolicy;
-	private IJavaThread[] fThreadFilters;
-	private boolean fEnabled;
-	private String fWorkingSetNames;
+	private final IJavaBreakpoint fBreakpoint;
+	private final String fTypeName;
+	private final int fHitCount;
+	private final IJavaObject[] fInstanceFilters;
+	private final int fSuspendPolicy;
+	private final IJavaThread[] fThreadFilters;
+	private final boolean fEnabled;
+	private final String fWorkingSetNames;
 
 	/**
 	 * Constructor

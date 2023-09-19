@@ -44,18 +44,18 @@ public class PacketReceiveManager extends PacketManager {
 	public static final int TIMEOUT_INFINITE = -1;
 
 	/** List of Command packets received from Virtual Machine. */
-	private LinkedList<JdwpCommandPacket> fCommandPackets;
+	private final LinkedList<JdwpCommandPacket> fCommandPackets;
 
 	/** List of Reply packets received from Virtual Machine. */
-	private LinkedList<JdwpReplyPacket> fReplyPackets;
+	private final LinkedList<JdwpReplyPacket> fReplyPackets;
 
 	/**
 	 * List of Packets that have timed out already. Maintained so that responses
 	 * can be discarded if/when they are received.
 	 */
-	private ArrayList<Integer> fTimedOutPackets;
+	private final ArrayList<Integer> fTimedOutPackets;
 
-	private VirtualMachineImpl fVM;
+	private final VirtualMachineImpl fVM;
 
 	/**
 	 * Create a new thread that receives packets from the Virtual Machine.

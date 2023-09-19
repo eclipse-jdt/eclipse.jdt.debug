@@ -104,7 +104,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * the output source file, range in the output source file]. (Integer ->
 		 * List of int[2]).
 		 */
-		private HashMap<Integer, List<int[]>> fLineInfo;
+		private final HashMap<Integer, List<int[]>> fLineInfo;
 
 		/**
 		 * FileInfo constructor.
@@ -194,12 +194,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		/**
 		 * The id of this stratum.
 		 */
-		private String fId;
+		private final String fId;
 
 		/**
 		 * The file info data associated to this stratum.
 		 */
-		private List<FileInfo> fFileInfos;
+		private final List<FileInfo> fFileInfos;
 
 		/**
 		 * Id of the primary file for this stratum.
@@ -210,7 +210,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * Map line number in the output source file -> list of line numbers in
 		 * the input source file. (Integer -> List of Integer)
 		 */
-		private HashMap<Integer, List<int[]>> fOutputLineToInputLine;
+		private final HashMap<Integer, List<int[]>> fOutputLineToInputLine;
 
 		/**
 		 * Stratum constructor.
@@ -351,7 +351,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	}
 
 	/** ReferenceTypeID that corresponds to this reference. */
-	private JdwpReferenceTypeID fReferenceTypeID;
+	private final JdwpReferenceTypeID fReferenceTypeID;
 
 	/** The following are the stored results of JDWP calls. */
 	protected List<InterfaceType> fInterfaces = null;

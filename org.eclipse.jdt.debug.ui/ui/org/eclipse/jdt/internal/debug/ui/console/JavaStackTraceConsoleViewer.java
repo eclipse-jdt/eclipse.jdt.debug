@@ -28,7 +28,7 @@ import org.eclipse.ui.console.TextConsoleViewer;
  */
 public class JavaStackTraceConsoleViewer extends TextConsoleViewer {
 
-	private JavaStackTraceConsole fConsole;
+	private final JavaStackTraceConsole fConsole;
 	private boolean fAutoFormat = false;
 
 	/**

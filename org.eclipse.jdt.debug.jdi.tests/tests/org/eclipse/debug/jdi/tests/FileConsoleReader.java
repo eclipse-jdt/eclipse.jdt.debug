@@ -25,7 +25,7 @@ import java.io.InputStreamReader;
  * Tests continuous reading from a file and input stream
  */
 public class FileConsoleReader extends AbstractReader {
-	private InputStream fInput;
+	private final InputStream fInput;
 	private FileOutputStream fFileOutputStream;
 	/**
 	 * Creates a new console reader that will read from the given input stream.

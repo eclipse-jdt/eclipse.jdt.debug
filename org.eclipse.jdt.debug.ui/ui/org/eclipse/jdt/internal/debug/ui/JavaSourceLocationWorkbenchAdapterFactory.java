@@ -39,7 +39,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 	class SourceLocationPropertiesAdapter implements IWorkbenchAdapter {
 
-		private JavaElementLabelProvider fJavaElementLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS);
+		private final JavaElementLabelProvider fJavaElementLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS);
 
 		/**
 		 * @see IWorkbenchAdapter#getChildren(Object)

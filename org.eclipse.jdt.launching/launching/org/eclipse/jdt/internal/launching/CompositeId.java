@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Utility class for id's made of multiple Strings
  */
 public class CompositeId {
-	private String[] fParts;
+	private final String[] fParts;
 
 	public CompositeId(String[] parts) {
 		fParts= parts;

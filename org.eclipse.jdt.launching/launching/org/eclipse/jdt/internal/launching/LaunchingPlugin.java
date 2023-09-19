@@ -200,7 +200,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		private boolean fDefaultChanged = false;
 
 		// old container ids to new
-		private HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<>();
+		private final HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<>();
 
 		/**
 		 * Returns the JRE container id that the given VM would map to, or
@@ -385,7 +385,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	}
 
 	class JREUpdateJob extends Job {
-		private VMChanges fChanges;
+		private final VMChanges fChanges;
 
 		public JREUpdateJob(VMChanges changes) {
 			super(LaunchingMessages.LaunchingPlugin_1);

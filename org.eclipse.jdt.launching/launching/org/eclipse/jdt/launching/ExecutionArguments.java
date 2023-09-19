@@ -27,8 +27,8 @@ import org.eclipse.debug.core.DebugPlugin;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class ExecutionArguments {
-	private String fVMArgs;
-	private String fProgramArgs;
+	private final String fVMArgs;
+	private final String fProgramArgs;
 
 	/**
 	 * Creates a new execution arguments object.

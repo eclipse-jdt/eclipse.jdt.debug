@@ -31,7 +31,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/**
 	 * The thread object in the thread and monitor model.
 	 */
-	private JavaMonitorThread fThread;
+	private final JavaMonitorThread fThread;
 
 	/**
 	 * The monitor this thread is waiting for.
@@ -40,7 +40,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/**
 	 * The parent, in the debug view tree.
 	 */
-	private JavaContendedMonitor fParent;
+	private final JavaContendedMonitor fParent;
 
 	/**
 	 * Constructor

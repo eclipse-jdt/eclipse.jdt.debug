@@ -33,7 +33,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 
-	private IMethod fDestMethod;
+	private final IMethod fDestMethod;
 
 	public MethodBreakpointMethodChange(IJavaMethodBreakpoint breakpoint, IMethod destMethod) throws CoreException {
 		super(breakpoint);

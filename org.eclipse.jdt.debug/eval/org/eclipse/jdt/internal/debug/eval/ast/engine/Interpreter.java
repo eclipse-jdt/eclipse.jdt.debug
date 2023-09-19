@@ -36,16 +36,16 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 import com.sun.jdi.VMDisconnectedException;
 
 public class Interpreter {
-	private Instruction[] fInstructions;
+	private final Instruction[] fInstructions;
 	private int fInstructionCounter;
-	private IRuntimeContext fContext;
+	private final IRuntimeContext fContext;
 	private Stack<Object> fStack;
 	private IJavaValue fLastValue;
 
 	/**
 	 * The list of internal variables
 	 */
-	private Map<String, IVariable> fInternalVariables;
+	private final Map<String, IVariable> fInternalVariables;
 
 	/**
 	 * List of objects for which GC has been disabled

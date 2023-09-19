@@ -67,7 +67,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
 	 */
-	private Map<String, String> fAttributeMap = new HashMap<>();
+	private final Map<String, String> fAttributeMap = new HashMap<>();
 
 	// system properties are cached in user preferences prefixed with this key, followed
 	// by VM type, VM id, and system property name

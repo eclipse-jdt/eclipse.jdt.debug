@@ -98,25 +98,25 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	/**
 	 * Maps suspended threads to the suspend event that suspended them
 	 */
-	private Map<IJavaThread, ICompiledExpression> fSuspendEvents = new HashMap<>();
+	private final Map<IJavaThread, ICompiledExpression> fSuspendEvents = new HashMap<>();
 	/**
 	 * The map of cached compiled expressions (ICompiledExpression) for this
 	 * breakpoint, keyed by thread. This value must be cleared every time the
 	 * breakpoint is added to a target.
 	 */
-	private Map<IJavaThread, ICompiledExpression> fCompiledExpressions = new HashMap<>();
+	private final Map<IJavaThread, ICompiledExpression> fCompiledExpressions = new HashMap<>();
 
 	/**
 	 * Cache of projects for stack frames to avoid repetitive project resolution
 	 * on conditional breakpoints.
 	 */
-	private Map<IJavaStackFrame, IJavaProject> fProjectsByFrame = new HashMap<>();
+	private final Map<IJavaStackFrame, IJavaProject> fProjectsByFrame = new HashMap<>();
 
 	/**
 	 * The map of the result value of the condition (IValue) for this
 	 * breakpoint, keyed by debug target.
 	 */
-	private Map<IDebugTarget, IValue> fConditionValues = new HashMap<>();
+	private final Map<IDebugTarget, IValue> fConditionValues = new HashMap<>();
 
 	/**
 	 * Status code indicating that a request to create a breakpoint in a type

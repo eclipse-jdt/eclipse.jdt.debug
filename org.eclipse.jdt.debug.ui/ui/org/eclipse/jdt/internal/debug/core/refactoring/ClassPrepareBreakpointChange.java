@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
  */
 public abstract class ClassPrepareBreakpointChange extends BreakpointChange {
 
-	private int fMemberType;
+	private final int fMemberType;
 
 	public ClassPrepareBreakpointChange(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);

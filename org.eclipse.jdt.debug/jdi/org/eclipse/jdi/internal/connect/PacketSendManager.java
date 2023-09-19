@@ -30,7 +30,7 @@ import com.sun.jdi.connect.spi.Connection;
  */
 public class PacketSendManager extends PacketManager {
 	/** List of packets to be sent to Virtual Machine */
-	private LinkedList<JdwpPacket> fOutgoingPackets;
+	private final LinkedList<JdwpPacket> fOutgoingPackets;
 
 	/**
 	 * Create a new thread that send packets to the Virtual Machine.

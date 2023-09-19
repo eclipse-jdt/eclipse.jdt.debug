@@ -32,7 +32,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 
 	private HotCodeReplaceErrorDialog fHotCodeReplaceFailedErrorDialog = null;
 
-	private ILabelProvider fLabelProvider= DebugUITools.newDebugModelPresentation();
+	private final ILabelProvider fLabelProvider= DebugUITools.newDebugModelPresentation();
 
 	/**
 	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded(IJavaDebugTarget)

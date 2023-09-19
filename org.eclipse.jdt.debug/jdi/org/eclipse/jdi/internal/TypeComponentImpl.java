@@ -28,9 +28,9 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/** JNI-style signature for this type. */
 	private String fSignature = null;
 	/** the generic signature for this type, java 1.5 */
-	private String fGenericSignature;
+	private final String fGenericSignature;
 	/** ReferenceType that holds field or method. */
-	private ReferenceTypeImpl fDeclaringType;
+	private final ReferenceTypeImpl fDeclaringType;
 	/** Modifier bits. */
 	protected int fModifierBits;
 

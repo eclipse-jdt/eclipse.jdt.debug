@@ -123,7 +123,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * <li>Method exit (value <code>EXIT_EVENT</code>)</li>
 	 * </ol>
 	 */
-	private Map<IDebugTarget, Integer> fLastEventTypes = new HashMap<>(10);
+	private final Map<IDebugTarget, Integer> fLastEventTypes = new HashMap<>(10);
 
 	/**
 	 * Used to match type names

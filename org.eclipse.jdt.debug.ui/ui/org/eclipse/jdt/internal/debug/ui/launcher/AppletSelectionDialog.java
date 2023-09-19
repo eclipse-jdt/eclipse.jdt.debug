@@ -43,8 +43,8 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 @SuppressWarnings("deprecation")
 public class AppletSelectionDialog extends TwoPaneElementSelector {
 
-	private IRunnableContext fRunnableContext;
-	private IJavaProject fProject;
+	private final IRunnableContext fRunnableContext;
+	private final IJavaProject fProject;
 	private static final IType[] EMPTY_TYPE_ARRAY = new IType[] {};
 
 	private static class PackageRenderer extends JavaElementLabelProvider {

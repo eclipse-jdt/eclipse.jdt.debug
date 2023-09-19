@@ -43,7 +43,7 @@ import com.sun.jdi.ObjectReference;
 public class JDIReferenceListValue extends JDIObjectValue implements
 		IIndexedValue {
 
-	private IJavaObject fRoot;
+	private final IJavaObject fRoot;
 	private boolean fIsMoreThanPreference;
 	private IJavaType fType = null;
 

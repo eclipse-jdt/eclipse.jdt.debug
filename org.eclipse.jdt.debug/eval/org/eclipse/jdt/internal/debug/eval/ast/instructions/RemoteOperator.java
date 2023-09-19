@@ -23,8 +23,8 @@ import org.eclipse.jdt.internal.debug.eval.RemoteEvaluator;
  */
 public class RemoteOperator extends CompoundInstruction {
 
-	private RemoteEvaluator fEvaluator;
-	private String fSignature;
+	private final RemoteEvaluator fEvaluator;
+	private final String fSignature;
 
 	public RemoteOperator(String body, int start, RemoteEvaluator evaluator) {
 		super(start);

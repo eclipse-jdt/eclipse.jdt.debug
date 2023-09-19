@@ -42,10 +42,10 @@ import org.eclipse.swt.widgets.Shell;
 public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 
 	private CompletionProposalCollector fCollector;
-	private JavaSnippetEditor fEditor;
+	private final JavaSnippetEditor fEditor;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
-	private CompletionProposalComparator fComparator;
+	private final CompletionProposalComparator fComparator;
 	private String fErrorMessage;
 
 	private char[] fProposalAutoActivationSet;

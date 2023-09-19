@@ -48,7 +48,7 @@ import org.eclipse.jface.text.IRegion;
  */
 public class ArgumentTests extends AbstractDebugTest {
 
-    private Object fLock = new Object();
+    private final Object fLock = new Object();
 	protected boolean fUseArgfile = false;
 
 	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {

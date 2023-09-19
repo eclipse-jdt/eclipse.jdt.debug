@@ -25,7 +25,7 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public class OverrideDependenciesAction extends RuntimeClasspathAction {
 
-	private JavaClasspathTab fTab;
+	private final JavaClasspathTab fTab;
 
 	/**
 	 * Constructor

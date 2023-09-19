@@ -41,7 +41,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * The stack frame the local is contained in
 	 */
-	private JDIStackFrame fStackFrame;
+	private final JDIStackFrame fStackFrame;
 
 	/**
 	 * Constructs a local variable for the given local in a stack frame.

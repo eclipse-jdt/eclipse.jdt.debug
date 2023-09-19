@@ -60,7 +60,7 @@ public class StackFrameShowInSourceAdapter implements IShowInSource {
 
 	}
 
-	private IJavaStackFrame fFrame;
+	private final IJavaStackFrame fFrame;
 
 	private ShowInContext fLazyContext = null;
 

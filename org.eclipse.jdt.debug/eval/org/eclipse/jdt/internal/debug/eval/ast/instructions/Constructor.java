@@ -23,8 +23,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  */
 public class Constructor extends CompoundInstruction {
 
-	private int fArgCount;
-	private String fSignature;
+	private final int fArgCount;
+	private final String fSignature;
 
 	public Constructor(String signature, int argCount, int start) {
 		super(start);

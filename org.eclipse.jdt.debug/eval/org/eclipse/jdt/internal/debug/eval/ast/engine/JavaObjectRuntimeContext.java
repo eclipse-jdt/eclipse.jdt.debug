@@ -26,12 +26,12 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * <code>this</code> object or this context.
 	 */
-	private IJavaObject fThisObject;
+	private final IJavaObject fThisObject;
 
 	/**
 	 * The thread for this context.
 	 */
-	private IJavaThread fThread;
+	private final IJavaThread fThread;
 
 	/**
 	 * ObjectValueRuntimeContext constructor.

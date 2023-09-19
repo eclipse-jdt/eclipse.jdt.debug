@@ -26,7 +26,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
  */
 public class PushThis extends SimpleInstruction {
 
-	private int fEnclosingLevel;
+	private final int fEnclosingLevel;
 
 	public PushThis(int enclosingLevel) {
 		fEnclosingLevel = enclosingLevel;
