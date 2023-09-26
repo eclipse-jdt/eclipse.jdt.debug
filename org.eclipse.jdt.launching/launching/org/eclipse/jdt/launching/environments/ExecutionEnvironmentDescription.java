@@ -203,7 +203,6 @@ public final class ExecutionEnvironmentDescription {
 	 * defined in <code>https://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
 	 *
 	 * @param eeProperties execution environment description properties
-	 * @throws CoreException if unable to read or parse the file
 	 * @since 3.21
 	 */
 	public ExecutionEnvironmentDescription(Map<String, String> eeProperties) {
