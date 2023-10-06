@@ -239,6 +239,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	private int fSuspendCount;
 
+	/** Number of extra VM.resume operations needed due SUSPEND_VM breakpoints */
+	private final AtomicInteger extraResumeCount = new AtomicInteger(0);
+
 	/**
 	 * Evaluation engine cache by Java project. Engines are disposed when this
 	 * target terminates.
@@ -1340,6 +1343,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			resumeThreads();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
+				// Extra resume call per each VM_SUSPEND breakpoint hit before
+				while (extraResumeCount.getAndUpdate(count -> count > 0 ? --count : 0) > 0) {
+					vm.resume();
+				}
+
+				// "regular" resume
 				vm.resume();
 			}
 			if (fireNotification) {
@@ -1770,6 +1779,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		} else {
 			fireSuspendEvent(DebugEvent.BREAKPOINT);
 		}
+		// We need to remember how many times VM was suspended, to call
+		// resume as many times as needed
+		extraResumeCount.incrementAndGet();
 	}
 
 	/**
@@ -2830,7 +2842,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Increments the suspend counter for this target based on the reason for
 	 * the suspend event. The suspend count is not updated for implicit
-	 * evaluations.
+	 * evaluations. This count is for both suspend kinds - single thread or entire VM.
 	 *
 	 * @param eventDetail
 	 *            the reason for the suspend event
