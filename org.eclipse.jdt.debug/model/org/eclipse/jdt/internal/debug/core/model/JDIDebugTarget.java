@@ -334,6 +334,10 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	private final Map<Long, String> objectLabels = new HashMap<>();
 
+	private int suspendCount;
+
+	private boolean pendingResumeRequests;
+
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
 	 *
@@ -1347,6 +1351,13 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			resumeThreads();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
+				if (pendingResumeRequests) {
+					while (suspendCount > 1) {
+						vm.resume();
+						suspendCount--;
+						pendingResumeRequests = false;
+					}
+				}
 				vm.resume();
 			}
 			if (fireNotification) {
@@ -1777,6 +1788,8 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		} else {
 			fireSuspendEvent(DebugEvent.BREAKPOINT);
 		}
+		pendingResumeRequests = true;
+		suspendCount++;
 	}
 
 	/**
