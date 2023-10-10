@@ -90,12 +90,12 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		List<IJavaElement> list= new ArrayList<>(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
-			if (object instanceof IAdaptable) {
-				IJavaElement element = ((IAdaptable) object).getAdapter(IJavaElement.class);
+			if (object instanceof IAdaptable adapt) {
+				IJavaElement element = adapt.getAdapter(IJavaElement.class);
 				if (element != null) {
-					if (element instanceof IMember) {
+					if (element instanceof IMember member) {
 						// Use the declaring type if available
-						IJavaElement type= ((IMember)element).getDeclaringType();
+						IJavaElement type= member.getDeclaringType();
 						if (type != null) {
 							element= type;
 						}
@@ -107,9 +107,6 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		return list.toArray(new IJavaElement[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
-	 */
 	@Override
 	protected ILaunchConfiguration createConfiguration(IType type) {
 		ILaunchConfiguration config = null;
@@ -134,9 +131,6 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		return config;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getConfigurationType()
-	 */
 	@Override
 	protected ILaunchConfigurationType getConfigurationType() {
 		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
@@ -151,9 +145,6 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
-	 */
 	@Override
 	protected IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException {
 		try {
@@ -180,8 +171,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	 * @return the smallest enclosing <code>IType</code> of the specified object if it is a main method or <code>null</code> if it is not
 	 */
 	private IType isMainMethod(Object o) {
-		if(o instanceof IAdaptable) {
-			IAdaptable adapt = (IAdaptable) o;
+		if(o instanceof IAdaptable adapt) {
 			IJavaElement element = adapt.getAdapter(IJavaElement.class);
 			if(element != null && element.getElementType() == IJavaElement.METHOD) {
 				try {
@@ -196,25 +186,16 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getTypeSelectionTitle()
-	 */
 	@Override
 	protected String getTypeSelectionTitle() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getEditorEmptyMessage()
-	 */
 	@Override
 	protected String getEditorEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getSelectionEmptyMessage()
-	 */
 	@Override
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_2;
