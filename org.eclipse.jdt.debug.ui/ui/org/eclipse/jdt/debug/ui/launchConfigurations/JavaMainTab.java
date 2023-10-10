@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -86,9 +86,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 	private Button fConsiderInheritedMainButton;
 	private Button fStopInMainCheckButton;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
@@ -100,9 +97,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 	}
 
-	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab#createMainTypeExtensions(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createMainTypeExtensions(Composite parent) {
 		fSearchExternalJarsCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6, null, false, 2);
@@ -115,17 +109,11 @@ public class JavaMainTab extends SharedJavaMainTab {
 		fStopInMainCheckButton.addSelectionListener(getDefaultListener());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LauncherMessages.JavaMainTab__Main_19;
@@ -174,11 +162,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		try {
 			types = engine.searchMainMethods(getLaunchConfigurationDialog(), searchScope, fConsiderInheritedMainButton.getSelection());
 		}
-		catch (InvocationTargetException e) {
-			setErrorMessage(e.getMessage());
-			return;
-		}
-		catch (InterruptedException e) {
+		catch (InvocationTargetException|InterruptedException e) {
 			setErrorMessage(e.getMessage());
 			return;
 		}
@@ -195,9 +179,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
@@ -207,9 +188,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 		updateExternalJars(config);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
@@ -245,9 +223,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
@@ -280,9 +255,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement javaElement = getContext();
@@ -296,8 +268,6 @@ public class JavaMainTab extends SharedJavaMainTab {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab#initializeAttributes()
 	 * @since 3.9
 	 */
 	@Override

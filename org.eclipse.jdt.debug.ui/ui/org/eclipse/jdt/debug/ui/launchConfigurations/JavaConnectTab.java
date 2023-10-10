@@ -92,9 +92,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	private IVMConnector fConnector;
 	private final IVMConnector[] fConnectors = JavaRuntime.getVMConnectors();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -165,11 +162,11 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			String key = keys.next();
 			Connector.Argument arg = fArgumentMap.get(key);
 			FieldEditor field = null;
-			if (arg instanceof Connector.IntegerArgument) {
-				store.setDefault(arg.name(), ((Connector.IntegerArgument)arg).intValue());
+			if (arg instanceof Connector.IntegerArgument integerArg) {
+				store.setDefault(arg.name(), integerArg.intValue());
 				field = new IntegerFieldEditor(arg.name(), arg.label(), fArgumentComposite);
-			} else if (arg instanceof Connector.SelectedArgument) {
-				List<String> choices = ((Connector.SelectedArgument)arg).choices();
+			} else if (arg instanceof Connector.SelectedArgument selectedArg) {
+				List<String> choices = selectedArg.choices();
 				String[][] namesAndValues = new String[choices.size()][2];
 				Iterator<String> iter = choices.iterator();
 				int count = 0;
@@ -184,8 +181,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			} else if (arg instanceof Connector.StringArgument) {
 				store.setDefault(arg.name(), arg.value());
 				field = new StringFieldEditor(arg.name(), arg.label(), fArgumentComposite);
-			} else if (arg instanceof Connector.BooleanArgument) {
-				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
+			} else if (arg instanceof Connector.BooleanArgument bool) {
+				store.setDefault(arg.name(), bool.booleanValue());
 				field = new BooleanFieldEditor(arg.name(), arg.label(), fArgumentComposite);
 			}
 			if(field != null) {
@@ -200,9 +197,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		updateLaunchConfigurationDialog();
 	}
 
-	 /* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
@@ -261,9 +255,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
@@ -304,9 +295,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		initializeHardCodedDefaults(config);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement javaElement = getContext();
@@ -326,8 +314,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 */
 	private void initializeName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = EMPTY_STRING;
-		if (javaElement instanceof IMember) {
-			IMember member = (IMember)javaElement;
+		if (javaElement instanceof IMember member) {
 			if (member.isBinary()) {
 				javaElement = member.getClassFile();
 			}
@@ -344,10 +331,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 					// Simply grab the first main type found in the searched element and set the module name
 					name = types[0].getFullyQualifiedName('.');
 				}
-			} catch (InterruptedException ie) {
+			} catch (InterruptedException|InvocationTargetException ie) {
 				JDIDebugUIPlugin.log(ie);
-			} catch (InvocationTargetException ite) {
-				JDIDebugUIPlugin.log(ite);
 			}
 			if (name.isEmpty()) {
 				name = javaElement.getElementName();
@@ -376,9 +361,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, JavaRuntime.getDefaultVMConnector().getIdentifier());
 	}
 
-	 /* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
@@ -395,8 +377,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			String key = keys.next();
 			Connector.Argument arg = fArgumentMap.get(key);
 			FieldEditor editor = fFieldEditorMap.get(key);
-			if (editor instanceof StringFieldEditor) {
-				String value = ((StringFieldEditor)editor).getStringValue();
+			if (editor instanceof StringFieldEditor stringEditor) {
+				String value = stringEditor.getStringValue();
 				if (!arg.isValid(value)) {
 					StringBuilder label = new StringBuilder(LegacyActionTools.removeMnemonics(arg.label()));
 					if (label.lastIndexOf(ConnectMessages.SocketConnectionLabelSeparator) == label.length() - 1) {
@@ -410,25 +392,17 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LauncherMessages.JavaConnectTab_Conn_ect_20;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_LCL_DISCONNECT);
 	}
 
 	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 *
 	 * @since 3.3
 	 */
 	@Override
@@ -444,9 +418,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		return fConnector;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		updateLaunchConfigurationDialog();
