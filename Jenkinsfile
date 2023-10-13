@@ -22,6 +22,7 @@ pipeline {
 						-Dcompare-version-with-baselines.skip=false \
 						-Dproject.build.sourceEncoding=UTF-8 \
 						-DDetectVMInstallationsJob.disabled=true \
+						-Dtycho.apitools.debug \
 						-DtrimStackTrace=false
 					"""
 				}
