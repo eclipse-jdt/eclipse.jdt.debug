@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.jdt.internal.launching;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +102,9 @@ public class PListParser {
 		Element root = null;
 		DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderIgnoringDOCTYPE();
 		parser.setErrorHandler(new DefaultHandler());
+		parser.setEntityResolver((publicId, systemId) -> {
+			return new InputSource(new ByteArrayInputStream(new byte[0]));
+		});
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(PLIST_ELEMENT)) {
 			throw getInvalidFormatException();
