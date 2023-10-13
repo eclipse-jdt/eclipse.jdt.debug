@@ -21,6 +21,7 @@ pipeline {
 						-Pbuild-individual-bundles -Ptest-on-javase-19 -Pbree-libs -Papi-check\
 						-Dcompare-version-with-baselines.skip=false \
 						-Dproject.build.sourceEncoding=UTF-8 \
+						-DDetectVMInstallationsJob.disabled=true \
 						-DtrimStackTrace=false
 					"""
 				}
