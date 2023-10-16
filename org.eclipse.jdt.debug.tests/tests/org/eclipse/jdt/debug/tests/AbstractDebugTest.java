@@ -179,6 +179,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONE_EIGHT_PROJECT_NAME = "OneEight";
 	public static final String NINE_PROJECT_NAME = "Nine";
 	public static final String ONESIX_PROJECT_NAME = "One_Six";
+	public static final String TWENTYONE_PROJECT_NAME = "Two_One";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -233,6 +234,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded18 = false;
 	private static boolean loaded9 = false;
 	private static boolean loaded16_ = false;
+	private static boolean loaded21 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -266,6 +268,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		loaded9 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONESIX_PROJECT_NAME);
 		loaded16_ = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TWENTYONE_PROJECT_NAME);
+		loaded21 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_JRE_PROJECT_NAME);
 		loadedJRE = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_EE_PROJECT_NAME);
@@ -576,6 +580,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, ONESIX_PROJECT_NAME, jp);
 		}
 	}
+	
+	/**
+	 * Creates the Java 21 compliant project
+	 */
+	synchronized void assert21Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded21) {
+				jp = createProject(TWENTYONE_PROJECT_NAME, JavaProjectHelper.TEST_21_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_21_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+				cfgs.add(createLaunchConfiguration(jp, "Main1"));
+				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				loaded21 = true;
+				waitForBuild();
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, TWENTYONE_PROJECT_NAME, jp);
+		}
+	}
 
 	/**
 	 * Creates the 'BoundJRE' project used for the JRE testing
@@ -865,6 +899,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get9Project() {
 		assert9Project();
 		return getJavaProject(NINE_PROJECT_NAME);
+	}
+	
+	 /**
+	 * Returns the 'Two_One' project, used for Java 21 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get21Project() {
+		assert21Project();
+		return getJavaProject(TWENTYONE_PROJECT_NAME);
 	}
 
 	/**

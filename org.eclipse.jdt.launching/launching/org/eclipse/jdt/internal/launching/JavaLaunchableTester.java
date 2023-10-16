@@ -196,7 +196,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	private boolean hasMainMethod(IType type) throws JavaModelException {
 		IMethod[] methods = type.getMethods();
 		for (int i= 0; i < methods.length; i++) {
-			if(methods[i].isMainMethod()) {
+			if(methods[i].isMainMethodCandidate()) {
 				return true;
 			}
 		}

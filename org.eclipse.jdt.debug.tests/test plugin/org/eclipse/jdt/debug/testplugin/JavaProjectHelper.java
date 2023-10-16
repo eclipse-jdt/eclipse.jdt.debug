@@ -64,6 +64,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_1_8_EE_NAME = "JavaSE-1.8";
 	public static final String JAVA_SE_9_EE_NAME = "JavaSE-9";
 	public static final String JAVA_SE_16_EE_NAME = "JavaSE-16";
+	public static final String JAVA_SE_21_EE_NAME = "JavaSE-21";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -90,6 +91,10 @@ public class JavaProjectHelper {
 	 * path to the 16 test source
 	 */
 	public static final IPath TEST_16_SRC_DIR = new Path("java16_");
+	/**
+	 * path to the 21 test source
+	 */
+	public static final IPath TEST_21_SRC_DIR = new Path("java21");
 
 	/**
 	 * path to the compiler error java file

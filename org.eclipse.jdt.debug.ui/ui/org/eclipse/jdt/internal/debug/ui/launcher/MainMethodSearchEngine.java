@@ -59,7 +59,7 @@ public class MainMethodSearchEngine{
 			Object enclosingElement = match.getElement();
 			if (enclosingElement instanceof IMethod curr) { // defensive code
 				try {
-					if (curr.isMainMethod()) {
+					if (curr.isMainMethodCandidate()) {
 						IType declaringType = curr.getDeclaringType();
 						fResult.add(declaringType);
 					}
@@ -86,7 +86,7 @@ public class MainMethodSearchEngine{
 			searchTicks = 25;
 		}
 
-		SearchPattern pattern = SearchPattern.createPattern("main(String[]) void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE); //$NON-NLS-1$
+		SearchPattern pattern = SearchPattern.createPattern("main void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE); //$NON-NLS-1$
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		MethodCollector collector = new MethodCollector();
 		IProgressMonitor searchMonitor = new SubProgressMonitor(pm, searchTicks);

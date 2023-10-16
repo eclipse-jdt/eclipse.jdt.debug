@@ -105,6 +105,7 @@ import org.eclipse.jdt.debug.tests.launching.ClasspathShortenerTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
+import org.eclipse.jdt.debug.tests.launching.InstanceMainMethodsTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationManagerTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
@@ -192,6 +193,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
+		addTest(new TestSuite(InstanceMainMethodsTests.class));
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
 
 	//mac specific tests
