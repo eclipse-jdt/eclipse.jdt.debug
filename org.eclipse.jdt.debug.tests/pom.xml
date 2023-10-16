@@ -48,8 +48,8 @@
     </plugins>
   </build>
   <profiles>
-  	<profile>
-		<id>test-on-javase-19</id>
+	<profile>
+		<id>test-on-javase-21</id>
 		<build>
 			<plugins>
 				<plugin>
@@ -66,7 +66,7 @@
 					<configuration>
 						<toolchains>
 							<jdk>
-								<id>JavaSE-19</id>
+								<id>JavaSE-21</id>
 							</jdk>
 						</toolchains>
 					</configuration>
