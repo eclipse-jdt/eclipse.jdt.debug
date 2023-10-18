@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
+ *     Ole Osterhagen - Issue 327 - Attribute "Without test code" is ignored in the launcher
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -1232,7 +1233,9 @@ public final class JavaRuntime {
 						return new IRuntimeClasspathEntry[0];
 					}
 					IClasspathAttribute[] attributes = entry.getClasspathEntry().getExtraAttributes();
-					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty(), attributes, excludeTestCode);
+					boolean withoutTestCode = entry.getClasspathEntry().isWithoutTestCode();
+					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty(), attributes, excludeTestCode
+							|| withoutTestCode);
 					if (entries != null) {
 						return entries;
 					}
@@ -1477,7 +1480,9 @@ public final class JavaRuntime {
 					IJavaProject jp = JavaCore.create(p);
 					if (jp != null && p.isOpen() && jp.exists()) {
 						IClasspathAttribute[] attributes = entry.getClasspathEntry().getExtraAttributes();
-						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty(), attributes, excludeTestCode);
+						boolean withoutTestCode = entry.getClasspathEntry().isWithoutTestCode();
+						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty(), attributes, excludeTestCode
+								|| withoutTestCode);
 						if (entries != null) {
 							return entries;
 						}
