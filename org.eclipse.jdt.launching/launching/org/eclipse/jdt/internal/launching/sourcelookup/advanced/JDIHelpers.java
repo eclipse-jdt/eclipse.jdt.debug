@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -28,6 +30,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 public final class JDIHelpers implements IJDIHelpers {
 
@@ -68,14 +71,16 @@ public final class JDIHelpers implements IJDIHelpers {
 				return null;
 			}
 
+			String spec = locations[1];
 			try {
-				URL url = new URL(locations[1]);
+				URL url = new URL(spec);
 				if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 					return new File(url.toURI()).toPath().normalize().toFile();
 				}
 			}
-			catch (URISyntaxException | MalformedURLException e) {
-				// fall through
+			catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
+				IStatus status = Status.error("Unable to resolve class location from: '" + spec + "'", e);  //$NON-NLS-1$//$NON-NLS-2$
+				LaunchingPlugin.log(status);
 			}
 		}
 
