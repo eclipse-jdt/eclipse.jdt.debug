@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-import org.eclipse.jdt.internal.launching.XmlProcessorFactoryJdtDebug;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
@@ -173,8 +172,9 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		Exception ex = null;
 		try {
 			Element root = null;
+			@SuppressWarnings("restriction")
 			DocumentBuilder parser =
-					XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+					org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

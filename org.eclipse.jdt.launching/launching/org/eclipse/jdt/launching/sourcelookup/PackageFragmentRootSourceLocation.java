@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-import org.eclipse.jdt.internal.launching.XmlProcessorFactoryJdtDebug;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -143,8 +142,9 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		Exception ex = null;
 		try {
 			Element root = null;
+			@SuppressWarnings("restriction")
 			DocumentBuilder parser =
-					XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+					org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

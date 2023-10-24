@@ -100,11 +100,10 @@ public class PListParser {
 	 */
 	private Object parseXML(InputStream stream) throws CoreException, ParserConfigurationException, IOException, SAXException {
 		Element root = null;
-		DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderIgnoringDOCTYPE();
+		@SuppressWarnings("restriction")
+		DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE();
 		parser.setErrorHandler(new DefaultHandler());
-		parser.setEntityResolver((publicId, systemId) -> {
-			return new InputSource(new ByteArrayInputStream(new byte[0]));
-		});
+		parser.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(PLIST_ELEMENT)) {
 			throw getInvalidFormatException();

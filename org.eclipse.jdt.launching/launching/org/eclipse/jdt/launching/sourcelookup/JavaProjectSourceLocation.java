@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-import org.eclipse.jdt.internal.launching.XmlProcessorFactoryJdtDebug;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -177,7 +176,8 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+			@SuppressWarnings("restriction")
+			DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
