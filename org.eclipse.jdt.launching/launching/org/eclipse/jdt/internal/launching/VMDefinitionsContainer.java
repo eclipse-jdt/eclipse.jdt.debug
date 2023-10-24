@@ -445,7 +445,8 @@ public class VMDefinitionsContainer {
 		Element config= null;
 		// Wrapper the stream for efficient parsing
 		try (InputStream stream = new BufferedInputStream(inputStream)) {
-			DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+			@SuppressWarnings("restriction")
+			DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			config = parser.parse(new InputSource(stream)).getDocumentElement();
 		} catch (SAXException e) {

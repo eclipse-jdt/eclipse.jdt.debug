@@ -946,7 +946,8 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		File file = libPath.toFile();
 		if (file.exists()) {
 			try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-				DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+				@SuppressWarnings("restriction")
+				DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
 				if(!root.getNodeName().equals("libraryInfos")) { //$NON-NLS-1$
@@ -1039,7 +1040,8 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		File file = libPath.toFile();
 		if (file.exists()) {
 			try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-				DocumentBuilder parser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
+				@SuppressWarnings("restriction")
+				DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
 				if(root.getNodeName().equalsIgnoreCase("dirs")) { //$NON-NLS-1$
@@ -1227,8 +1229,10 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	public static DocumentBuilder getParser() throws CoreException {
 		if (fgXMLParser == null) {
 			try {
-				fgXMLParser = XmlProcessorFactoryJdtDebug.createDocumentBuilderWithErrorOnDOCTYPE();
-				fgXMLParser.setErrorHandler(new DefaultHandler());
+				@SuppressWarnings("restriction")
+				DocumentBuilder p = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+				p.setErrorHandler(new DefaultHandler());
+				fgXMLParser = p;
 			} catch (ParserConfigurationException e) {
 				abort(LaunchingMessages.LaunchingPlugin_34, e);
 			} catch (FactoryConfigurationError e) {
