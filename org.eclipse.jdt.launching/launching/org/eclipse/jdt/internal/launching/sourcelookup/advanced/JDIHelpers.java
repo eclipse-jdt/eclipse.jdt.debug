@@ -14,9 +14,8 @@
 package org.eclipse.jdt.internal.launching.sourcelookup.advanced;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -71,14 +70,17 @@ public final class JDIHelpers implements IJDIHelpers {
 				return null;
 			}
 
-			String spec = locations[1];
+			String spec = locations[1].trim();
 			try {
-				URL url = new URL(spec);
-				if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
-					return new File(url.toURI()).toPath().normalize().toFile();
+				if (spec.startsWith("file:")) { //$NON-NLS-1$
+					if (!spec.startsWith("file:/")) { //$NON-NLS-1$
+						// opaque -> URI is not hierarchical https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/330
+						spec = spec.replace("file:", "file:/"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					URI uri = URI.create(spec);
+					return Path.of(uri).normalize().toFile();
 				}
-			}
-			catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
+			} catch (Exception e) {
 				IStatus status = Status.error("Unable to resolve class location from: '" + spec + "'", e);  //$NON-NLS-1$//$NON-NLS-2$
 				LaunchingPlugin.log(status);
 			}
@@ -144,16 +146,16 @@ public final class JDIHelpers implements IJDIHelpers {
 	public Iterable<File> getStackFramesClassesLocations(Object element) throws DebugException {
 		IStackFrame[] stack = getStackFrames(element);
 
-		return new Iterable<File>() {
+		return new Iterable<>() {
 			@Override
 			public Iterator<File> iterator() {
 				return Arrays.stream(stack) //
-						.map(frame -> getClassesLocation(frame)) //
+						.map(this::getClassesLocation) //
 						.filter(frameLocation -> frameLocation != null) //
 						.iterator();
 			}
 
-			File getClassesLocation(IStackFrame frame) {
+			private File getClassesLocation(IStackFrame frame) {
 				// TODO consider ignoring DebugException for all IJDIHeloper methods
 				try {
 					return JDIHelpers.this.getClassesLocation(frame);
