@@ -10,7 +10,7 @@ pipeline {
 	}
 	tools {
 		maven 'apache-maven-latest'
-		jdk 'temurin-jdk17-latest'
+		jdk 'openjdk-jdk21-latest'
 	}
 	stages {
 		stage('Build') {
@@ -18,7 +18,7 @@ pipeline {
 				wrap([$class: 'Xvnc', useXauthority: true]) {
 					sh """
 					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						-Pbuild-individual-bundles -Ptest-on-javase-19 -Pbree-libs -Papi-check\
+						-Pbuild-individual-bundles -Ptest-on-javase-21 -Pbree-libs -Papi-check\
 						-Dcompare-version-with-baselines.skip=false \
 						-Dproject.build.sourceEncoding=UTF-8 \
 						-DDetectVMInstallationsJob.disabled=true \

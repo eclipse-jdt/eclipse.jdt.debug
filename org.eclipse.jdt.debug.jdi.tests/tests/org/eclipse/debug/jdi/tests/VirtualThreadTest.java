@@ -117,7 +117,7 @@ public class VirtualThreadTest extends AbstractJDITest {
 		if (!outputFolder.exists()) {
 			outputFolder.mkdir();
 		}
-		String[] options = new String[] { "--enable-preview", "--release", "19", "-d", outputFolder.getAbsolutePath(), "-g", "-proc:none" };
+		String[] options = new String[] { "--release", "21", "-d", outputFolder.getAbsolutePath(), "-g", "-proc:none" };
 		final StringWriter output = new StringWriter();
 		CompilationTask task = compiler.getTask(output, fileManager, diagnosticCollector, Arrays.asList(options), null, javaFileObjects);
 		boolean result = task.call();
