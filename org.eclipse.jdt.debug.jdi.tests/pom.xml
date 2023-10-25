@@ -60,7 +60,7 @@
   </build>
   <profiles>
   	<profile>
-		<id>test-on-javase-19</id>
+		<id>test-on-javase-21</id>
 		<build>
 			<plugins>
 				<plugin>
