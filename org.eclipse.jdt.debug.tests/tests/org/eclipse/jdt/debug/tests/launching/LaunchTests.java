@@ -13,16 +13,22 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.launching;
 
+import java.io.File;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform.OS;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
+import org.eclipse.jdt.launching.sourcelookup.advanced.AdvancedSourceLookup;
 
 /**
  * Tests launch notification.
@@ -41,6 +47,48 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		super(name);
 	}
 
+	public void testUri() throws DebugException {
+		// https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/330
+		if (OS.isWindows()) {
+			IJavaReferenceType ref1 = new JDIReferenceType(null, null) {
+				@Override
+				public String[] getSourceNames(String stratum) {
+					// normal URL resource on windows
+					return new String[] { "Main.java", "file:/C:/workspace/prj/bi%20n/main/" };
+				}
+			};
+			File classesLocation1 = AdvancedSourceLookup.getClassesLocation(ref1);
+			IJavaReferenceType ref2 = new JDIReferenceType(null, null) {
+				@Override
+				public String[] getSourceNames(String stratum) {
+					// opaque URL on windows
+					return new String[] { "Main.java", "file:C:/workspace/prj/bi%20n/main/" };
+				}
+			};
+			File classesLocation2 = AdvancedSourceLookup.getClassesLocation(ref2);
+			assertEquals(new File("C:/workspace/prj/bi n/main/"), classesLocation1);
+			assertEquals(new File("C:/workspace/prj/bi n/main/"), classesLocation2);
+		}
+
+		IJavaReferenceType ref3 = new JDIReferenceType(null, null) {
+			@Override
+			public String[] getSourceNames(String stratum) {
+				// opaque URL on linux
+				return new String[] { "Main.java", "file:workspace/prj/bi%20n/main/" };
+			}
+		};
+		File classesLocation3 = AdvancedSourceLookup.getClassesLocation(ref3);
+		IJavaReferenceType ref4 = new JDIReferenceType(null, null) {
+			@Override
+			public String[] getSourceNames(String stratum) {
+				// normal URL resource on linux
+				return new String[] { "Main.java", "file:/workspace/prj/bi%20n/main/" };
+			}
+		};
+		File classesLocation4 = AdvancedSourceLookup.getClassesLocation(ref4);
+		assertEquals(new File("/workspace/prj/bi n/main/"), classesLocation3);
+		assertEquals(new File("/workspace/prj/bi n/main/"), classesLocation4);
+	}
 	/**
 	 * test launch notification
 	 * @throws CoreException
