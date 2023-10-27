@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -193,7 +193,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
-		addTest(new TestSuite(InstanceMainMethodsTests.class));
+		if(JavaProjectHelper.isJava21_Compatible()) {
+			addTest(new TestSuite(InstanceMainMethodsTests.class));
+		}
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
 
 	//mac specific tests
