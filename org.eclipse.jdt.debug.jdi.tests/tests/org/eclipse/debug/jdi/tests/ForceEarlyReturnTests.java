@@ -85,7 +85,6 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 					System.out.println(val);
 					assertTrue("value should be a StringReference", val instanceof StringReference);
 					fEventReader.removeEventListener(waiter);
-					//TODO make sure this works with the newest versions of the 1.6VM
 					assertEquals("values should be 'foobar'", "foobar", ((StringReference) val).value());
 				}
 			}

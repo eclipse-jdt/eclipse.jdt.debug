@@ -55,9 +55,6 @@ public class EventTest extends AbstractJDITest {
 			request,
 			triggerAndWait(request, "BreakpointEvent", true));
 
-		// TODO ClassPrepareEvent
-		// TODO ClassUnloadEvent
-		// TODO ExceptionEvent
 
 		// ModificationWatchpointEvent
 		if (fVM.canWatchFieldModification()) {
@@ -67,10 +64,6 @@ public class EventTest extends AbstractJDITest {
 				triggerAndWait(request, "ModificationWatchpointEvent", true));
 		}
 
-		// TODO StepEvent
-		// TODO ThreadEndEvent
-		// TODO ThreadStartEvent
-		// TODO VMDeathEvent
 
 	}
 	/**
