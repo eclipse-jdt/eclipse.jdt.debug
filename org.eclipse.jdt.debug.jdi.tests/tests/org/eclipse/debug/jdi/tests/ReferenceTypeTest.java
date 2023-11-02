@@ -141,7 +141,9 @@ public class ReferenceTypeTest extends AbstractJDITest {
 			ReferenceType type = iterator.next();
 			assertTrue("1." + type.name() + ".1", type.equals(type));
 			assertFalse("1." + type.name() + ".2", type.equals(other));
-			assertFalse("1." + type.name() + ".3", type.equals(fVM));
+			@SuppressWarnings("unlikely-arg-type")
+			boolean wrongClass = type.equals(fVM);
+			assertFalse("1." + type.name() + ".3", wrongClass);
 			assertFalse("1." + type.name() + ".4", type.equals(new Object()));
 			assertFalse("1." + type.name() + ".5", type.equals(null));
 			assertNotEquals("1." + type.name() + ".6", type.hashCode(), other.hashCode());
