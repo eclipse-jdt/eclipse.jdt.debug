@@ -78,7 +78,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	}
 
 	/**
-	 * @returns tag.
+	 * @return tag.
 	 */
 	@Override
 	public byte getTag() {

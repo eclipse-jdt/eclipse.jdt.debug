@@ -50,13 +50,13 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	}
 
 	/**
-	 * @returns type of value.
+	 * @return type of value.
 	 */
 	@Override
 	public abstract Type type();
 
 	/**
-	 * @returns type of value.
+	 * @return type of value.
 	 */
 	public abstract byte getTag();
 

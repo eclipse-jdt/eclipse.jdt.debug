@@ -334,7 +334,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	/**
 	 * This method is used to ensure that the JVM file encoding matches that of the console preference for file encoding. If the user explicitly
-	 * declares a file encoding in the launch configuration, then that file encoding is used.
+	 * declares a file encoding in the launch configuration, then that file encoding is used. This is needed for Java >=19.
 	 *
 	 * @param launch
 	 *            the {@link Launch}
@@ -343,8 +343,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @return the listing of JVM arguments including file encoding if one was not specified
 	 *
 	 * @since 3.4
-	 * @see {@link System#out} for Java >=19 *
-	 * @see {@link System#err} for Java >=19 *
+	 * @see System#out
+	 * @see System#err
 	 */
 	protected String[] ensureEncoding(ILaunch launch, String[] vmargs) {
 		String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);

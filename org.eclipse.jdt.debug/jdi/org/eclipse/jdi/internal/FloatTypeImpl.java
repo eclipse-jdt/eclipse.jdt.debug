@@ -30,7 +30,7 @@ public class FloatTypeImpl extends PrimitiveTypeImpl implements FloatType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {

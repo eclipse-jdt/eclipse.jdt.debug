@@ -238,7 +238,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	}
 
 	/**
-	 * @returns Returns Type Name, converted from a JNI signature.
+	 * @return Returns Type Name, converted from a JNI signature.
 	 */
 	public static String signatureToName(String signature) {
 		// See JNI 1.1 Specification, Table 3-2 Java VM Type Signatures.
@@ -285,7 +285,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	}
 
 	/**
-	 * @returns Returns Jdwp Tag, converted from a JNI signature.
+	 * @return Returns Jdwp Tag, converted from a JNI signature.
 	 */
 	public static byte signatureToTag(String signature) {
 		switch (signature.charAt(0)) {
@@ -321,7 +321,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	}
 
 	/**
-	 * @returns Returns true if signature is an primitive signature.
+	 * @return Returns true if signature is an primitive signature.
 	 */
 	public static boolean isPrimitiveSignature(String signature) {
 		switch (signature.charAt(0)) {
@@ -339,7 +339,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	}
 
 	/**
-	 * @returns Returns true if signature is void signature.
+	 * @return Returns true if signature is void signature.
 	 */
 	public static boolean isVoidSignature(String signature) {
 		return (signature.charAt(0) == 'V');

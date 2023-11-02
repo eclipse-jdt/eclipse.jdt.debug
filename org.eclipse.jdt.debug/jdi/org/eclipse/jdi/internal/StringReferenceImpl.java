@@ -42,7 +42,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements
 	}
 
 	/**
-	 * @returns Value tag.
+	 * @return Value tag.
 	 */
 	@Override
 	public byte getTag() {
@@ -50,7 +50,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements
 	}
 
 	/**
-	 * @returns Returns the StringReference as a String.
+	 * @return Returns the StringReference as a String.
 	 */
 	@Override
 	public String value() {
@@ -81,10 +81,13 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements
 		JdwpStringID ID = new JdwpStringID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
+		 {
 			target.fVerboseWriter.println("stringReference", ID.value()); //$NON-NLS-1$
+		}
 
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 
 		StringReferenceImpl mirror = new StringReferenceImpl(vmImpl, ID);
 		return mirror;

@@ -106,7 +106,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	}
 
 	/**
-	 * @returns Value tag.
+	 * @return Value tag.
 	 */
 	@Override
 	public byte getTag() {
@@ -114,7 +114,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	}
 
 	/**
-	 * @returns Returns an ObjectReference for the monitor, if any, for which
+	 * @return Returns an ObjectReference for the monitor, if any, for which
 	 *          this thread is currently waiting.
 	 */
 	@Override
@@ -210,7 +210,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	}
 
 	/**
-	 * @returns Returns the StackFrame at the given index in the thread's
+	 * @return Returns the StackFrame at the given index in the thread's
 	 *          current call stack.
 	 */
 	@Override
