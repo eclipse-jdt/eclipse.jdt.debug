@@ -39,7 +39,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	}
 
 	/**
-	 * @returns tag.
+	 * @return tag.
 	 */
 	@Override
 	public byte getTag() {
@@ -47,7 +47,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	}
 
 	/**
-	 * @returns type of value.
+	 * @return type of value.
 	 */
 	@Override
 	public Type type() {
@@ -63,7 +63,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	}
 
 	/**
-	 * @returns Value.
+	 * @return Value.
 	 */
 	@Override
 	public long value() {

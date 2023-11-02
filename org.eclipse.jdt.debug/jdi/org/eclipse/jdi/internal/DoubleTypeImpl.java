@@ -30,7 +30,7 @@ public class DoubleTypeImpl extends PrimitiveTypeImpl implements DoubleType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {

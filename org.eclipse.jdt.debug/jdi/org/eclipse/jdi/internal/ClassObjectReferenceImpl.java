@@ -43,7 +43,7 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl implements
 	}
 
 	/**
-	 * @returns Returns Value tag.
+	 * @return Returns Value tag.
 	 */
 	@Override
 	public byte getTag() {
@@ -51,7 +51,7 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl implements
 	}
 
 	/**
-	 * @returns Returns the ReferenceType corresponding to this class object.
+	 * @return Returns the ReferenceType corresponding to this class object.
 	 */
 	@Override
 	public ReferenceType reflectedType() {
@@ -79,10 +79,13 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl implements
 		JdwpClassObjectID ID = new JdwpClassObjectID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
+		 {
 			target.fVerboseWriter.println("classObjectReference", ID.value()); //$NON-NLS-1$
+		}
 
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 
 		ClassObjectReferenceImpl mirror = new ClassObjectReferenceImpl(vmImpl,
 				ID);

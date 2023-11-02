@@ -63,7 +63,7 @@ public abstract class PrimitiveTypeImpl extends TypeImpl implements
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	public abstract byte tag();
 

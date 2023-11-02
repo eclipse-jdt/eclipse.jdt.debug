@@ -42,7 +42,7 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements
 	}
 
 	/**
-	 * @returns tag.
+	 * @return tag.
 	 */
 	@Override
 	public byte getTag() {
@@ -50,7 +50,7 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements
 	}
 
 	/**
-	 * @returns type of value.
+	 * @return type of value.
 	 */
 	@Override
 	public Type type() {

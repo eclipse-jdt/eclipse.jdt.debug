@@ -30,7 +30,7 @@ public class CharTypeImpl extends PrimitiveTypeImpl implements CharType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {

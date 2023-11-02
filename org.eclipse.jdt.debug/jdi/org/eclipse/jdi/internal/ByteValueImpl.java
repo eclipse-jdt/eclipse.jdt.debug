@@ -41,7 +41,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue, Comp
 	}
 
 	/**
-	 * @returns tag.
+	 * @return tag.
 	 */
 	@Override
 	public byte getTag() {
@@ -57,7 +57,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue, Comp
 	}
 
 	/**
-	 * @returns type of value.
+	 * @return type of value.
 	 */
 	@Override
 	public Type type() {

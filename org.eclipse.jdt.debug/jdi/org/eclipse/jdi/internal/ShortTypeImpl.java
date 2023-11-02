@@ -30,7 +30,7 @@ public class ShortTypeImpl extends PrimitiveTypeImpl implements ShortType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {

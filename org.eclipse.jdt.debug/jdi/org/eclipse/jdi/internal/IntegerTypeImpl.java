@@ -30,7 +30,7 @@ public class IntegerTypeImpl extends PrimitiveTypeImpl implements IntegerType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {

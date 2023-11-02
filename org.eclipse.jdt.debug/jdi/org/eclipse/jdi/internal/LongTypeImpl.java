@@ -30,7 +30,7 @@ public class LongTypeImpl extends PrimitiveTypeImpl implements LongType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {

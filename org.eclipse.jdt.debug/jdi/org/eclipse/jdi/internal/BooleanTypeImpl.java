@@ -31,7 +31,7 @@ public class BooleanTypeImpl extends PrimitiveTypeImpl implements BooleanType {
 	}
 
 	/**
-	 * @returns primitive type tag.
+	 * @return primitive type tag.
 	 */
 	@Override
 	public byte tag() {
