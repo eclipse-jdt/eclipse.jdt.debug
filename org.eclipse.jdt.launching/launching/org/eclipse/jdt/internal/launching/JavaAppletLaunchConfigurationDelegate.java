@@ -121,7 +121,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			buf.append("\" height=\""); //$NON-NLS-1$
 			buf.append(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200)));
 			buf.append("\" >\n"); //$NON-NLS-1$
-			Map<String, String> parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap<String, String>());
+			Map<String, String> parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap<>());
 			if (!parameters.isEmpty()) {
 				Iterator<Entry<String, String>> iterator = parameters.entrySet().iterator();
 				while (iterator.hasNext()) {

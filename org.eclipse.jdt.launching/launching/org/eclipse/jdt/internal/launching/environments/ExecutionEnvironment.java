@@ -326,7 +326,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			if (cachedRules == null || !cachedRules.equals(rulesByParticipant)) {
 				ArrayList<List<IAccessRule>> libLists = new ArrayList<>(); // array of lists of access rules
 				for (int i = 0; i < libraries.length; i++) {
-					libLists.add(new ArrayList<IAccessRule>());
+					libLists.add(new ArrayList<>());
 				}
 				for (int i = 0; i < participants.length; i++) {
 					IAccessRuleParticipant participant = participants[i];
