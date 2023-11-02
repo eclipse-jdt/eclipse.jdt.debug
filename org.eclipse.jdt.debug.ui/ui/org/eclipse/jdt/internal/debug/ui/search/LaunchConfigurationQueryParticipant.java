@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -56,7 +56,6 @@ import org.eclipse.ui.PartInitException;
  *
  * @since 3.4.0
  */
-@SuppressWarnings("deprecation")
 public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**
@@ -137,7 +136,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 				return;
 			}
 			monitor.worked(1);
-			searchLaunchConfigurations(query.getScope(), requestor, pattern, new SubProgressMonitor(monitor, 7));
+			searchLaunchConfigurations(query.getScope(), requestor, pattern, SubMonitor.convert(monitor, 7));
 		} finally {
 			monitor.done();
 		}
