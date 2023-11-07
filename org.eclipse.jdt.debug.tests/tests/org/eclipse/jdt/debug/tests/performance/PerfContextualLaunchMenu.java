@@ -30,7 +30,6 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
 
     /**
      * Constructor
-     * @param name
      */
     public PerfContextualLaunchMenu(String name) {
         super(name);
@@ -38,7 +37,6 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
 
     /**
      * Tests the performance of the fly-out time of the contextual launch menu
-     * @throws Exception
      */
     public void testContextualLaunchMenu() throws Exception {
     	setDegradationComment("This test is unreliable as it improved 10x during 3.3 (vs 3.2), and needs to be replaced.");

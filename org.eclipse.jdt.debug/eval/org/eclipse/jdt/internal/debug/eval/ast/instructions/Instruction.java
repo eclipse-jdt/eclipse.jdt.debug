@@ -222,7 +222,6 @@ public abstract class Instruction {
 	 * @param name
 	 *            type name, for example - "int"
 	 * @return primitive type
-	 * @throws CoreException
 	 */
 	protected IJavaType getPrimitiveType(String name) throws CoreException {
 		IJavaReferenceType type = null;

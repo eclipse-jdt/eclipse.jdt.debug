@@ -41,8 +41,6 @@ public class TestLogicalStructures extends AbstractDebugTest {
 
 	/**
 	 * Test the logical structure for a list.
-	 *
-	 * @throws Exception
 	 */
 	public void testListLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
@@ -80,8 +78,6 @@ public class TestLogicalStructures extends AbstractDebugTest {
 
 	/**
 	 * Test the logical structure for a map.
-	 *
-	 * @throws Exception
 	 */
 	public void testMapLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";
@@ -119,8 +115,6 @@ public class TestLogicalStructures extends AbstractDebugTest {
 
 	/**
 	 * Test the logical structure for a map entry.
-	 *
-	 * @throws Exception
 	 */
 	public void testEntryLogicalStructure() throws Exception {
 		String typeName = "LogicalStructures";

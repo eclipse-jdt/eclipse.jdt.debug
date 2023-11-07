@@ -192,10 +192,8 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 
 	/**
 	 *
-	 * @param configuration
 	 * @param version
 	 *            string eg. org.eclipse.jdt.core.JavaCore.VERSION_14
-	 * @return
 	 */
 	private boolean isJavaNewerThan(ILaunchConfiguration configuration, String version) {
 		try {

@@ -40,8 +40,6 @@ public class PListParserTests extends AbstractDebugTest {
 
 	/**
 	 * Tests parsing of a sample installed JREs plist from the Mac.
-	 *
-	 * @throws Exception
 	 */
 	public void testParseJREs() throws Exception {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist.xml"));
@@ -94,7 +92,6 @@ public class PListParserTests extends AbstractDebugTest {
 	/**
 	 * Tests that we parse out the correct number of raw entries from the 'lion' plist output
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseLionJREs() throws Exception {
@@ -114,7 +111,6 @@ public class PListParserTests extends AbstractDebugTest {
 	/**
 	 * Tests that we parse out the correct number of raw entries from the 'now leopard' plist output
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseSnowLeopardJREs() throws Exception {
@@ -135,7 +131,6 @@ public class PListParserTests extends AbstractDebugTest {
 	 * Tests that we can parse out certain {@link VMStandin}s from the 'old' style
 	 * of plist output.
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseJREDescriptors() throws Exception {
@@ -150,7 +145,6 @@ public class PListParserTests extends AbstractDebugTest {
 	 * Tests that we can parse out certain {@link VMStandin}s from the 'snow leopard' style
 	 * of plist output.
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseJREDescriptorsSnowLeopard() throws Exception {
@@ -165,7 +159,6 @@ public class PListParserTests extends AbstractDebugTest {
 	 * Tests that we can parse out certain {@link VMStandin}s from the 'lion' style
 	 * of plist output.
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseJREDescriptorsLion() throws Exception {
@@ -183,7 +176,6 @@ public class PListParserTests extends AbstractDebugTest {
 	 * <code>plist-bad1.xml</code> has a boolean value in place of the VM name for the 1.6 VM,
 	 * but we should still recover the remainder of the VMs defined (3 of them)
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseJREDescriptorsBad() throws Exception {
@@ -201,7 +193,6 @@ public class PListParserTests extends AbstractDebugTest {
 	 * <br><br>
 	 * <code>plist-bad2.xml</code> is missing a key element - but still has the value for the key.
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseJREDescriptorsBad2() throws Exception {
@@ -219,7 +210,6 @@ public class PListParserTests extends AbstractDebugTest {
 	 * <br><br>
 	 * <code>plist-bad3.xml</code> has corrupt XML syntax
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	public void testParseJREDescriptorsBad3() throws Exception {

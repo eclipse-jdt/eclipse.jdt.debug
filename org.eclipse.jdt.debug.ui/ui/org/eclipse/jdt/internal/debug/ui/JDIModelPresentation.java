@@ -773,10 +773,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 
-	/**
-	 * @param thread
-	 * @return
-	 */
 	private Image getJavaWaitingThreadImage(JavaWaitingThread thread) {
 		JDIImageDescriptor descriptor;
 		int flag= JDIImageDescriptor.IN_CONTENTION_FOR_MONITOR | (thread.getThread().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
@@ -788,10 +784,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return getDebugImageRegistry().get(descriptor);
 	}
 
-	/**
-	 * @param thread
-	 * @return
-	 */
 	private Image getJavaOwningThreadImage(JavaOwningThread thread) {
 		JDIImageDescriptor descriptor;
 		int flag= JDIImageDescriptor.OWNS_MONITOR | (thread.getThread().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
@@ -803,10 +795,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return getDebugImageRegistry().get(descriptor);
 	}
 
-	/**
-	 * @param monitor
-	 * @return
-	 */
 	private Image getJavaContendedMonitorImage(JavaContendedMonitor monitor) {
 		int flag= monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0;
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(
@@ -814,10 +802,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return getDebugImageRegistry().get(descriptor);
 	}
 
-	/**
-	 * @param monitor
-	 * @return
-	 */
 	private Image getJavaOwnedMonitorImage(JavaOwnedMonitor monitor) {
 		int flag= monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0;
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(getImageDescriptor(JavaDebugImages.IMG_OBJS_OWNED_MONITOR), flag);
@@ -952,7 +936,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Returns the image associated with reference variables being used to display
 	 * references to a root object.
 	 *
-	 * @param element
 	 * @return image associated with reference variables
 	 */
 	protected Image getReferencesImage(Object element){
@@ -963,7 +946,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Returns the image associated with reference variables being used to display
 	 * references to a root object.
 	 *
-	 * @param element
 	 * @return image associated with reference variables
 	 */
 	protected Image getReferenceImage(Object element){
@@ -1341,7 +1323,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Returns text for the given value based on user preferences to display
 	 * toString() details.
 	 *
-	 * @param javaValue
 	 * @return text
 	 */
 	public String getFormattedValueText(IJavaValue javaValue) {
@@ -1609,10 +1590,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	    }
 	}
 
-	/**
-	 * @param breakpoint
-	 * @return
-	 */
 	private String getJavaStratumLineBreakpointText(IJavaStratumLineBreakpoint breakpoint) throws CoreException {
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		String sourceName = breakpoint.getSourceName();

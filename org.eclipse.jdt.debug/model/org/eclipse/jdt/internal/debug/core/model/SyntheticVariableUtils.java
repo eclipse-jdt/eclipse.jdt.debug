@@ -62,7 +62,6 @@ public final class SyntheticVariableUtils {
 	 * @param variables
 	 *            variable to search on
 	 * @return array of variables
-	 * @throws DebugException
 	 */
 	public static IVariable[] findSyntheticVariables(IVariable[] variables) throws DebugException {
 		ArrayList<IVariable> extracted = new ArrayList<>();

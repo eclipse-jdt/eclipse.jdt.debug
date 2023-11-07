@@ -150,7 +150,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a single VM argument.
 	 * Program output should be: foo
-	 * @throws CoreException
 	 */
 	public void testVMArgSingle() throws CoreException {
 		testWithVMArg("-Dfoo=foo", "foo");
@@ -158,7 +157,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a VM argument with quotes in a valid location.
 	 * Program output should be: foo
-	 * @throws CoreException
 	 */
 	public void testVMArgSimpleQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=\"foo\"", "foo");
@@ -167,7 +165,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a VM argument with the standard style quoting for arguments with
 	 * spaces.
 	 * Program output should be: foo bar
-	 * @throws CoreException
 	 */
 	public void testVMArgStandardQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=\"foo bar\"", "foo bar");
@@ -175,7 +172,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a VM argument with quotes in a standard location.
 	 * Program output should be: "foo"
-	 * @throws CoreException
 	 */
 	public void testVMArgStandardEmbeddedQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=\"\\\"foo\\\"\"", "\"foo\"");
@@ -184,7 +180,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a VM argument with the quoting style we recommended as a workaround
 	 * to a bug (now fixed) that we suggested in the past.
 	 * Program output should be: foo bar
-	 * @throws CoreException
 	 */
 	public void testVMArgWorkaroundQuotes() throws CoreException {
 		testWithVMArg("\"-Dfoo=foo bar\"", "foo bar");
@@ -193,7 +188,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a VM argument with quotes placed in a creative (non-standard, but
 	 * valid) location
 	 * Program output should be: foo bar
-	 * @throws CoreException
 	 */
 	public void testVMArgCreativeQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=fo\"o b\"ar", "foo bar");
@@ -201,7 +195,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a VM argument with embedded quotes.
 	 * Program output should be: "foo bar"
-	 * @throws CoreException
 	 */
 	public void testVMArgEmbeddedQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=\"\\\"foo bar\\\"\"", "\"foo bar\"");
@@ -210,7 +203,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a VM argument with quotes placed in a creative (non-standard, but
 	 * valid) location
 	 * Program output should be: fo"o b"ar
-	 * @throws CoreException
 	 */
 	public void testVMArgEmbeddedCreativeQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=fo\"\\\"o b\\\"\"ar", "fo\"o b\"ar");
@@ -222,7 +214,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a single program argument.
 	 * Program output should be: foo
-	 * @throws CoreException
 	 */
 	public void testProgramArgSingle() throws CoreException {
 		testWithProgramArg("foo", "foo");
@@ -230,7 +221,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test multiple program arguments.
 	 * Program output should be: foo\nbar
-	 * @throws CoreException
 	 */
 	public void testProgramArgMultiple() throws CoreException {
 		testWithProgramArg("foo bar", "foobar");
@@ -238,7 +228,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a program argument with quotes in a valid location.
 	 * Program output should be: foo
-	 * @throws CoreException
 	 */
 	public void testProgramArgSimpleQuotes() throws CoreException {
 		testWithProgramArg("\"foo\"", "foo");
@@ -246,7 +235,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a program argument with quotes in a standard location.
 	 * Program output should be: foo bar
-	 * @throws CoreException
 	 */
 	public void testProgramArgStandardQuotes() throws CoreException {
 		testWithProgramArg("\"foo bar\"", "foo bar");
@@ -255,7 +243,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a program argument with quotes placed in a creative (non-standard,
 	 * but valid) location.
 	 * Program output should be: foo bar
-	 * @throws CoreException
 	 */
 	public void testProgramArgCreativeQuotes() throws CoreException {
 		testWithProgramArg("fo\"o b\"ar", "foo bar");
@@ -263,7 +250,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	/**
 	 * Test a program argument with embedded quotes in a standard location.
 	 * Program output should be: "blah"
-	 * @throws CoreException
 	 */
 	public void testProgramArgEmbeddedQuotes() throws CoreException {
 		testWithProgramArg("\\\"blah\\\"", "\"blah\"");
@@ -272,7 +258,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a program argument with embedded quotes in a creative (non-standard,
 	 * but valie) location.
 	 * Program output should be: f"o"o
-	 * @throws CoreException
 	 */
 	public void testProgramArgCreativeEmbeddedQuotes() throws CoreException {
 		testWithProgramArg("f\\\"o\\\"o", "f\"o\"o");
@@ -282,7 +267,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a program argument with one empty string
      *
 	 * Program output should be: 1
-	 * @throws CoreException
 	 */
 	public void testProgramArgEmptyString() throws CoreException {
 		testProgramArgCount("\"\"", "1");
@@ -294,7 +278,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Test a program with an empty string among other args.
 	 *
 	 * Program output should be: 4
-	 * @throws CoreException
 	 */
 	public void testProgramArgEmptyStringWithOthers() throws CoreException {
 		testProgramArgCount("word1 \"\" \"part1 part2\" word2", "4");
@@ -305,7 +288,6 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * empty string to match Java console behavior.
 	 *
 	 * Program output should be: 1
-	 * @throws CoreException
 	 */
 	public void testProgramArgOneQuote() throws CoreException {
 		testProgramArgCount("\"", "1");
@@ -323,9 +305,6 @@ public class ArgumentTests extends AbstractDebugTest {
 
 	/**
 	 * Runs the ArgumentPrinter with the given program arguments
-	 * @param argString
-	 * @param outputValue
-	 * @throws CoreException
 	 */
 	private void testWithProgramArg(String argString, String outputValue) throws CoreException {
 		testOutput("ArgumentPrinter", null, argString, outputValue);
@@ -333,9 +312,6 @@ public class ArgumentTests extends AbstractDebugTest {
 
 	/**
 	 * Runs the ArgumentCounter with the given program arguments
-	 * @param argString
-	 * @param outputValue
-	 * @throws CoreException
 	 */
 	private void testProgramArgCount(String argString, String outputValue) throws CoreException {
 		testOutput("ArgumentCounter", null, argString, outputValue);
@@ -437,7 +413,6 @@ public class ArgumentTests extends AbstractDebugTest {
 
 	/**
 	 * Tests the default VM args
-	 * @throws CoreException
 	 */
 	/*public void testDefaultVMArgs() throws CoreException {
 	    IVMInstall install = JavaRuntime.getVMInstall(get14Project());

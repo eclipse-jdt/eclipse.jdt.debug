@@ -44,7 +44,6 @@ public class RunToLineTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public RunToLineTests(String name) {
 		super(name);
@@ -85,8 +84,6 @@ public class RunToLineTests extends AbstractDebugTest {
 
 	/**
 	 * Test a run to line, with no extra breakpoints.
-	 *
-	 * @throws Exception
 	 */
 	public void testRunToLine() throws Exception {
 		runToLine(58, 58, true);
@@ -94,8 +91,6 @@ public class RunToLineTests extends AbstractDebugTest {
 
 	/**
 	 * Test a run to line, with an extra breakpoint, and preference to skip
-	 *
-	 * @throws Exception
 	 */
 	public void testRunToLineSkipBreakpoint() throws Exception {
 		createLineBreakpoint(56, "Breakpoints");
@@ -104,8 +99,6 @@ public class RunToLineTests extends AbstractDebugTest {
 
 	/**
 	 * Test a run to line, with an extra breakpoint, and preference to *not* skip
-	 *
-	 * @throws Exception
 	 */
 	public void testRunToLineHitBreakpoint() throws Exception {
 		createLineBreakpoint(56, "Breakpoints");
@@ -120,7 +113,6 @@ public class RunToLineTests extends AbstractDebugTest {
 	 * @param expectedLineNumber the line number to be on after run-to-line (may differ from
 	 *  the target line number if the option to skip breakpoints is off).
 	 * @param skipBreakpoints preference value for "skip breakpoints during run to line"
-	 * @throws Exception
 	 */
 	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints) throws Exception {
 		String typeName = "Breakpoints";

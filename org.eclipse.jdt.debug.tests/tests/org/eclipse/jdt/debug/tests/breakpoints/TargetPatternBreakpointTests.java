@@ -38,7 +38,6 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public TargetPatternBreakpointTests(String name) {
 		super(name);
@@ -46,7 +45,6 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 
 	/**
 	 * Tests that several pattern breakpoints are suspending properly
-	 * @throws Exception
 	 */
 	public void testTargetPatternBreakpoints() throws Exception {
 		JDIDebugPlugin.getDefault().addJavaBreakpointListener(this);

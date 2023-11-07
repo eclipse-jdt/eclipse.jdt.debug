@@ -26,7 +26,6 @@ import com.sun.jdi.event.ThreadDeathEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class ThreadDeathEventImpl extends EventImpl implements ThreadDeathEvent {
 	/** Jdwp Event Kind. */

@@ -60,8 +60,6 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Sets autobuild to the specified boolean value
-	 * @param enable
-	 * @throws CoreException
 	 */
 	public static void enableAutobuild(boolean enable) throws CoreException {
 		// disable auto build
@@ -73,7 +71,6 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the file corresponding to the specified path from within this bundle
-	 * @param path
 	 * @return the file corresponding to the specified path from within this bundle, or
 	 * <code>null</code> if not found
 	 */

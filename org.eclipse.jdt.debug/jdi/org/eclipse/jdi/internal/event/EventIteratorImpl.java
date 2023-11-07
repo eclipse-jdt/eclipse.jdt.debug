@@ -21,7 +21,6 @@ import com.sun.jdi.event.EventIterator;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class EventIteratorImpl implements EventIterator {
 	/** List iterator implementation of iterator. */

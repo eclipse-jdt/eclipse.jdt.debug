@@ -33,8 +33,6 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 	/**
 	 * Tests that qualified names get created for line breakpoints in external
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testExternalLineBreakpoint() throws Exception {
 		Listener listener = new Listener();
@@ -58,8 +56,6 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 	/**
 	 * Tests that qualified names get created for watchpoints in external
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testExternalWatchpoint() throws Exception {
 		Listener listener = new Listener();
@@ -83,8 +79,6 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 	/**
 	 * Tests that qualified names get created for method breakpoints in external
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testExternalMethodBreakpoint() throws Exception {
 		Listener listener = new Listener();

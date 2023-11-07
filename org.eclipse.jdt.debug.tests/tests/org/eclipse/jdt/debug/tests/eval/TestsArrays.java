@@ -20,7 +20,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 public class TestsArrays extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
-	 * @param name
 	 */
 	public TestsArrays(String name) {
 		super(name);

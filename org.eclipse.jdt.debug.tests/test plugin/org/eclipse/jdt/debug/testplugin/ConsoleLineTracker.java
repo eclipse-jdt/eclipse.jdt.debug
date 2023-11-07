@@ -31,8 +31,6 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 
 	/**
 	 * Sets the delegate, possibly <code>null</code>
-	 *
-	 * @param tracker
 	 */
 	public static void setDelegate(IConsoleLineTrackerExtension tracker) {
 		fDelegate = tracker;

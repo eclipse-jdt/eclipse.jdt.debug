@@ -34,7 +34,6 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ConfigurationEncodingTests(String name) {
 		super(name);

@@ -39,8 +39,6 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 
 	/**
 	 * Step into 'new StepIntoSelectionClass()'
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoSourceConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
@@ -75,8 +73,6 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 
 	/**
 	 * Step into 'step()'
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoSourceMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
@@ -111,8 +107,6 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 
 	/**
 	 * Step into 'method1(int[], String[])'
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoSourceMethodWithParameters() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
@@ -147,8 +141,6 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 
 	/**
 	 * Step into 'Vector.addElement(Object)'
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoBinaryMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
@@ -186,8 +178,6 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 
 	/**
 	 * Step into 'Integer.valueOf(i)'
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoBinaryConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";

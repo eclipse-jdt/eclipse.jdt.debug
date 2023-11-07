@@ -183,7 +183,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Sets a zero-length array as the new values
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetZeroLengthArray() throws Exception {
@@ -217,7 +216,6 @@ public class ArrayTests extends AbstractDebugTest {
 	/**
 	 * Tries to set a new array with a starting index of -1
 	 *
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLowerIndexArray() throws Exception {
@@ -256,7 +254,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with an index greater than the total length of the source array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadUpperIndexArray() throws Exception {
@@ -296,7 +293,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with an index greater than the total length of the soure array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetExactUpperIndexArray() throws Exception {
@@ -336,7 +332,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLowerSrcIndexArray() throws Exception {
@@ -376,7 +371,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadUpperSrcIndexArray() throws Exception {
@@ -416,7 +410,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetExactSrcIndexArray() throws Exception {
@@ -456,7 +449,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a length less than -1
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLowerLengthArray() throws Exception {
@@ -496,7 +488,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a length equal to -1
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetMinus1LengthArray() throws Exception {
@@ -534,7 +525,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array where the given length and index combined exceed the length of the array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLengthPlusIndexArray() throws Exception {
@@ -574,7 +564,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array where the given length and source index combined exceed the length of the array
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLengthPlusSrcIndexArray() throws Exception {
@@ -613,7 +602,6 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array where the source array is longer than the array to set the values into
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetLongerSrcArray() throws Exception {

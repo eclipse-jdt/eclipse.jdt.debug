@@ -21,7 +21,6 @@ import com.sun.jdi.Method;
  * Class for analysing Java methods while debugging.
  *
  * @author jmoeller2
- *
  */
 public class JDIMethod {
 

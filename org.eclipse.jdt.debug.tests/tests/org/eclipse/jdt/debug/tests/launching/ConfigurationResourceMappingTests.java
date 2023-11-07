@@ -27,7 +27,6 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ConfigurationResourceMappingTests(String name) {
 		super(name);
@@ -117,7 +116,6 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that > 1 resource can be mapped correctly
-	 * @throws CoreException
 	 */
 	public void testSetMappedResources() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");

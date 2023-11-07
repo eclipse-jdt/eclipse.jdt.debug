@@ -76,7 +76,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param newfqname the new fully qualified name
 	 * @param pname the new project name
 	 * @return the <code>Change</code> for this outer type
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	protected static Change createChangesForOuterTypeChange(ILaunchConfiguration config, IType type, String newfqname, String pname) throws CoreException {
@@ -103,7 +102,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param packageFragment the fragment to move
 	 * @param destination the destination to move it to
 	 * @return the <code>Change</code> for moving the package
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	public static Change createChangesForPackageMove(IPackageFragment pfragment, IPackageFragmentRoot destination) throws CoreException {
@@ -126,7 +124,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param packageFragment the fragment to rename
 	 * @param newName the new name for the fragment
 	 * @return the Change for the renaming
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	public static Change createChangesForPackageRename(IPackageFragment pfragment, String newname) throws CoreException {
@@ -158,7 +155,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param javaProject the project to rename
 	 * @param newProjectName the new name for the project
 	 * @return the Change for the project rename
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	public static Change createChangesForProjectRename(IJavaProject project, String newname) throws CoreException {
@@ -184,7 +180,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param newname
 	 *            the new name for the module
 	 * @return the Change for the module rename
-	 * @throws CoreException
 	 */
 	public static Change createChangesForModuleRename(IModuleDescription module, String newname) throws CoreException {
 		List<Change> changes = new ArrayList<>();
@@ -207,7 +202,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param newfqname the new fully qualified name
 	 * @param pname the project name
 	 * @return the <code>Change</code> for changing the specified type
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	protected static Change createChangesForTypeChange(IType type, String newfqname, String pname) throws CoreException {
@@ -235,7 +229,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param type the type being moved
 	 * @param destination the destination to move the type to
 	 * @return the <code>Change</code> for the type move
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	public static Change createChangesForTypeMove(IType type, IJavaElement destination) throws CoreException {
@@ -261,7 +254,6 @@ public class JDTDebugRefactoringUtil {
 	 * @param type the type to rename
 	 * @param newname the new name for the type
 	 * @return the <code>Change</code> for the type rename
-	 * @throws CoreException
 	 * @since 3.2
 	 */
 	public static Change createChangesForTypeRename(IType type, String newname) throws CoreException {

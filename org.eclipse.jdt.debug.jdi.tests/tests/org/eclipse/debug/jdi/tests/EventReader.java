@@ -47,8 +47,6 @@ public class EventReader extends AbstractReader {
 
 	/**
 	 * Constructor
-	 * @param name
-	 * @param queue
 	 */
 	public EventReader(String name, EventQueue queue) {
 		super(name);
@@ -56,7 +54,6 @@ public class EventReader extends AbstractReader {
 	}
 	/**
 	 * Registers the given event listener.
-	 * @param listener
 	 */
 	public synchronized void addEventListener(EventListener listener) {
 		fEventListeners.addElement(listener);
@@ -141,7 +138,6 @@ public class EventReader extends AbstractReader {
 	}
 	/**
 	 * De-registers the given event listener.
-	 * @param listener
 	 */
 	public synchronized void removeEventListener(EventListener listener) {
 		fEventListeners.removeElement(listener);

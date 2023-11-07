@@ -99,8 +99,6 @@ public class TestAll {
 	/**
 	 * Run all tests with the given arguments.
 	 * @see AbstractJDITest for details on the arguments.
-	 * @param arguments
-	 * @throws Throwable
 	 */
 	public static void main(String[] arguments) throws Throwable {
 		// Create test result

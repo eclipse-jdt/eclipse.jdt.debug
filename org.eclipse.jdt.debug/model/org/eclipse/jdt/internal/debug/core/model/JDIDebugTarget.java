@@ -1019,8 +1019,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Reinstall all breakpoints installed in the given resources
-	 * @param resources
-	 * @param classNames
 	 */
 	public void reinstallBreakpointsIn(List<IResource> resources, List<String> classNames) {
 		List<IBreakpoint> breakpoints = getBreakpoints();

@@ -24,7 +24,6 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 /**
  * Java configuration for the source viewer in the detail pane.  Uses standard text editor
  * settings, but adds the java content assist proposals.
- *
  */
 public class DetailsViewerConfiguration extends TextSourceViewerConfiguration {
 

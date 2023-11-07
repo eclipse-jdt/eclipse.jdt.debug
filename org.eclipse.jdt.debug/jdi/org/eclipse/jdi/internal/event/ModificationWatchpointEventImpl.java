@@ -27,7 +27,6 @@ import com.sun.jdi.event.ModificationWatchpointEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class ModificationWatchpointEventImpl extends WatchpointEventImpl
 		implements ModificationWatchpointEvent {

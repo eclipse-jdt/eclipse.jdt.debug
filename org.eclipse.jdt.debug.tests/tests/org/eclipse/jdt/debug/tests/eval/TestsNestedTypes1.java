@@ -20,7 +20,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 public class TestsNestedTypes1 extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
-	 * @param name
 	 */
 	public TestsNestedTypes1(String name) {
 		super(name);

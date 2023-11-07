@@ -150,7 +150,6 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	 * handles setting the checked state of the widget
 	 * must check if we are in the UI thread before calling this method, as the launch ocnfiguration
 	 * notification can come from the non-UI tread.
-	 * @param configuration
 	 */
 	private void setWidget(ILaunchConfiguration configuration) {
 		try {

@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.2
- *
  */
 public class JavaThreadEventHandler extends ThreadEventHandler implements IPropertyChangeListener, TreeListener {
 
@@ -60,8 +59,6 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 
 	/**
 	 * Constructs and event handler for a Java thread.
-	 *
-	 * @param proxy
 	 */
 	public JavaThreadEventHandler(AbstractModelProxy proxy) {
 		super(proxy);

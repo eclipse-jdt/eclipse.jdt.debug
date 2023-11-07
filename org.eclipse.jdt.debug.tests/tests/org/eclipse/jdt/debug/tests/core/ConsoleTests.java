@@ -75,8 +75,6 @@ public class ConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test that when a process is removed from a launch, the associated
 	 * console is closed.
-	 *
-	 * @throws Exception
 	 */
 	public void testRemoveProcess() throws Exception {
 		String typeName = "Breakpoints";

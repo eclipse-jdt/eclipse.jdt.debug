@@ -30,7 +30,6 @@ import org.eclipse.jface.wizard.Wizard;
 
 /**
  * @since 3.3
- *
  */
 public abstract class VMInstallWizard extends Wizard {
 
@@ -81,9 +80,6 @@ public abstract class VMInstallWizard extends Wizard {
 
 	/**
 	 * Returns a page to use for editing a VM install type
-	 *
-	 * @param type
-	 * @return
 	 */
 	public AbstractVMInstallPage getPage(IVMInstallType type) {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_PAGES);

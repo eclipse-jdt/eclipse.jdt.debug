@@ -202,8 +202,6 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 
 	/**
 	 * Maps the config to associated java resource
-	 *
-	 * @param config
 	 */
 	protected void mapResources(ILaunchConfigurationWorkingCopy config)  {
 		try {

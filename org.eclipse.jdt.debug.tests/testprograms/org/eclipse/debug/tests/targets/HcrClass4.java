@@ -24,9 +24,6 @@ public class HcrClass4 {
 		String s = new String("HcrClass4#run()");
 	}
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		HcrClass4 clazz = new HcrClass4();
 	}

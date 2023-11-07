@@ -37,7 +37,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that breakpoint suspends on caught exceptions
-	 * @throws Exception
 	 */
 	public void testCaughtException() throws Exception {
 		String typeName = "ThrowsException";
@@ -60,7 +59,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that breakpoint suspends on uncaught exceptions
-	 * @throws Exception
 	 */
 	public void testUncaughtException() throws Exception {
 		String typeName = "HitCountException";
@@ -83,10 +81,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		}
 	}
 
-	/**
-	 *
-	 * @throws Exception
-	 */
 	public void testDisabledCaughtException() throws Exception {
 		String typeName = "ThrowsNPE";
 		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);
@@ -104,7 +98,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that the breakpoint does not suspend for disabled breakpoint set for uncaught exceptions
-	 * @throws Exception
 	 */
 	public void testDisabledUncaughtNPE() throws Exception {
 		String typeName = "MultiThreadedException";
@@ -123,7 +116,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that the breakpoint will only suspend on a breakpoint in the inclusion filters
-	 * @throws Exception
 	 */
 	public void testInclusiveScopedException() throws Exception {
 		String typeName = "ThrowsException";
@@ -147,7 +139,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * test that the breakpoint will not suspend as the class that throws the exception has been added to the exclusion filters
-	 * @throws Exception
 	 */
 	public void testExclusiveScopedException() throws Exception {
 		String typeName = "ThrowsException";
@@ -166,7 +157,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests the hit count of an exception breakpoint
-	 * @throws Exception
 	 */
 	public void testHitCountException() throws Exception {
 		String typeName = "HitCountException";
@@ -189,7 +179,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 	/**
 	 * tests that the breakpoint will suspend at an NPE with more than one exclusion filter, just not suspend in either
 	 * of the classes for the exclusion filter
-	 * @throws Exception
 	 */
 	public void testMultiExclusiveScopedExceptionHit() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -210,7 +199,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that the breakpoint does not suspend for multiple exclusion filters
-	 * @throws Exception
 	 */
 	public void testMultiExclusiveScopedExceptionMissed() throws Exception {
 		String typeName = "ThrowsException";
@@ -229,7 +217,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that a breakpoint is hit with multiple inclusion filters set
-	 * @throws Exception
 	 */
 	public void testMultiInclusiveScopedExceptionHit() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -250,7 +237,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that the breakpoint does not suspend with multiple inclusion filters
-	 * @throws Exception
 	 */
 	public void testMultiInclusiveScopedExceptionMissed() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -269,7 +255,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * test that breakpoint suspends with multi inclusion and exclusion filters
-	 * @throws Exception
 	 */
 	public void testMultiInclusiveExclusiveScopedExceptionHit() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -291,7 +276,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that breakpoint does not suspend with multi inclusion and exclusion filters
-	 * @throws Exception
 	 */
 	public void testMultiInclusiveExclusiveScopedExceptionMissed() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -311,7 +295,6 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 
 	/**
 	 * tests that breakpoint is skipped when told to do so
-	 * @throws Exception
 	 */
 	public void testSkipExceptionBreakpoint() throws Exception {
 		String typeName = "ThrowsNPE";

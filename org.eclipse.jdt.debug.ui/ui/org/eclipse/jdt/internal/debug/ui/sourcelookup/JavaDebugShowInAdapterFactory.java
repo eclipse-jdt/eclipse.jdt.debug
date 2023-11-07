@@ -20,7 +20,6 @@ import org.eclipse.ui.part.IShowInTargetList;
 
 /**
  * @since 3.2
- *
  */
 public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 

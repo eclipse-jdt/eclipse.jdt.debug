@@ -17,8 +17,6 @@ public class ReturnInstruction extends CompoundInstruction {
 
 	/**
 	 * Constructor for ReturnInstruction.
-	 *
-	 * @param start
 	 */
 	public ReturnInstruction(int start) {
 		super(start);

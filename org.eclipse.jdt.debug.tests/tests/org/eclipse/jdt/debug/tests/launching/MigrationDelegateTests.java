@@ -22,7 +22,6 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Java types in this context only include Local Java Applications, Java Applets, and Remote Java Applications
  *
  * @since 3.2
- *
  */
 public class MigrationDelegateTests extends AbstractDebugTest {
 
@@ -36,7 +35,6 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Runs a normal migration with no problems
-	 * @throws Exception
 	 */
 	public void testStandardMigration() throws Exception {
 		createLaunchConfiguration("MigrationTests"); //$NON-NLS-1$
@@ -55,7 +53,6 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Tests to see if the previously migrated launch configurations are still considered candidates
-	 * @throws Exception
 	 */
 	public void testMigrationAlreadyPerformed() throws Exception {
 		createLaunchConfiguration("MigrationTests2"); //$NON-NLS-1$

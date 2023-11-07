@@ -46,7 +46,6 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 
 /**
  * Test long module-path. OSs have limits in term of command line length or argument length. We use an argument file when module-path is too long.
- *
  */
 public class LongModulePathTests extends AbstractDebugTest {
 	private static final IPath CLASSPATH_PROJECT_CONTENT_PATH = new Path("testresources/classpathModuleProject");

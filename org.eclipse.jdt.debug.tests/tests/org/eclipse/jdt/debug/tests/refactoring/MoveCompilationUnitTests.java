@@ -46,7 +46,6 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 	 *
 	 * @param element element to move
 	 * @param destination destination of move
-	 * @throws Exception
 	 */
 	protected void move(IJavaElement element, IJavaElement destination) throws Exception {
 		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
@@ -63,7 +62,6 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 
 	/**
 	 * Tests if a LineBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testLineBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -88,7 +86,6 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 
 	/**
 	 * Tests if a MethodBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testMethodBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -113,7 +110,6 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testWatchPointBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -138,7 +134,6 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 
 	/**
 	 * Tests if a ClassLoadBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testClassLoadBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();

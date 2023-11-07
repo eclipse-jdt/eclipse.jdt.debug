@@ -21,7 +21,6 @@ import java.io.UTFDataFormatException;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) ID
  * declared by the JDWP specification.
- *
  */
 public class JdwpString {
 	/**

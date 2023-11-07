@@ -20,9 +20,6 @@ import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.AbsentInformationException;
 
-/**
- *
- */
 public class SourceDebugExtensionParser {
 
 	private static class Lexer {
@@ -121,9 +118,6 @@ public class SourceDebugExtensionParser {
 			}
 		}
 
-		/**
-		 *
-		 */
 		private void startWithOtherChar() {
 			int lexemStart = fPointer;
 			consumeWhiteSpace();
@@ -134,9 +128,6 @@ public class SourceDebugExtensionParser {
 			}
 		}
 
-		/**
-		 * @param lexemStart
-		 */
 		private void nonAsteriskString(int lexemStart) {
 			while (fChar != '\n' && fChar != '\r' && !fEOF) {
 				nextChar();
@@ -152,9 +143,6 @@ public class SourceDebugExtensionParser {
 			}
 		}
 
-		/**
-		 * @param lexemStart
-		 */
 		private void number(int lexemStart) {
 			while (fChar >= '0' && fChar <= '9') {
 				nextChar();
@@ -166,9 +154,6 @@ public class SourceDebugExtensionParser {
 			System.arraycopy(fSmap, lexemStart, fLexem, 0, length);
 		}
 
-		/**
-		 *
-		 */
 		private void startWithAsterisk() throws AbsentInformationException {
 			nextChar();
 			if (fEOF) {
@@ -205,9 +190,6 @@ public class SourceDebugExtensionParser {
 			nextChar();
 		}
 
-		/**
-		 *
-		 */
 		private void startWithCR() {
 			if (fChar == '\r') {
 				if (nextChar() == '\n') {
@@ -223,9 +205,6 @@ public class SourceDebugExtensionParser {
 			fLexemType = CR;
 		}
 
-		/**
-		 *
-		 */
 		private void consumeWhiteSpace() {
 			while (fChar == ' ' || fChar == '\t') {
 				nextChar();
@@ -275,9 +254,6 @@ public class SourceDebugExtensionParser {
 		fDefinedStrata.add(VirtualMachineImpl.JAVA_STRATUM_NAME);
 	}
 
-	/**
-	 *
-	 */
 	private void parseSmap(String smap) throws AbsentInformationException {
 		Lexer lexer = new Lexer(smap);
 		parseHeader(lexer);
@@ -288,9 +264,6 @@ public class SourceDebugExtensionParser {
 		}
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseHeader(Lexer lexer) throws AbsentInformationException {
 		int lexemType = lexer.nextLexem();
 		if (lexemType != Lexer.SMAP) {
@@ -313,18 +286,12 @@ public class SourceDebugExtensionParser {
 		fReferenceType.setDefaultStratumId(getNonAsteriskString(lexer));
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseSections(Lexer lexer) throws AbsentInformationException {
 		while (lexer.lexemType() != Lexer.ASTERISK_E) {
 			parseStratumSection(lexer);
 		}
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseStratumSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.lexemType() != Lexer.ASTERISK_S) {
@@ -392,9 +359,6 @@ public class SourceDebugExtensionParser {
 		fReferenceType.addStratum(fCurrentStratum);
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseFileSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
@@ -408,9 +372,6 @@ public class SourceDebugExtensionParser {
 		}
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseFileInfo(Lexer lexer) throws AbsentInformationException {
 		int lexemType = lexer.lexemType();
 		switch (lexemType) {
@@ -444,9 +405,6 @@ public class SourceDebugExtensionParser {
 		}
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseLineSection(Lexer lexer)
 			throws AbsentInformationException {
 		fCurrentLineFileId = 0;
@@ -461,9 +419,6 @@ public class SourceDebugExtensionParser {
 		}
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseLineInfo(Lexer lexer) throws AbsentInformationException {
 		if (lexer.lexemType() != Lexer.NUMBER) {
 			throw new AbsentInformationException(
@@ -520,9 +475,6 @@ public class SourceDebugExtensionParser {
 				repeatCount, outputStartLine, outputLineIncrement);
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseVendorSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
@@ -537,9 +489,6 @@ public class SourceDebugExtensionParser {
 		}
 	}
 
-	/**
-	 * @param lexer
-	 */
 	private void parseFutureSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {

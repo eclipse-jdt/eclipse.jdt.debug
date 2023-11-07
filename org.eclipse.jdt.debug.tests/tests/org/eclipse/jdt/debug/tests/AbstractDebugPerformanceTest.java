@@ -36,7 +36,6 @@ public class AbstractDebugPerformanceTest extends AbstractDebugUiTests {
 
 	/**
 	 * Overridden to create a default performance meter for this test case.
-	 * @throws Exception
 	 */
 	@Override
 	protected void setUp() throws Exception {
@@ -47,7 +46,6 @@ public class AbstractDebugPerformanceTest extends AbstractDebugUiTests {
 
 	/**
 	 * Overridden to dispose of the performance meter.
-	 * @throws Exception
 	 */
 	@Override
 	protected void tearDown() throws Exception {

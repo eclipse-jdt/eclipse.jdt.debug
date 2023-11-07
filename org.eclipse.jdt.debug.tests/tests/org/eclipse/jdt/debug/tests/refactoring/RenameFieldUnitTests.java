@@ -31,14 +31,6 @@ public class RenameFieldUnitTests extends AbstractRefactoringDebugTest {
 		super(name);
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @throws Exception
-	 */
 	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage) throws Exception {
 		String newFieldName = "renamedField";
 		try {

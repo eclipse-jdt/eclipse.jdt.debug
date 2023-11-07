@@ -21,7 +21,6 @@ import com.sun.jdi.Accessible;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	/** Modifier bit flag: Is synthetic. see MODIFIER_ACC_SYNTHETIC. */

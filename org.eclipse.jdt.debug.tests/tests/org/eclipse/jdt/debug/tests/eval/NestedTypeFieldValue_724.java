@@ -21,7 +21,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 public class NestedTypeFieldValue_724 extends Tests {
 	/**
 	 * Constructor for NestedTypeFieldValue.
-	 * @param name
 	 */
 	public NestedTypeFieldValue_724(String name) {
 		super(name);

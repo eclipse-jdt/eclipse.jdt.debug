@@ -88,7 +88,6 @@ public class WatchpointEventTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new WatchpointEventTest().runSuite(args);

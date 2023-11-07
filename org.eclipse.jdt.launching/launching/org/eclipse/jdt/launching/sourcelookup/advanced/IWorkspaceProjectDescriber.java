@@ -52,7 +52,6 @@ public interface IWorkspaceProjectDescriber {
 		 * <li>for PDE Plug-In projects used by Equinox, this is project bundle installation location
 		 * <li>for PDE Plug-In projects used plain java, this is still project output locations
 		 * </ul>
-		 *
 		 */
 		public void addLocation(File location);
 

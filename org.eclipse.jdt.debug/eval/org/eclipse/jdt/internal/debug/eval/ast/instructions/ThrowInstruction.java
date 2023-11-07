@@ -23,9 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  */
 public class ThrowInstruction extends CompoundInstruction {
 
-	/**
-	 * @param start
-	 */
 	public ThrowInstruction(int start) {
 		super(start);
 	}

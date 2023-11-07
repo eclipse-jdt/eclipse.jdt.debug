@@ -150,7 +150,6 @@ public class MacInstalledJREs {
 	 * XML properties format.
 	 *
 	 * @param monitor the {@link IProgressMonitor} or <code>null</code>
-	 * @param stream
 	 * @return the array of {@link VMStandin}s or an empty array never <code>null</code>
 	 * @since 3.8
 	 */

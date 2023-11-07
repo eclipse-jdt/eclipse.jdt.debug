@@ -41,7 +41,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that we do not fail on a null variable
-	 * @throws CoreException
 	 */
 	public void testNullVariableResolution() throws CoreException {
 		String varName = "NULL_VARIABLE";
@@ -54,7 +53,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * test JRE resolution
-	 * @throws CoreException
 	 */
 	public void testJRELibResolution() throws CoreException {
 		String varName = JavaRuntime.JRELIB_VARIABLE;
@@ -70,7 +68,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	/**
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a null source attachment.
-	 * @throws Exception
 	 */
 	public void testVariableExtensionWithNullSourceAttachment() throws Exception {
 		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
@@ -91,7 +88,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a source attachment rooted with a null
 	 * variable with an extension.
-	 * @throws Exception
 	 */
 	public void testVariableExtensionWithNullSourceAttachmentWithExtension() throws Exception {
 		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
@@ -110,8 +106,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * Test a class path entry with variable extensions for archive and source attachment.
-	 *
-	 * @throws Exception
 	 */
 	public void testVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
 		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
@@ -130,8 +124,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * Test a class path entry with variable extensions for archive and source attachment.
-	 *
-	 * @throws Exception
 	 */
 	public void testProjectResolutionWithVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
 		IJavaProject project = JavaProjectHelper.createJavaProject("VariableSource");

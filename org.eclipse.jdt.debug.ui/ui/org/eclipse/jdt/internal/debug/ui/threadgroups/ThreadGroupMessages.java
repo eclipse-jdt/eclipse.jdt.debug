@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
- *
  */
 public class ThreadGroupMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.threadgroups.ThreadGroupMessages"; //$NON-NLS-1$

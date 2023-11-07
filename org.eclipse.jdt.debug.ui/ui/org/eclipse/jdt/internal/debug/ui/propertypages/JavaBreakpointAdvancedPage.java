@@ -26,9 +26,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-/**
- *
- */
 public class JavaBreakpointAdvancedPage extends PropertyPage {
 
 	ThreadFilterEditor fThreadFilterEditor;
@@ -84,7 +81,6 @@ public class JavaBreakpointAdvancedPage extends PropertyPage {
 
 	/**
 	 * Allow subclasses to create type-specific editors.
-	 * @param parent
 	 */
 	protected void createTypeSpecificEditors(Composite parent) {
 		// Do nothing.

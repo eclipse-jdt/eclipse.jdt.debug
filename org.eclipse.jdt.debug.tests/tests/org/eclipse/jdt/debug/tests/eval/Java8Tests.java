@@ -30,9 +30,6 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class Java8Tests extends AbstractDebugTest {
 
-	/**
-	 * @param name
-	 */
 	public Java8Tests(String name) {
 		super(name);
 	}
@@ -45,8 +42,6 @@ public class Java8Tests extends AbstractDebugTest {
 	/**
 	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalDefaultMethod() throws Exception {
 		IJavaThread thread = null;
@@ -66,8 +61,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet in the context of interface method generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalInterfaceMethod() throws Exception {
 		IJavaThread thread = null;
@@ -88,8 +81,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet in the context of interface method generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testBugEvalIntfSuperDefault() throws Exception {
 		IJavaThread thread = null;
@@ -111,8 +102,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a static method on an object generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalStatictMethod() throws Exception {
 		IJavaThread thread = null;
@@ -133,8 +122,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet containing a lambda
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalLambda() throws Exception {
 		IJavaThread thread = null;
@@ -155,8 +142,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet containing a lambda referencing a variable in a loop
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalLambdaInLoop() throws Exception {
 		IJavaThread thread = null;
@@ -177,8 +162,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet containing a method reference
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalMethodReference() throws Exception {
 		IJavaThread thread = null;
@@ -199,8 +182,6 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet containing a method reference
-	 *
-	 * @throws Exception
 	 */
 	public void testContextEvaluations() throws Exception {
 		IJavaThread thread = null;

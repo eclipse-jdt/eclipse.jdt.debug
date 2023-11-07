@@ -26,7 +26,6 @@ import com.sun.jdi.event.MethodEntryEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class MethodEntryEventImpl extends LocatableEventImpl implements
 		MethodEntryEvent {

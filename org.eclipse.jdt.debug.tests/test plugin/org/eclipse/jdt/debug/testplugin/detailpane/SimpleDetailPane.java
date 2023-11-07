@@ -36,7 +36,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * @see DetailPaneManagerTests
  * @see TestDetailPaneFactory
  * @see IDetailPane
- *
  */
 public class SimpleDetailPane implements IDetailPane {
 

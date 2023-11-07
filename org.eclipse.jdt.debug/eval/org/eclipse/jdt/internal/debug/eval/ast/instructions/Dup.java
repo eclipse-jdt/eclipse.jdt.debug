@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
  * ->
  *
  * Element Element ...
- *
  */
 public class Dup extends SimpleInstruction {
 

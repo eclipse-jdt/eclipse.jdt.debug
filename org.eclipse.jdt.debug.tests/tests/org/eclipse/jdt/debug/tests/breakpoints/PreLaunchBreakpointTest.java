@@ -32,7 +32,6 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public PreLaunchBreakpointTest(String name) {
 		super(name);
@@ -41,7 +40,6 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 	/**
 	 * Tests that the perspective will switch if breakpoints are detected and the program was launched in
 	 * 'run' mode
-	 * @throws Exception
 	 */
 	public void testRunModeLaunchWithBreakpoints() throws Exception {
 		String typeName = "Breakpoints";

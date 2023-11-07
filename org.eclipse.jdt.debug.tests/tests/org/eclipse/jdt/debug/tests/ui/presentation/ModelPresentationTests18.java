@@ -48,8 +48,6 @@ public class ModelPresentationTests18 extends AbstractDebugTest {
 	 * Tests a closure/lambda variable text including variable type name.
 	 *
 	 * Test for Bug 542989.
-	 *
-	 * @throws Exception
 	 */
 	public void testClosureVariableText() throws Exception {
 		String typeName = "ClosureVariableTest_Bug542989";

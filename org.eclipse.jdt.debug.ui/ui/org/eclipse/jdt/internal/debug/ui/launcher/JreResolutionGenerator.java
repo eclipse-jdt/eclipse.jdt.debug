@@ -129,7 +129,6 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 	/**
 	 * Returns the java project from the specified marker, or <code>null</code> if the marker
 	 * does not have an associated java project
-	 * @param marker
 	 * @return the associated java project or <code>null</code>
 	 */
 	protected IJavaProject getJavaProject(IMarker marker) {

@@ -25,9 +25,6 @@ package org.eclipse.debug.jdi.tests.program;
 
 import java.io.OutputStream;
 
-/**
- *
- */
 public interface Printable extends Cloneable {
 	/**
 	 * the number 1
@@ -35,7 +32,6 @@ public interface Printable extends Cloneable {
 	int CONSTANT = 1;
 	/**
 	 * Prints to the specified output stream
-	 * @param out
 	 */
 	public void print(OutputStream out);
 	}

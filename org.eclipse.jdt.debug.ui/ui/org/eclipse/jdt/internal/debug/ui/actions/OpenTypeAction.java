@@ -93,7 +93,6 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 *
 	 * @param element selected debug element
 	 * @return the type to open or <code>null</code> if none
-	 * @throws DebugException
 	 */
 	protected abstract IJavaType getTypeToOpen(IDebugElement element) throws CoreException;
 
@@ -102,7 +101,6 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 *
 	 * @param e selected element to resolve a source element for
 	 * @return the source element to open or <code>null</code> if none
-	 * @throws CoreException
 	 */
 	protected IType resolveSourceElement(Object e) throws CoreException {
 		IType source = null;

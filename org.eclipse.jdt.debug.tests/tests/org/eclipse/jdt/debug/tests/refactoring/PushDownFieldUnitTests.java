@@ -52,15 +52,6 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 
 /////////////////////////////////////////
 
-	/**
-	 * @param parentClassName
-	 * @param className
-	 * @param root
-	 * @param targetPackageName
-	 * @param cuName
-	 * @return
-	 * @throws Exception
-	 */
 	private Refactoring setupRefactor(String parentClassName, String className, String root, String targetPackageName, String cuName) throws Exception {
 
 		IJavaProject javaProject = get14Project();

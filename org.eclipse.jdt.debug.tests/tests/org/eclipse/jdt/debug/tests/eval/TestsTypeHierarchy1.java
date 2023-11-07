@@ -19,7 +19,6 @@ import org.eclipse.debug.core.model.IValue;
 public class TestsTypeHierarchy1 extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
-	 * @param name
 	 */
 	public TestsTypeHierarchy1(String name) {
 		super(name);

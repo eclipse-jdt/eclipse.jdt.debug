@@ -26,7 +26,6 @@ public class JDITestSuite extends TestSuite {
 	private final AbstractJDITest fTest;
 	/**
 	 * Creates a new test suite for the given JDI test.
-	 * @param test
 	 */
 	public JDITestSuite(AbstractJDITest test) {
 		super();

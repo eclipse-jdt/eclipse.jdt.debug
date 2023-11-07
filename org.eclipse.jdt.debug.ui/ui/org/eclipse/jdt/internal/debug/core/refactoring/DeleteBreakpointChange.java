@@ -27,7 +27,6 @@ import org.eclipse.osgi.util.NLS;
  * cannot be undone. Instead, we delete breakpoints on undo.
  *
  * @since 3.2
- *
  */
 public class DeleteBreakpointChange extends BreakpointChange {
 

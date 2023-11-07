@@ -22,7 +22,6 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- *
  */
 public interface IJavaDebugHelpContextIds {
 

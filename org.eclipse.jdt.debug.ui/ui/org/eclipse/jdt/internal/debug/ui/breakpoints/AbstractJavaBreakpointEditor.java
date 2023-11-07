@@ -160,10 +160,6 @@ public abstract class AbstractJavaBreakpointEditor {
 
 	/**
 	 * Fires a property change event to all listeners.
-	 *
-	 * @param source
-	 * @param propId
-	 * @param value
 	 */
 	protected void firePropertyChange(int propId) {
 		if (!fSuppressPropertyChanges) {

@@ -50,9 +50,6 @@ public class HcrClass3 {
 		aclass.run();
 	}
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		HcrClass3 clazz = new HcrClass3();
 		clazz.run();

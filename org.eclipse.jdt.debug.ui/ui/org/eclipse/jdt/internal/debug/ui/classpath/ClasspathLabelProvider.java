@@ -82,9 +82,6 @@ public class ClasspathLabelProvider implements ILabelProvider {
 	public void removeListener(ILabelProviderListener listener) {
 	}
 
-	/**
-	 * @param configuration
-	 */
 	public void setLaunchConfiguration(ILaunchConfiguration configuration) {
 		runtimeClasspathLabelProvider.setLaunchConfiguration(configuration);
 	}

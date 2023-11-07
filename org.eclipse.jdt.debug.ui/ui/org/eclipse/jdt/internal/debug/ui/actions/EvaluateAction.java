@@ -798,8 +798,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 
 	/**
 	 * Returns the selected text region, or <code>null</code> if none.
-	 *
-	 * @return
 	 */
 	protected IRegion getRegion() {
 		return fRegion;

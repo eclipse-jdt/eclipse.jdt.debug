@@ -21,8 +21,6 @@ public class VMDisconnectEventWaiter extends EventWaiter {
 
 	/**
 	 * Constructor
-	 * @param request
-	 * @param shouldGo
 	 */
 	public VMDisconnectEventWaiter(com.sun.jdi.request.EventRequest request, boolean shouldGo) {
 		super(request, shouldGo);

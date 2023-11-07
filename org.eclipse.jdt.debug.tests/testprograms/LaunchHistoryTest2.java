@@ -13,9 +13,6 @@
  *******************************************************************************/
 public class LaunchHistoryTest2 {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 	}

@@ -35,7 +35,6 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 	}
 	/**
 	 * Tests if a LineBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testLineBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -61,7 +60,6 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 
 	/**
 	 * Tests if a MethodBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testMethodBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -86,7 +84,6 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testWatchPointBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -112,7 +109,6 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 
 	/**
 	 * Tests if a ClassLoadBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testClassLoadBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();

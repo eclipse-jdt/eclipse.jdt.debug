@@ -40,7 +40,6 @@ public class FloatValueTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new FloatValueTest().runSuite(args);

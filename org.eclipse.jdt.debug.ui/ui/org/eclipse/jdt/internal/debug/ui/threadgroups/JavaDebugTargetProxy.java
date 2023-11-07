@@ -41,7 +41,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
- *
  */
 public class JavaDebugTargetProxy extends DebugTargetProxy {
 

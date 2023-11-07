@@ -613,7 +613,6 @@ public class BinaryBasedSourceGenerator {
 	 *            major level - e.g. 1 from 1.4
 	 * @param minor
 	 *            minor level - e.g. 4 from 1.4
-	 * @return
 	 */
 	public boolean isSourceLevelGreaterOrEqual(int major, int minor) {
 		return (fSourceMajorLevel > major)

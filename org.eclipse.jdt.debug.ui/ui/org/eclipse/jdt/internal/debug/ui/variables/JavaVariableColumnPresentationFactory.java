@@ -22,7 +22,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
 /**
  * @since 3.2
- *
  */
 public class JavaVariableColumnPresentationFactory implements IColumnPresentationFactory {
 

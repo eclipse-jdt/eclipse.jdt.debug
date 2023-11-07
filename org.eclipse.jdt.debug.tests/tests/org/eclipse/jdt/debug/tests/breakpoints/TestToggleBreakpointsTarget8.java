@@ -36,8 +36,6 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 	/**
 	 * Tests that qualified names get created for method breakpoints in default method of Java 8 interface
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testInterfaceDefaultMethodBreakpoint() throws Exception {
 		Listener listener = new Listener();
@@ -62,8 +60,6 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 	/**
 	 * Tests that qualified names get created for method breakpoints in Static method of Java 8 interface
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testInterfaceStaticMethodBreakpoint() throws Exception {
 		Listener listener = new Listener();
@@ -89,8 +85,6 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 	/**
 	 * Tests that qualified names does get created for method breakpoints in unimplemented method of Java 8 interface
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testInterfaceUnimplementedMethodBreakpoint() throws Exception {
 		Listener listener = new Listener();
@@ -110,8 +104,6 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 	/**
 	 * Tests that qualified names get created for line breakpoints in Interface implemented method
 	 * files.
-	 *
-	 * @throws Exception
 	 */
 	public void testInterfaceLineBreakpoint() throws Exception {
 		Listener listener = new Listener();

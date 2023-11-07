@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 
 /**
  * @since 3.2
- *
  */
 public abstract class ExceptionBreakpointChange extends BreakpointChange {
 

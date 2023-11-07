@@ -21,7 +21,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
  * @since 3.2
- *
  */
 public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 
@@ -111,9 +110,6 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 
     /**
      * Returns whether the given variable is a boolean.
-     *
-     * @param variable
-     * @return
      */
     public static boolean isBoolean(IJavaVariable variable) {
         try {

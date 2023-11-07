@@ -54,8 +54,6 @@ public class TypeContext implements IJavaDebugContentAssistContext {
 
     /**
      * Throws an exception when unable to resolve a type
-     *
-     * @throws CoreException
      */
     protected void unableToResolveType() throws CoreException {
         IStatus status = new Status(IStatus.INFO, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Unable to resolve enclosing type", null); //$NON-NLS-1$

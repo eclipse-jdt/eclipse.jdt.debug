@@ -122,9 +122,6 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/**
 	 * Sets the evaluation context for the given page, and notes that
 	 * a valid execution context exists.
-	 *
-	 * @param page
-	 * @param frame
 	 */
 	private void setContext(IWorkbenchPage page, IJavaStackFrame frame, boolean instOf) {
 		if (fContextsByPage == null) {
@@ -152,8 +149,6 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/**
 	 * Removes an evaluation context for the given page, and determines if
 	 * any valid execution context remain.
-	 *
-	 * @param page
 	 */
 	private void removeContext(IWorkbenchPage page) {
 		if (fContextsByPage != null) {

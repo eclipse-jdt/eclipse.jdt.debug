@@ -92,9 +92,6 @@ public class MethodBreakpointTests15 extends AbstractDebugUiTests {
 		}
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public void testGenericArrayEntryBreakpoints() throws Exception {
 		String typeName = "a.b.c.GenericMethodEntryTest";
 		List<IJavaMethodBreakpoint> bps = new ArrayList<>();

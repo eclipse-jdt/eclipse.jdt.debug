@@ -46,8 +46,6 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 
 	/**
 	 * Returns the preference store this source viewer configuration is associated with.
-	 *
-	 * @return
 	 */
 	public IPreferenceStore getTextPreferenceStore() {
 		return fPreferenceStore;

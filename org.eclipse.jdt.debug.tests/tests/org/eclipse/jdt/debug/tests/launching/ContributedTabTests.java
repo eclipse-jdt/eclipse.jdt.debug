@@ -45,7 +45,6 @@ public class ContributedTabTests extends AbstractDebugTest {
 
 	/**
 	 * Checks to make sure that all of the contributed tabs to the java tab group are present
-	 * @throws CoreException
 	 */
 	public void testContributedTab() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
@@ -65,7 +64,6 @@ public class ContributedTabTests extends AbstractDebugTest {
 
 	/**
 	 * Checks to make sure that a contributed tab with a relative placement to an existing tab is in the correct place
-	 * @throws CoreException
 	 */
 	public void testContributedTabRelativePlacement() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
@@ -88,7 +86,6 @@ public class ContributedTabTests extends AbstractDebugTest {
 	/**
 	 * Checks to see that if a contributor supplies a bad tab id as a placement id that the tab will be added
 	 * to the end of the group
-	 * @throws CoreException
 	 */
 	public void testContributedTabPlacementTabNotFound() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
@@ -101,7 +98,6 @@ public class ContributedTabTests extends AbstractDebugTest {
 	/**
 	 * Checks to see that the two tabs following the arguments tab are TestTab2, and TestTab3. They can be in either order depending
 	 * on when they were loaded, so this test only checks that they are the next two following tabs not their order
-	 * @throws CoreException
 	 */
 	public void testContributedTabsPlacement() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();

@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
- *
  */
 public class EnvironmentMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.launching.environments.EnvironmentMessages"; //$NON-NLS-1$

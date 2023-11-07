@@ -47,7 +47,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * users with a listing of <code>IType</code>s that contain main methods
  *
  * @since 3.3
- *
  */
 public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 

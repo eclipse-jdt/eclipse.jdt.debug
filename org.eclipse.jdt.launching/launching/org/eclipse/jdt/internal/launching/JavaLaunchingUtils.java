@@ -20,7 +20,6 @@ import org.eclipse.debug.core.ILaunch;
 
 /**
  * A Utilities class.
- *
  */
 public class JavaLaunchingUtils {
 

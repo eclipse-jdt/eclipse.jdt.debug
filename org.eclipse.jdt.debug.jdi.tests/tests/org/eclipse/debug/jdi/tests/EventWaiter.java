@@ -40,8 +40,6 @@ public class EventWaiter implements EventListener {
 	/**
 	 * Creates a new EventWaiter for the given request. Sets whether it
 	 * should let the VM go after it got the event.
-	 * @param request
-	 * @param shouldGo
 	 */
 	public EventWaiter(EventRequest request, boolean shouldGo) {
 		fRequest = request;
@@ -159,7 +157,6 @@ public class EventWaiter implements EventListener {
 	/**
 	 * Waits for the first event corresponding to this waiter's request.
 	 * @return if the vm should be restarted
-	 * @throws InterruptedException
 	 */
 	synchronized public Event waitEvent() throws InterruptedException {
 		if (fEvent == null) {
@@ -172,9 +169,7 @@ public class EventWaiter implements EventListener {
 	/**
 	 * Waits for the first event corresponding to this waiter's request
 	 * for the given time (in ms). If it times out, return null.
-	 * @param time
 	 * @return if the vm should be restarted or not
-	 * @throws InterruptedException
 	 */
 	synchronized public Event waitEvent(long time)
 		throws InterruptedException {

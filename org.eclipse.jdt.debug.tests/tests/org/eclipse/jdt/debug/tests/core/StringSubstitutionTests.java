@@ -396,8 +396,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 
 	/**
 	 * Test that we receive proper add notification.
-	 *
-	 * @throws CoreException
 	 */
 	public void testAddNotificaiton() throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -420,8 +418,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 
 	/**
 	 * Test that we receive proper change notification.
-	 *
-	 * @throws CoreException
 	 */
 	public void testChangeNotificaiton() throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -444,8 +440,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 
 	/**
 	 * Test that we receive proper remove notification.
-	 *
-	 * @throws CoreException
 	 */
 	public void testRemoveNotificaiton() throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();

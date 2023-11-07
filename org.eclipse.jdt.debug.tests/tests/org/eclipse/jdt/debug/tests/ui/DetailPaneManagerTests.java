@@ -45,7 +45,6 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 
 	/**
 	 * Initializes the test class and gets the singleton detail pane manager.
-	 * @param name
 	 */
 	public DetailPaneManagerTests(String name) {
 		super(name);

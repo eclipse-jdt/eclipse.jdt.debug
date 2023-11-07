@@ -25,9 +25,6 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class GenericsEvalTests extends AbstractDebugTest {
 
-	/**
-	 * @param name
-	 */
 	public GenericsEvalTests(String name) {
 		super(name);
 	}
@@ -40,8 +37,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 	/**
 	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalGenerics1() throws Exception {
 		IJavaThread thread = null;
@@ -62,8 +57,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 	/**
 	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalGenerics2() throws Exception {
 		IJavaThread thread = null;
@@ -84,8 +77,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 	/**
 	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalGenerics3() throws Exception {
 		IJavaThread thread = null;
@@ -267,7 +258,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testLineCommentEvalGenerics1() throws Exception {
 		IJavaThread thread = null;
@@ -287,7 +277,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testLineCommentEvalGenerics2() throws Exception {
 		IJavaThread thread = null;
@@ -307,7 +296,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testLineCommentEvalGenerics3() throws Exception {
 		IJavaThread thread = null;
@@ -327,7 +315,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testLineCommentEvalGenerics4() throws Exception {
 		IJavaThread thread = null;
@@ -347,7 +334,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerEnumType1() throws Exception {
 		IJavaThread thread = null;
@@ -367,7 +353,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerEnumType2() throws Exception {
 		IJavaThread thread = null;
@@ -387,7 +372,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerEnumType3() throws Exception {
 		IJavaThread thread = null;
@@ -407,7 +391,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerEnumType4() throws Exception {
 		IJavaThread thread = null;
@@ -427,7 +410,6 @@ public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerEnumType5() throws Exception {
 		IJavaThread thread = null;

@@ -28,7 +28,6 @@ import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
  * Wrapper for an original library location, to support editing.
- *
  */
 public final class LibraryStandin {
 	private final IPath fSystemLibrary;
@@ -77,8 +76,6 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns the path to the external annotations.
-	 *
-	 * @return
 	 */
 	public IPath getExternalAnnotationsPath() {
 		return fExternalAnnotations;
@@ -205,8 +202,6 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns a status for this library describing any error states
-	 *
-	 * @return
 	 */
 	IStatus validate() {
 		if (!getSystemLibraryPath().toFile().exists()) {

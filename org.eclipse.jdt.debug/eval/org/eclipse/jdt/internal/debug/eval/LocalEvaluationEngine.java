@@ -563,9 +563,6 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Verifies the receiving type was resolved and is not an inner type.
-	 *
-	 * @param receivingType
-	 * @throws DebugException
 	 */
 	private void validateReceivingType(final IType receivingType)
 			throws DebugException {

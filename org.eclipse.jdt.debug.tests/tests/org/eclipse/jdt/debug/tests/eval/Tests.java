@@ -408,7 +408,6 @@ public abstract class Tests extends AbstractDebugTest {
 
 	/**
 	 * Constructor for Tests.
-	 * @param name
 	 */
 	public Tests(String name) {
 		super(name);

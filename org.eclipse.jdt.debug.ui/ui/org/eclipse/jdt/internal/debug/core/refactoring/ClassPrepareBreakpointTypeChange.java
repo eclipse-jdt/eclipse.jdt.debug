@@ -30,7 +30,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
- *
  */
 public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChange {
 

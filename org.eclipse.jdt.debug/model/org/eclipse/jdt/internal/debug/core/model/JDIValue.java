@@ -237,7 +237,6 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 * is cached.
 	 *
 	 * @return list of variable children
-	 * @throws DebugException
 	 */
 	protected synchronized List<IJavaVariable> getVariablesList() throws DebugException {
 		if (fVariables != null) {

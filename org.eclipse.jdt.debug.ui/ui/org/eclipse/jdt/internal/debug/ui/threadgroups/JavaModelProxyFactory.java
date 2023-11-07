@@ -23,7 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 
 /**
  * @since 3.2
- *
  */
 public class JavaModelProxyFactory implements IModelProxyFactory {
 

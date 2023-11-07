@@ -41,8 +41,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on a line breakpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testLineBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
@@ -95,8 +93,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on a method entry breakpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testMethodEntryBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
@@ -154,8 +150,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on a method exit breakpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testMethodExitBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
@@ -213,8 +207,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on an exception breakpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testExceptionBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
@@ -267,8 +259,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on an access watchpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testAccessWatchpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
@@ -324,8 +314,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on an modification watchpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testModificationWatchpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
@@ -387,7 +375,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	/**
 	 * Returns whether the associated target supports instance breakpoints
 	 *
-	 * @param thread
 	 * @return boolean
 	 */
 	private boolean supportsInstanceBreakpoints(IJavaThread thread) {

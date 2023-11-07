@@ -24,8 +24,6 @@ public class ExpressionWaiter extends DebugElementEventWaiter {
 
 	/**
 	 * Constructor
-	 * @param kind
-	 * @param element
 	 */
 	public ExpressionWaiter(int kind, Object element) {
 		super(kind, element);

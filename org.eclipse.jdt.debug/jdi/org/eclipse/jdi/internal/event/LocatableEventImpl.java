@@ -28,7 +28,6 @@ import com.sun.jdi.Location;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class LocatableEventImpl extends EventImpl implements Locatable {
 	/** Location where event occurred. */

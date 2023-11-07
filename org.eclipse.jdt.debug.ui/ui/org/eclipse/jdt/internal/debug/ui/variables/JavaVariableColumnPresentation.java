@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 
 /**
  * @since 3.2
- *
  */
 public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	/**

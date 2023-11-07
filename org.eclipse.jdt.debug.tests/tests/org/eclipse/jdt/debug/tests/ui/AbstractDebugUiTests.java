@@ -104,9 +104,6 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 
 	/**
 	 * Switches to the specified perspective in the given window, and resets the perspective.
-	 *
-	 * @param window
-	 * @param perspectiveId
 	 */
 	protected static void switchPerspective(IWorkbenchWindow window, String perspectiveId) {
 		IPerspectiveDescriptor descriptor = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
@@ -192,9 +189,6 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 
 	/**
 	 * Sync exec the given runnable, re-throwing exceptions in the current thread
-	 *
-	 * @param r
-	 * @throws Exception
 	 */
 	protected static void sync(Runnable r) throws RuntimeException {
 		AtomicReference<Exception> error = new AtomicReference<>();
@@ -216,9 +210,6 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 
 	/**
 	 * Sync exec the given runnable, re-throwing exceptions in the current thread
-	 *
-	 * @param c
-	 * @throws Exception
 	 */
 	protected static <V> V sync(Callable<V> c) throws RuntimeException {
 		AtomicReference<Throwable> error = new AtomicReference<>();
@@ -286,7 +277,6 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	/**
 	 * Opens and returns an editor on the given file or <code>null</code> if none. The editor will be activated.
 	 *
-	 * @param file
 	 * @return editor or <code>null</code>
 	 */
 	protected static IEditorPart openEditor(final IFile file) throws RuntimeException {
@@ -306,8 +296,6 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	/**
 	 * Toggles a breakpoint in the editor at the given line number returning the breakpoint or <code>null</code> if none.
 	 *
-	 * @param editor
-	 * @param lineNumber
 	 * @return returns the created breakpoint or <code>null</code> if none.
 	 */
 	protected IBreakpoint toggleBreakpoint(final IEditorPart editor, int lineNumber) throws Exception {
@@ -371,7 +359,6 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	/**
 	 * Opens the view with the given id, does nothing if no such view exists. This method can return <code>null</code>
 	 *
-	 * @param viewId
 	 * @return the handle to the {@link IDebugView} with the given id
 	 */
 	protected static IViewPart openView(final String viewId) throws RuntimeException {

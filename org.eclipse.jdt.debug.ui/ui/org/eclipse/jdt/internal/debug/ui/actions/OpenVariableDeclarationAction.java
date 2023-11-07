@@ -24,7 +24,6 @@ import org.eclipse.jdt.ui.JavaUI;
 
 /**
  * Open the source code, where the variable is declared.
- *
  */
 public class OpenVariableDeclarationAction extends OpenVariableConcreteTypeAction {
 

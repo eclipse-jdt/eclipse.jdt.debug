@@ -175,7 +175,6 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 	 * @param name the typename, possibly including inner type,
 	 * separated by $.
 	 * eg: EnclosingType$InnerType
-	 * @return
 	 */
 	private IType getInnermostType(IType enclosing, String name) {
 		for(int i=0;i<name.length();i++)

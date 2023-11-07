@@ -49,7 +49,6 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a Standard (Socket Attach) VM connection.
-	 * @throws Exception
 	 */
 	public void testAttach() throws Exception {
 		String typeName = "Breakpoints";
@@ -127,7 +126,6 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a Standard (Socket Listen) VM connection.
-	 * @throws Exception
 	 */
 	public void testListen() throws Exception {
 		String typeName = "Breakpoints";

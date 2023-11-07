@@ -23,7 +23,6 @@ abstract public class AbstractReader {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public AbstractReader(String name) {
 		fName = name;
@@ -35,7 +34,6 @@ abstract public class AbstractReader {
 	abstract protected void readerLoop();
 	/**
 	 * Start the thread that reads events.
-	 *
 	 */
 	public void start() {
 		fReaderThread = new Thread(new Runnable() {

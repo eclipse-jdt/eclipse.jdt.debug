@@ -124,7 +124,6 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	 *
 	 * @param newName
 	 *            new name of VM
-	 *
 	 */
 	@Deprecated
 	protected void nameChanged(String newName) {

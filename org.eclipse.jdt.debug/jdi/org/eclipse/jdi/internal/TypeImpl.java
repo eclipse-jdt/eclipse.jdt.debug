@@ -22,7 +22,6 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class TypeImpl extends AccessibleImpl implements Type {
 	/** Text representation of this type. */

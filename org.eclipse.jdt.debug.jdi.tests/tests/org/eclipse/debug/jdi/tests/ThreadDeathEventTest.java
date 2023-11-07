@@ -56,7 +56,6 @@ public class ThreadDeathEventTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new ThreadDeathEventTest().runSuite(args);

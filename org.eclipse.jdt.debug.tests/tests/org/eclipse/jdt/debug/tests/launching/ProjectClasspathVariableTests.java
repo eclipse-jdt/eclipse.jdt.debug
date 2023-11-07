@@ -75,8 +75,6 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a project name must be specified.
-	 *
-	 * @throws Exception
 	 */
 	public void testMissingProjectName() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -91,8 +89,6 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * Tests the selected project's classpath.
-	 *
-	 * @throws Exception
 	 */
 	public void testSelectedProject() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -109,8 +105,6 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a Java project must exist
-	 *
-	 * @throws Exception
 	 */
 	public void testProjectDoesNotExist() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();

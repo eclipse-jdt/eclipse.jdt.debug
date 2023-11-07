@@ -313,7 +313,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	/**
 	 * Adds generic type parameters as needed to the given buffer
 	 *
-	 * @param buffer
 	 * @since 3.8.0
 	 */
 	void adddTypeParameters(StringBuilder buffer) {

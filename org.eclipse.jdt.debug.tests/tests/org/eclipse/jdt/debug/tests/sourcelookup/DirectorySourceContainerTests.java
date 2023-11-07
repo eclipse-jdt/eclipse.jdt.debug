@@ -47,8 +47,6 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testDirectorySourceContainerMemento() throws Exception {
 		DirectorySourceContainer container = getContainer(true, true);

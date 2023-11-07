@@ -52,7 +52,6 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	 * Constructs a new dialog on the given shell, with the specified
 	 * set of actions.
 	 *
-	 * @param parentShell
 	 * @param actions advanced actions
 	 */
 	public RuntimeClasspathAdvancedDialog(Shell parentShell, IAction[] actions, IClasspathViewer viewer) {

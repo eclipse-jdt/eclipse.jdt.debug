@@ -36,14 +36,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		super(name);
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @throws Exception
-	 */
 	protected void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
@@ -65,15 +57,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @param lineNumber
-	 * @throws Exception
-	 */
 	protected void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, int lineNumber) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
@@ -96,15 +79,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @param methodName
-	 * @throws Exception
-	 */
 	protected void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String methodName) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
@@ -127,15 +101,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @param fieldName
-	 * @throws Exception
-	 */
 	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String fieldName) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
@@ -160,12 +125,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 
 	/**
 	 *
-	 * @param root
-	 * @param packageName
-	 * @param cuName
 	 * @param type TODO
-	 * @return
-	 * @throws Exception
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName,
 			String type) throws Exception {
@@ -239,11 +199,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	/**
 	 * Creates an exception breakpoint and adds a filter. Refactors & checks
 	 * if the filter changed appropriately w/ the refactor.
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param targetName
-	 * @throws Exception
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName) throws Exception {
 		String newTypeName = "RenamedType",

@@ -103,8 +103,6 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
 
     /**
      * Fills the given menu with available stratum.
-     *
-     * @param m
      */
     private void fillMenu(Menu m) {
         IStackFrame frame = (IStackFrame) fSelection.getFirstElement();

@@ -71,12 +71,6 @@ class WorkspaceOperationRunner implements IRunnableContext {
 
 	/**
 	 * Runs a new {@link WorkspaceModifyDelegatingOperation}
-	 * @param fork
-	 * @param cancelable
-	 * @param runnable
-	 * @param schedulingRule
-	 * @throws InvocationTargetException
-	 * @throws InterruptedException
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable, ISchedulingRule schedulingRule) throws InvocationTargetException, InterruptedException {
 		WorkspaceModifyDelegatingOperation operation= new WorkspaceModifyDelegatingOperation(runnable, schedulingRule);

@@ -16,9 +16,6 @@ package org.eclipse.jdt.debug.tests;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Control;
 
-/**
- *
- */
 public class VerticalRulerInfoStub implements IVerticalRulerInfo {
 
 	private int fLineNumber = -1;

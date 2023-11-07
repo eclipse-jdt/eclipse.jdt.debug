@@ -29,7 +29,6 @@ public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugUiTe
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public AbstractBreakpointWorkingSetTest(String name) {
 		super(name);

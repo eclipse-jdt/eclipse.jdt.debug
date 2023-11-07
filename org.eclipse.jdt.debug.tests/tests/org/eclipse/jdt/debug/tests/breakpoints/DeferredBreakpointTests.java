@@ -34,7 +34,6 @@ public class DeferredBreakpointTests extends AbstractDebugUiTests {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public DeferredBreakpointTests(String name) {
 		super(name);
@@ -42,7 +41,6 @@ public class DeferredBreakpointTests extends AbstractDebugUiTests {
 
 	/**
 	 * Tests deferring several breakpoints
-	 * @throws Exception
 	 */
 	public void testDeferredBreakpoints() throws Exception {
 		String typeName = "Breakpoints";
@@ -111,7 +109,6 @@ public class DeferredBreakpointTests extends AbstractDebugUiTests {
 
 	/**
 	 * Tests disabling several breakpoints
-	 * @throws Exception
 	 */
 	public void testDisabledBreakpoint() throws Exception {
 		String typeName = "Breakpoints";
@@ -129,7 +126,6 @@ public class DeferredBreakpointTests extends AbstractDebugUiTests {
 
 	/**
 	 * Tests a cycle of enable/disable breakpoints
-	 * @throws Exception
 	 */
 	public void testEnableDisableBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -149,7 +145,6 @@ public class DeferredBreakpointTests extends AbstractDebugUiTests {
 
 	/**
 	 * Tests skipping a single line breakpoint
-	 * @throws Exception
 	 */
 	public void testSkipLineBreakpoint() throws Exception {
 		String typeName = "Breakpoints";

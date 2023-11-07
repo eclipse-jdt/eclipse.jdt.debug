@@ -625,7 +625,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * Returns the class load breakpoint for the specified type or null if none found
      * @param type the type to search for a class load breakpoint for
      * @return the existing class load breakpoint, or null if none
-     * @throws CoreException
      * @since 3.3
      */
 	protected static IJavaBreakpoint getClassLoadBreakpoint(IType type) throws CoreException {
@@ -644,7 +643,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * <br><br>
      * If the {@link ITypeBinding} cannot be derived this method falls back to calling
      * {@link #createQualifiedTypeName(IType)} to try and compose the type name.
-     * @param type
      * @return the binary name for the given {@link IType}
      * @since 3.6
      */
@@ -679,9 +677,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /**
      * Checks if the type or any of its enclosing types are local types.
-     * @param type
      * @return <code>true</code> if the type or a parent type are a local type
-     * @throws JavaModelException
      * @since 3.6
      */
 	static boolean needsBindings(IType type) throws JavaModelException {
@@ -734,7 +730,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     /**
      * Prunes out all naming occurrences of anonymous inner types, since these types have no names
      * and cannot be derived visiting an AST (no positive type name matching while visiting ASTs)
-     * @param type
      * @return the compiled type name from the given {@link IType} with all occurrences of anonymous inner types removed
      * @since 3.4
      */
@@ -788,10 +783,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
 	/**
 	 * Returns whether the given part/selection is remote (viewing a repository)
-	 *
-	 * @param part
-	 * @param selection
-	 * @return
 	 */
 	protected static boolean isRemote(IWorkbenchPart part, ISelection selection) {
     	if (selection instanceof IStructuredSelection) {
@@ -922,9 +913,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * When an <code>IField</code> can be resolved for an <code>IJavaFieldVariable</code>, it is
      * returned in favour of the variable.
      *
-     * @param selection
      * @return list of <code>IField</code> and <code>IJavaFieldVariable</code>, possibly empty
-     * @throws CoreException
      */
 	protected static List<Object> getFields(IStructuredSelection selection) throws CoreException {
         if (selection.isEmpty()) {
@@ -1138,7 +1127,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @param typeName fully qualified type name on which watchpoint may exist
      * @param fieldName field name
 	 * @return any existing watchpoint for the given field, or <code>null</code> if none
-	 * @throws CoreException
 	 */
 	private static IJavaWatchpoint getWatchpoint(String typeName, String fieldName) throws CoreException {
         IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
@@ -1159,7 +1147,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * Returns the resolved signature of the given method
      * @param method method to resolve
      * @return the resolved method signature or <code>null</code> if none
-     * @throws JavaModelException
      * @since 3.4
      */
     public static String resolveMethodSignature(IMethod method) throws JavaModelException {
@@ -1187,7 +1174,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @param method method containing the type signature
      * @param typeSignature the type signature to resolve
      * @return the resolved type signature
-     * @throws JavaModelException
      */
     private static String resolveTypeSignature(IMethod method, String typeSignature) throws JavaModelException {
         int count = Signature.getArrayCount(typeSignature);
@@ -1252,9 +1238,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *
      * @param editorPart
      *            the editor containing the method
-     * @param typeName
-     * @param methodName
-     * @param signature
      * @return handle or <code>null</code>
      */
 	protected static IMethod getMethodHandle(IEditorPart editorPart, String typeName, String methodName, String signature) throws CoreException {
@@ -1368,8 +1351,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * Returns a selection of the member in the given text selection, or the
      * original selection if none.
      *
-     * @param part
-     * @param selection
      * @return a structured selection of the member in the given text selection,
      *         or the original selection if none
      * @exception CoreException
@@ -1429,7 +1410,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /**
      * Returns the {@link ITypeRoot} for the given {@link IEditorInput}
-     * @param input
      * @return the type root or <code>null</code> if one cannot be derived
 	 * @since 3.4
      */
@@ -1755,7 +1735,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	/**
 	 * Returns the {@link ITypeRoot} for the given {@link IEditorInput}
 	 *
-	 * @param input
 	 * @return the type root or <code>null</code> if one cannot be derived
 	 * @since 3.8
 	 */

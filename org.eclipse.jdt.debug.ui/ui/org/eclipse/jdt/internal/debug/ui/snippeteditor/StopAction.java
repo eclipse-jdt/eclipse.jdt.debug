@@ -21,7 +21,6 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Stops the VM used to run a snippet.
- *
  */
 public class StopAction extends SnippetAction {
 

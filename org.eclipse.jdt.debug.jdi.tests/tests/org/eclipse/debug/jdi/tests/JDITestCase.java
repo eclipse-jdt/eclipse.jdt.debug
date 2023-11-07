@@ -26,8 +26,6 @@ public class JDITestCase extends TestCase {
 	private final AbstractJDITest fTest;
 	/**
 	 * Creates a new test for the given JDI test.
-	 * @param test
-	 * @param name
 	 */
 	public JDITestCase(AbstractJDITest test, String name) {
 		super(name);

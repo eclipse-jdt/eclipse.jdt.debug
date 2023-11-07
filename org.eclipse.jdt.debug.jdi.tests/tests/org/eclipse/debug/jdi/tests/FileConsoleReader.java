@@ -29,9 +29,6 @@ public class FileConsoleReader extends AbstractReader {
 	private FileOutputStream fFileOutputStream;
 	/**
 	 * Creates a new console reader that will read from the given input stream.
-	 * @param name
-	 * @param fileName
-	 * @param input
 	 */
 	public FileConsoleReader(String name, String fileName, InputStream input) {
 		super(name);

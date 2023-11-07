@@ -34,7 +34,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public StepFilterTests(String name) {
 		super(name);
@@ -44,7 +43,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a simple step filter
-	 * @throws Exception
 	 */
 	public void testSimpleStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
@@ -74,7 +72,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a simple step filter
-	 * @throws Exception
 	 */
 	public void testDontStepThruStepFilters() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
@@ -104,7 +101,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a step filter that is not active
-	 * @throws Exception
 	 */
 	public void testInactiveStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo");
@@ -135,7 +131,6 @@ public class StepFilterTests extends AbstractDebugTest {
 	/**
 	 * Tests a deep step filter, i.e. a step filter that is more than one stack frame deep on the current
 	 * suspended thread
-	 * @throws Exception
 	 */
 	public void testDeepStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
@@ -165,7 +160,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a simple step return filter
-	 * @throws Exception
 	 */
 	public void testStepReturnFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
@@ -195,7 +189,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a simple step over filter
-	 * @throws Exception
 	 */
 	public void testStepOverFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo,StepFilterThree," + fOriginalInactiveFilters);
@@ -225,7 +218,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests filtering of getter methods
-	 * @throws Exception
 	 */
 	public void testGetterFilters() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_FILTER_GETTERS, true);
@@ -260,7 +252,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests filtering of setter methods
-	 * @throws Exception
 	 */
 	public void testSetterFilters() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_FILTER_GETTERS, false);
@@ -296,7 +287,6 @@ public class StepFilterTests extends AbstractDebugTest {
 	/**
 	 * Tests filtering from a contributed filter
 	 *
-	 * @throws Exception
 	 * @since 3.8.300
 	 */
 	public void testContributedFilter1() throws Exception {
@@ -334,7 +324,6 @@ public class StepFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Returns the <code>JDIDebugUIPlugin</code> preference store
-	 * @return
 	 */
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();

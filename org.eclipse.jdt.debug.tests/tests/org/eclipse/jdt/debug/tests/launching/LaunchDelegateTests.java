@@ -37,7 +37,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public LaunchDelegateTests(String name) {
 		super(name);
@@ -46,7 +45,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	/**
 	 * Ensures a launch delegate can provide a launch object for
 	 * a launch.
-	 * @throws CoreException
 	 */
 	public void testProvideLaunch() throws CoreException {
 		ILaunchManager manager = getLaunchManager();
@@ -82,7 +80,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Test launch delegate for mixed launch mode.
-	 * @throws CoreException
 	 */
 	public void testMixedModeDelegate() throws CoreException {
 		ILaunchManager manager = getLaunchManager();
@@ -100,7 +97,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Tests if the java launch delegate was found as one of the delegates for debug mode.
-	 * @throws CoreException
 	 */
 	public void testSingleDebugModeDelegate() throws CoreException {
 		ILaunchManager manager = getLaunchManager();
@@ -123,7 +119,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Tests correct delegate is found for alternate mode.
-	 * @throws CoreException
 	 */
 	public void testSingleAlternateModeDelegate() throws CoreException {
 		ILaunchManager manager = getLaunchManager();
@@ -141,7 +136,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	/**
 	 * Checks that the delegate definition is collecting and parsing mode combination information properly from both the delegate
 	 * contribution and from modeCombination child elements
-	 * @throws CoreException
 	 */
 	public void testMultipleModeSingleDelegate() throws CoreException {
 		ILaunchManager manager = getLaunchManager();
@@ -161,7 +155,6 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 
 	/**
 	 * Checks that all applicable delegates are found for given types and mode combinations
-	 * @throws CoreException
 	 */
 	public void testSingleModeMultipleDelegates() throws CoreException {
 		ILaunchManager manager = getLaunchManager();

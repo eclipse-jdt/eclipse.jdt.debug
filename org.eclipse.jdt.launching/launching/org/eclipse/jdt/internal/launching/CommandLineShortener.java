@@ -170,8 +170,6 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	 * The directory to use to create temp files needed when shortening the classpath. By default, the working directory is used
 	 *
 	 * The java.io.tmpdir should not be used on MacOs (does not work for classpath-only jars)
-	 *
-	 * @param processTempFilesDir
 	 */
 	public void setProcessTempFilesDir(File processTempFilesDir) {
 		this.processTempFilesDir = processTempFilesDir;
@@ -181,7 +179,6 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	 * Writes the command line into an arguments file and returns the shortened command line.
 	 *
 	 * @return a shortened command line
-	 * @throws CoreException
 	 */
 	public String[] shortenCommandLine() throws CoreException {
 		List<String> fullCommandLine = new ArrayList<>(Arrays.asList(cmdLine));
@@ -204,7 +201,6 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	 *
 	 * @return <code>true</code> if {@link #isArgumentFileSupported()} returns <code>true</code> and command line should be shortened,
 	 *         <code>false</code> otherwise
-	 * @throws CoreException
 	 */
 	public boolean shouldShortenCommandLine() throws CoreException {
 		if (!isArgumentFileSupported()) {

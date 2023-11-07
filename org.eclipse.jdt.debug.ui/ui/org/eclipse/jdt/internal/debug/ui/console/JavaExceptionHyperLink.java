@@ -86,8 +86,6 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 
 	/**
 	 * Show the properties dialog for the given breakpoint.
-	 *
-	 * @param exceptionBreakpoint
 	 */
 	private void showProperties(IJavaExceptionBreakpoint breakpoint) {
 		JavaBreakpointPropertiesAction action = new JavaBreakpointPropertiesAction();

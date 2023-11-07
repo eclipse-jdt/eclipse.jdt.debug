@@ -99,7 +99,6 @@ public class JavaSourceLookupUtil {
 	 *
 	 * @param entry
 	 *            non null
-	 * @param containers
 	 */
 	private static void addSourceAttachment(IRuntimeClasspathEntry entry, List<ISourceContainer> containers) {
 		String path = entry.getSourceAttachmentLocation();

@@ -28,7 +28,6 @@ import com.sun.jdi.VMDisconnectedException;
 
 /**
  * @since 3.2
- *
  */
 public class JDIThreadGroup extends JDIDebugElement implements
 		IJavaThreadGroup, ITerminate {

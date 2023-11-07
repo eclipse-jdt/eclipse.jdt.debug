@@ -46,8 +46,6 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 
 	/**
 	 * Constructor
-	 * @param monitor
-	 * @param parent
 	 */
 	public JavaOwnedMonitor(JavaMonitor monitor, JavaWaitingThread parent) {
 		fMonitor= monitor;

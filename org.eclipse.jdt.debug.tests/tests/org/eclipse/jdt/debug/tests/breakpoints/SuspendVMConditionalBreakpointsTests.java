@@ -32,8 +32,6 @@ public class SuspendVMConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public SuspendVMConditionalBreakpointsTests(String name) {
 		super(name);

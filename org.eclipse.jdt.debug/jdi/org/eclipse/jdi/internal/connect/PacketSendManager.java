@@ -26,7 +26,6 @@ import com.sun.jdi.connect.spi.Connection;
 /**
  * This class implements a thread that sends available packets to the Virtual
  * Machine.
- *
  */
 public class PacketSendManager extends PacketManager {
 	/** List of packets to be sent to Virtual Machine */

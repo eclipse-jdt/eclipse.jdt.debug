@@ -41,7 +41,6 @@ public class JavaContentProviderFilter {
 	 * @param variables array of variables to filter
 	 * @param context the current view's context, required because the preferences are view specific
 	 * @return array of filtered variables
-	 * @throws DebugException
 	 */
 	public static Object[] filterVariables(Object[] variables, IPresentationContext context) throws DebugException {
 		boolean filterStatics = !includeStatic(context);

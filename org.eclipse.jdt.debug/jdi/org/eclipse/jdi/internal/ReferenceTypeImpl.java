@@ -64,7 +64,6 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class ReferenceTypeImpl extends TypeImpl implements
 		ReferenceType, org.eclipse.jdi.hcr.ReferenceType {
@@ -275,7 +274,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 *            number of the first line in the output source file.
 		 * @param outputLineIncrement
 		 *            number of line to increment at each iteration.
-		 * @throws AbsentInformationException
 		 */
 		public void addLineInfo(int inputStartLine, int lineFileId,
 				int repeatCount, int outputStartLine, int outputLineIncrement)
@@ -340,10 +338,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			return null;
 		}
 
-		/**
-		 * @param outputLineNumber
-		 * @return
-		 */
 		public List<int[]> getInputLineInfos(int outputLineNumber) {
 			return fOutputLineToInputLine.get(Integer.valueOf(outputLineNumber));
 		}
@@ -1737,8 +1731,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 	/**
 	 * Get the source debug extension from the VM.
-	 *
-	 * @throws AbsentInformationException
 	 */
 	private void getSourceDebugExtension() throws AbsentInformationException {
 		initJdwpRequest();
@@ -1773,8 +1765,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 	/**
 	 * Get the name of the Java source file from the VM.
-	 *
-	 * @throws AbsentInformationException
 	 */
 	private void getSourceName() throws AbsentInformationException {
 		if (fSourceName != null || isSourceDebugExtensionAvailable()) {
@@ -1859,7 +1849,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the index of the code.
 	 * @param method
 	 *            the method where is the code.
-	 * @param stratumId
 	 */
 	protected String sourceName(long codeIndex, MethodImpl method,
 			String stratumId) throws AbsentInformationException {
@@ -1887,7 +1876,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the index of the code.
 	 * @param method
 	 *            the method where is the code.
-	 * @param stratum
 	 */
 	private FileInfo fileInfo(long codeIndex, MethodImpl method, Stratum stratum) {
 		int fileId = stratum.fPrimaryFileId;
@@ -1919,7 +1907,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the index of the code.
 	 * @param method
 	 *            the method where is the code.
-	 * @param stratum
 	 * @return List of int[2]: [fileId, inputLineNumber]
 	 */
 	private List<int[]> lineInfos(long codeIndex, MethodImpl method, Stratum stratum) throws AbsentInformationException {
@@ -1945,7 +1932,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the index of the code.
 	 * @param method
 	 *            the method where is the code.
-	 * @param stratumId
 	 */
 	protected String sourcePath(long codeIndex, MethodImpl method,
 			String stratumId) throws AbsentInformationException {
@@ -1975,7 +1961,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the index of the code.
 	 * @param method
 	 *            the method where is the code.
-	 * @param stratumId
 	 */
 	protected int lineNumber(long codeIndex, MethodImpl method, String stratumId) {
 		Stratum stratum = getStratum(stratumId);
@@ -2010,7 +1995,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the name of the source file.
 	 * @param lineNumber
 	 *            the number of the line.
-	 * @param method
 	 * @throws AbsentInformationException
 	 *             if the specified sourceName is not valid.
 	 */
@@ -2044,14 +2028,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            the stratum id
 	 * @param sourceName
 	 *            the name of the source file
-	 * @param method
 	 * @param codeIndexTable
 	 *            the list of code indexes for the method, as get from the
 	 *            VM/JDWP
 	 * @param javaStratumLineNumberTable
 	 *            the list of line numbers in the java stratum for the method,
 	 *            as get from the VM/JDWP
-	 * @return
 	 */
 	public List<Location> allLineLocations(String stratumId, String sourceName,
 			MethodImpl method, long[] codeIndexTable,

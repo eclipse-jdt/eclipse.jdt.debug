@@ -172,7 +172,6 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests asking for the index from the EE file
 	 *
-	 * @throws Exception
 	 * @since 3.9.0
 	 */
 	public void testIndexLocation() throws Exception {
@@ -266,8 +265,6 @@ public class EEDefinitionTests extends AbstractDebugTest {
 
 	/**
 	 * Tests raw EE properties map.
-	 *
-	 * @throws CoreException
 	 */
 	public void testParseProperties() throws CoreException {
 		File file = getEEFile();

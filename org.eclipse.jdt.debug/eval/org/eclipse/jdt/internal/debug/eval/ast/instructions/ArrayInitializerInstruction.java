@@ -27,8 +27,6 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 
 	/**
 	 * Constructor for ArrayInitializerInstruction.
-	 *
-	 * @param start
 	 */
 	public ArrayInitializerInstruction(String typeSignature, int length,
 			int dimensions, int start) {

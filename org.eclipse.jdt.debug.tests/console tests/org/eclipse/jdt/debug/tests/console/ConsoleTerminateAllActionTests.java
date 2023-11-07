@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.console.ConsoleView;
 
 /**
  * Test the Terminate All action in Console view
- *
  */
 public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 

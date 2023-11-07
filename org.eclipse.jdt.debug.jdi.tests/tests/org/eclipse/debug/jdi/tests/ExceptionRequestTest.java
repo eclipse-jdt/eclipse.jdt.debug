@@ -46,7 +46,6 @@ public class ExceptionRequestTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new ExceptionRequestTest().runSuite(args);

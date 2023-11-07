@@ -21,7 +21,6 @@ import com.sun.jdi.request.AccessWatchpointRequest;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class AccessWatchpointRequestImpl extends WatchpointRequestImpl
 		implements AccessWatchpointRequest {

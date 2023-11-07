@@ -45,8 +45,6 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 
 	/**
 	 * Constructor
-	 * @param monitor
-	 * @param parent
 	 */
 	public JavaContendedMonitor(JavaMonitor monitor, JavaOwningThread parent) {
 		fMonitor= monitor;

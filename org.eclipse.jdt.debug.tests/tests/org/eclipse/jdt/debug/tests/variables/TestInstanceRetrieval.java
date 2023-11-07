@@ -39,8 +39,6 @@ public class TestInstanceRetrieval extends AbstractDebugTest {
 
 	/**
 	 * Test the logical structure for a list.
-	 *
-	 * @throws Exception
 	 */
 	public void testGetInstances() throws Exception {
 		String typeName = "java6.AllInstancesTests";

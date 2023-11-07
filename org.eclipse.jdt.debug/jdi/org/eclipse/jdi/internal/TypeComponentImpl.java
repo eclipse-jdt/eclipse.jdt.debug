@@ -19,7 +19,6 @@ import com.sun.jdi.TypeComponent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class TypeComponentImpl extends AccessibleImpl implements
 		TypeComponent {

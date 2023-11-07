@@ -230,7 +230,6 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	 * @param loader
 	 *            class loader object
 	 * @return parent class loader or <code>null</code>
-	 * @throws CoreException
 	 */
 	private IJavaObject getParentLoader(IJavaObject loader)
 			throws CoreException {

@@ -24,9 +24,6 @@ public class ClassPrepareEventWaiter extends EventWaiter {
 
 	/**
 	 * Constructor
-	 * @param request
-	 * @param shouldGo
-	 * @param className
 	 */
 	public ClassPrepareEventWaiter(EventRequest request, boolean shouldGo, String className) {
 		super(request, shouldGo);

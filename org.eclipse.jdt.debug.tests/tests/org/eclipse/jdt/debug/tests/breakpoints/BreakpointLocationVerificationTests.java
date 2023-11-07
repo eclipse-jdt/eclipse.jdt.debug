@@ -31,7 +31,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public BreakpointLocationVerificationTests(String name) {
 		super(name);
@@ -40,7 +39,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	/**
 	 * Parses the specified <code>ICompilationUnit</code> into its respective
 	 * <code>CompilationUnit</code>
-	 * @param unit
 	 * @return the parsed <code>CompilationUnit</code>
 	 */
 	private CompilationUnit parseCompilationUnit(ICompilationUnit unit) {
@@ -53,10 +51,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the predefined location is locatable in the specified type
-	 * @param lineToTry
-	 * @param expectedLineNumber
-	 * @param expectedTypeName
-	 * @throws JavaModelException
 	 */
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
 		testLocation(lineToTry, expectedLineNumber, expectedTypeName, expectedTypeName, false);
@@ -64,12 +58,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the predefined location is locatable in the specified type
-	 * @param lineToTry
-	 * @param expectedLineNumber
-	 * @param baseTypeName
-	 * @param expectedTypeName
-	 * @param bestmatch
-	 * @throws JavaModelException
 	 */
 	private void testLocation(int lineToTry, int expectedLineNumber, String baseTypeName, String expectedTypeName, boolean bestmatch) throws JavaModelException {
 		IType type= get14Project().findType(baseTypeName);
@@ -94,8 +82,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * Tests setting a line breakpoint on a final field that is initialized
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations");
@@ -105,8 +91,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * Tests setting a line breakpoint on a final field that is initialized looking for best match
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecla() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
@@ -116,8 +100,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * Tests setting a line breakpoint on an inner type member for the initializer of
 	 * a final local field variable
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl3() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations");
@@ -128,8 +110,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * for best match
 	 * a final local field variable
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl3a() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
@@ -139,8 +119,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of
 	 * a final local field variable
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl4() throws Exception {
 		testLocation(20, 20, "FinalBreakpointLocations");
@@ -150,8 +128,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of
 	 * a final local field variable looking for best match
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl4a() throws Exception {
 		testLocation(20, 20, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
@@ -160,8 +136,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	/**
 	 * Tests setting a line breakpoint on a final field that has not been initialized
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl5() throws Exception {
 		testLocation(30, 33, "FinalBreakpointLocations");
@@ -171,8 +145,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * Tests setting a line breakpoint on a final field that has not been initialized looking
 	 * for best match
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl5a() throws Exception {
 		testLocation(30, 33, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
@@ -180,8 +152,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Test line before type declaration
-	 *
-	 * @throws Exception
 	 */
 	public void testLineBeforeTypeDeclaration() throws Exception {
 		testLocation(12, 21, "BreakpointsLocation");
@@ -189,7 +159,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineMethodSignature() throws Exception {
 		testLocation(32, 33, "BreakpointsLocation");
@@ -197,7 +166,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineInInnerType() throws Exception {
 		testLocation(28, 28, "BreakpointsLocation.InnerClass");
@@ -205,7 +173,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineInAnnonymousType() throws Exception {
 		testLocation(42, 42, "BreakpointsLocation");
@@ -213,7 +180,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineAfterAllCode() throws Exception {
 		// ********* this test need to be updated every time BreakpointsLocation.java is modified *************
@@ -223,7 +189,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineVariableDeclarationWithAssigment() throws Exception {
 		testLocation(46, 49, "BreakpointsLocation");
@@ -231,7 +196,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a breakpoint is not set on a final field
-	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalField() throws Exception {
 		testLocation(16, 16, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984");
@@ -240,7 +204,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	/**
 	 * Tests that a breakpoint is not set on a final field looking
 	 * for best match
-	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalFielda() throws Exception {
 		testLocation(16, 16, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", true);
@@ -248,7 +211,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
     public void testEmptyLabel() throws Exception {
 		testLocation(18, 19, "LabelTest");
@@ -256,7 +218,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
     /**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
     public void testNestedEmptyLabels() throws Exception {
 		testLocation(22, 24, "LabelTest");
@@ -264,7 +225,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
     /**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
     public void testLabelWithCode() throws Exception {
 		testLocation(24, 24, "LabelTest");
@@ -272,7 +232,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
     /**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineFieldDeclarationWithAssigment() throws Exception {
 		testLocation(54, 58, "BreakpointsLocation");
@@ -280,7 +239,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineExpressionReplacedByConstant1() throws Exception {
 		testLocation(65, 65, "BreakpointsLocation");
@@ -288,7 +246,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineExpressionReplacedByConstant2() throws Exception {
 		testLocation(67, 65, "BreakpointsLocation");
@@ -296,7 +253,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineExpressionNotReplacedByConstant1() throws Exception {
 		testLocation(73, 73, "BreakpointsLocation");
@@ -304,7 +260,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineExpressionNotReplacedByConstant2() throws Exception {
 		testLocation(75, 75, "BreakpointsLocation");
@@ -312,7 +267,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineLitteral1() throws Exception {
 		testLocation(49, 49, "BreakpointsLocation");
@@ -320,7 +274,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testLineLitteral2() throws Exception {
 		testLocation(58, 58, "BreakpointsLocation");
@@ -328,7 +281,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a specific breakpoint location
-	 * @throws Exception
 	 */
 	public void testInnerStaticClass() throws Exception {
 		String version = get14Project().getOption(JavaCore.COMPILER_COMPLIANCE, false);
@@ -342,11 +294,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that an specific field is locatable in a specific type at a given offset and line
-	 * @param line
-	 * @param offsetInLine
-	 * @param expectedFieldName
-	 * @param expectedTypeName
-	 * @throws Exception
 	 */
 	public void testField(int line, int offsetInLine, String expectedFieldName, String expectedTypeName) throws Exception {
 		IType type= get14Project().findType("BreakpointsLocation");
@@ -364,7 +311,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific filed is at the correct location
-	 * @throws Exception
 	 */
 	public void testFieldLocationOnField() throws Exception {
 		testField(30, 20, "fList", "BreakpointsLocation");
@@ -372,7 +318,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific filed is at the correct location
-	 * @throws Exception
 	 */
 	public void testFieldLocationNotOnField() throws Exception {
 		testField(36, 21, null, null);
@@ -380,12 +325,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific method is locatable in the specified type at the given offset and line
-	 * @param line
-	 * @param offsetInLine
-	 * @param expectedMethodName
-	 * @param expectedTypeName
-	 * @param expectedMethodSignature
-	 * @throws Exception
 	 */
 	public void testMethod(int line, int offsetInLine, String expectedMethodName, String expectedTypeName, String expectedMethodSignature) throws Exception {
 		IType type= get14Project().findType("BreakpointsLocation");
@@ -405,7 +344,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific method is locatable in a specific location
-	 * @throws Exception
 	 */
 	public void testMethodOnSignature() throws Exception {
 		testMethod(20, 23, "test1", "BreakpointsLocation", "()V");
@@ -413,7 +351,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific method is locatable in a specific location
-	 * @throws Exception
 	 */
 	public void testMethodOnCode() throws Exception {
 		testMethod(19, 17, "test1", "BreakpointsLocation", "()V");
@@ -421,7 +358,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific method is locatable in a specific location
-	 * @throws Exception
 	 */
 	public void testMethodNotOnMethod() throws Exception {
 		testMethod(30, 1, null, null, null);
@@ -429,7 +365,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a specific method is locatable in a specific location
-	 * @throws Exception
 	 */
 	public void testMethodOnMethodSignatureNotAvailable() throws Exception {
 		testMethod(35, 4, "test2", "BreakpointsLocation", null);

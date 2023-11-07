@@ -26,7 +26,6 @@ import com.sun.jdi.event.BreakpointEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class BreakpointEventImpl extends LocatableEventImpl implements
 		BreakpointEvent {

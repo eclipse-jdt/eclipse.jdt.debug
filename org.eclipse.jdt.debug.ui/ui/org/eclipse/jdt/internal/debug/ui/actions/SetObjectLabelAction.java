@@ -31,7 +31,6 @@ import org.eclipse.jface.window.Window;
 /**
  * Asks the user to give a label to the variable, and store it in the {@link JDIDebugTarget}. If the user gives an empty string, this will remove the
  * label.
- *
  */
 public class SetObjectLabelAction extends ObjectActionDelegate {
 

@@ -202,8 +202,6 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that default access rules appear for system packages when a profile file is specified.
-	 *
-	 * @throws Exception
 	 */
 	public void testDefaultSystemPackageAccessRules() throws Exception {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
@@ -226,8 +224,6 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a location can be resolved for ${ee_home:J2SE-1.4}
-	 *
-	 * @throws Exception
 	 */
 	public void testEEHomeVariable() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -240,8 +236,6 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a location cannot be resolved for ${ee_home}
-	 *
-	 * @throws Exception
 	 */
 	public void testEEHomeVariableMissingArgument() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -255,8 +249,6 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a location cannot be resolved for ${ee_home:bogus}
-	 *
-	 * @throws Exception
 	 */
 	public void testEEHomeVariableInvalidArgument() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();

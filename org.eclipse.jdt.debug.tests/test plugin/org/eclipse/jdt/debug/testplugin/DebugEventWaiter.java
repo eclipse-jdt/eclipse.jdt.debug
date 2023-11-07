@@ -71,7 +71,6 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * Creates a new <code>DebugEventWaiter</code> which
 	 * waits for events of a kind <code>eventType</code>.
 	 * The wait method will wait the default timeout value.
-	 * @param eventType
 	 */
 	public DebugEventWaiter(int eventType) {
 		fDebugPlugin= DebugPlugin.getDefault();
@@ -83,7 +82,6 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 
 	/**
 	 * Answers true if the <code>DebugEvent</code> is acceptable.
-	 * @param event
 	 * @return if the event is accepted or not
 	 */
 	public boolean accept(DebugEvent event) {
@@ -136,7 +134,6 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 
 	/**
 	 * Sets the number of milliseconds to wait for this callback
-	 * @param milliseconds
 	 */
 	public void setTimeout(long milliseconds) {
 		fTimeout= milliseconds;

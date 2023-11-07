@@ -91,7 +91,6 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	}
 	/**
 	 * test launch notification
-	 * @throws CoreException
 	 */
 	public void testLaunchNotification() throws CoreException {
 		String typeName = "Breakpoints";		 //$NON-NLS-1$
@@ -140,8 +139,6 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 
 	/**
 	 * Tests launching an unregistered launch.
-	 *
-	 * @throws Exception
 	 */
 	public void testUnregisteredLaunch() throws Exception {
 	   String typeName = "Breakpoints"; //$NON-NLS-1$

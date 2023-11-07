@@ -70,8 +70,6 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 
 	/**
 	 * Displays the given error message in the status line.
-	 *
-	 * @param message
 	 */
 	protected void showErrorMessage(String message) {
 		if (fPart instanceof IViewPart) {

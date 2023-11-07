@@ -42,7 +42,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 /**
  * An abstract change for breakpoint type refactoring changes
  * @since 3.2
- *
  */
 public abstract class BreakpointChange extends Change {
 
@@ -64,8 +63,6 @@ public abstract class BreakpointChange extends Change {
 
 	/**
 	 * Constructor
-	 * @param breakpoint
-	 * @throws CoreException
 	 */
 	public BreakpointChange(IJavaBreakpoint breakpoint) throws CoreException {
 		fBreakpoint = breakpoint;
@@ -82,7 +79,6 @@ public abstract class BreakpointChange extends Change {
 	 * Applies the original attributes to the new breakpoint
 	 *
 	 * @param breakpoint the new breakpoint
-	 * @throws CoreException
 	 */
 	protected void apply(IJavaBreakpoint breakpoint) throws CoreException {
 		breakpoint.setHitCount(fHitCount);
@@ -107,8 +103,6 @@ public abstract class BreakpointChange extends Change {
 	/**
 	 * Returns the original name of the type the associated breakpoint was set on.
 	 * This can be different than the type being changed.
-	 *
-	 * @return
 	 */
 	protected String getOriginalBreakpointTypeName() {
 		return fTypeName;
@@ -142,7 +136,6 @@ public abstract class BreakpointChange extends Change {
 	 * Returns an array of ints representing the new line number, char start and char end
 	 * of the member.
 	 *
-	 * @param member
 	 * @return array of 3 ints or <code>null</code>
 	 */
 	protected int[] getNewLineNumberAndRange(IMember member) throws CoreException {
@@ -157,7 +150,6 @@ public abstract class BreakpointChange extends Change {
 	 * @param member the member to query
 	 * @param offset the offset
 	 * @return the new line number
-	 * @throws JavaModelException
 	 */
 	private int getNewLineNumber(IMember member, int offset) throws JavaModelException {
 		int lineNumber = getLineNumber();
@@ -187,8 +179,6 @@ public abstract class BreakpointChange extends Change {
 
 	/**
 	 * Returns the <code>IType</code> within the specified parent type given by simpleName
-	 * @param parent
-	 * @param simpleName
 	 * @return the <code>IType</code> within the specified parent type given by simpleName
 	 */
 	public static IType getType(IJavaElement parent, String simpleName) {
@@ -208,8 +198,6 @@ public abstract class BreakpointChange extends Change {
 	/**
 	 * Returns the <code>IJavaElement</code> contained within the specified parent one, or the parent one
 	 * by default
-	 * @param parent
-	 * @param element
 	 * @return the <code>IJavaElement</code> contained within the specified parent one, or the parent one
 	 * by default
 	 */
@@ -268,7 +256,6 @@ public abstract class BreakpointChange extends Change {
 	 * Returns the path of the given element up to but not including its compilation unit,
 	 * in bottom up order.
 	 *
-	 * @param element
 	 * @return element's path
 	 */
 	private static List<IJavaElement> getPath(IJavaElement element) {

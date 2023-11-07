@@ -18,7 +18,6 @@ import com.sun.jdi.PrimitiveType;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class PrimitiveTypeImpl extends TypeImpl implements
 		PrimitiveType {

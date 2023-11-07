@@ -62,9 +62,6 @@ public class VirtualThreadTest extends AbstractJDITest {
 
 	/**
 	 * Init the fields that are used by this test only.
-	 *
-	 * @throws SecurityException
-	 * @throws NoSuchFieldException
 	 */
 	@Override
 	public void localSetUp() {

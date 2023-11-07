@@ -27,8 +27,6 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 
 	/**
 	 * Constructor
-	 * @param breakpoint
-	 * @throws CoreException
 	 */
 	public MethodBreakpointChange(IJavaMethodBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);
@@ -81,8 +79,6 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 
 	/**
 	 * Applies the old settings to the new breakpoint
-	 * @param breakpoint
-	 * @throws CoreException
 	 */
 	protected void apply(IJavaMethodBreakpoint breakpoint) throws CoreException {
 		super.apply(breakpoint);

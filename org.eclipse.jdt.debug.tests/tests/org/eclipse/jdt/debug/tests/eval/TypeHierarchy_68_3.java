@@ -19,7 +19,6 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 public class TypeHierarchy_68_3 extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
-	 * @param name
 	 */
 	public TypeHierarchy_68_3(String name) {
 		super(name);
