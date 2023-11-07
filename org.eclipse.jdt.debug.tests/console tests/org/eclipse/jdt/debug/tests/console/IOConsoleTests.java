@@ -33,7 +33,6 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
 
     /**
      * Constructor
-     * @param name
      */
     public IOConsoleTests(String name) {
         super(name);
@@ -41,7 +40,6 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
 
     /**
      * Tests that the pattern matcher will find a specific pattern
-     * @throws Exception
      */
     public void testPatternMatchListener() throws Exception {
         MessageConsole console = new MessageConsole("Test console", null);

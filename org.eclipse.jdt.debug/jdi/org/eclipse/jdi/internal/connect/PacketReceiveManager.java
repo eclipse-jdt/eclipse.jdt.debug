@@ -33,7 +33,6 @@ import com.sun.jdi.connect.spi.Connection;
 /**
  * This class implements a thread that receives packets from the Virtual
  * Machine.
- *
  */
 public class PacketReceiveManager extends PacketManager {
 

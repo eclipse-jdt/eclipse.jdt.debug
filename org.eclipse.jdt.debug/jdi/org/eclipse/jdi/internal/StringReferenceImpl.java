@@ -27,7 +27,6 @@ import com.sun.jdi.StringReference;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class StringReferenceImpl extends ObjectReferenceImpl implements
 		StringReference {

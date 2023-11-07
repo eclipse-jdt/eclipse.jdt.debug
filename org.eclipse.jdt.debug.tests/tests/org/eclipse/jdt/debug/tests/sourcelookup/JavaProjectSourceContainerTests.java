@@ -32,9 +32,6 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Returns a Java project source container
-	 *
-	 * @return
-	 * @throws Exception
 	 */
 	protected JavaProjectSourceContainer getContainer(IJavaProject project, boolean duplicates) throws Exception {
 		ISourceLookupDirector director = new JavaSourceLookupDirector();
@@ -47,8 +44,6 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testSourceContainerMemento() throws Exception {
 		ISourceContainer container = getContainer(get14Project(), false);

@@ -53,10 +53,6 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     private static final String USE_EVALUATION = "USE_EVALUATION"; //$NON-NLS-1$
     private static final String WRAP_TEXT = "WRAP_TEXT"; //$NON-NLS-1$
 
-    /**
-     * @param parentShell
-     * @param variable
-     */
     protected StringValueInputDialog(Shell parentShell, IJavaVariable variable) {
         super(parentShell, variable);
     }

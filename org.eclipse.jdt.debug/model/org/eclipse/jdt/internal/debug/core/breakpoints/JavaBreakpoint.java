@@ -549,7 +549,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Adds an instance filter to the given request. Since the implementation is
 	 * request specific, subclasses must override.
 	 *
-	 * @param request
 	 * @param object
 	 *            instance filter
 	 */
@@ -1092,7 +1091,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Returns whether this breakpoint is installed in the given target.
 	 *
-	 * @param target
 	 * @return whether this breakpoint is installed in the given target
 	 */
 	protected boolean isInstalledIn(IJavaDebugTarget target) {
@@ -1102,7 +1100,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Sets this breakpoint as installed in the given target
 	 *
-	 * @param target
 	 * @param installed
 	 *            whether installed
 	 */
@@ -1433,8 +1430,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Writes the current breakpoint listener collection to the underlying
 	 * marker.
-	 *
-	 * @throws CoreException
 	 */
 	private void writeBreakpointListeners() throws CoreException {
 		StringBuilder buf = new StringBuilder();

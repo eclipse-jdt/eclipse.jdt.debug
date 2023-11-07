@@ -106,8 +106,6 @@ public class EventDispatcherTest extends AbstractDebugTest {
 	/**
 	 * Tests that a conditional breakpoint with an expression that will hit a breakpoint will complete the conditional expression evaluation (bug
 	 * 269231) and that we dispatch events for conditional breakpoints in dedicated jobs.
-	 *
-	 * @throws Exception
 	 */
 	public void testConditionalExpressionEventDispatching() throws Exception {
 		String typeName = "BreakpointListenerTest";

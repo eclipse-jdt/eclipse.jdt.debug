@@ -61,7 +61,6 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
     /**
      * Constructor
-     * @param name
      */
     public PerfConditionalBreakpointsTests(String name) {
         super(name);
@@ -69,7 +68,6 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
     /**
      * Tests the performance of launching to conditional breakpoints
-     * @throws Exception
      */
     public void testConditionalBreakpoints() throws Exception {
         tagAsSummary("Conditional Breakpoint Test", Dimension.ELAPSED_PROCESS);

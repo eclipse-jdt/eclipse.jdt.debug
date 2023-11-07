@@ -248,10 +248,6 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 		return false;
 	}
 
-	/**
-	 * @param typeName
-	 * @return
-	 */
 	private boolean validType(String typeName) throws CoreException {
 
 		String[] patterns = getTypeNamePatterns();

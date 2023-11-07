@@ -68,7 +68,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ViewManagementTests(String name) {
 		super(name);
@@ -76,10 +75,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 
 	/**
 	 * Returns whether the specified view is open
-	 *
-	 * @param window
-	 * @param id
-	 * @return
 	 */
 	protected boolean isViewOpen(final IWorkbenchWindow window, final String id) throws Exception {
 		final IViewReference[] refs = new IViewReference[1];
@@ -107,8 +102,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	/**
 	 * Tests that context views auto-open in debug perspective.
 	 * Both context views should auto-open.
-	 *
-	 * @throws Exception
 	 */
 	public void testAutoOpenDebugPerspective() throws Exception {
 		if (HAS_BUG_420778) {
@@ -140,8 +133,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	/**
 	 * Tests that context views auto-open in debug perspective, and auto close on termination.
 	 * View "two" should auto-close.
-	 *
-	 * @throws Exception
 	 */
 	public void testAutoCloseDebugPerspective() throws Exception {
 		if (HAS_BUG_420778) {
@@ -181,8 +172,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	/**
 	 * Tests that context views auto-open in java perspective.
 	 * Both context views should auto-open as well as standard debug views.
-	 *
-	 * @throws Exception
 	 */
 	public void testAutoOpenJavaPerspective() throws Exception {
 		if (HAS_BUG_420778) {
@@ -219,8 +208,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	/**
 	 * Tests that context views auto-open and close in java perspective.
 	 * All views should auto-close in non-standard debug perspective.
-	 *
-	 * @throws Exception
 	 */
 	public void testAutoCloseJavaPerspective() throws Exception {
 		if (HAS_BUG_420778) {
@@ -286,9 +273,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 
 	/**
 	 * Adds ids of views to 'expecting open' queue.
-	 *
-	 * @param window
-	 * @param viewIds
 	 */
 	protected void expectingViewOpenEvents(IWorkbenchWindow window, String[] viewIds) {
 		for (int i = 0; i < viewIds.length; i++) {
@@ -299,9 +283,6 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 
 	/**
 	 * Adds ids of views to 'expecting open' queue.
-	 *
-	 * @param window
-	 * @param viewIds
 	 */
 	protected void expectingViewCloseEvents(IWorkbenchWindow window, String[] viewIds) {
 		for (int i = 0; i < viewIds.length; i++) {

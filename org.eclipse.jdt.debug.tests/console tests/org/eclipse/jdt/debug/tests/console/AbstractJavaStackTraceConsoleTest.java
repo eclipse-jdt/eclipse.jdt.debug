@@ -221,7 +221,6 @@ public class AbstractJavaStackTraceConsoleTest extends AbstractDebugUiTests {
 	 * @param text
 	 *            new console text
 	 * @return the consoles document
-	 * @throws Exception
 	 */
 	protected IDocument consoleDocumentFormatted(String text) throws Exception {
 		IDocument document = sync(() -> {

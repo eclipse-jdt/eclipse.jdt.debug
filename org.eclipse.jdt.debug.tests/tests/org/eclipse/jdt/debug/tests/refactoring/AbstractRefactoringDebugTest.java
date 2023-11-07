@@ -60,9 +60,6 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 	/**
 	 * Performs the given refactoring. If a {@link CoreException} occurs during the refactoring, we trap it and throw a {@link TestAgainException} to
 	 * try the test again.
-	 *
-	 * @param refactoring
-	 * @throws Exception
 	 */
 	public void performRefactor(final Refactoring refactoring) throws Exception {
 		if(refactoring == null) {
@@ -86,7 +83,6 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 
 	/**
 	 * Clean up all the test files
-	 * @throws CoreException
 	 */
 	protected void cleanTestFiles() throws CoreException {
 		waitUntilIndexesReady();
@@ -100,7 +96,6 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 
 	/**
 	 * Cleans up refactored files and reverts the source.
-	 * @throws Exception
 	 */
 	private void doClean() throws Exception {
 		IJavaProject javaProject = get14Project();

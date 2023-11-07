@@ -29,9 +29,6 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
-/**
- *
- */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
 
 	private IViewPart fView;
@@ -133,7 +130,6 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * Returns the value of this filters preference (on/off) for the given
 	 * view.
 	 *
-	 * @param part
 	 * @return boolean
 	 */
 	protected boolean getPreferenceValue() {

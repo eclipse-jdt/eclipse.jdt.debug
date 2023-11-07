@@ -42,8 +42,6 @@ public class WorkspaceSourceContainerTests extends AbstractDebugTest {
 	}
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testWorkspaceSourceContainerMemento() throws Exception {
 		WorkspaceSourceContainer container = getContainer(true);

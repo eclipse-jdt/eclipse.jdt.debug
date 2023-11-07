@@ -44,8 +44,6 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 
 	/**
 	 * Constructor
-	 * @param thread
-	 * @param parent
 	 */
 	public JavaOwningThread(JavaMonitorThread thread, JavaContendedMonitor parent) {
 		fThread= thread;
@@ -62,7 +60,6 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 
 	/**
 	 * Returns the parent contended
-	 * @return
 	 */
 	public JavaContendedMonitor getParent() {
 		return fParent;

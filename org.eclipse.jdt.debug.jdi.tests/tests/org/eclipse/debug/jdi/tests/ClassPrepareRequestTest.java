@@ -36,7 +36,6 @@ public class ClassPrepareRequestTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(String[] args) {
 		new ClassPrepareRequestTest().runSuite(args);

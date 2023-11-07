@@ -27,7 +27,6 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public HitCountBreakpointsTests(String name) {
 		super(name);
@@ -35,7 +34,6 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests resetting the hit count of a line breakpoint
-	 * @throws Exception
 	 */
 	public void testResetHitCountBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -78,7 +76,6 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 	/**
 	 * Tests an expired hit count breakpoint, i.e. expired meaning that the count is no longer
 	 * effectual
-	 * @throws Exception
 	 */
 	public void testExpiredHitCountBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";

@@ -21,7 +21,6 @@ import org.eclipse.jdt.launching.PropertyChangeEvent;
  * Simple VM listener that reports whether VM settings have changed.
  *
  * @since 3.2
- *
  */
 public class VMListener implements IVMInstallChangedListener {
 

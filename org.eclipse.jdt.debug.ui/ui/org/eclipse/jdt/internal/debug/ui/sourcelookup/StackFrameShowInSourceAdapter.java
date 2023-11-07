@@ -24,7 +24,6 @@ import org.eclipse.ui.part.ShowInContext;
 
 /**
  * @since 3.2
- *
  */
 public class StackFrameShowInSourceAdapter implements IShowInSource {
 
@@ -66,8 +65,6 @@ public class StackFrameShowInSourceAdapter implements IShowInSource {
 
 	/**
 	 * Constructs a new adapter on the given frame.
-	 *
-	 * @param frame
 	 */
 	public StackFrameShowInSourceAdapter(IJavaStackFrame frame) {
 		fFrame = frame;

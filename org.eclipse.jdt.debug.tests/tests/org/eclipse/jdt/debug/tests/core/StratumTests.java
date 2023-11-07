@@ -34,8 +34,6 @@ public class StratumTests extends AbstractDebugTest {
 
 	/**
 	 * Test available strata on a type.
-	 *
-	 * @throws Exception
 	 */
 	public void testAvailableStrata() throws Exception {
 		String typeName = "Breakpoints";
@@ -69,8 +67,6 @@ public class StratumTests extends AbstractDebugTest {
 
 	/**
 	 * Test default stratum on a type.
-	 *
-	 * @throws Exception
 	 */
 	public void testDefaultStratum() throws Exception {
 		String typeName = "Breakpoints";
@@ -91,8 +87,6 @@ public class StratumTests extends AbstractDebugTest {
 
 	/**
 	 * Test set / get default stratum on a java debug target.
-	 *
-	 * @throws Exception
 	 */
 	public void testSetGetDefaultStratum() throws Exception {
 		String typeName = "Breakpoints";

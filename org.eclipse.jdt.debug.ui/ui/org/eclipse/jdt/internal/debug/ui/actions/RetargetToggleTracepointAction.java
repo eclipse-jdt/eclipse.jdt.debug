@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * Global retargettable toggle tracepoint action.
  *
  * @since 3.12
- *
  */
 public class RetargetToggleTracepointAction extends RetargetToggleBreakpointAction {
 

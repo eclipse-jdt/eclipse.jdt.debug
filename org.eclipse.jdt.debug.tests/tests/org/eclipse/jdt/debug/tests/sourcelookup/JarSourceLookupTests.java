@@ -61,7 +61,6 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	/**
 	 * Disposes all source containers after a test, ensures no containers are still holding open Jar references, which can lead to {@link ResourceException}s
 	 * when we try to delete / setup following tests
-	 * @param containers
 	 */
 	void disposeContainers(ISourceContainer[] containers) {
 		if(containers != null) {
@@ -130,8 +129,6 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * Ensures the translation of source containers yields the correct containers
 	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
-	 *
-	 * @throws Exception
 	 */
 	public void testTranslateContainers() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
@@ -187,8 +184,6 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * Tests that the class file is found as source when the lookup is done from a jar from another project
 	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
-	 *
-	 * @throws Exception
 	 */
 	public void testInspectClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
@@ -214,8 +209,6 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * Tests that the class file is found as source when the lookup is done from a jar from another project
 	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
-	 *
-	 * @throws Exception
 	 */
 	public void testShowClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);

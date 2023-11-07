@@ -47,9 +47,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Perform the evaluation on the given snippet and return the value
-	 * @param snippet
 	 * @return returns the evaluation value or <code>null</code>
-	 * @throws Exception
 	 */
 	IValue doEval(String snippet) throws Exception {
 		ILineBreakpoint bp = createLineBreakpoint(28, LITERAL_TYPE_NAME);
@@ -72,10 +70,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 	 * run two snippets on the same thread where the second snippet may or may not depend on the state change from the
 	 * first snippet
 	 *
-	 * @param snippet
-	 * @param snippet2
 	 * @return the {@link IEvaluationResult}
-	 * @throws Exception
 	 */
 	IValue doEval(String snippet, String snippet2) throws Exception {
 		ILineBreakpoint bp = createLineBreakpoint(28, LITERAL_TYPE_NAME);
@@ -98,8 +93,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with an int with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreIntEval() throws Exception {
 		IValue value = doEval("literals.x1 + 1");
@@ -111,8 +104,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to an int with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreIntVarAssignment() throws Exception {
 		IValue value = doEval("literals.x1 = 1_______1;", "literals.x1 + 1");
@@ -124,8 +115,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a short with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreShortEval() throws Exception {
 		IValue value = doEval("literals.x9 + 1");
@@ -137,8 +126,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a short with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreShortVarAssignment() throws Exception {
 		IValue value = doEval("literals.x9 = 1_______1;", "literals.x9 + 1");
@@ -150,8 +137,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a byte with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreByteEval() throws Exception {
 		IValue value = doEval("literals.x10 + 1");
@@ -163,8 +148,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a short with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreByteVarAssignment() throws Exception {
 		IValue value = doEval("literals.x10 = 1_______1;", "literals.x10 + 1");
@@ -176,8 +159,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a long with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreLongEval() throws Exception {
 		IValue value = doEval("literals.x8 + 1");
@@ -189,8 +170,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a long with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreLongVarAssignment() throws Exception {
 		IValue value = doEval("literals.x8 = 1_______1L;", "literals.x8 + 1");
@@ -202,8 +181,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a float with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreFloatEval() throws Exception {
 		IValue value = doEval("literals.x6 + 1");
@@ -215,8 +192,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a float with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreFloatVarAssignment() throws Exception {
 		IValue value = doEval("literals.x6 = 6.1_4_1_5F;", "literals.x6 + 1");
@@ -228,8 +203,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a double with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreDoubleEval() throws Exception {
 		IValue value = doEval("literals.x5 + 1");
@@ -241,8 +214,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a double with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreDoubleVarAssignment() throws Exception {
 		IValue value = doEval("literals.x5 = 1_5.5_5_6D;", "literals.x5 + 1.000D");
@@ -254,8 +225,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a binary literal with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreBinaryEval() throws Exception {
 		IValue value = doEval("literals.x4 + 1");
@@ -267,8 +236,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a binary literal with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreBinaryVarAssignment() throws Exception {
 		IValue value = doEval("literals.x4 = 0b1_0_0_0_0;", "literals.x4 + 1");
@@ -280,8 +247,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with a hex with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreHexEval() throws Exception {
 		IValue value = doEval("literals.x2 + 1");
@@ -293,8 +258,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to a hex with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreHexVarAssignment() throws Exception {
 		IValue value = doEval("literals.x2 = 0x1_0_0;", "literals.x2 + 1");
@@ -306,8 +269,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that an addition evaluation with an octal with underscores in it works
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreOctEval() throws Exception {
 		IValue value = doEval("literals.x3 + 1");
@@ -319,8 +280,6 @@ public class LiteralTests17 extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can assign a variable value to an octal with underscores
-	 *
-	 * @throws Exception
 	 */
 	public void testUnderscoreOctVarAssignment() throws Exception {
 		IValue value = doEval("literals.x3 = 0_100;", "literals.x3 + 1");

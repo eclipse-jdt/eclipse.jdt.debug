@@ -64,11 +64,6 @@ public class RemoteEvaluator {
 	/**
 	 * Constructs a new evaluation engine for the given VM in the context of the specified project. Class files required for the evaluation will be
 	 * deployed to the specified directory (which must be on the class path of the VM in order for evaluation to work).
-	 *
-	 * @param classFiles
-	 * @param codeSnippetClassName
-	 * @param variableNames
-	 * @param enclosingTypeName
 	 */
 	public RemoteEvaluator(LinkedHashMap<String, byte[]> classFiles, String codeSnippetClassName, List<String> variableNames, String enclosingTypeName) {
 		this.classFiles = classFiles;

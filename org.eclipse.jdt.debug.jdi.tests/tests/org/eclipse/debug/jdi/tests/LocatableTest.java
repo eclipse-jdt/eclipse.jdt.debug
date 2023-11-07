@@ -100,7 +100,6 @@ public class LocatableTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new LocatableTest().runSuite(args);

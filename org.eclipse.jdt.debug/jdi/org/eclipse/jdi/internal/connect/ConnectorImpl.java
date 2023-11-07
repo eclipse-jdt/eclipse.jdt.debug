@@ -30,7 +30,6 @@ import com.sun.jdi.connect.spi.Connection;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class ConnectorImpl implements Connector {
 	/** Virtual machine manager that created this connector. */

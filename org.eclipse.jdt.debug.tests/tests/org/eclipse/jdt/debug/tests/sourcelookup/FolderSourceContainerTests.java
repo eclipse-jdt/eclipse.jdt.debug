@@ -49,8 +49,6 @@ public class FolderSourceContainerTests extends AbstractDebugTest {
 	}
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testFolderSourceContainerMemento() throws Exception {
 		FolderSourceContainer container = getContainer(true, true);

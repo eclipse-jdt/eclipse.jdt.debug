@@ -31,8 +31,6 @@ public class ArrayAllocation extends ArrayInstruction {
 
 	/**
 	 * Constructor for ArrayAllocation.
-	 *
-	 * @param start
 	 */
 	public ArrayAllocation(int dimension, int exprDimension,
 			boolean hasInitializer, int start) {

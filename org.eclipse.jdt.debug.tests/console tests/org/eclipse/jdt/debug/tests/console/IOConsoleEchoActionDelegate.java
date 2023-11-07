@@ -76,7 +76,6 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
 
     /**
      * Actually runs the test
-     * @param console
      */
     public void runTest(IOConsole console) {
         final Display display = Display.getDefault();

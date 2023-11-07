@@ -42,9 +42,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-/**
- *
- */
 public class ThreadFilterEditor {
 
 	private final JavaBreakpointAdvancedPage fPage;

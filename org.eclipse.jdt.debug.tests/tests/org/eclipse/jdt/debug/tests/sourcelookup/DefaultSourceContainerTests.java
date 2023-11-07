@@ -30,8 +30,6 @@ public class DefaultSourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testDefaultSourceContainerMemento() throws Exception {
 		JavaSourceLookupDirector director = new JavaSourceLookupDirector();

@@ -64,9 +64,6 @@ public class EEVMPage extends AbstractVMInstallPage {
 	private final IStatus[] fFieldStatus = new IStatus[1];
 	private boolean fIgnoreCallbacks = false;
 
-	/**
-	 *
-	 */
 	public EEVMPage() {
 		super(JREMessages.EEVMPage_0);
 		for (int i = 0; i < fFieldStatus.length; i++) {

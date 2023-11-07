@@ -35,9 +35,6 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 
-/**
- *
- */
 public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 
 	private String fExpressionText;

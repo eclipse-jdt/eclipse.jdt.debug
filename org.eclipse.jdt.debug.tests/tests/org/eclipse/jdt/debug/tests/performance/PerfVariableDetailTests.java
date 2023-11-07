@@ -33,7 +33,6 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
 
     /**
      * Constructor
-     * @param name
      */
     public PerfVariableDetailTests(String name) {
         super(name);
@@ -51,7 +50,6 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
 
     /**
      * Tests the performance of calculating the 'toString' method
-     * @throws Exception
      */
     public void testToStringDetails() throws Exception {
         // just in case

@@ -404,7 +404,6 @@ public class JavaDebugUtils {
 	/**
 	 * Resolves the {@link IJavaProject} within the context of the given {@link IJavaStackFrame}
 	 *
-	 * @param frame
 	 * @return the {@link IJavaProject} or <code>null</code>
 	 * @since 3.8.0
 	 */

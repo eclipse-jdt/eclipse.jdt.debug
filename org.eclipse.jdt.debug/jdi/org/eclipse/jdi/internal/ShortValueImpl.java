@@ -25,7 +25,6 @@ import com.sun.jdi.Type;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class ShortValueImpl extends PrimitiveValueImpl implements ShortValue {
 	/** JDWP Tag. */

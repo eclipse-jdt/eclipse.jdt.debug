@@ -1697,7 +1697,6 @@ public final class JavaRuntime {
 	 * @param project
 	 *            Java project
 	 * @return the {@link IPackageFragmentRoot} for the JRE container or null if no JRE container is on the classpath
-	 * @throws JavaModelException
 	 */
 	private static IPackageFragmentRoot findJreContainer(IJavaProject project) throws JavaModelException {
 		IPackageFragmentRoot jreContainer = null;

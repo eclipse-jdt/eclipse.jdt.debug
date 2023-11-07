@@ -22,7 +22,6 @@ import com.sun.jdi.connect.Transport;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class TransportImpl implements Transport {
 	/** Name of Transport. */

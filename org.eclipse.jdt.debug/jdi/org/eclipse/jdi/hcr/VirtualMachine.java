@@ -147,7 +147,6 @@ public interface VirtualMachine {
 	 * whether it was ignored (for example if the VM doesn't support this kind
 	 * of replacement), or whether the operation failed and the VM should be
 	 * restarted
-	 *
 	 */
 	public int classesHaveChanged(String[] arg1);
 }

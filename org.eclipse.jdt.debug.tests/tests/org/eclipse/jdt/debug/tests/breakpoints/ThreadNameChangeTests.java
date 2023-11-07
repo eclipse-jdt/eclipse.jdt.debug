@@ -45,7 +45,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ThreadNameChangeTests(String name) {
 		super(name);
@@ -53,8 +52,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that we listen to thread name changes and send a debug event if that happens
-	 *
-	 * @throws Exception
 	 */
 	public void testListenToThreadNameChange() throws Exception {
 		String typeName = "ThreadNameChange";
@@ -102,8 +99,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that we do not listen to thread name changes if the corresponding preference is set to false
-	 *
-	 * @throws Exception
 	 */
 	public void testListenToThreadNameChangeDisabled() throws Exception {
 		System.setProperty(DISABLE_THREAD_NAME_CHANGE_LISTENER, String.valueOf(Boolean.TRUE));
@@ -190,7 +185,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 
 	/**
 	 * Returns the <code>JDIDebugUIPlugin</code> preference store
-	 * @return
 	 */
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();

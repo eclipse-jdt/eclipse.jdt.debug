@@ -101,11 +101,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 
 		/**
 		 * Constructor
-		 *
-		 * @param value
-		 * @param type
-		 * @param thread
-		 * @param evaluationEngine
 		 */
 		public EvaluationBlock(IJavaObject value, IJavaReferenceType type,
 				IJavaThread thread, IAstEvaluationEngine evaluationEngine) {
@@ -137,7 +132,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 		 * @param snippet
 		 *            the snippet to evaluate
 		 * @return the <code>IJavaValue</code> from the evaluation
-		 * @throws DebugException
 		 */
 		public IJavaValue evaluate(String snippet) throws DebugException {
 			Map<String, String> compileOptions =
@@ -353,7 +347,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 	 * Returns the <code>IJavaReferenceType</code> from the specified
 	 * <code>IJavaObject</code>
 	 *
-	 * @param value
 	 * @return the <code>IJavaReferenceType</code> from the specified
 	 *         <code>IJavaObject</code>
 	 */
@@ -398,10 +391,8 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 	 * Return the current stack frame context, or a valid stack frame for the
 	 * given value.
 	 *
-	 * @param value
 	 * @return the current stack frame context, or a valid stack frame for the
 	 *         given value.
-	 * @throws CoreException
 	 */
 	private IJavaStackFrame getStackFrame(IValue value) throws CoreException {
 		IStatusHandler handler = getStackFrameProvider();
@@ -451,8 +442,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 
 	/**
 	 * Sets if this logical structure should be used for subtypes or not.
-	 *
-	 * @param subtypes
 	 */
 	public void setSubtypes(boolean subtypes) {
 		fSubtypes = subtypes;
@@ -469,8 +458,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 
 	/**
 	 * Sets the name of the type this logical structure should be used for.
-	 *
-	 * @param type
 	 */
 	public void setType(String type) {
 		fType = type;
@@ -487,8 +474,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 
 	/**
 	 * Sets the code snippet to use to generate the logical structure.
-	 *
-	 * @param value
 	 */
 	public void setValue(String value) {
 		fValue = value;
@@ -505,8 +490,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 
 	/**
 	 * Sets the variables of this logical structure.
-	 *
-	 * @param variables
 	 */
 	public void setVariables(String[][] variables) {
 		fVariables = variables;
@@ -514,8 +497,6 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 
 	/**
 	 * Set the description of this logical structure.
-	 *
-	 * @param description
 	 */
 	public void setDescription(String description) {
 		fDescription = description;

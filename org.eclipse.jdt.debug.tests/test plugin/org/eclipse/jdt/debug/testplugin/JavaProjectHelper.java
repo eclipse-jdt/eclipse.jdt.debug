@@ -216,7 +216,6 @@ public class JavaProjectHelper {
 	 *
 	 * @param pname the desired name for the project
 	 * @return the new {@link IProject} handle
-	 * @throws CoreException
 	 */
 	public static IProject createProject(String pname) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -234,10 +233,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * creates a java project with the specified name and output folder
-	 * @param projectName
-	 * @param binFolderName
 	 * @return a new java project
-	 * @throws CoreException
 	 */
 	public static IJavaProject createJavaProject(String projectName, String binFolderName) throws CoreException {
 		IProject project = createProject(projectName);
@@ -262,9 +258,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * Creates a new Java project with the specified name
-	 * @param projectName
 	 * @return a new java project with the specified name
-	 * @throws CoreException
 	 */
 	public static IJavaProject createJavaProject(String projectName) throws CoreException {
 		IProject project = createProject(projectName);
@@ -278,8 +272,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * deletes a java project
-	 * @param jproject
-	 * @throws CoreException
 	 */
 	public static void delete(IJavaProject jproject) throws CoreException {
 		jproject.setRawClasspath(new ClasspathEntry[0], jproject.getProject().getFullPath(), null);
@@ -288,10 +280,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a new source container specified by the container name to the source path of the specified project
-	 * @param jproject
-	 * @param containerName
 	 * @return the package fragment root of the container name
-	 * @throws CoreException
 	 */
 	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName) throws CoreException {
 		IProject project= jproject.getProject();
@@ -314,11 +303,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a source container to a IJavaProject.
-	 * @param jproject
-	 * @param containerName
-	 * @param outputName
 	 * @return the package fragment root of the new source container
-	 * @throws CoreException
 	 */
 	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName, String outputName) throws CoreException {
 		IProject project= jproject.getProject();
@@ -351,12 +336,7 @@ public class JavaProjectHelper {
 	/**
 	 * Adds a source container to a IJavaProject and imports all files contained
 	 * in the given Zip file.
-	 * @param jproject
-	 * @param containerName
-	 * @param zipFile
 	 * @return the package fragment root of the new source container
-	 * @throws InvocationTargetException
-	 * @throws CoreException
 	 */
 	public static IPackageFragmentRoot addSourceContainerWithImport(IJavaProject jproject, String containerName, ZipFile zipFile) throws InvocationTargetException, CoreException {
 		IPackageFragmentRoot root= addSourceContainer(jproject, containerName);
@@ -366,9 +346,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Removes a source folder from a IJavaProject.
-	 * @param jproject
-	 * @param containerName
-	 * @throws CoreException
 	 */
 	public static void removeSourceContainer(IJavaProject jproject, String containerName) throws CoreException {
 		IFolder folder= jproject.getProject().getFolder(containerName);
@@ -378,10 +355,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a library entry to a IJavaProject.
-	 * @param jproject
-	 * @param path
 	 * @return the package fragment root of the new library
-	 * @throws JavaModelException
 	 */
 	public static IPackageFragmentRoot addLibrary(IJavaProject jproject, IPath path) throws JavaModelException {
 		return addLibrary(jproject, path, null, null);
@@ -389,12 +363,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a library entry with source attchment to a IJavaProject.
-	 * @param jproject
-	 * @param path
-	 * @param sourceAttachPath
-	 * @param sourceAttachRoot
 	 * @return the package fragment root of the new library
-	 * @throws JavaModelException
 	 */
 	public static IPackageFragmentRoot addLibrary(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newLibraryEntry(path, sourceAttachPath, sourceAttachRoot);
@@ -404,13 +373,7 @@ public class JavaProjectHelper {
 
 	/**
 	 * Copies the library into the project and adds it as library entry.
-	 * @param jproject
-	 * @param jarPath
-	 * @param sourceAttachPath
-	 * @param sourceAttachRoot
 	 * @return the package fragment root of the new library
-	 * @throws IOException
-	 * @throws CoreException
 	 */
 	public static IPackageFragmentRoot addLibraryWithImport(IJavaProject jproject, IPath jarPath, IPath sourceAttachPath, IPath sourceAttachRoot) throws IOException, CoreException {
 		IProject project= jproject.getProject();
@@ -425,12 +388,7 @@ public class JavaProjectHelper {
 	/**
 	 * Adds a variable entry with source attachment to a IJavaProject.
 	 * Can return null if variable can not be resolved.
-	 * @param jproject
-	 * @param path
-	 * @param sourceAttachPath
-	 * @param sourceAttachRoot
 	 * @return the package fragment root of the new variable entry
-	 * @throws JavaModelException
 	 */
 	public static IPackageFragmentRoot addVariableEntry(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newVariableEntry(path, sourceAttachPath, sourceAttachRoot);
@@ -444,9 +402,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a container entry to the specified java project
-	 * @param project
-	 * @param container
-	 * @throws JavaModelException
 	 */
 	public static void addContainerEntry(IJavaProject project, IPath container) throws JavaModelException {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(container, false);
@@ -458,9 +413,6 @@ public class JavaProjectHelper {
 	 * <br><br>
 	 * See {@link JavaCore#VERSION_1_4}, {@link JavaCore#VERSION_1_5}, {@link JavaCore#VERSION_1_6},
 	 * {@link JavaCore#VERSION_1_7} and {@link JavaCore#VERSION_1_8} for more information on accepted compliances
-	 *
-	 * @param project
-	 * @param compliance
 	 */
 	public static void setCompliance(IJavaProject project, String compliance) {
 		Map<String, String> map = JavaCore.getOptions();
@@ -473,8 +425,6 @@ public class JavaProjectHelper {
 	/**
 	 * Updates the compiler compliance project setting for the given project to match the given EE.
 	 * I.e. J2SE-1.5 will set a 1.5 compliance for the compiler and the source level.
-	 * @param project
-	 * @param ee
 	 */
 	public static void updateCompliance(IJavaProject project, String ee) {
 		/*
@@ -490,9 +440,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a required project entry.
-	 * @param jproject
-	 * @param required
-	 * @throws JavaModelException
 	 */
 	public static void addRequiredProject(IJavaProject jproject, IJavaProject required) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newProjectEntry(required.getProject().getFullPath());
@@ -501,9 +448,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Removes a specified path form the specified java project
-	 * @param jproject
-	 * @param path
-	 * @throws JavaModelException
 	 */
 	public static void removeFromClasspath(IJavaProject jproject, IPath path) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
@@ -521,9 +465,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds the specified classpath entry to the specified java project
-	 * @param jproject
-	 * @param cpe
-	 * @throws JavaModelException
 	 */
 	public static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
@@ -545,10 +486,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds the specified nature to the specified project
-	 * @param proj
-	 * @param natureId
-	 * @param monitor
-	 * @throws CoreException
 	 */
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
@@ -562,10 +499,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Imports files from the specified zip to the specified destination
-	 * @param srcZipFile
-	 * @param destPath
-	 * @param monitor
-	 * @throws InvocationTargetException
 	 */
 	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {
 		ZipFileStructureProvider structureProvider=	new ZipFileStructureProvider(srcZipFile);
@@ -579,11 +512,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Imports files from the specified root dir into the specified path
-	 * @param rootDir
-	 * @param destPath
-	 * @param monitor
-	 * @throws InvocationTargetException
-	 * @throws IOException
 	 */
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
@@ -605,10 +533,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Imports the specified file into the specified path
-	 * @param file
-	 * @param destPath
-	 * @param monitor
-	 * @throws InvocationTargetException
 	 */
 	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
@@ -625,9 +549,6 @@ public class JavaProjectHelper {
 
 	/**
 	 * Recursively adds files from the specified dir to the provided list
-	 * @param dir
-	 * @param collection
-	 * @throws IOException
 	 */
 	private static void addJavaFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();

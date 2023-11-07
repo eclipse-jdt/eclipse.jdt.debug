@@ -21,9 +21,6 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
-/**
- *
- */
 public class TestIJavaValue implements IJavaValue {
 
 	IJavaType type = null;

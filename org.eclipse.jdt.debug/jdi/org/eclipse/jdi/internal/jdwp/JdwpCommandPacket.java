@@ -24,7 +24,6 @@ import java.util.Map;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP)
  * packet declared by the JDWP specification.
- *
  */
 public class JdwpCommandPacket extends JdwpPacket {
 	/** Command Sets. */

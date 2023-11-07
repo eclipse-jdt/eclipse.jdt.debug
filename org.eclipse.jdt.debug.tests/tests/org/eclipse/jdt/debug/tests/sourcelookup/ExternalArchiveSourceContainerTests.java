@@ -42,9 +42,6 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Returns the JREs source archive.
-	 *
-	 * @return
-	 * @throws Exception
 	 */
 	protected ExternalArchiveSourceContainer getContainer(boolean detect, boolean duplicates) throws Exception {
 		ISourceLookupDirector director = new JavaSourceLookupDirector();
@@ -81,8 +78,6 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testArchiveSourceContainerMemento() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(true, false);

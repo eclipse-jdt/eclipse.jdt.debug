@@ -249,7 +249,6 @@ public final class LibraryLocation {
 	/**
 	 * Sets the index location to the given {@link URL}.
 	 *
-	 * @param indexLoc
 	 * @since 3.7
 	 */
 	public void setIndexLocation(URL indexLoc) {

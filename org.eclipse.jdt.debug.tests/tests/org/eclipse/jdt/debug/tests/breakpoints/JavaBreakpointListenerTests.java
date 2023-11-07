@@ -79,8 +79,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 		/**
 		 * Constructor
-		 * @param suspendVote
-		 * @param breakpoint
 		 */
 		public SuspendVoter(int suspendVote, IJavaBreakpoint breakpoint) {
 			fVote = suspendVote;
@@ -150,8 +148,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 		/**
 		 * Constructor
-		 * @param installVote
-		 * @param breakpoint
 		 */
 		public InstallVoter(int installVote, IJavaBreakpoint breakpoint) {
 			super(installVote, breakpoint);
@@ -215,7 +211,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public JavaBreakpointListenerTests(String name) {
 		super(name);
@@ -234,7 +229,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests the functionality of a single line breakpoint
-	 * @throws Exception
 	 */
 	public void testLineBreakpoint() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -288,7 +282,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests the functionality of an exception breakpoint
-	 * @throws Exception
 	 */
 	public void testExceptionBreakpoint() throws Exception {
 		IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint("java.lang.NullPointerException", true, true);
@@ -353,7 +346,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests the functionality of a method breakpoint
-	 * @throws Exception
 	 */
 	public void testMethodBreakpoint() throws Exception {
 		IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("DropTests", "method4", "()V", true, false);
@@ -417,7 +409,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Install 3, Don't Care 0, Don't Install 0 == INSTALL
-	 * @throws Exception
 	 */
 	public void testUnanimousInstallVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -443,7 +434,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Install 0, Don't Care 3, Don't Install 0 == INSTALL
-	 * @throws Exception
 	 */
 	public void testDontCareInstallVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -469,7 +459,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Install 1, Don't Care 2, Don't Install 0 == INSTALL
-	 * @throws Exception
 	 */
 	public void testInstallDontCareVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -495,7 +484,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Install 1, Don't Care 0, Don't Install 2 == INSTALL
-	 * @throws Exception
 	 */
 	public void testInstallDontVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -521,7 +509,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Install 0, Don't Care 1, Don't Install 2 = RESUME
-	 * @throws Exception
 	 */
 	public void testDontInstallVote() throws Exception {
 		IJavaLineBreakpoint breakpoint1 = createLineBreakpoint(57, "Breakpoints");
@@ -548,7 +535,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Suspend 3, Don't Care 0, Don't Suspend 0 == SUSPEND
-	 * @throws Exception
 	 */
 	public void testUnanimousSuspendVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -574,7 +560,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Suspend 0, Don't Care 3, Don't Suspend 0 == SUSPEND
-	 * @throws Exception
 	 */
 	public void testDontCareSuspendVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -600,7 +585,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Suspend 1, Don't Care 2, Don't Suspend 0 == SUSPEND
-	 * @throws Exception
 	 */
 	public void testSuspendDontCareVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -626,7 +610,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Suspend 1, Don't Care 0, Don't Suspend 2 == SUSPEND
-	 * @throws Exception
 	 */
 	public void testSuspendDontVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(57, "Breakpoints");
@@ -652,7 +635,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Suspend 0, Don't Care 1, Don't Suspend 2 = RESUME
-	 * @throws Exception
 	 */
 	public void testDontSuspendVote() throws Exception {
 		IJavaLineBreakpoint breakpoint1 = createLineBreakpoint(54, "Breakpoints");
@@ -679,7 +661,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Vote: Suspend 0, Don't Care 1 (java debug options manager), Don't Suspend 1 = RESUME
-	 * @throws Exception
 	 */
 	public void testMethodBreakpointDontSuspendVote() throws Exception {
 		IJavaMethodBreakpoint breakpoint1 = createMethodBreakpoint("DropTests", "method2", "()V", true, false);
@@ -814,8 +795,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Tests that a step end that lands on a breakpoint listener that votes to resume
 	 * results in the step completing and suspending.
-	 *
-	 * @throws Exception
 	 */
 	public void testStepEndResumeVote() throws Exception {
 		String typeName = "HitCountLooper";
@@ -839,8 +818,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Test that a step over hitting a breakpoint deeper up the stack with a listener
 	 * can perform an evaluation and resume to complete the step.
-	 *
-	 * @throws Exception
 	 */
 	public void testStepOverHitsNestedEvaluationHandlerResume() throws Exception {
 		String typeName = "MethodLoop";
@@ -892,8 +869,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Test that a step over hitting a breakpoint deeper up the stack with a listener
 	 * can perform an evaluation and suspend to abort the step.
-	 *
-	 * @throws Exception
 	 */
 	public void testStepOverHitsNestedEvaluationHandlerSuspend() throws Exception {
 		String typeName = "MethodLoop";
@@ -946,8 +921,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Suspends an evaluation. Ensures we're returned to the proper top frame.
-	 *
-	 * @throws Exception
 	 */
 	public void testSuspendEvaluation() throws Exception {
 		String typeName = "MethodLoop";
@@ -980,8 +953,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Test that a global listener gets notifications.
-	 *
-	 * @throws Exception
 	 */
 	public void testGlobalListener() throws Exception {
 		GlobalBreakpointListener.clear();
@@ -1008,8 +979,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests that breakpoint listeners are only notified when condition is true.
-	 *
-	 * @throws Exception
 	 */
 	public void testListenersOnConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -1034,8 +1003,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Tests that breakpoint listeners are only notified when condition is true
 	 * while stepping to a breakpoint.
-	 *
-	 * @throws Exception
 	 */
 	public void testListenersOnConditionalBreakpointStepping() throws Exception {
 		String typeName = "HitCountLooper";
@@ -1072,8 +1039,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Tests that breakpoint listeners are not notified of "hit" when condition has compilation
 	 * errors. Also they should be notified of the compilation errors.
-	 *
-	 * @throws Exception
 	 */
 	public void testListenersOnCompilationError() throws Exception {
 		String typeName = "HitCountLooper";
@@ -1097,8 +1062,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/**
 	 * Tests that breakpoint listeners are not notified of "hit" when condition has compilation
 	 * errors. Also they should be notified of the compilation errors.
-	 *
-	 * @throws Exception
 	 */
 	public void testListenersOnRuntimeError() throws Exception {
 		String typeName = "HitCountLooper";
@@ -1121,8 +1084,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests addition and removal of breakpoint listeners to a breakpoint.
-	 *
-	 * @throws Exception
 	 */
 	public void testAddRemoveListeners() throws Exception {
 		try {
@@ -1171,8 +1132,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests addition of duplicate breakpoint listeners to a breakpoint.
-	 *
-	 * @throws Exception
 	 */
 	public void testAddDuplicateListeners() throws Exception {
 		try {
@@ -1204,8 +1163,6 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	/**
 	 * Tests that listeners can be retrieved after breakpoint deletion.
-	 *
-	 * @throws Exception
 	 */
 	public void testGetListenersAfterDelete() throws Exception {
 		try {

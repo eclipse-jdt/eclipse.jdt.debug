@@ -30,7 +30,6 @@ import com.sun.jdi.ThreadReference;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		ThreadGroupReference {

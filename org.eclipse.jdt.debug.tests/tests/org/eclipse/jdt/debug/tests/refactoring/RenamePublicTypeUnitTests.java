@@ -36,14 +36,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		super(name);
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @throws Exception
-	 */
 	protected void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage) throws Exception {
 		try {
 			//create breakpoint to test
@@ -68,11 +60,7 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * Creates an exception breakpoint and adds a filter. Refactors & checks
 	 * if the filter changed appropriately w/ the refactor.
 	 * @param src name of src file
-	 * @param pack
-	 * @param cunit
-	 * @param targetName
 	 * @param exceptionName TODO
-	 * @throws Exception
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String exceptionName) throws Exception {
 		try {
@@ -95,15 +83,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @param lineNumber
-	 * @throws Exception
-	 */
 	protected void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, int lineNumber) throws Exception {
 		try {
 			//create breakpoint to test
@@ -125,15 +104,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @param methodName
-	 * @throws Exception
-	 */
 	protected void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, String methodName) throws Exception {
 		try {
 			//create breakpoint to test
@@ -155,15 +125,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @param fieldName
-	 * @throws Exception
-	 */
 	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, String fieldName) throws Exception {
 		try {
 			//create breakpoint to test
@@ -187,12 +148,7 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 
 	/**
 	 *
-	 * @param root
-	 * @param packageName
-	 * @param cuName
 	 * @param type TODO
-	 * @return
-	 * @throws Exception
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName, String type) throws Exception {
 		IJavaProject javaProject = get14Project();

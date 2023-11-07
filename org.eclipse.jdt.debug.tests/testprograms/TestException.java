@@ -20,9 +20,6 @@ import java.lang.Error;
  */
 public class TestException extends Error {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 }

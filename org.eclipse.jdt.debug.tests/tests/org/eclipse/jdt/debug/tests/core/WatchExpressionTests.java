@@ -167,8 +167,6 @@ public class WatchExpressionTests extends AbstractDebugTest {
 
 	/**
 	 * Dumps any error messages to the console.
-	 *
-     * @param expression
      */
     private void dumpErrors(IWatchExpression expression) {
         if (expression.hasErrors()) {

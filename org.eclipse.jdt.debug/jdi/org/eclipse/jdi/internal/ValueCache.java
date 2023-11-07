@@ -31,7 +31,6 @@ import java.util.Map;
  * Note that WeakHashMap can't be used for this purpose because in WeakHashMap
  * soft references are only used for the keys, and values may not have 'strong'
  * references to keys otherwise they will never be garbage collected.
- *
  */
 public class ValueCache {
 	/**

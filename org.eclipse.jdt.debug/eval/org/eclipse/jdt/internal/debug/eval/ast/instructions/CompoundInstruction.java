@@ -23,8 +23,6 @@ public abstract class CompoundInstruction extends Instruction {
 
 	/**
 	 * Constructor for CompoundInstruction.
-	 *
-	 * @param start
 	 */
 	protected CompoundInstruction(int start) {
 		fSize = -start;

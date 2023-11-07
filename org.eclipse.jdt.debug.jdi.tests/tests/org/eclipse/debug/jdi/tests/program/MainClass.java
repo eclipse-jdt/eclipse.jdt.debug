@@ -79,8 +79,6 @@ public class MainClass extends Date implements Runnable, Printable {
 	 */
 	public static Thread fMainThread;
 
-	/**
-	 */
 	public static String[] fArray = new String[] { "foo", "bar", "hop" };
 
 	/**
@@ -113,9 +111,6 @@ public class MainClass extends Date implements Runnable, Printable {
 	 * Constructor
 	 * Used to test ClassType.newInstance
 	 * @see ClassTypeTest
-	 * @param i
-	 * @param o1
-	 * @param o2
 	 */
 	public MainClass(int i, Object o1, Object o2) {
 	}
@@ -123,7 +118,6 @@ public class MainClass extends Date implements Runnable, Printable {
 	/**
 	 * For invocation tests
 	 * @param x the integer
-	 * @param o
 	 * @return a string object representing the specified interger value
 	 */
 	private static String invoke1(int x, Object o) {
@@ -142,8 +136,6 @@ public class MainClass extends Date implements Runnable, Printable {
 
 	/**
 	 * For invocation tests
-	 * @param str
-	 * @param o
 	 * @return an the integer value of the specified string
 	 */
 	private int invoke3(String str, Object o) {
@@ -152,20 +144,17 @@ public class MainClass extends Date implements Runnable, Printable {
 	/**
 	 * For invocation tests
 	 * @return nothing, only throws an exception
-	 * @throws java.io.EOFException
 	 */
 	private long invoke4() throws java.io.EOFException {
 		throw new java.io.EOFException();
 	}
 	/**
 	 * For variables test
-	 * @param l
 	 */
 	private void variablesTest(long l) {}
 
 	/**
 	 * Runs the test program
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		// Start the test program

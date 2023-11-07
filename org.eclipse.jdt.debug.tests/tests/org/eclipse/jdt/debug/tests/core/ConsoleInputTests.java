@@ -158,11 +158,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	 * of lines to be written to the console. Returns the lines written to
 	 * the console.
 	 *
-	 * @param console
-	 * @param text
-	 * @param linesExpected
 	 * @return lines written to the console without line delimiters
-	 * @throws Exception
 	 */
 	private String[] appendAndGet(IConsole console, final String text, int linesExpected) throws Exception {
 		fLinesRead.clear();
@@ -197,10 +193,6 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 
 	/**
 	 * Appends the given text to the given console. Text should not have new lines.
-	 *
-	 * @param console
-	 * @param text
-	 * @throws Exception
 	 */
 	private void append(IConsole console, final String text) throws Exception {
 		final IDocument document = console.getDocument();
@@ -219,9 +211,6 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 
 	/**
 	 * Deletes all text in the given console.
-	 *
-	 * @param console
-	 * @throws Exception
 	 */
 	private void deleteAll(IConsole console) throws Exception {
 		final IDocument document = console.getDocument();
@@ -305,8 +294,6 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	/**
 	 * Tests the scenario reported in bug 241394 - 'a', backspace, 'b', backspace, 'c', Enter.
 	 * Result should be 'c'.
-	 *
-	 * @throws Exception
 	 */
 	public void testDeleteAllEnteredText() throws Exception {
 		ConsoleLineTracker.setDelegate(this);

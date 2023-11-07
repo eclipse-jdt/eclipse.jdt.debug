@@ -19,8 +19,6 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 public class TestsAnonymousClassVariable extends Tests {
 	/**
 	 * Constructor for TestsAnonymousClassVariable.
-	 *
-	 * @param name
 	 */
 	public TestsAnonymousClassVariable(String name) {
 		super(name);

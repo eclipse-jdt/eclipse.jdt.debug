@@ -52,9 +52,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		return get14Project();
 	}
 
-    /**
-     *
-     */
     public void testPerspectiveSwtich() {
         DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
             @Override
@@ -75,7 +72,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
     /**
      * test if builds completed successfully and output directory contains class
      * files.
-     * @throws Exception
      */
     public void testOutputFolderNotEmpty() throws Exception {
         waitForBuild();
@@ -91,9 +87,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         assertTrue("output folder is empty", children.length > 0);
     }
 
-    /**
-     * @throws Exception
-     */
     public void testForUnexpectedErrorsInProject() throws Exception {
         waitForBuild();
         IProject project = get14Project().getProject();
@@ -110,9 +103,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		assertEquals("Unexpected compile errors in project. Expected 0 found " + markers.length, 0, errors);
     }
 
-    /**
-     * @throws Exception
-     */
     public void testClassFilesGenerated() throws Exception {
         waitForBuild();
         IPath outputLocation = get14Project().getOutputLocation();

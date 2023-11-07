@@ -24,7 +24,6 @@ import com.sun.jdi.event.VMDeathEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class VMDeathEventImpl extends EventImpl implements VMDeathEvent {
 	/** Jdwp Event Kind. */
@@ -40,10 +39,6 @@ public class VMDeathEventImpl extends EventImpl implements VMDeathEvent {
 	/**
 	 * Creates, reads and returns new EventImpl, of which requestID has
 	 *         already been read.
-	 * @param target
-	 * @param requestID
-	 * @param dataInStream
-	 * @return
 	 */
 	public static VMDeathEventImpl read(MirrorImpl target, RequestID requestID,
 			DataInputStream dataInStream) {

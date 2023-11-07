@@ -32,7 +32,6 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
 
     /**
      * Constructor
-     * @param name
      */
     public OpenLaunchConfigurationDialogTests(String name) {
         super(name);
@@ -70,8 +69,6 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
 
     /**
      * Helper method to open the launch configuration dialog
-     * @param selection
-     * @param groupIdentifier
      */
     private void openLCD(final IStructuredSelection selection, final String groupIdentifier) {
         //set a status to go to the classpath tab

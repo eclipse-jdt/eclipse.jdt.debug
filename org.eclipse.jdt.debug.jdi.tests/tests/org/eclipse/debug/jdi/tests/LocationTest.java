@@ -47,7 +47,6 @@ public class LocationTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new LocationTest().runSuite(args);
@@ -90,7 +89,7 @@ public class LocationTest extends AbstractJDITest {
 	 * Test JDI lineNumber().
 	 */
 	public void testJDILineNumber() {
-		assertEquals("1", 191, fLocation.lineNumber());
+		assertEquals("1", 180, fLocation.lineNumber());
 	}
 	/**
 	 * Test JDI method().

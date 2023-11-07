@@ -28,8 +28,6 @@ public abstract class LineBreakpointChange extends BreakpointChange {
 
 	/**
 	 * Constructor
-	 * @param breakpoint
-	 * @throws CoreException
 	 */
 	public LineBreakpointChange(IJavaLineBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);
@@ -45,8 +43,6 @@ public abstract class LineBreakpointChange extends BreakpointChange {
 
 	/**
 	 * Applies the original attributes to the new breakpoint
-	 * @param breakpoint
-	 * @throws CoreException
 	 */
 	protected void apply(IJavaLineBreakpoint breakpoint) throws CoreException {
 		super.apply(breakpoint);

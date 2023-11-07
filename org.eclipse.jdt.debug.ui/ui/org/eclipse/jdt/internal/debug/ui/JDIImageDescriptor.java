@@ -76,7 +76,6 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	 *
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered
-	 *
 	 */
 	public JDIImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);

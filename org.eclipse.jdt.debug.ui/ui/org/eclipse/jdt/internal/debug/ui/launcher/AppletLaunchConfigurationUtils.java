@@ -107,9 +107,6 @@ public class AppletLaunchConfigurationUtils {
 		return null;
 	}
 
-	/**
-	 *
-	 */
 	public static Set<IType> collectAppletTypesInProject(IProgressMonitor monitor, IJavaProject project) {
 		IType[] types;
 		HashSet<IType> result = new HashSet<>(5);
@@ -206,11 +203,8 @@ public class AppletLaunchConfigurationUtils {
 
 	/**
 	 * Searches for applets from within the given scope of elements
-	 * @param context
 	 * @param elements the search scope
 	 * @return and array of <code>IType</code>s of matches for java types that extend <code>Applet</code> (directly or indirectly)
-	 * @throws InvocationTargetException
-	 * @throws InterruptedException
 	 */
 	public static IType[] findApplets(IRunnableContext context, final Object[] elements) throws InvocationTargetException, InterruptedException {
 		final Set<Object> result= new HashSet<>();

@@ -33,7 +33,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * Clients may subclass this class.
  * </p>
  * @since 3.0
- *
  */
 public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 

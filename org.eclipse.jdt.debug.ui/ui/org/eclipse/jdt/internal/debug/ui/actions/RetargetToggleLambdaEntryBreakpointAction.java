@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * Global retargettable toggle Line Entry action.
  *
  * @since 3.12
- *
  */
 public class RetargetToggleLambdaEntryBreakpointAction extends RetargetToggleBreakpointAction {
 

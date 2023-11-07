@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  * ->
  *
  * Element1 Element2 Element3 ...
- *
  */
 public class DupX1 extends SimpleInstruction {
 

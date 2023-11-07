@@ -36,8 +36,6 @@ public class JDINullValue extends JDIObjectValue {
 
 	/**
 	 * Constructor
-	 *
-	 * @param target
 	 */
 	public JDINullValue(JDIDebugTarget target) {
 		super(target, null);
@@ -183,11 +181,6 @@ public class JDINullValue extends JDIObjectValue {
 
 	/**
 	 * Creates an artificial NPE for display to the user as an error message
-	 *
-	 * @param selector
-	 * @param signature
-	 * @return
-	 * @throws DebugException
 	 */
 	private IJavaValue npe(String selector, String signature)
 			throws DebugException {

@@ -39,7 +39,6 @@ import com.sun.jdi.VoidType;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class ValueImpl extends MirrorImpl implements Value {
 	/**
@@ -218,8 +217,6 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 												: "null", type.name() })); //$NON-NLS-1$
 	}
 
-	/**
-     */
 	private static void checkReferenceType(ReferenceType valueType,
 			ReferenceType type) throws InvalidTypeException {
 		if (valueType instanceof ArrayType) {

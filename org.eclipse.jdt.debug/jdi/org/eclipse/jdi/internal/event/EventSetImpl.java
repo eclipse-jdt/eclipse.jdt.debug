@@ -34,7 +34,6 @@ import com.sun.jdi.request.EventRequest;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class EventSetImpl extends MirrorImpl implements EventSet {
 	/** Set that is used to store events. */

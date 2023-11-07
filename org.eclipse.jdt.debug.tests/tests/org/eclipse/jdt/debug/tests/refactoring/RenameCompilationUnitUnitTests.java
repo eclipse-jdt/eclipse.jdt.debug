@@ -33,14 +33,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 		super(name);
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param newTargetLineage
-	 * @throws Exception
-	 */
 	private void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName, String newTargetLineage) throws Exception {
 		try {
 			//create breakpoint to test
@@ -61,15 +53,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetsParentName
-	 * @param lineNumber
-	 * @throws Exception
-	 */
 	private void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetsParentName, int lineNumber) throws Exception {
 		try {
 			//create breakpoint to test
@@ -91,15 +74,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param newTargetLineage
-	 * @param methodName
-	 * @throws Exception
-	 */
 	private void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String newTargetLineage, String methodName) throws Exception {
 		try {
 			//create breakpoint to test
@@ -121,15 +95,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 		}
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param newTargetLineage
-	 * @param fieldName
-	 * @throws Exception
-	 */
 	private void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String newTargetLineage, String fieldName) throws Exception {
 		try {
 			//create breakpoint to test

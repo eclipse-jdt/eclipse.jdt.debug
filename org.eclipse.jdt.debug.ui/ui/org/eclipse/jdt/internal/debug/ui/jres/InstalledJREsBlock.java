@@ -829,8 +829,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 
 	/**
 	 * Removes the given VMs from the table.
-	 *
-	 * @param vms
 	 */
 	public void removeJREs(IVMInstall[] vms) {
 		for (int i = 0; i < vms.length; i++) {
@@ -1014,11 +1012,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Searches the specified directory recursively for installed VMs, adding each
 	 * detected VM to the <code>found</code> list. Any directories specified in
 	 * the <code>ignore</code> are not traversed.
-	 *
-	 * @param directory
-	 * @param found
-	 * @param types
-	 * @param ignore
 	 */
 	protected void search(File directory, List<File> found, List<IVMInstallType> types, Set<File> ignore, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
@@ -1155,8 +1148,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 
 	/**
 	 * Restores the column widths from dialog settings
-	 * @param settings
-	 * @param qualifier
 	 */
 	private void restoreColumnWidths(IDialogSettings settings, String qualifier) {
         int columnCount = fTable.getColumnCount();

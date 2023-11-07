@@ -126,8 +126,6 @@ public class JavaThreadEventHandlerTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that we can (or can't) compute frame index during evaluation
-	 *
-	 * @throws Exception
 	 */
 	public void testComputeFrameIndexDuringEvaluation() throws Exception {
 		String typeName = "DropTests";

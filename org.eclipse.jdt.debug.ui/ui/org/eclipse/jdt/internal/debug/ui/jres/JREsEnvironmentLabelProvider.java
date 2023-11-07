@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Display;
  * Decorates JREs to emphasize those that are strictly compatible with an environment.
  *
  * @since 3.2
- *
  */
 public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements IFontProvider {
 

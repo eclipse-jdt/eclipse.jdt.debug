@@ -453,8 +453,6 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	/**
 	 * Tests that default classpath computation works for a project with mulitple
 	 * output locations.
-	 *
-	 * @throws Exception
 	 */
 	public void testMultiOutputDefaultClasspath() throws Exception {
 		IJavaProject project = getMultiOutputProject();
@@ -478,8 +476,6 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	/**
 	 * Tests that default classpath computation works for a project with a default
 	 * output location.
-	 *
-	 * @throws Exception
 	 */
 	public void testSingleOutputDefaultClasspath() throws Exception {
 		IJavaProject project = get14Project();
@@ -499,8 +495,6 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a buildpath with a relative (../..) classpath entry will resolve properly.
-	 *
-	 * @throws Exception
 	 */
 	public void testRelativeClasspathEntry() throws Exception {
         // create a project with a relative classpath entry
@@ -533,8 +527,6 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a variable with a relative (../..) path will resolve properly.
-	 *
-	 * @throws Exception
 	 */
 	public void testVariableWithRelativePath() throws Exception {
         // create a project with a relative classpath entry

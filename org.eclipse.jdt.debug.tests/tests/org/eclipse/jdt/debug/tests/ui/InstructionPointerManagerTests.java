@@ -179,7 +179,6 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	 * </p>
 	 * @param expectedIPCCounts array of expected values for IPC count at each step as marked above, length must be 8
 	 * @param expectedMappingCounts array of expected values for editor mapping count at each step as marked above, length must be 8
-	 * @throws Exception
 	 */
 	private void addAndRemoveAnnotations(int[] expectedIPCCounts, int[] expectedMappingCounts) throws Exception{
 		assertEquals("Incorrect number of expected counts", 8, expectedIPCCounts.length);

@@ -50,7 +50,6 @@ public class TryVirtualThread implements Runnable {
 	
 	/**
 	 * Runs the test program
-	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		// Ensure at least one carrier thread is created.

@@ -61,8 +61,6 @@ public class ProcessTests extends AbstractDebugTest {
 	/**
 	 * Tests that an already terminated java.lang.Process behaves properly when
 	 * wrapped in an IProcess.
-	 *
-	 * @throws Exception
 	 */
 	public void testAlreadyTerminatedProcess() throws Exception {
 		if (Platform.getOS().equals(Platform.OS_LINUX)) {

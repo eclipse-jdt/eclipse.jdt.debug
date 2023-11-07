@@ -44,7 +44,6 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
-	 * @param args
 	 */
 	public static void main(String[] args) {
 		new VirtualMachineExitTest().runSuite(args);

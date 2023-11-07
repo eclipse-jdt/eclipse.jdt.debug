@@ -21,7 +21,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 public class TestsOperators1 extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
-	 * @param name
 	 */
 	public TestsOperators1(String name) {
 		super(name);

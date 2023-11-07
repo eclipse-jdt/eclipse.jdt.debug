@@ -27,7 +27,6 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public PerfSteppingTests(String name) {
 		super(name);
@@ -41,8 +40,6 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 
 		/**
 		 * Constructor
-		 * @param thread
-		 * @param lock
 		 */
 		public MyFilter(IJavaThread thread, Object lock) {
 			fThread = thread;
@@ -91,8 +88,6 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 
 	/**
 	 * Tests stepping over without taking into account event processing in the UI.
-	 *
-	 * @throws Exception
 	 */
 	public void testBareStepOver() throws Exception {
 		String typeName = "PerfLoop";

@@ -787,8 +787,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * Returns the last exception object that was encountered by this exception
 	 *
 	 * TODO: make API in future release.
-	 *
-	 * @return
 	 */
 	public IJavaObject getLastException() {
 		if (fLastException != null) {

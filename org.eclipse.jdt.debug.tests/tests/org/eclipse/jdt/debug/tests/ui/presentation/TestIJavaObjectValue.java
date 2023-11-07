@@ -20,20 +20,12 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
-/**
- *
- */
 public class TestIJavaObjectValue extends TestIJavaValue implements IJavaObject {
 
 	private String label;
 
 	/**
 	 * Constructor
-	 * @param type
-	 * @param sig
-	 * @param gsig
-	 * @param rtname
-	 * @param vstring
 	 */
 	public TestIJavaObjectValue(IJavaType type, String sig, String gsig, String rtname, String vstring) {
 		super(type, sig, gsig, rtname, vstring);

@@ -31,7 +31,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ConditionalBreakpointsTests(String name) {
 		super(name);
@@ -39,7 +38,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a breakpoint with a simple condition
-	 * @throws Exception
 	 */
 	public void testSimpleConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -67,7 +65,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a static method call that has a conditional breakpoint on it
-	 * @throws Exception
 	 */
 	public void testStaticMethodCallConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -95,7 +92,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a simple conditional breakpoint that gets hit when a change is made
-	 * @throws Exception
 	 */
 	public void testSimpleConditionalBreakpointSuspendOnChange() throws Exception {
 		String typeName = "HitCountLooper";
@@ -134,7 +130,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a conditional step return
-	 * @throws Exception
 	 */
 	public void testConditionalStepReturn() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -157,8 +152,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	/**
 	 * Tests a breakpoint condition *is* evaluated when it coincides with a step end.
 	 * See bug 265714.
-	 *
-	 * @throws Exception
 	 */
 	public void testEvalConditionOnStep() throws Exception {
 		String typeName = "HitCountLooper";
@@ -194,8 +187,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a thread can be suspended when executing a long-running condition.
-	 *
-	 * @throws Exception
 	 */
 	public void testSuspendLongRunningCondition() throws Exception {
 		String typeName = "MethodCall";
@@ -233,8 +224,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	/**
 	 * Tests that a conditional breakpoint with an expression that will hit a breakpoint
 	 * will complete the conditional expression evaluation (bug 269231).
-	 *
-	 * @throws Exception
 	 */
 	public void testConditionalExpressionIgnoresBreakpoint() throws Exception {
 		String typeName = "BreakpointListenerTest";
@@ -255,7 +244,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix1() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -273,7 +261,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix2() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -291,7 +278,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix3() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -309,7 +295,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix4() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -327,7 +312,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix5() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -345,7 +329,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix6() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -363,7 +346,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix7() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -381,7 +363,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix8() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -399,7 +380,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix9() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -417,7 +397,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix10() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -435,7 +414,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix11() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -453,7 +431,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix12() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -471,7 +448,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testConditionalMultiInfix13() throws Exception {
 		String typeName = "ConditionalStepReturn";
@@ -489,8 +465,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a breakpoint with a simple systrace Launch should don't suspend for simple systrace
-	 *
-	 * @throws Exception
 	 */
 	public void testSystracelBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -511,8 +485,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a breakpoint with a simple code which returns Integer Object, Launch should don't suspend for non true boolean returns
-	 *
-	 * @throws Exception
 	 */
 	public void testConditionBreakpointReturnNonBooleanObject() throws Exception {
 		String typeName = "HitCountLooper";
@@ -532,8 +504,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a breakpoint with a simple code which returns Boolean Object with true, Launch should suspend for true Boolean returns
-	 *
-	 * @throws Exception
 	 */
 	public void testConditionBreakpointReturnBooleanObjectTrue() throws Exception {
 		String typeName = "HitCountLooper";
@@ -553,8 +523,6 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a breakpoint with a simple code which returns Boolean Object with false, Launch should not suspend for false Boolean returns
-	 *
-	 * @throws Exception
 	 */
 	public void testConditionBreakpointReturnBooleanObjectFalse() throws Exception {
 		String typeName = "HitCountLooper";

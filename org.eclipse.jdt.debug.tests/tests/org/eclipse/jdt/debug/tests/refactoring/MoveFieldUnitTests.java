@@ -33,7 +33,6 @@ public class MoveFieldUnitTests extends MoveRefactoringTest {
 
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testPublicTypeFieldMove() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -60,7 +59,6 @@ public class MoveFieldUnitTests extends MoveRefactoringTest {
 
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testInnerTypeFieldMove() throws Exception {
 		IJavaProject javaProject = get14Project();
@@ -87,7 +85,6 @@ public class MoveFieldUnitTests extends MoveRefactoringTest {
 
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
-	 * @throws Exception
 	 */
 	public void testNonPublicTypeFieldMove() throws Exception {
 		IJavaProject javaProject = get14Project();

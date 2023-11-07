@@ -17,9 +17,6 @@ public class Pop extends Instruction {
 
 	private final int fSize;
 
-	/**
-	 * @param start
-	 */
 	public Pop(int size) {
 		fSize = size;
 	}

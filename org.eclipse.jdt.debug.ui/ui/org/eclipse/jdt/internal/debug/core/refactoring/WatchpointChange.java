@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 
 /**
  * @since 3.2
- *
  */
 public abstract class WatchpointChange extends LineBreakpointChange {
 

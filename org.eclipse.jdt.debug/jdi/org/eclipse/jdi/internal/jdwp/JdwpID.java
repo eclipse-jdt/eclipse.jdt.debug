@@ -25,7 +25,6 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 /**
  * From this class all Java Debug Wire Protocol (JDWP) IDs declared by the JDWP
  * specification are derived.
- *
  */
 public abstract class JdwpID {
 	/** Tag Constants. */

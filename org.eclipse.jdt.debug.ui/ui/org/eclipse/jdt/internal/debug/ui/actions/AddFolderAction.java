@@ -51,7 +51,6 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 * provides a filter to remove the files from the ElementSelectionDialog
 	 *
 	 * @since 3.2
-	 *
 	 */
 	static class FileFilter extends ViewerFilter {
 		@Override

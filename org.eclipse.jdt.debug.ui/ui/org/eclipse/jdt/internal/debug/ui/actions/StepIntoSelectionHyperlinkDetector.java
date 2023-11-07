@@ -56,7 +56,6 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 
 		/**
 		 * Constructor
-		 * @param region
 		 */
 		public StepIntoSelectionHyperlink(ITextSelection selection) {
 			fSelection = selection;

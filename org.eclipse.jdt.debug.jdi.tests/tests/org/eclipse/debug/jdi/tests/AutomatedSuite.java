@@ -16,8 +16,6 @@ package org.eclipse.debug.jdi.tests;
 
 import junit.framework.TestSuite;
 
-/**
- */
 public class AutomatedSuite extends TestSuite {
 
 	/**

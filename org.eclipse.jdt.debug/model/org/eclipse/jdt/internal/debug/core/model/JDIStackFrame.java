@@ -518,8 +518,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * If there is a return value from a "step return" that belongs to this frame, insert it as first element
-	 *
-	 * @param variables
 	 */
 	private void addStepReturnValue(List<IJavaVariable> variables) {
 		if (fIsTop) {

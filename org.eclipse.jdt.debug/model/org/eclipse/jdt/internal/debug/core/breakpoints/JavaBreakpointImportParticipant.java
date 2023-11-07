@@ -77,9 +77,6 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Constructor
-		 *
-		 * @param breakpoint
-		 * @param unit
 		 */
 		public BreakpointVerifier(IBreakpoint breakpoint, CompilationUnit unit) {
 			fTypename = getBreakpointTypeName(breakpoint);
@@ -94,7 +91,6 @@ public class JavaBreakpointImportParticipant implements
 		 * Returns the value of the {@link JavaBreakpoint#TYPE_NAME} attribute
 		 * from the breakpoint or <code>null</code>
 		 *
-		 * @param breakpoint
 		 * @return the value of the type name attribute
 		 */
 		String getBreakpointTypeName(IBreakpoint breakpoint) {
@@ -110,7 +106,6 @@ public class JavaBreakpointImportParticipant implements
 		 * method or method entry breakpoint (3) <code>null</code> if there is
 		 * no member name
 		 *
-		 * @param breakpoint
 		 * @return the member name or <code>null</code>
 		 */
 		String getMemberName(IBreakpoint breakpoint) {
@@ -127,7 +122,6 @@ public class JavaBreakpointImportParticipant implements
 		 * {@link JavaMethodBreakpoint#METHOD_SIGNATURE} attribute, or
 		 * <code>null</code>
 		 *
-		 * @param breakpoint
 		 * @return the signature of the member or <code>null</code>
 		 */
 		String getMemberSignature(IBreakpoint breakpoint) {
@@ -139,7 +133,6 @@ public class JavaBreakpointImportParticipant implements
 		 * Returns the fully qualified name of the enclosing type for the given
 		 * node
 		 *
-		 * @param node
 		 * @return the fully qualified name of the enclosing type
 		 */
 		private String getTypeName(ASTNode node) {
@@ -232,7 +225,6 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Visits the type node and return if children should be visited
 		 *
-		 * @param node
 		 * @return true if child nodes should be visited false otherwise
 		 */
 		private boolean doTypeVisit(AbstractTypeDeclaration node) {
@@ -331,7 +323,6 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Creates a method signature from a specified {@link MethodDeclaration}
 		 *
-		 * @param node
 		 * @return the signature for the given method node or <code>null</code>
 		 */
 		private String getMethodSignatureFromNode(MethodDeclaration node) {
@@ -367,7 +358,6 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Returns the listing of the signatures of the parameters passed in
 		 *
-		 * @param rawparams
 		 * @return a listing of signatures for the specified parameters
 		 */
 		private List<String> getParametersTypeNames(List<SingleVariableDeclaration> rawparams) {
@@ -465,9 +455,6 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Determines if the given {@link MethodDeclaration} is present in a top
 		 * level type
-		 *
-		 * @param method
-		 * @return
 		 */
 		private boolean isInTopLevelType(final MethodDeclaration method) {
 			TypeDeclaration type = (TypeDeclaration) method.getParent();
@@ -625,11 +612,8 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given line breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesLineBreakpoint(Map<String, Object> attributes,
 			JavaLineBreakpoint breakpoint) throws CoreException {
@@ -642,11 +626,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given class prepare
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesClassBreakpoint(Map<String, Object> attributes,
 			JavaClassPrepareBreakpoint breakpoint) throws CoreException {
@@ -662,11 +643,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given exception
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesExceptionBreakpoint(Map<String, Object> attributes,
 			JavaExceptionBreakpoint breakpoint) throws CoreException {
@@ -679,11 +657,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given method
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesMethodBreakpoint(Map<String, Object> attributes,
 			JavaMethodBreakpoint breakpoint) throws CoreException {
@@ -699,11 +674,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given method entry
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesMethodEntryBreakpoint(Map<String, Object> attributes,
 			JavaMethodEntryBreakpoint breakpoint) throws CoreException {
@@ -718,11 +690,8 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given watchpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the watchpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesWatchpoint(Map<String, Object> attributes, JavaWatchpoint watchpoint)
 			throws CoreException {
@@ -736,11 +705,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given stratum line
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesStratumLineBreakpoint(Map<String, Object> attributes,
 			JavaStratumLineBreakpoint breakpoint) throws CoreException {
@@ -759,11 +725,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given pattern
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesPatternBreakpoint(Map<String, Object> attributes,
 			JavaPatternBreakpoint breakpoint) throws CoreException {
@@ -781,11 +744,8 @@ public class JavaBreakpointImportParticipant implements
 	 * Returns if the given map of attributes matches the given target pattern
 	 * breakpoint
 	 *
-	 * @param attributes
-	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
 	 *         otherwise
-	 * @throws CoreException
 	 */
 	private boolean matchesTargetPatternBreakpoint(Map<String, Object> attributes,
 			JavaTargetPatternBreakpoint breakpoint) throws CoreException {

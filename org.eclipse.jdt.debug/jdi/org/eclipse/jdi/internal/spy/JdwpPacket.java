@@ -25,7 +25,6 @@ import java.lang.reflect.Modifier;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP)
  * packet declared by the JDWP specification.
- *
  */
 public abstract class JdwpPacket {
 	/** General JDWP constants. */

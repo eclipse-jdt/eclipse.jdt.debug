@@ -59,7 +59,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public BreakpointListenerTests(String name) {
 		super(name);
@@ -127,7 +126,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 
 	/**
 	 * Tests a single breakpoint listener
-	 * @throws Exception
 	 */
 	public void testSingleListener() throws Exception {
 		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
@@ -158,7 +156,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 
 	/**
 	 * Tests more than one simultaneous breakpoint listener
-	 * @throws Exception
 	 */
 	public void testMultiListener() throws Exception {
 		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
@@ -189,7 +186,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 
 	/**
 	 * Test multiple breakpoint listeners over a project open and close
-	 * @throws Exception
 	 */
 	public void testMultiListenerProjectCloseOpen() throws Exception {
 		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
@@ -230,7 +226,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 
 	/**
 	 * Tests multiple breakpoint listeners over a compilation move operation
-	 * @throws Exception
 	 */
 	public void testMultiListenerMoveCompilationUnit() throws Exception {
 		IJavaProject project = get14Project();
@@ -275,7 +270,6 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 
 	/**
 	 * Tests a single breakpoint listener over the move of a compilation unit
-	 * @throws Exception
 	 */
 	public void testSingleListenerMoveCompilationUnit() throws Exception {
 		IJavaProject project = get14Project();

@@ -293,7 +293,6 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	/**
 	 * Fall back to compute the type name if bindings are not resolved
 	 *
-	 * @param node
 	 * @return the computed type name
 	 */
 	String computeTypeName0(ASTNode node) {

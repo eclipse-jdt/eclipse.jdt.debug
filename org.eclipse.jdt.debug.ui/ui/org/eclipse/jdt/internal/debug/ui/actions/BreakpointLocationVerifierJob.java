@@ -91,14 +91,6 @@ public class BreakpointLocationVerifierJob extends Job {
 
 	/**
 	 * Constructor
-	 * @param document
-	 * @param cunit
-	 * @param breakpoint
-	 * @param lineNumber
-	 * @param typeName
-	 * @param type
-	 * @param editorPart
-	 * @param bestmatch
 	 */
 	public BreakpointLocationVerifierJob(IDocument document, CompilationUnit cunit, IJavaLineBreakpoint breakpoint, int lineNumber, String typeName, IType type, IEditorPart editorPart, boolean bestmatch) {
 		super(ActionMessages.BreakpointLocationVerifierJob_breakpoint_location);

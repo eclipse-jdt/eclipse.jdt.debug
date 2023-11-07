@@ -33,7 +33,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public SuspendVMBreakpointsTests(String name) {
 		super(name);
@@ -41,7 +40,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the VM is suspended when the specific line breakpoint is hit
-	 * @throws Exception
 	 */
 	public void testSuspendVmLineBreakpoint() throws Exception {
 		String typeName = "MultiThreadedLoop";
@@ -63,7 +61,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the VM is suspended when a specific exception breakpoint is hit
-	 * @throws Exception
 	 */
 	public void testSuspendVmExceptionBreakpoint() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -90,7 +87,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the VM is suspended when a specific access watchpoint is hit
-	 * @throws Exception
 	 */
 	public void testSuspendVmAccessWatchpointBreakpoint() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -120,7 +116,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the VM is suspended when a specific modification watchpoint is hit
-	 * @throws Exception
 	 */
 	public void testSuspendVmModificationWatchpointBreakpoint() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -153,7 +148,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the VM is suspended when a specific method entry breakpoint is hit
-	 * @throws Exception
 	 */
 	public void testSuspendVmMethodEntryBreakpoint() throws Exception {
 		String typeName = "DropTests";
@@ -179,7 +173,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that the VM is suspended when a specific method exit breakpoint is hit
-	 * @throws Exception
 	 */
 	public void testSuspendVmMethodExitBreakpoint() throws Exception {
 		String typeName = "DropTests";
@@ -205,7 +198,6 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Verifies that all of the threads of the related debug target are suspended
-	 * @param thread
 	 */
 	protected void verifyAllThreadsSuspended(IJavaThread thread) {
 		try {

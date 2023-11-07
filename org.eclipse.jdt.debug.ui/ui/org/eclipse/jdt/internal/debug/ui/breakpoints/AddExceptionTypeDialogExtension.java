@@ -47,8 +47,6 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 
 	 /**
 	 * Constructor
-	 * @param caught
-	 * @param uncaught
 	 */
 	public AddExceptionTypeDialogExtension(boolean caught, boolean uncaught) {
 		 fCaught = caught;

@@ -32,7 +32,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public WatchpointTests(String name) {
 		super(name);
@@ -40,7 +39,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests both access and modification breakpoints suspend
-	 * @throws Exception
 	 */
 	public void testAccessAndModification() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -87,7 +85,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a modification breakpoint suspends correctly
-	 * @throws Exception
 	 */
 	public void testModification() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -118,7 +115,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a disabled modification watchpoint is NOT hit
-	 * @throws Exception
 	 */
 	public void testDisabledModification() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -137,7 +133,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that an access watchpoint is hit
-	 * @throws Exception
 	 */
 	public void testAccess() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -181,7 +176,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a disabled access watchpoint is not hit
-	 * @throws Exception
 	 */
 	public void testDisabledAccess() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -215,7 +209,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that an access watchpoint suspends when it count is hit
-	 * @throws Exception
 	 */
 	public void testHitCountAccess() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -270,7 +263,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a watchpoint set to be skipped is indeed skipped
-	 * @throws Exception
 	 */
 	public void testSkipWatchpoint() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
@@ -303,8 +295,6 @@ public class WatchpointTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a watchpoint set to be skipped is indeed skipped
-	 *
-	 * @throws Exception
 	 */
 	public void testFinalWatchpoint() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984";

@@ -43,9 +43,6 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 			fgTestCase.launch(configuration, mode);
 	}
 
-	/**
-	 * @param testCase
-	 */
 	public static void setTestCase(LaunchModeTests testCase) {
 		fgTestCase = testCase;
 	}

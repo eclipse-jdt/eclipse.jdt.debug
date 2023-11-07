@@ -117,9 +117,6 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		addAllLogicalStructures(fUserDefinedJavaLogicalStructures);
 	}
 
-	/**
-	 * @param pluginContributedJavaLogicalStructures
-	 */
 	private static void addAllLogicalStructures(
 			List<JavaLogicalStructure> pluginContributedJavaLogicalStructures) {
 		for (JavaLogicalStructure logicalStructure : pluginContributedJavaLogicalStructures) {
@@ -127,9 +124,6 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		}
 	}
 
-	/**
-	 * @param structure
-	 */
 	private static void addLogicalStructure(JavaLogicalStructure structure) {
 		String typeName = structure.getQualifiedTypeName();
 		List<JavaLogicalStructure> logicalStructure = fJavaLogicalStructureMap.get(typeName);

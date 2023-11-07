@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 
 /**
  * @since 3.2
- *
  */
 public abstract class ClassPrepareBreakpointChange extends BreakpointChange {
 

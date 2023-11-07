@@ -64,9 +64,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 
 	/**
 	 * Perform the actual evaluation (inspect)
-	 * @param thread
 	 * @return the result of the evaluation
-	 * @throws Exception
 	 */
 	IValue doEval(IJavaThread thread) throws Exception{
 		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
@@ -89,8 +87,6 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	/**
 	 * Tests that we can successfully inspect a method call from an anonymous type declaration that is assigned
 	 * to a field
-	 *
-	 * @throws Exception
 	 */
 	public void testInspectInAnonField() throws Exception {
 		IJavaThread thread = null;
@@ -113,8 +109,6 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	/**
 	 * Tests that we can successfully inspect a method call from an anonymous type declaration within a method
 	 * declaration
-	 *
-	 * @throws Exception
 	 */
 	public void testInspectInAnonMethod() throws Exception {
 		IJavaThread thread = null;
@@ -137,8 +131,6 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	/**
 	 * Tests that we can successfully inspect a method call from an anonymous type declaration within a static
 	 * initializer
-	 *
-	 * @throws Exception
 	 */
 	public void testInspectInAnonInitializer() throws Exception {
 		IJavaThread thread = null;

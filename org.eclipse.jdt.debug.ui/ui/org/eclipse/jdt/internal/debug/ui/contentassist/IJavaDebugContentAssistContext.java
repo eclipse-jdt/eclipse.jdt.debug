@@ -74,7 +74,6 @@ public interface IJavaDebugContentAssistContext {
 	 *
 	 * @param snippet the snippet in source viewer on which completion is being performed
 	 * @return the snippet on which to perform code completion
-	 * @throws CoreException
 	 */
 	public String getSnippet(String snippet) throws CoreException;
 }

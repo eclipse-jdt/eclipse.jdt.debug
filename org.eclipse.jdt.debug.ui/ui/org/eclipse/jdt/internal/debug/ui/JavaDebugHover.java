@@ -236,7 +236,6 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
      * Returns the value of this filters preference (on/off) for the given
      * view.
      *
-     * @param part
      * @return boolean
      */
     public static boolean getBooleanPreferenceValue(String id, String preference) {

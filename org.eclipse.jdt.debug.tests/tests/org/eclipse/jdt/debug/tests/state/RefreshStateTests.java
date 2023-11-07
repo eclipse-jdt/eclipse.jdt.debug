@@ -16,7 +16,6 @@ package org.eclipse.jdt.debug.tests.state;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IThread;
@@ -44,8 +43,6 @@ public class RefreshStateTests extends AbstractDebugTest {
 
 	/**
 	 * Resume a thread behind the scenes and ensure model state updates appropriately.
-	 *
-	 * @throws CoreException
 	 */
 	public void testThreadHasResumed() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
@@ -84,8 +81,6 @@ public class RefreshStateTests extends AbstractDebugTest {
 
 	/**
 	 * Resume all threads behind the scenes and ensure model state updates appropriately.
-	 *
-	 * @throws CoreException
 	 */
 	public void testAllThreadsResumed() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
@@ -127,8 +122,6 @@ public class RefreshStateTests extends AbstractDebugTest {
 
 	/**
 	 * Suspend a thread behind the scenes and ensure model state updates appropriately.
-	 *
-	 * @throws CoreException
 	 */
 	public void testThreadHasSuspended() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
@@ -176,8 +169,6 @@ public class RefreshStateTests extends AbstractDebugTest {
 
 	/**
 	 * Suspend all threads behind the scenes and ensure model state updates appropriately.
-	 *
-	 * @throws CoreException
 	 */
 	public void testAllThreadsSuspended() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
@@ -228,8 +219,6 @@ public class RefreshStateTests extends AbstractDebugTest {
 
 	/**
 	 * Suspend the entire target behind the scenes and ensure model state updates appropriately.
-	 *
-	 * @throws CoreException
 	 */
 	public void testTargetHasSuspended() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";
@@ -276,8 +265,6 @@ public class RefreshStateTests extends AbstractDebugTest {
 
 	/**
 	 * Resume a target behind the scenes and ensure model state updates appropriately.
-	 *
-	 * @throws CoreException
 	 */
 	public void testTargetHasResumed() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.CallLoop";

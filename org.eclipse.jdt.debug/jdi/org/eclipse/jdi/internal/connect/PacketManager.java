@@ -20,7 +20,6 @@ import com.sun.jdi.connect.spi.Connection;
 /**
  * This class implements threads that receive/send packets from/to the Virtual
  * Machine.
- *
  */
 public abstract class PacketManager implements Runnable {
 	/** Connector that performs IO to Virtual Machine. */

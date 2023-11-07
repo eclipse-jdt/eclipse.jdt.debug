@@ -27,8 +27,6 @@ public class NullConsoleReader extends AbstractReader {
 	private final InputStream fInput;
 	/**
 	 * Constructor
-	 * @param name
-	 * @param input
 	 */
 	public NullConsoleReader(String name, InputStream input) {
 		super(name);

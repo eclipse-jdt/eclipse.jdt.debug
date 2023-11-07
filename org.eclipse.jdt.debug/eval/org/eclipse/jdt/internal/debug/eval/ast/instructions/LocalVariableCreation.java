@@ -68,7 +68,6 @@ public class LocalVariableCreation extends CompoundInstruction {
 	 *            indicate if the type is a primitive type.
 	 * @param hasInitializer
 	 *            indicate if there is an initializer for this variable.
-	 * @param start
 	 */
 	public LocalVariableCreation(String name, String typeSignature,
 			int dimension, boolean isPrimitiveType, boolean hasInitializer,

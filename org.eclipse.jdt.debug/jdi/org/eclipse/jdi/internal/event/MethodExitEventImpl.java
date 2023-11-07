@@ -28,7 +28,6 @@ import com.sun.jdi.event.MethodExitEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class MethodExitEventImpl extends LocatableEventImpl implements
 		MethodExitEvent {

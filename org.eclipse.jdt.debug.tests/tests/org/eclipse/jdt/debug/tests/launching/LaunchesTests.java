@@ -51,7 +51,6 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 
 	/**
 	 * Tests launch notification in debug mode.
-	 * @throws CoreException
 	 */
 	public void testDebugMode() throws CoreException {
 		doMode(ILaunchManager.DEBUG_MODE);
@@ -59,7 +58,6 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 
 	/**
 	 * Tests launch notification in run mode.
-	 * @throws CoreException
 	 */
 	public void testRunMode() throws CoreException {
 		doMode(ILaunchManager.RUN_MODE);

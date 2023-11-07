@@ -42,8 +42,6 @@ public class AlternateStratumTests extends AbstractDebugTest {
 
 	/**
 	 * Test available strata on a type with alternate strata
-	 *
-	 * @throws Exception
 	 */
 	public void testAvailableStrata() throws Exception {
 		String typeName = "HelloWorld";
@@ -67,8 +65,6 @@ public class AlternateStratumTests extends AbstractDebugTest {
 
 	/**
 	 * Test default stratum on a type with alternate strata.
-	 *
-	 * @throws Exception
 	 */
 	public void testDefaultStratum() throws Exception {
 		String typeName = "HelloWorld";

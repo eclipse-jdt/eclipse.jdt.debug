@@ -44,8 +44,6 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 
 	/**
 	 * Tests creation and restoring from a memento.
-	 *
-	 * @throws Exception
 	 */
 	public void testProjectSourceContainerMemento() throws Exception {
 		ProjectSourceContainer container = getContainer(true, true);

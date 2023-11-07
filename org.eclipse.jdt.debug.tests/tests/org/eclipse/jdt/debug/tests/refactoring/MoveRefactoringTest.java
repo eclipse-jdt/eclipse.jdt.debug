@@ -30,18 +30,12 @@ import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
  */
 public class MoveRefactoringTest extends AbstractRefactoringDebugTest {
 
-	/**
-	 * @param name
-	 */
 	public MoveRefactoringTest(String name) {
 		super(name);
 	}
 
 	/** Configures a processor for refactoring
-	 * @param javaProject
-	 * @param type
 	 * @return the configured processor that will be used in refactoring
-	 * @throws JavaModelException
 	 */
 	protected JavaMoveProcessor setupRefactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException {
 		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
@@ -57,10 +51,6 @@ public class MoveRefactoringTest extends AbstractRefactoringDebugTest {
 	}
 
 	/** Sets up a refactoring and executes it.
-	 * @param javaProject
-	 * @param cunit
-	 * @throws JavaModelException
-	 * @throws Exception
 	 */
 	protected void refactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException, Exception {
 		JavaMoveProcessor processor = setupRefactor(javaProject, type);

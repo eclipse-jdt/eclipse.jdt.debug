@@ -591,7 +591,6 @@ public class JREsComboBlock {
 	 * Sets the selection based on the given container path and returns
 	 * a status indicating if the selection was successful.
 	 *
-	 * @param containerPath
 	 * @return status
 	 */
 	public void setPath(IPath containerPath) {

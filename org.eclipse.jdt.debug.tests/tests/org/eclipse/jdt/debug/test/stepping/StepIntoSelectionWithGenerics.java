@@ -53,7 +53,6 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 	/**
 	 * Tests stepping into a method of a top-level class that is generified
-	 * @throws Exception
 	 */
 	public void testStepIntoSelection1() throws Exception {
 		createLineBreakpoint(33, qtypename);
@@ -90,8 +89,6 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 	/**
 	 * Tests stepping into a method of an inner class that is generified
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoSelection2() throws Exception {
 		createLineBreakpoint(34, qtypename);
@@ -130,8 +127,6 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 	/**
 	 * Tests stepping into a method of an inner-inner class that is generified
-	 *
-	 * @throws Exception
 	 */
 	public void testStepIntoSelection3() throws Exception {
 		createLineBreakpoint(35, qtypename);

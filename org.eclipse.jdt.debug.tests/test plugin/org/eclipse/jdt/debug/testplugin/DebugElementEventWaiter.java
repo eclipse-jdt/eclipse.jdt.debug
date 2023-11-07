@@ -24,8 +24,6 @@ public class DebugElementEventWaiter extends DebugEventWaiter {
 
 	/**
 	 * Constructor
-	 * @param kind
-	 * @param element
 	 */
 	public DebugElementEventWaiter(int kind, Object element) {
 		super(kind);

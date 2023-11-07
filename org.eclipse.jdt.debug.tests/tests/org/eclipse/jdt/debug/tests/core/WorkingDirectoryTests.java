@@ -55,7 +55,6 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 
 	/**
 	 * Sets the working directory attribute of the test launch config
-	 * @param path
 	 */
 	protected void setWorkingDirectory(IPath path) throws CoreException {
 		ILaunchConfiguration configuration = getLaunchConfiguration("WorkingDirectoryTest");

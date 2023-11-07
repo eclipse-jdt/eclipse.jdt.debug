@@ -581,9 +581,6 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 	}
 
-	/**
-	 * @throws AbsentInformationException
-	 */
 	private List<LocalVariable> inferArguments() throws AbsentInformationException {
 		// infer arguments, if possible
 

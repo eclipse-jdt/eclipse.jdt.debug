@@ -55,7 +55,6 @@ import junit.framework.TestSuite;
 /**
  * Test long classpaths. OSs have limits in term of command line length or argument length. We handle this limit differently depending on the VM
  * version and OS.
- *
  */
 public class LongClassPathTests extends AbstractDebugTest {
 	protected static final String MAIN_TYPE_NAME = "test.classpath.Main";

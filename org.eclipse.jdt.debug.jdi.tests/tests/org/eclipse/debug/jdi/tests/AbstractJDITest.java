@@ -688,7 +688,6 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Parse the command {@link String} to make sure we use
 	 * {@link Runtime#exec(String[])}.
 	 *
-	 * @param command
 	 * @return the array of items from the command {@link String}
 	 * @since 4.3
 	 */
@@ -843,7 +842,6 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Flattens the variable size command line and calls Runtime.exec().
 	 * @param commandLine A vector of command line argument strings.
 	 * @return The Process created by Runtime.exec()
-	 * @throws IOException
 	 */
 	private Process exec(Vector<String> commandLine) throws IOException {
 		String[] vmString = new String[commandLine.size()];

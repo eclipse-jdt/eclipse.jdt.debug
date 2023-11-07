@@ -50,7 +50,6 @@ import com.sun.jdi.Value;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadReference, org.eclipse.jdi.hcr.ThreadReference {
 	/** ThreadStatus Constants. */

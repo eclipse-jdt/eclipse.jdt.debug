@@ -77,10 +77,7 @@ public class StepIntoSelectionUtils {
     /**
      * Returns the <code>IMethod</code> from the given selection within the given <code>IJavaElement</code>,
      * or <code>null</code> if the selection does not container or is not an <code>IMethod</code>
-     * @param selection
-     * @param element
      * @return the corresponding <code>IMethod</code> from the selection within the provided <code>IJavaElement</code>
-     * @throws JavaModelException
      */
     public static IMethod getMethod(ITextSelection selection, IJavaElement element) throws JavaModelException {
     	if(element instanceof ICodeAssist) {
@@ -94,7 +91,6 @@ public class StepIntoSelectionUtils {
 	 * @param length selection length
 	 * @param codeAssist context
 	 * @return the method at the given position, or <code>null</code> if no method could be resolved
-	 * @throws JavaModelException
 	 */
 	private static IMethod resolveMethod(int offset, int length, ICodeAssist codeAssist) throws JavaModelException {
 		IJavaElement[] elements = codeAssist.codeSelect(offset, length);
@@ -107,11 +103,7 @@ public class StepIntoSelectionUtils {
 	}
 
 	/**
-	 * @param offset
-	 * @param activeEditor
-	 * @param element
 	 * @return the first method found at or after <code>offset</code> on the same line
-	 * @throws JavaModelException
 	 */
 	@SuppressWarnings("deprecation")
 	public static IMethod getFirstMethodOnLine(int offset, IEditorPart activeEditor, IJavaElement element) throws JavaModelException {
@@ -291,7 +283,6 @@ public class StepIntoSelectionUtils {
 			 * This frame is expecting a stack frame for the suspension of the "run to line".
 			 * @param frame the given stack frame or <code>null</code>
 			 * @return whether the given stack frame is the expected frame
-			 * @throws DebugException
 			 */
 			private boolean isExpectedFrame(IJavaStackFrame frame) throws DebugException {
 				return frame != null &&
@@ -323,10 +314,8 @@ public class StepIntoSelectionUtils {
 	/**
 	 * Steps into the given method in the given stack frame
 	 *
-	 * @param editor
 	 * @param frame the frame in which the step should begin
 	 * @param method the method to step into
-	 * @throws DebugException
 	 */
 	static void doStepIn(IEditorPart editor, IJavaStackFrame frame, IMethod method) throws DebugException {
 		// ensure top stack frame
@@ -344,9 +333,6 @@ public class StepIntoSelectionUtils {
 
 	/**
 	 * Displays an error message in the status area
-	 *
-	 * @param editor
-	 * @param message
 	 */
 	static void showErrorMessage(IEditorPart editor, String message) {
 		if (editor != null) {
@@ -374,8 +360,6 @@ public class StepIntoSelectionUtils {
 
 	/**
      * Strips inner class names and parameterized type information from the given type name.
-     *
-     * @param fullyQualifiedName
      */
     static String stripInnerNamesAndParameterType(String fullyQualifiedName) {
         // ignore inner class qualification, as the compiler generated names and java model names can be different

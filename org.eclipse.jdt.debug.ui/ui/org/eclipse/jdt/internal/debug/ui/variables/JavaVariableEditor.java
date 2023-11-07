@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
  * Editor for Java variable columns. Restricts edits to primitives and strings.
  *
  * @since 3.2
- *
  */
 public class JavaVariableEditor extends VariableEditor {
 

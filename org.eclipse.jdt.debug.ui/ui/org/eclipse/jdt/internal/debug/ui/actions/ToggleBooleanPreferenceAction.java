@@ -55,8 +55,6 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 	/**
 	 * Returns a key to use in the preference store for this option.
 	 * By default the preference key is used, but actions may override.
-	 *
-	 * @return
 	 */
 	protected String getViewKey() {
 		return getPreferenceKey();

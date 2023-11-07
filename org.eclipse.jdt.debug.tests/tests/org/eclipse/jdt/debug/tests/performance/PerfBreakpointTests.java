@@ -38,7 +38,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Constructor
-     * @param name
      */
     public PerfBreakpointTests(String name) {
         super(name);
@@ -46,7 +45,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Tests the performance of line breakpoint creation
-     * @throws Exception
      */
     public void testLineBreakpointCreation() throws Exception {
         tagAsSummary("Install Line Breakpoints", Dimension.ELAPSED_PROCESS);
@@ -95,7 +93,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Tests the performance of breakpoint removal
-     * @throws Exception
      */
     public void testBreakpointRemoval() throws Exception {
         String typeName = "LargeSourceFile";
@@ -151,7 +148,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Tests the performance of method entry breakpoint creation
-     * @throws Exception
      */
     public void testMethodEntryBreakpointCreation() throws Exception {
         tagAsSummary("Install Method Entry Breakpoints", Dimension.ELAPSED_PROCESS);
@@ -201,7 +197,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Tests the performance of watchpoint creation
-     * @throws Exception
      */
     public void testWatchpointCreation() throws Exception {
         tagAsSummary("Install Watchpoints", Dimension.ELAPSED_PROCESS);
@@ -250,8 +245,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Waits for the specified breakpoint count to be hit
-     * @param i
-     * @throws Exception
      */
     private synchronized void waitForBreakpointCount(int i) throws Exception {
         long end = System.currentTimeMillis() + 60000;
@@ -263,10 +256,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Creates line breakpoints on the specified line numbers in the given type name with the given resource
-     * @param resource
-     * @param typeName
-     * @param lineNumbers
-     * @throws CoreException
      */
     private void createLineBreakpoints(IResource resource, String typeName, int[] lineNumbers) throws CoreException {
         for (int i = 0; i < lineNumbers.length; i++) {
@@ -276,10 +265,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Creates method entry breakpoints on the specified methods in the given type name in the specified project
-     * @param project
-     * @param typeName
-     * @param methods
-     * @throws CoreException
      */
     private void createMethodEntryBreakpoints(IProject project, String typeName, String[] methods) throws CoreException {
         for (int i = 0; i < methods.length; i++) {
@@ -290,10 +275,6 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
     /**
      * Creates watchpoints on the specified fields of the specified resource with the given type name
-     * @param resource
-     * @param typeName
-     * @param fields
-     * @throws Exception
      */
     private void createWatchpoints(IResource resource, String typeName, String[] fields) throws Exception {
         for(int i = 0; i < fields.length; i++) {

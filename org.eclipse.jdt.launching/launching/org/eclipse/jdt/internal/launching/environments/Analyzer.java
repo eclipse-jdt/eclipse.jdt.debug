@@ -24,7 +24,6 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDeleg
  * Contributed analyzer.
  *
  * @since 3.2
- *
  */
 class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
 

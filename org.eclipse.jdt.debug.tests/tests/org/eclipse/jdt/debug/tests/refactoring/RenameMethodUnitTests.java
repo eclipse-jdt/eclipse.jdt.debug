@@ -32,14 +32,6 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 		super(name);
 	}
 
-	/**
-	 * @param src
-	 * @param pack
-	 * @param cunit
-	 * @param fullTargetName
-	 * @param targetLineage
-	 * @throws Exception
-	 */
 	protected void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage) throws Exception {
 		String newMethodName = "renamedMethod";
 		try {
@@ -65,12 +57,6 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 	/**
 	 * Will setup the refactoring for Methods and members declared within
 	 * members (i.e. members of anonymous classes)
-	 * @param root
-	 * @param packageName
-	 * @param cuName
-	 * @param fullName
-	 * @return
-	 * @throws Exception
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName, String fullName) throws Exception {
 

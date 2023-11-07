@@ -33,7 +33,6 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public LaunchShortcutTests(String name) {
 		super(name);

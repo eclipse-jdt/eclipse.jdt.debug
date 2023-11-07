@@ -168,10 +168,6 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 	/**
 	 * Updates the charstart and charend ranges if necessary for the given line.
 	 * Returns immediately if the line is not valid (< 0 or greater than the total line number count)
-	 * @param document
-	 * @param marker
-	 * @param line
-	 * @throws BadLocationException
 	 */
 	private void ensureRanges(IDocument document, IMarker marker, int line) throws BadLocationException {
 		if(line < 0 || line > document.getNumberOfLines()) {
@@ -186,7 +182,6 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 
 	/**
 	 * Returns if the specified marker is for an <code>IJavaLineBreakpoint</code>
-	 * @param marker
 	 * @return true if the marker is for an <code>IJavalineBreakpoint</code>, false otherwise
 	 *
 	 * @since 3.4

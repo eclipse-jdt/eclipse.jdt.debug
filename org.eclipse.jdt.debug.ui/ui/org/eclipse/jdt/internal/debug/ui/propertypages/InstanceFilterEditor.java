@@ -32,9 +32,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-/**
- *
- */
 public class InstanceFilterEditor {
 	private final IJavaBreakpoint fBreakpoint;
 	private CheckboxTableViewer fInstanceViewer;

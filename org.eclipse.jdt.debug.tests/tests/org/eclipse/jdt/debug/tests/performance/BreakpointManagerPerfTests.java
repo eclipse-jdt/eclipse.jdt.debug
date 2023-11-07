@@ -34,7 +34,6 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public BreakpointManagerPerfTests() {
 		super("Breakpoint Manager Performance");
@@ -46,8 +45,6 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 	/**
 	 * Create the given number of breakpoints in the given resource starting from the given line
 	 *
-	 * @param count
-	 * @throws Exception
 	 * @return the collection of breakpoints
 	 */
 	IBreakpoint[] generateBreakpoints(int count) throws Exception {
@@ -78,7 +75,6 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 
 	/**
 	 * Tests the time required to start the {@link BreakpointManager}
-	 * @throws Exception
 	 */
 	public void testStartup200Breakpoints() throws Exception {
 		tagAsSummary("Start Breakpoint Manager - 200 BPs", Dimension.ELAPSED_PROCESS);
@@ -108,7 +104,6 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 
 	/**
 	 * Tests the time required to start the {@link BreakpointManager}
-	 * @throws Exception
 	 */
 	public void testStartup50Breakpoints() throws Exception {
 		tagAsSummary("Start Breakpoint Manager - 50 BPs", Dimension.ELAPSED_PROCESS);
@@ -138,7 +133,6 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 
 	/**
 	 * Tests the time required to start the {@link BreakpointManager}
-	 * @throws Exception
 	 */
 	public void testStartup100Breakpoints() throws Exception {
 		tagAsSummary("Start Breakpoint Manager - 100 BPs", Dimension.ELAPSED_PROCESS);

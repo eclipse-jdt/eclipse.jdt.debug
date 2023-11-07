@@ -242,7 +242,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public AbstractDebugTest(String name) {
 		super(name);
@@ -709,7 +708,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
 	 *
-	 * @throws Exception
 	 * @since 3.8
 	 */
 	protected final void assertWelcomeScreenClosed() throws Exception {
@@ -764,9 +762,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Sets the contents of the given {@link ICompilationUnit} to be the new contents provided
-	 * @param unit
 	 * @param contents the new {@link String} contents, cannot be <code>null</code>
-	 * @throws JavaModelException
 	 */
 	protected void setFileContents(ICompilationUnit unit, String contents) throws JavaModelException {
 		assertNotNull("You cannot set the new contents of an ICompilationUnit to null", contents);
@@ -853,7 +849,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Returns the {@link IBreakpointOrganizer} with the given id or <code>null</code>
 	 * if no such organizer exists
-	 * @param id
 	 * @return the {@link IBreakpointOrganizer} or <code>null</code>
 	 * @since 3.8.100
 	 */
@@ -964,7 +959,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param ee the level of execution environment to use
 	 * @param if an existing project should be deleted
 	 * @return the new Java project
-	 * @throws Exception
 	 */
 	protected IJavaProject createProject(String name, String contentpath, String ee, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -1011,7 +1005,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param ee the level of execution environment to use
 	 * @param if an existing project should be deleted
 	 * @return the new Java project
-	 * @throws Exception
 	 */
 	protected IJavaProject createJavaProjectClone(String name, String contentpath, String ee, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -1063,7 +1056,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
 	 * @param if an existing project should be deleted
 	 * @return the new project
-	 * @throws Exception
 	 */
 	protected IProject createProjectClone(String name, String contentpath, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -1087,7 +1079,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Returns the launch shortcut with the given id
-	 * @param id
 	 * @return the <code>LaunchShortcutExtension</code> with the given id,
 	 * or <code>null</code> if none
 	 *
@@ -1110,8 +1101,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * As such, for tests that launch specific configurations, must be check to ensure that there is a preferred
 	 * launch delegate available for the launch in the event there are duplicates. Otherwise the tests
 	 * will hang waiting for a user to select a resolution action.
-	 * @param configuration
-	 * @param modes
 	 * @throws CoreException
 	 *
 	 * @since 3.3
@@ -1144,7 +1133,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Returns the source folder with the given name in the given project.
 	 *
-	 * @param project
 	 * @param name source folder name
 	 * @return package fragment root
 	 */
@@ -1156,8 +1144,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Returns the <code>IHyperLink</code> at the given offset in the specified document
 	 * or <code>null</code> if the offset does not point to an <code>IHyperLink</code>
-	 * @param offset
-	 * @param doc
 	 * @return the <code>IHyperLink</code> at the given offset or <code>null</code>
 	 */
 	protected IHyperlink getHyperlink(int offset, IDocument doc) {
@@ -1677,7 +1663,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param typeName the name of the <code>IJavaElement</code> to get the resource for
 	 * @return the corresponding <code>IResource</code> from the <code>IJavaElement</code> with the
 	 * specified name
-	 * @throws Exception
 	 */
 	protected IResource getBreakpointResource(String typeName) throws Exception {
 		IJavaElement element = getProjectContext().findElement(new Path(typeName + JAVA_EXTENSION));
@@ -1691,9 +1676,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Returns the resource from the specified type or the project from the testing java project in the
 	 * event there is no resource from the specified type
-	 * @param type
-	 * @return
-	 * @throws Exception
 	 */
 	protected IResource getBreakpointResource(IType type) throws Exception {
 		if (type == null) {
@@ -1721,11 +1703,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Creates am  new java line breakpoint
-	 * @param lineNumber
-	 * @param root
-	 * @param packageName
-	 * @param cuName
-	 * @param fullTargetName
 	 * @return a new line breakpoint
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String root, String packageName, String cuName,
@@ -1749,7 +1726,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param cuName simple name of compilation unit containing the type, example "Something.java"
 	 * @param typeName $ qualified type name, example "Something" or "NonPublic" or "Something$Inner"
 	 * @return line breakpoint
-	 * @throws Exception
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String packageName, String cuName, String typeName) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
@@ -1763,7 +1739,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param type type in which to install the breakpoint
 	 * @param lineNumber line number to install the breakpoint at
 	 * @return line breakpoint
-	 * @throws Exception
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(IType type, int lineNumber) throws Exception {
 		assertNotNull("You cannot create a line breakpoint for a null IType", type);
@@ -1797,8 +1772,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Forces marker deltas to be sent based on breakpoint creation.
-	 *
-	 * @param breakpoint
 	 */
 	private void forceDeltas(IBreakpoint breakpoint) throws CoreException {
 		IProject project = breakpoint.getMarker().getResource().getProject();
@@ -1815,7 +1788,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param cuName simple compilation unit name within the package, example "Something.java"
 	 * @param typeName simple dot qualified type name, example "Something" or "NonPublic" or "Something.Inner"
 	 * @return associated type or <code>null</code> if none
-	 * @throws Exception
 	 */
 	protected IType getType(String packageName, String cuName, String typeName) throws Exception {
 		IPackageFragment[] packageFragments = getProjectContext().getPackageFragments();
@@ -1842,7 +1814,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *
 	 * @param element java element the breakpoint is associated with
 	 * @return map of breakpoint attributes or <code>null</code>
-	 * @throws Exception
 	 */
 	protected Map<String, Object> getExtraBreakpointAttributes(IMember element) throws Exception {
 		if (element != null && element.exists()) {
@@ -1964,7 +1935,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param entry whether to break on entry
 	 * @param exit whether to break on exit
 	 * @return method breakpoint
-	 * @throws Exception
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String packageName, String cuName, String typeName, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
@@ -2046,7 +2016,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *
 	 * @param typeName type on which to create the breakpoint
 	 * @return breakpoint
-	 * @throws Exception
 	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String typeName) throws Exception {
 		return createClassPrepareBreakpoint(getType(typeName));
@@ -2057,7 +2026,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *
 	 * @param typeName type on which to create the breakpoint
 	 * @return breakpoint
-	 * @throws Exception
 	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String root,
 			String packageName, String cuName, String fullTargetName) throws Exception {
@@ -2084,7 +2052,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *
 	 * @param type type
 	 * @return class prepare breakpoint
-	 * @throws Exception
 	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(IType type) throws Exception {
 		assertNotNull("type not specified for class prepare breakpoint", type); //$NON-NLS-1$
@@ -2102,9 +2069,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Returns the Java model type from the test project with the given name or <code>null</code>
 	 * if none.
 	 *
-	 * @param typeName
 	 * @return type or <code>null</code>
-	 * @throws Exception
 	 */
 	protected IType getType(String typeName) throws Exception {
 		return getProjectContext().findType(typeName);
@@ -2156,14 +2121,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Creates a WatchPoint on the field specified at the given path.
 	 * Will create watchpoints on fields within anonymous types, inner types,
 	 * local (non-public) types, and public types.
-	 * @param root
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
 	 * @param fullTargetName - see below
 	 * @param access whether to suspend on access
 	 * @param modification whether to suspend on modification
 	 * @return a watchpoint
-	 * @throws Exception
 	 * @throws CoreException
 	 *
 	 * <p>
@@ -2222,7 +2185,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param access whether to suspend on access
 	 * @param modification whether to suspend on modification
 	 * @return watchpoint
-	 * @throws Exception
 	 */
 	protected IJavaWatchpoint createWatchpoint(IType type, String fieldName, boolean access, boolean modification) throws Exception, CoreException {
 		assertNotNull("type not specified for watchpoint", type); //$NON-NLS-1$
@@ -2347,7 +2309,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param snippet the snippet to evaluate
 	 * @param thread the suspended thread to run the evaluation on
 	 * @return the {@link IEvaluationResult}
-	 * @throws Exception
 	 * @since 3.1.200
 	 */
 	protected IEvaluationResult evaluate(String snippet, IJavaThread thread) throws Exception {
@@ -2596,11 +2557,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
     /**
      * Finds the specified variable within the context of the specified stackframe. Returns null if a variable with
      * the given name does not exist
-     * @param frame
-     * @param name
      * @return the <code>IJavaVariable</code> with the given name or <code>null</code> if it
      * does not exist
-     * @throws DebugException
      */
     protected IJavaVariable findVariable(IJavaStackFrame frame, String name) throws DebugException {
         IJavaVariable variable = frame.findVariable(name);
@@ -2776,8 +2734,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * See bug 297071.
 	 *
 	 * @param e Debug Exception
-	 * @throws TestAgainException
-	 * @throws DebugException
 	 */
 	protected void tryTestAgain(DebugException e) throws Exception {
 		Throwable cause = e.getCause();
@@ -2792,9 +2748,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Perform the actual evaluation (inspect)
-	 * @param thread
 	 * @return the result of the evaluation
-	 * @throws Exception
 	 */
 	protected IValue doEval(IJavaThread thread, String snippet) throws Exception{
 		return this.doEval(thread, () -> (IJavaStackFrame) thread.getTopStackFrame(), snippet);
@@ -2803,11 +2757,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Perform the actual evaluation (inspect)
 	 *
-	 * @param thread
 	 * @param frameSupplier
 	 *            The frame supplier which provides the frame for the evaluation
 	 * @return the result of the evaluation
-	 * @throws Exception
 	 */
 	protected IValue doEval(IJavaThread thread, StackFrameSupplier frameSupplier, String snippet) throws Exception {
 		class Listener implements IEvaluationListener {

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Shell;
  * Edits classpath entries.
  *
  * @since 3.2
- *
  */
 public interface IClasspathEditor {
 

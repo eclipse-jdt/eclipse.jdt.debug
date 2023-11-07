@@ -30,7 +30,6 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public TabGroupWrapperTests(String name) {
 		super(name);
@@ -38,7 +37,6 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 
 	/**
 	 * Checks that all of the tabs specified in the original tab group and ones that are contributed are created
-	 * @throws CoreException
 	 */
 	public void testAllTabsCreated() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
@@ -50,7 +48,6 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 	/**
 	 * Checks to make sure that all of the controls of the tabs (including contributed ones) are disposed on a call to the tab group
 	 * wrapper class
-	 * @throws CoreException
 	 */
 	public void testDisposeAllTabs() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();

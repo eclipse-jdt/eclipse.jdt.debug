@@ -51,7 +51,6 @@ import org.eclipse.jdt.launching.IVMInstall2;
  *
  * Depending on the java version, os and launch configuration, the classpath argument will be replaced by an argument file, a classpath-only jar or
  * env variable. The modulepath is replaced by an argument file if necessary.
- *
  */
 public class ClasspathShortener implements IProcessTempFileCreator {
 	private static final String CLASSPATH_ENV_VAR_PREFIX = "CLASSPATH="; //$NON-NLS-1$
@@ -107,8 +106,6 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 	 * The directory to use to create temp files needed when shortening the classpath. By default, the working directory is used
 	 *
 	 * The java.io.tmpdir should not be used on MacOs (does not work for classpath-only jars)
-	 *
-	 * @param processTempFilesDir
 	 */
 	public void setProcessTempFilesDir(File processTempFilesDir) {
 		this.processTempFilesDir = processTempFilesDir;

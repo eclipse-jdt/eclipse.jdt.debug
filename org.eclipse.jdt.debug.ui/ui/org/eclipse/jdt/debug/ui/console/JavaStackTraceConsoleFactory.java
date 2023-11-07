@@ -24,7 +24,6 @@ import org.eclipse.ui.console.IConsoleManager;
  * Creates a new console into which users can paste stack traces and follow the hyperlinks.
  *
  * @since 3.8
- *
  */
 public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 	private IConsoleManager fConsoleManager = null;

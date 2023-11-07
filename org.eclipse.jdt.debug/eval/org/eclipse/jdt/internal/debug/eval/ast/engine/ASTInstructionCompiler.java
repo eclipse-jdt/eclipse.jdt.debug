@@ -396,9 +396,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void addPopInstruction() {
 		Instruction lastInstruction = fInstructions
 				.getInstruction(fInstructions.getEnd());

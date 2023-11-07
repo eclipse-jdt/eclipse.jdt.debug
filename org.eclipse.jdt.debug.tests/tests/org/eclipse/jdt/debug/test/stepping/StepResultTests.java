@@ -96,8 +96,6 @@ public class StepResultTests extends AbstractDebugTest {
 
 	/**
 	 * test that if the step return is aborted by some other break point, no return value of a recursive invocation is shown
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReturnValueAfterAbortedStepReturn() throws Exception {
 		String typeName = "StepResult1";

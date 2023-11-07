@@ -21,9 +21,6 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class InstructionPointerTests extends AbstractDebugTest {
 
-	/**
-	 * @param name
-	 */
 	public InstructionPointerTests(String name) {
 		super(name);
 	}

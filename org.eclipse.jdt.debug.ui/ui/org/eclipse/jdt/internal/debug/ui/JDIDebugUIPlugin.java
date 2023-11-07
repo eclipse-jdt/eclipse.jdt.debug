@@ -682,8 +682,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the text tools used by this plug-in
-	 *
-	 * @return
 	 */
 	public JavaTextTools getJavaTextTools() {
 		if (fTextTools == null) {

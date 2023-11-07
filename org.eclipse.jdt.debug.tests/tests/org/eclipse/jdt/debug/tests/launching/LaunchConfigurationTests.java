@@ -30,8 +30,6 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 
 		/**
 		 * Constructor
-		 * @param name
-		 * @param container
 		 */
 		protected TestConfiguration(String name, IContainer container) {
 			super(name, container);
@@ -54,7 +52,6 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public LaunchConfigurationTests(String name) {
 		super(name);
@@ -63,7 +60,6 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 	/**
 	 * Tests the {@link LaunchConfiguration#getSimpleName} method
 	 *
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=332410
 	 */
 	public void testGetSimpleName() throws Exception {
@@ -85,8 +81,6 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests the {@link LaunchConfiguration#setName} method
-	 *
-	 * @throws Exception
 	 */
 	public void testSetName() throws Exception {
 		assertEquals("The default name should be: 'Test'", "Test", config.getName());
@@ -98,8 +92,6 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests the {@link LaunchConfiguration#getFileName} method
-	 *
-	 * @throws Exception
 	 */
 	public void testGetFileName() throws Exception {
 		String filename = config.getFileNameProxy();

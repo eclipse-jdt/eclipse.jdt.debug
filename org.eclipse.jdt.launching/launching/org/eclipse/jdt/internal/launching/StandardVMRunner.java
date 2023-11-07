@@ -81,7 +81,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 	/**
 	 * Returns the 'rendered' name for the specified command line
 	 *
-	 * @param p
 	 * @param commandLine
 	 *            the command line
 	 * @param timestamp
@@ -157,7 +156,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @param config the backing {@link ILaunchConfiguration}
 	 * @param cmdLine the original VM arguments
 	 * @return the (possibly) modified command line to launch with
-	 * @throws CoreException
 	 */
 	private String[] wrap(ILaunchConfiguration config, String[] cmdLine) throws CoreException {
 		if(config != null && Platform.OS_MACOSX.equals(Platform.getOS())) {
@@ -176,7 +174,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * Returns path to executable.
 	 * @param cmdLine the old command line
 	 * @param vmVersion the version of the VM
-	 * @param startonfirstthread
 	 * @return the new command line
 	 */
 	private String[] createSWTlauncher(String[] cmdLine, String vmVersion, boolean startonfirstthread) {

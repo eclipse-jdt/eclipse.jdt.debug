@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 public class TestsNumberLiteral extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
-	 * @param name
 	 */
 	public TestsNumberLiteral(String name) {
 		super(name);

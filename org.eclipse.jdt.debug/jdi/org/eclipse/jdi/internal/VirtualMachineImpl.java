@@ -60,7 +60,6 @@ import com.sun.jdi.request.EventRequestManager;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		org.eclipse.jdi.hcr.VirtualMachine, org.eclipse.jdi.VirtualMachine {

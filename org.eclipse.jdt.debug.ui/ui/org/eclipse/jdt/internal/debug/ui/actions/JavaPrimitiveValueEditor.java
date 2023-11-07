@@ -256,9 +256,6 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 		 * represents an octal or hexadecimal escape sequence. Returns
 		 * Integer.MAX_VALUE if the given string is not a valid octal or
 		 * hexadecimal escape sequence.
-		 *
-		 * @param string
-		 * @return
 		 */
 		protected int getEscapeValue(String string) {
 			return ASTInstructionCompiler.parseIntValue(string);

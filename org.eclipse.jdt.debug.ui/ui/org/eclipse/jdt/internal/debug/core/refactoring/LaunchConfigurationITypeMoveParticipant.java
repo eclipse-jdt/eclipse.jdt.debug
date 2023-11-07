@@ -26,8 +26,6 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 
-/**
- */
 public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 
 	private IType fType;

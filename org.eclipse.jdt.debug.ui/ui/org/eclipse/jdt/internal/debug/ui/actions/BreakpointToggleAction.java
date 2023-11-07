@@ -126,7 +126,6 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 
 	/**
 	 * Returns if the underlying action should be enabled for the given selection
-	 * @param selection
 	 * @return if the underlying action should be enabled for the given selection
 	 */
 	public abstract boolean isEnabledFor(IStructuredSelection selection);

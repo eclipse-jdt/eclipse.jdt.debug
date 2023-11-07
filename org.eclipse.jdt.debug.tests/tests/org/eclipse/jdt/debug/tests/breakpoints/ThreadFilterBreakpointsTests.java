@@ -26,7 +26,6 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ThreadFilterBreakpointsTests(String name) {
 		super(name);
@@ -34,7 +33,6 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a simple thread filter is working for a specific line breakpoint
-	 * @throws Exception
 	 */
 	public void testSimpleThreadFilterBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
@@ -56,7 +54,6 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests multiple thread filters are working for a specific line breakpoint
-	 * @throws Exception
 	 */
 	public void testMultiThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedLoop";
@@ -82,8 +79,6 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a thread works for specific exception breakpoint
-	 *
-	 * @throws Exception
 	 */
 	public void testExceptionThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedException";
@@ -107,7 +102,6 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a thread filter works for a specific watchpoint
-	 * @throws Exception
 	 */
 	public void testAccessWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";
@@ -132,7 +126,6 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that a thread filter is working for a specific modification watchpoint
-	 * @throws Exception
 	 */
 	public void testModificationWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";

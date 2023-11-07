@@ -70,9 +70,6 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	private boolean fAutoDetectAttributes = false;
 	private final IStatus[] fFieldStatus = new IStatus[1];
 
-	/**
-	 *
-	 */
 	public StandardVMPage() {
 		super(JREMessages.StandardVMPage_0);
 		for (int i = 0; i < fFieldStatus.length; i++) {

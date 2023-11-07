@@ -258,8 +258,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Persists dialog settings.
-		 *
-		 * @param shell
 		 */
 		private void persistSettings(Shell shell) {
 			if (shell != null && !shell.isDisposed()) {

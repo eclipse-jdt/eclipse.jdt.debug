@@ -32,7 +32,6 @@ public class SourceNameFilterTests extends AbstractJDITest {
 	/**
 	 * test to see if we can use source name filters from a 1.6 VM, and
 	 * that we cannot from a pre 1.6 VM
-	 *
 	 */
 	public void testCanUseSourceNameFilters() {
 		if(fVM.version().indexOf("1.6") > -1) {

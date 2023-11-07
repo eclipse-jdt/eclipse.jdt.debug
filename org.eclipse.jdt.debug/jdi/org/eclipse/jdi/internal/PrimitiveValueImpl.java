@@ -24,7 +24,6 @@ import com.sun.jdi.PrimitiveValue;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveValue {
 	/** Primitive value in wrapper. */

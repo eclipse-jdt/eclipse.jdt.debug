@@ -27,7 +27,6 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public TriggerPointBreakpointsTests(String name) {
 		super(name);
@@ -35,8 +34,6 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests the trigger point
-	 *
-	 * @throws Exception
 	 */
 	public void testTriggerPointBreakpoint() throws Exception {
 		String typeName = "TriggerPoint_01";

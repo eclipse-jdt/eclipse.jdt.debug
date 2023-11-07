@@ -119,7 +119,6 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 
 	/**
 	 * This program prints the final line without a new line
-	 * @throws Exception
 	 */
 	public void testNoPrintln() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
@@ -150,8 +149,6 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 
 	/**
 	 * Test 10,000 lines of output.
-	 *
-	 * @throws Exception
 	 */
 	public void testFlood() throws Exception {
 		ConsoleLineTracker.setDelegate(this);

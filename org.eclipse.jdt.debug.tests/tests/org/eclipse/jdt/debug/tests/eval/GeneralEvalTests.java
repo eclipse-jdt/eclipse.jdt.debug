@@ -25,16 +25,12 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 public class GeneralEvalTests extends AbstractDebugTest {
 
 
-	/**
-	 * @param name
-	 */
 	public GeneralEvalTests(String name) {
 		super(name);
 	}
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerType1() throws Exception {
 		IJavaThread thread = null;
@@ -54,7 +50,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerType2() throws Exception {
 		IJavaThread thread = null;
@@ -74,7 +69,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerType3() throws Exception {
 		IJavaThread thread = null;
@@ -94,7 +88,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
-	 * @throws Exception
 	 */
 	public void testInnerAnonymousType() throws Exception {
 		IJavaThread thread = null;
@@ -114,7 +107,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval1() throws Exception {
 		IJavaThread thread = null;
@@ -135,7 +127,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval2() throws Exception {
 		IJavaThread thread = null;
@@ -156,7 +147,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval3() throws Exception {
 		IJavaThread thread = null;
@@ -177,7 +167,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval4() throws Exception {
 		IJavaThread thread = null;
@@ -198,7 +187,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval5() throws Exception {
 		IJavaThread thread = null;
@@ -219,7 +207,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval6() throws Exception {
 		IJavaThread thread = null;
@@ -240,7 +227,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval7() throws Exception {
 		IJavaThread thread = null;
@@ -261,7 +247,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval8() throws Exception {
 		IJavaThread thread = null;
@@ -282,7 +267,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval9() throws Exception {
 		IJavaThread thread = null;
@@ -303,7 +287,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval10() throws Exception {
 		IJavaThread thread = null;
@@ -324,7 +307,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval11() throws Exception {
 		IJavaThread thread = null;
@@ -345,7 +327,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval12() throws Exception {
 		IJavaThread thread = null;
@@ -366,7 +347,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval13() throws Exception {
 		IJavaThread thread = null;
@@ -387,7 +367,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval14() throws Exception {
 		IJavaThread thread = null;
@@ -408,7 +387,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval15() throws Exception {
 		IJavaThread thread = null;
@@ -429,7 +407,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
-	 * @throws Exception
 	 */
 	public void testMultipleInfixEval16() throws Exception {
 		IJavaThread thread = null;
@@ -450,7 +427,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
-	 * @throws Exception
 	 */
 	public void testCompoundCondition() throws Exception {
 		IJavaThread thread = null;
@@ -471,8 +447,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=508105
-	 *
-	 * @throws Exception
 	 */
 	public void testMultiByteCharacters() throws Exception {
 		IJavaThread thread = null;
@@ -510,8 +484,6 @@ public class GeneralEvalTests extends AbstractDebugTest {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=508105
-	 *
-	 * @throws Exception
 	 */
 	public void XtestAReturn() throws Exception {
 		IJavaThread thread = null;

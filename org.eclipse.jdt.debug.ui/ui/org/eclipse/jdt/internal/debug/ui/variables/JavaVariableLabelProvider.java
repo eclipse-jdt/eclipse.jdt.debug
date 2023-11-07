@@ -139,7 +139,6 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 
 	/**
 	 * Returns if the the specified presentation context is showing qualified names or not
-	 * @param context
 	 * @return true if the presentation context is showing qualified names, false otherwise
 	 */
 	private Boolean isShowQualfiiedNames(IPresentationContext context) {

@@ -25,7 +25,6 @@ import com.sun.jdi.event.AccessWatchpointEvent;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class AccessWatchpointEventImpl extends WatchpointEventImpl implements
 		AccessWatchpointEvent {

@@ -58,10 +58,6 @@ import org.eclipse.jdt.internal.core.SourceType;
  */
 public class MemberParser{
 
-	/**
-	 * @param typeQualifiedName
-	 * @return
-	 */
 	private static ArrayList<String> createTypeList(String typeQualifiedName) {
 		String newname = typeQualifiedName;
 		newname = newname.replace('$','.');//ensure proper format was used.
@@ -76,7 +72,6 @@ public class MemberParser{
 	/**
 	 * @param fragments the scope of which you wish to return compilation units
 	 * @return a handle to all compilation units contained by the given fragments
-	 * @throws JavaModelException
 	 */
 	private static ICompilationUnit[] getAllCompilationUnits(IPackageFragment[] fragments) throws JavaModelException {
 		if(fragments == null)
@@ -98,7 +93,6 @@ public class MemberParser{
 	/**
 	 * @param projects the scope of which you wish to return compilation units
 	 * @return a handle to all compilation units contained by the given projects
-	 * @throws JavaModelException
 	 */
 	private static ICompilationUnit[] getAllCompilationUnits(IProject[] projects)  throws JavaModelException{
 		return getAllCompilationUnits(getAllPackageFragments(projects));
@@ -109,9 +103,7 @@ public class MemberParser{
 	}
 
 	/**
-	 * @param types
 	 * @return an array of all declared methods for the given types
-	 * @throws JavaModelException
 	 */
 	private static IMethod[] getAllMethods(IType[] types) throws JavaModelException{
 		if(types==null)
@@ -132,7 +124,6 @@ public class MemberParser{
 	/**
 	 * @param projects the scope of the return
 	 * @return all package fragments in the scope
-	 * @throws JavaModelException
 	 */
 	private static IPackageFragment[] getAllPackageFragments(IProject[] projects) throws JavaModelException {
 		final Set<IPackageFragment> results = new HashSet<>();
@@ -159,7 +150,6 @@ public class MemberParser{
 	/**
 	 * @param cunits the scope of the search
 	 * @return all types within the scope
-	 * @throws JavaModelException
 	 */
 	private static IType[] getAllTypes(ICompilationUnit[] cunits) throws JavaModelException {
 		if(cunits == null)
@@ -180,7 +170,6 @@ public class MemberParser{
 	/**
 	 * @param methods the scope of the search
 	 * @return an array of all types declared within the given methods.
-	 * @throws JavaModelException
 	 */
 	private static IType[] getAllTypes(IMethod[] methods) throws JavaModelException {
 		if(methods==null)
@@ -202,7 +191,6 @@ public class MemberParser{
 	 * and anonymous types for other types.
 	 * @param types the scope of the search
 	 * @return all types within the given scope
-	 * @throws JavaModelException
 	 */
 	public static IType[] getAllTypes(IType[] types) throws JavaModelException{
 		if(types == null)
@@ -243,7 +231,6 @@ public class MemberParser{
 	 * @param packageName name of the package
 	 * @param projects where to search
 	 * @return the 1st instance of the given packageName
-	 * @throws JavaModelException
 	 */
 	private static IPackageFragment[] getAllPackageFragments(String packageName, IProject[] projects) throws JavaModelException{
 		final Set<IPackageFragment> results = new HashSet<>();
@@ -315,7 +302,6 @@ public class MemberParser{
 	 * @param packageName the elemental name of the package containing the given type - may be null
 	 * @param projectName the elemental name of the project containing the given type - may be null
 	 * @return the IType handle to the requested type
-	 * @throws JavaModelException
 	 */
 	public static IType getType(String typeName, String packageName, String projectName) throws JavaModelException{
 		if(typeName == null)

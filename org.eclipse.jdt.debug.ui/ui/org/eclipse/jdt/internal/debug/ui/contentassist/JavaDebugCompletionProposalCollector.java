@@ -32,8 +32,6 @@ public class JavaDebugCompletionProposalCollector extends CompletionProposalColl
 
 	/**
 	 * Constructs a proposal collector on the given project.
-	 *
-	 * @param project
 	 */
 	public JavaDebugCompletionProposalCollector(IJavaProject project) {
 		super(project);

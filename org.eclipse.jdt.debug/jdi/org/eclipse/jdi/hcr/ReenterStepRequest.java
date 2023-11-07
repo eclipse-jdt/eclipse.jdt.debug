@@ -39,7 +39,6 @@ import com.sun.jdi.request.StepRequest;
  * Note that other events may need to be reported as well (e.g., hit breakpoint
  * on first instruction). Execution does not reenter the caller at any point; so
  * no step out or step into events are reported.
- *
  */
 public interface ReenterStepRequest extends StepRequest {
 	/**

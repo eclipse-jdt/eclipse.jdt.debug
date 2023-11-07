@@ -43,7 +43,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * Constructor
-     * @param name
      */
     public PerfConsoleTests(String name) {
         super(name);
@@ -52,7 +51,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * Tests the performance of 1000 lines of plain output to the console
-     * @throws Exception
      */
     public void testProcessConsolePlainOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
@@ -61,7 +59,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * Tests the performance of 10000 lines of stack trace output to the console
-     * @throws Exception
      */
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
@@ -70,7 +67,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * Tests the performance of 10000 lines of wrapped process console output to the console
-     * @throws Exception
      */
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: wrapped output", Dimension.ELAPSED_PROCESS);
@@ -99,9 +95,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * Runs the
-     * @param lines
-     * @param repeatTest
-     * @throws Exception
      */
     protected void runConsole80CharsTest(int lines, int repeatTest) throws Exception {
         String typeName = "Console80Chars";
@@ -173,8 +166,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * A warmup run of launching and having output piped to the console
-     * @param workingCopy
-     * @throws Exception
      */
     protected void warmupRun(ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
         fWarmingUp = true;
@@ -187,8 +178,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     /**
      * Launches the specified working copy and then waits
-     * @param workingCopy
-     * @throws Exception
      */
     protected void launchWorkingCopyAndWait(final ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
 		ILaunch launch = null;

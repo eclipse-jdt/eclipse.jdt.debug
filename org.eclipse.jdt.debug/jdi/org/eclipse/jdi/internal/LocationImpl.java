@@ -27,7 +27,6 @@ import com.sun.jdi.ReferenceType;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- *
  */
 public class LocationImpl extends MirrorImpl implements Location {
 	/** Line nr used if line numbers are not available. */

@@ -18,7 +18,6 @@ import org.eclipse.ui.part.IShowInTargetList;
 
 /**
  * @since 3.2
- *
  */
 public class StackFrameShowInTargetListAdapter implements IShowInTargetList {
 
