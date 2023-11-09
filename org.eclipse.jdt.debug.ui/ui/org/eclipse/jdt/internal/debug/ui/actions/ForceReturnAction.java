@@ -69,7 +69,7 @@ public class ForceReturnAction extends EvaluateAction {
 			IJavaStackFrame frame = fTargetFrame;
 			IJavaValue value = result.getValue();
 			frame.forceReturn(value);
-			if (!Signature.SIG_VOID.equals(value)) {
+			if (!Signature.SIG_VOID.equals(value.getSignature())) {
 				display.asyncExec(new Runnable() {
 					@Override
 					public void run() {

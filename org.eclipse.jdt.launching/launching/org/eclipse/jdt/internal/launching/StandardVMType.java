@@ -744,7 +744,6 @@ public class StandardVMType extends AbstractVMInstallType {
 		return info;
 	}
 
-	@SuppressWarnings("restriction")
 	private boolean isReadingDone(IStreamMonitor monitor) {
 		if (monitor instanceof OutputStreamMonitor) {
 			return ((OutputStreamMonitor) monitor).isReadingDone();

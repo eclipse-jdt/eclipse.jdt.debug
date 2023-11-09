@@ -253,7 +253,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 */
 	@Override
 	protected Comparator getItemsComparator() {
-		Comparator<?> comp = new Comparator<Object>() {
+		Comparator<?> comp = new Comparator<>() {
             @Override
 			public int compare(Object o1, Object o2) {
             	if(o1 instanceof IType && o2 instanceof IType) {

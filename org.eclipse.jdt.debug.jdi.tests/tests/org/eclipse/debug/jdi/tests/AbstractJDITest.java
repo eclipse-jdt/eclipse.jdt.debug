@@ -177,7 +177,6 @@ public abstract class AbstractJDITest extends TestCase {
 	 * @return <code>true</code> if a 1.6 or higher VM
 	 * @since 3.8
 	 */
-	@SuppressWarnings("restriction")
 	protected boolean is16OrGreater() {
 		return ((VirtualMachineImpl) fVM).isJdwpVersionGreaterOrEqual(1, 6);
 	}
