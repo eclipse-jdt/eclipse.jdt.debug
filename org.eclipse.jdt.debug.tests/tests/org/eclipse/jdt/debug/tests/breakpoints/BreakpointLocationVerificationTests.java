@@ -42,7 +42,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @return the parsed <code>CompilationUnit</code>
 	 */
 	private CompilationUnit parseCompilationUnit(ICompilationUnit unit) {
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		parser.setSource(unit);
 		parser.setUnitName(unit.getElementName());
 		parser.setResolveBindings(true);

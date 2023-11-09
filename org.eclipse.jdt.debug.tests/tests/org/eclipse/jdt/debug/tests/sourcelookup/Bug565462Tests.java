@@ -15,8 +15,8 @@ package org.eclipse.jdt.debug.tests.sourcelookup;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.function.Predicate;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -67,6 +67,7 @@ public class Bug565462Tests extends AbstractDebugTest {
 		assertTrue("Default VM doesn't have source", hasSource.test(javaSE11.getDefaultVM()));
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		javaSE11.setDefaultVM(defaultJavaSE11VM);
