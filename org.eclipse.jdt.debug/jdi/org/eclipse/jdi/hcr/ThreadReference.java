@@ -58,7 +58,7 @@ public interface ThreadReference {
 	 * Note that a <code>finally</code> block manifests itself as (and is
 	 * indistinguishable from) a <code>catch Throwable</code> block.
 	 * <code>synchronized</code> statements also compile to a
-	 * <code> catch Throwable block<code>.The target program may inadventently
+	 * <code>catch Throwable</code> block. The target program may inadventently
 	 * end up catching this exception.
 	 *
 	 * Since the choices each have their pros and cons, making the decision

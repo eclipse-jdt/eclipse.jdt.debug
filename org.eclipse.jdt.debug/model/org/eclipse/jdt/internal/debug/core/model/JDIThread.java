@@ -904,7 +904,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Only one receiver may be specified - either a class or an object, the
 	 * other must be <code>null</code>. This thread is left suspended after the
 	 * invocation is complete, unless a call is made to
-	 * <code>abortEvaluation<code> while
+	 * <code>abortEvaluation</code> while
 	 * performing a method invocation. In that case, this thread is automatically
 	 * resumed when/if this invocation (eventually) completes.
 	 * <p>
@@ -1022,7 +1022,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Invokes a method on the target, in this thread, and returns the result.
 	 * This thread is left suspended after the invocation is complete, unless
-	 * a call is made to <code>abortEvaluation<code> while  performing a method
+	 * a call is made to <code>abortEvaluation</code> while  performing a method
 	 * invocation. In that case, this thread is automatically resumed when/if
 	 * this invocation (eventually) completes.
 	 * <p>
@@ -2636,7 +2636,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		/**
 		 * Sets the step request created by this handler in the underlying VM.
-		 * Set to <code>null<code> when
+		 * Set to <code>null</code> when
 		 * this handler deletes its request.
 		 *
 		 * @param request
