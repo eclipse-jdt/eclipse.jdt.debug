@@ -33,6 +33,10 @@ public class MirrorTest extends AbstractJDITest {
 	public MirrorTest() {
 		super();
 	}
+
+	public MirrorTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -46,8 +50,10 @@ public class MirrorTest extends AbstractJDITest {
 		fMirrors = new LinkedList<>();
 
 		if (fVM.canWatchFieldAccess())
+		 {
 			fMirrors.add(getAccessWatchpointRequest());
 		// AccessWatchpointRequest
+		}
 
 		fMirrors.add(getObjectArrayReference()); // ArrayReference
 		fMirrors.add(getArrayType()); // ArrayType
@@ -70,8 +76,10 @@ public class MirrorTest extends AbstractJDITest {
 		fMirrors.add(getMethod()); // Method
 
 		if (fVM.canWatchFieldModification())
+		 {
 			fMirrors.add(getModificationWatchpointRequest());
 		// ModificationWatchpointRequest
+		}
 
 		fMirrors.add(getObjectReference()); // ObjectReference
 		fMirrors.add(fVM.mirrorOf((short) 12345)); // ShortValue
@@ -91,19 +99,22 @@ public class MirrorTest extends AbstractJDITest {
 			Object mirror = iterator.next();
 
 			// Delete the access watchpoint request we created in this test
-			if (mirror instanceof AccessWatchpointRequest)
+			if (mirror instanceof AccessWatchpointRequest) {
 				fVM.eventRequestManager().deleteEventRequest(
 					(AccessWatchpointRequest) mirror);
+			}
 
 			// Delete the breakpoint request we created in this test
-			if (mirror instanceof BreakpointRequest)
+			if (mirror instanceof BreakpointRequest) {
 				fVM.eventRequestManager().deleteEventRequest(
 					(BreakpointRequest) mirror);
+			}
 
 			// Delete the modification watchpoint request we created in this test
-			if (mirror instanceof ModificationWatchpointRequest)
+			if (mirror instanceof ModificationWatchpointRequest) {
 				fVM.eventRequestManager().deleteEventRequest(
 					(ModificationWatchpointRequest) mirror);
+			}
 		}
 	}
 	/**
@@ -111,14 +122,6 @@ public class MirrorTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new MirrorTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.Mirror";
 	}
 	/**
 	 * Test JDI toString().

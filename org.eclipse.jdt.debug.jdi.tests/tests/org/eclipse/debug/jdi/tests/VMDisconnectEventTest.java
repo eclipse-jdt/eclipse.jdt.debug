@@ -30,6 +30,10 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	public VMDisconnectEventTest() {
 		super();
 	}
+
+	public VMDisconnectEventTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -66,14 +70,6 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new VMDisconnectEventTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.event.VMDeathEvent";
 	}
 	/**
 	 * Test that we received the event.

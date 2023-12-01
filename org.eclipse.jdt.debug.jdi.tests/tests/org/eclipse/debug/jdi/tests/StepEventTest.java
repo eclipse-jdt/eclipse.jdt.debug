@@ -31,6 +31,10 @@ public class StepEventTest extends AbstractJDITest {
 	public StepEventTest() {
 		super();
 	}
+
+	public StepEventTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -52,14 +56,6 @@ public class StepEventTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new StepEventTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.event.StepEvent";
 	}
 	/**
 	 * Test JDI thread().

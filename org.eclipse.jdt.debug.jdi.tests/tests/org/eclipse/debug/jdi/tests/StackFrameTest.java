@@ -38,6 +38,10 @@ public class StackFrameTest extends AbstractJDITest {
 	public StackFrameTest() {
 		super();
 	}
+
+	public StackFrameTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -52,14 +56,6 @@ public class StackFrameTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new StackFrameTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.StackFrame";
 	}
 	/**
 	 * Test JDI equals() and hashCode().

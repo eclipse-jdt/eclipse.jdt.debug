@@ -30,6 +30,10 @@ public class IntegerValueTest extends AbstractJDITest {
 	public IntegerValueTest() {
 		super();
 	}
+
+	public IntegerValueTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -43,14 +47,6 @@ public class IntegerValueTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new IntegerValueTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.IntegerValue";
 	}
 	/**
 	 * Test JDI equals() and hashCode().

@@ -32,6 +32,10 @@ public class ClassLoaderReferenceTest extends AbstractJDITest {
 	public ClassLoaderReferenceTest() {
 		super();
 	}
+
+	public ClassLoaderReferenceTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -47,23 +51,16 @@ public class ClassLoaderReferenceTest extends AbstractJDITest {
 		new ClassLoaderReferenceTest().runSuite(args);
 	}
 	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.ClassLoaderReference";
-	}
-	/**
 	 * Test JDI definedClasses().
 	 */
 	public void testJDIDefinedClasses() {
 		Iterator<?> defined = fClassLoader.definedClasses().iterator();
 		int i = 0;
-		while (defined.hasNext())
+		while (defined.hasNext()) {
 			assertTrue(
 				Integer.toString(i++),
 				defined.next() instanceof ReferenceType);
+		}
 	}
 	/**
 	 * Test JDI visibleClasses().

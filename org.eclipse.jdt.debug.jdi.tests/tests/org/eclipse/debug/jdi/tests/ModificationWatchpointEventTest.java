@@ -30,6 +30,10 @@ public class ModificationWatchpointEventTest extends AbstractJDITest {
 	public ModificationWatchpointEventTest() {
 		super();
 	}
+
+	public ModificationWatchpointEventTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -63,14 +67,6 @@ public class ModificationWatchpointEventTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new ModificationWatchpointEventTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.event.ModificationWatchpointEvent";
 	}
 	/**
 	 * Test JDI valueToBe().
