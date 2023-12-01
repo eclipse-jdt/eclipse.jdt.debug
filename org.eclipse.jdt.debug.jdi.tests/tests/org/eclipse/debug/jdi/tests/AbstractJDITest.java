@@ -109,7 +109,24 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Constructs a test case with a default name.
 	 */
 	public AbstractJDITest() {
-		super("JDI Test");
+		this("JDI Test");
+	}
+
+	public AbstractJDITest(String name) {
+		super(name);
+	}
+
+	static {
+		fTargetAddress = System.getProperty("java.home");
+		fVMLauncherName = "DefaultVMLauncher";
+		fClassPath = new File("./bin").getAbsolutePath();
+		fBootPath = "";
+		fVMType = "?";
+	}
+
+	@Override
+	public final String getName() {
+		return super.getName();
 	}
 	/**
 	 * Returns the names of the tests that are known to not work

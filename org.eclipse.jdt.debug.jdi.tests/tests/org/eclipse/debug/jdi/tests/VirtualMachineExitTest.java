@@ -25,6 +25,10 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 	public VirtualMachineExitTest() {
 		super();
 	}
+
+	public VirtualMachineExitTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -47,14 +51,6 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 	 */
 	public static void main(String[] args) {
 		new VirtualMachineExitTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.VirtualMachine.exit(int)";
 	}
 	/**
 	 * Test JDI exit().

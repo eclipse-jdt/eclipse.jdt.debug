@@ -26,6 +26,11 @@ import com.sun.jdi.request.MethodExitRequest;
  */
 public class MethodExitRequestTest extends AbstractJDITest {
 
+	public MethodExitRequestTest() {
+	}
+	public MethodExitRequestTest(String name) {
+		super(name);
+	}
 	/**
 	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localSetUp()
 	 */
@@ -47,15 +52,6 @@ public class MethodExitRequestTest extends AbstractJDITest {
 	public static void main(java.lang.String[] args) {
 		new MethodExitRequestTest().runSuite(args);
 	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.MethodExitRequest";
-	}
-
 	/**
 	 * Creates and returns a new <code>MethodExitRequest</code>
 	 * @return a new <code>MethodExitRequest</code>

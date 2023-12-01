@@ -27,6 +27,10 @@ public class ThreadStartEventTest extends AbstractJDITest {
 	public ThreadStartEventTest() {
 		super();
 	}
+
+	public ThreadStartEventTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -58,14 +62,6 @@ public class ThreadStartEventTest extends AbstractJDITest {
 	 */
 	public static void main(java.lang.String[] args) {
 		new ThreadStartEventTest().runSuite(args);
-	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.event.ThreadStartEvent";
 	}
 	/**
 	 * Test JDI thread().

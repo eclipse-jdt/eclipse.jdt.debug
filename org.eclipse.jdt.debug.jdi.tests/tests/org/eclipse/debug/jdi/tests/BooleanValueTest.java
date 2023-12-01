@@ -30,6 +30,10 @@ public class BooleanValueTest extends AbstractJDITest {
 	public BooleanValueTest() {
 		super();
 	}
+
+	public BooleanValueTest(String name) {
+		super(name);
+	}
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -44,14 +48,7 @@ public class BooleanValueTest extends AbstractJDITest {
 	public static void main(java.lang.String[] args) {
 		new BooleanValueTest().runSuite(args);
 	}
-	/**
-	 * Gets the name of the test case.
-	 * @see junit.framework.TestCase#getName()
-	 */
-	@Override
-	public String getName() {
-		return "com.sun.jdi.BooleanValue";
-	}
+
 	/**
 	 * Test JDI equals() and hashCode().
 	 */
