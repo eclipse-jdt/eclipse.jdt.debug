@@ -11,3 +11,6 @@ Snap.*
 # maven
 /*/target/
 /target/
+
+# pomless
+.polyglot.*
