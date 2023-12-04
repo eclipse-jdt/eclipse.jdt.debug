@@ -636,8 +636,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		Runnable r= new Runnable() {
 			@Override
 			public void run() {
-				Shell shell= getShell();
-				if (JavaSnippetEditor.this.fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
+				if (JavaSnippetEditor.this.fSnippetStateListeners != null) {
 					for (ISnippetStateChangedListener listener : new ArrayList<>(JavaSnippetEditor.this.fSnippetStateListeners)) {
 						listener.snippetStateChanged(JavaSnippetEditor.this);
 					}
