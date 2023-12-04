@@ -579,7 +579,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, ONESIX_PROJECT_NAME, jp);
 		}
 	}
-	
+
 	/**
 	 * Creates the Java 21 compliant project
 	 */
@@ -895,7 +895,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assert9Project();
 		return getJavaProject(NINE_PROJECT_NAME);
 	}
-	
+
 	 /**
 	 * Returns the 'Two_One' project, used for Java 21 tests.
 	 *
@@ -2293,10 +2293,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 			Object suspendee= waiter.waitForEvent();
 			setEventSet(waiter.getEventSet());
-			if(suspendee == null) {
-				throw new TestAgainException("Program did not suspend evaluating: \n\n"+snippet);
-			}
-			assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
+			tryAgain(() -> assertNotNull("Program did not suspend evaluating: \n\n" + snippet, suspendee)); //$NON-NLS-1$
 			return fEvaluationResult;
 		}
 		finally {
@@ -2667,7 +2664,31 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
     }
 
 	/**
+	 * Exception to indicate a test should be run again when it fails.
+	 */
+	protected static class TestAgainException extends RuntimeException {
+		private static final long serialVersionUID = 1848804390493463729L;
+
+		public TestAgainException(String string) {
+			super(string);
+		}
+
+		public TestAgainException(Throwable cause) {
+			super("Try test again because of random fail.", cause);
+		}
+	}
+
+	protected void tryAgain(Runnable run) {
+		try {
+			run.run();
+		} catch (AssertionError e) {
+			throw new TestAgainException(e);
+		}
+	}
+
+	/**
 	 * When a test throws the 'try again' exception, try it again.
+	 *
 	 * @see junit.framework.TestCase#runBare()
 	 */
 	@Override
@@ -2740,7 +2761,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		if (cause instanceof InternalException) {
 			int code = ((InternalException)cause).errorCode();
 			if (code == 13) {
-				throw new TestAgainException("Retest - exception during test: "+getName()+": "+e.getMessage());
+				throw new TestAgainException(e);
 			}
 		}
 		throw e;

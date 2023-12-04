@@ -20,7 +20,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;

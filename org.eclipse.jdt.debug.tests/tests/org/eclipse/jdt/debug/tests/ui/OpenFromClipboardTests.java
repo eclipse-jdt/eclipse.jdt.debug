@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -33,7 +34,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
-import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
@@ -79,8 +79,6 @@ public class OpenFromClipboardTests {
 
 	private IPackageFragmentRoot fSourceFolder;
 
-	private final Accessor fAccessor = new Accessor(OpenFromClipboardAction.class);
-
 	public static IJavaProject fJProject;
 
 	@Rule
@@ -90,6 +88,12 @@ public class OpenFromClipboardTests {
 	public static void setUpClass() throws CoreException {
 		JavaTestPlugin.enableAutobuild(false);
 		fJProject = createProject("OpenFromClipboardTests");
+		Job.getJobManager().wakeUp(ResourcesPlugin.FAMILY_AUTO_REFRESH);
+		try {
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 		waitForEncodingRelatedJobs();
 	}
 
@@ -134,15 +138,13 @@ public class OpenFromClipboardTests {
 	}
 
 	private int getMatachingPattern(String s) throws Exception {
-		Object returnValue = fAccessor.invoke("getMatchingPattern", new Object[] { s });
-		return ((Integer) returnValue).intValue();
+		return OpenFromClipboardAction.getMatchingPattern(s);
 	}
 
 	private List<?> getJavaElementMatches(final String textData) throws Exception {
 		JavaModelManager.getIndexManager().waitForIndex(false, null);
-		final List<?> matches = new ArrayList<>();
-		Display.getDefault().syncCall(() -> fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] {
-				textData, matches }));
+		final List<Object> matches = new ArrayList<>();
+		Display.getDefault().syncCall(() -> OpenFromClipboardAction.getJavaElementMatches(textData, matches));
 		return matches;
 	}
 
@@ -511,9 +513,6 @@ public class OpenFromClipboardTests {
 
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
-		if (matches.size() != 1) {
-			throw new TestAgainException("testQualifiedName_1 test again");
-		}
 		assertEquals(1, matches.size());
 	}
 
@@ -531,7 +530,6 @@ public class OpenFromClipboardTests {
 	public void testQualifiedName_3() throws Exception {
 		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand";
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
-
 		setupMemberTest();
 		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());

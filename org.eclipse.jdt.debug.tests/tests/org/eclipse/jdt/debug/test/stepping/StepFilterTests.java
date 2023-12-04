@@ -18,7 +18,6 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -57,10 +56,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			if (!"StepFilterOne".equals(recTypeName)) {
-				throw new TestAgainException("Retest - "+recTypeName+" is does not match StepFilterOne"); // @see bug 297071
-			}
-			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
+			tryAgain(() -> assertEquals("Wrong receiving type", "StepFilterOne", recTypeName));
 			int lineNumber = stackFrame.getLineNumber();
 			assertEquals("Wrong line number", 27, lineNumber);
 		} finally {
@@ -86,10 +82,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepIntoWithFilters(stackFrame, false);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			if (!"StepFilterOne".equals(recTypeName)) {
-				throw new TestAgainException("Retest - "+recTypeName+" is does not match StepFilterOne"); // @see bug 297071
-			}
-			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
+			tryAgain(() -> assertEquals("Wrong receiving type", "StepFilterOne", recTypeName));
 			int lineNumber = stackFrame.getLineNumber();
 			assertEquals("Wrong line number", 28, lineNumber);
 		} finally {
@@ -115,10 +108,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			if (!"StepFilterTwo".equals(recTypeName)) {
-				throw new TestAgainException("Retest - "+recTypeName+" is does not match StepFilterTwo"); // @see bug 297071
-			}
-			assertEquals("Wrong receiving type", "StepFilterTwo", recTypeName);
+			tryAgain(() -> assertEquals("Wrong receiving type", "StepFilterTwo", recTypeName));
 			int lineNumber = stackFrame.getLineNumber();
 			assertEquals("Wrong line number", 28, lineNumber);
 		} finally {
@@ -145,10 +135,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			if (!"StepFilterThree".equals(recTypeName)) {
-				throw new TestAgainException("Retest - "+recTypeName+" is does not match StepFilterThree");
-			}
-			assertEquals("Wrong receiving type", "StepFilterThree", recTypeName);
+			tryAgain(() -> assertEquals("Wrong receiving type", "StepFilterThree", recTypeName));
 			int lineNumber = stackFrame.getLineNumber();
 			assertEquals("Wrong line number", 22, lineNumber);
 		} finally {
@@ -174,10 +161,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepReturnWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			if (!"StepFilterOne".equals(recTypeName)) {
-				throw new TestAgainException("Retest - "+recTypeName+" is does not match StepFilterOne");
-			}
-			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
+			tryAgain(() -> assertEquals("Wrong receiving type", "StepFilterOne", recTypeName));
 			int lineNumber = stackFrame.getLineNumber();
 			assertEquals("Wrong line number", 26, lineNumber);
 		} finally {
@@ -203,10 +187,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepOverWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			if (!"StepFilterOne".equals(recTypeName)) {
-				throw new TestAgainException("Retest - "+recTypeName+" is does not match StepFilterOne");
-			}
-			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
+			tryAgain(() -> assertEquals("Wrong receiving type", "StepFilterOne", recTypeName));
 			int lineNumber = stackFrame.getLineNumber();
 			assertEquals("Wrong line number", 26, lineNumber);
 		} finally {
