@@ -35,7 +35,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
-import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;

@@ -23,6 +23,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 
@@ -67,6 +69,16 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 		IWorkspaceDescription desc= workspace.getDescription();
 		desc.setAutoBuilding(enable);
 		workspace.setDescription(desc);
+		waitForAutoBuild();
+	}
+
+	private static void waitForAutoBuild()  {
+		Job.getJobManager().wakeUp(ResourcesPlugin.FAMILY_AUTO_BUILD);
+		try {
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, new NullProgressMonitor());
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
