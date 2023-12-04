@@ -43,6 +43,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -86,7 +87,9 @@ import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.util.tracker.ServiceTracker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -191,6 +194,11 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Shared XML parser
 	 */
 	private static DocumentBuilder fgXMLParser = null;
+
+	/**
+	 * Service tracker for the workspace service
+	 */
+	private ServiceTracker<IWorkspace, IWorkspace> fWorkspaceServiceTracker = null;
 
 	/**
 	 * Stores VM changes resulting from a JRE preference change.
@@ -544,7 +552,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 			JavaRuntime.removeVMInstallChangedListener(this);
 			JavaRuntime.saveVMConfiguration();
 			fgXMLParser = null;
-			ResourcesPlugin.getWorkspace().removeSaveParticipant(ID_PLUGIN);
+			fWorkspaceServiceTracker.close();
 		} finally {
 			super.stop(context);
 		}
@@ -559,24 +567,50 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
-		ResourcesPlugin.getWorkspace().addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
+		fWorkspaceServiceTracker = new ServiceTracker<>(context, IWorkspace.class, null) {
+
 			@Override
-			public void doneSaving(ISaveContext context1) {}
-			@Override
-			public void prepareToSave(ISaveContext context1)	throws CoreException {}
-			@Override
-			public void rollback(ISaveContext context1) {}
-			@Override
-			public void saving(ISaveContext context1) throws CoreException {
-				try {
-					InstanceScope.INSTANCE.getNode(ID_PLUGIN).flush();
-				} catch (BackingStoreException e) {
-					log(e);
+			public IWorkspace addingService(ServiceReference<IWorkspace> reference) {
+				IWorkspace workspace = context.getService(reference);
+				if (workspace == null) {
+					log("Could not add save participant as IWorkspace service is unavailable"); //$NON-NLS-1$
+					return null;
 				}
-				//catch in case any install times are still cached for removed JREs
-				writeInstallInfo();
+				try {
+					workspace.addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
+						@Override
+						public void doneSaving(ISaveContext context1) {}
+						@Override
+						public void prepareToSave(ISaveContext context1)	throws CoreException {}
+						@Override
+						public void rollback(ISaveContext context1) {}
+						@Override
+						public void saving(ISaveContext context1) throws CoreException {
+							try {
+								InstanceScope.INSTANCE.getNode(ID_PLUGIN).flush();
+							} catch (BackingStoreException e) {
+								log(e);
+							}
+							//catch in case any install times are still cached for removed JREs
+							writeInstallInfo();
+						}
+					});
+				} catch (CoreException e) {
+					log(e.getStatus());
+					context.ungetService(reference);
+					return null;
+				}
+				return super.addingService(reference);
 			}
-		});
+
+			@Override
+			public void removedService(ServiceReference<IWorkspace> reference, IWorkspace service) {
+				service.removeSaveParticipant(ID_PLUGIN);
+				context.ungetService(reference);
+			}
+
+		};
+		fWorkspaceServiceTracker.open();
 
 		InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(this);
 		JavaRuntime.addVMInstallChangedListener(this);
