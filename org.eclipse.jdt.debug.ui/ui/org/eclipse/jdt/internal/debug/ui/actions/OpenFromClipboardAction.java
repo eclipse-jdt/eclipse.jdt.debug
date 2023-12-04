@@ -253,7 +253,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		return s.indexOf(lineDelimiter) == -1;
 	}
 
-	private static int getMatchingPattern(String s) {
+	public static int getMatchingPattern(String s) {
 		if (s.matches(JAVA_FILE_LINE_PATTERN)) {
 			return JAVA_FILE_LINE;
 		}
@@ -302,7 +302,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @return the line number
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static int getJavaElementMatches(String inputText, List<Object> matches) throws InterruptedException {
+	public static int getJavaElementMatches(String inputText, List<Object> matches) throws InterruptedException {
 		String s = inputText.trim();
 		switch (getMatchingPattern(s)) {
 		case JAVA_FILE_LINE: {
