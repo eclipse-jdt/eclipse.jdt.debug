@@ -36,11 +36,11 @@ public interface ThreadReference {
 	 * <li>If yes, the VM checks to see whether there might be a <code>finally</code> or <code>synchronized</code> block enclosing the current
 	 * instruction.
 	 * <ul>
-	 * <li>If there is no enclosing <code>finally</code> block, the operation reduces to the above case.
+	 * <li>If there is no enclosing <code>finally</code> block, the operation reduces to the above case.ll
 	 * <li>If there is an enclosing <code>finally</code> block, the VM creates a VM exception and activates the <code>finally</code> block with it. If
 	 * this exception eventually causes the stack frame to be popped, the exception is caught by the VM itself, the return value is returned, and
 	 * execution continues back in the caller.
-	 * <ul>
+	 * </ul>
 	 * </ul>
 	 * <br/>
 	 * Note that a <code>finally</code> block manifests itself as (and is indistinguishable from) a <code>catch Throwable</code> block.

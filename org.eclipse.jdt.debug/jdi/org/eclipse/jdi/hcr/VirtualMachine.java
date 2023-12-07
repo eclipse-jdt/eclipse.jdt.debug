@@ -91,6 +91,7 @@ public interface VirtualMachine {
 	 * <li>send a class unload event,
 	 * <li>suspend the VM if it was requested by the class unload event request.
 	 * </ul>
+	 * </ul>
 	 * </ol>
 	 * <p>
 	 * Subsequent references to classes will work with the new class definition. Note the existing <code>com.sun.jdi.ReferenceType</code>,
