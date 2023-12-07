@@ -92,6 +92,7 @@ public interface VirtualMachine {
 	 * <li>suspend the VM if it was requested by the class unload event request.
 	 * </ul>
 	 * </ul>
+	 * </ul>
 	 * </ol>
 	 * <p>
 	 * Subsequent references to classes will work with the new class definition. Note the existing <code>com.sun.jdi.ReferenceType</code>,
@@ -118,7 +119,7 @@ public interface VirtualMachine {
 	 * <p>
 	 * Change notices apply to all classes that are HCR-eligible (i.e., loaded by one of the cooperative system class loaders); other classes are
 	 * never affected.
-	 * <p>
+	 * </p>
 	 * Returns whether the operation could be completed as specified above, whether it was ignored (for example if the VM doesn't support this kind of
 	 * replacement), or whether the operation failed and the VM should be restarted.
 	 *
