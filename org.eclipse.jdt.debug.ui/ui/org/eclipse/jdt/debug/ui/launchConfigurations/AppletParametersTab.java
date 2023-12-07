@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,11 +54,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This tab appears for java applet launch configurations and allows the user to edit
- * applet-specific attributes such as width, height, name & applet parameters.
+ * This tab appears for java applet launch configurations and allows the user to edit applet-specific attributes such as width, height, name &amp;
+ * applet parameters.
  * <p>
  * This class may be instantiated.
  * </p>
+ *
  * @since 2.1
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -73,17 +74,11 @@ public class AppletParametersTab extends JavaLaunchTab {
 
 	private class AppletTabListener extends SelectionAdapter implements ModifyListener {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-		 */
 		@Override
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
@@ -119,9 +114,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 	 */
 	private TableViewer fViewer;
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -248,9 +240,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 	}
 
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
@@ -349,9 +338,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 		return (Map<String, String>) fViewer.getInput();
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		try {
@@ -382,17 +368,11 @@ public class AppletParametersTab extends JavaLaunchTab {
 		return fHeightText.getText().trim();
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
@@ -423,9 +403,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 		fViewer.setInput(input);
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LauncherMessages.appletlauncher_argumenttab_name;
@@ -441,25 +418,16 @@ public class AppletParametersTab extends JavaLaunchTab {
 		return "org.eclipse.jdt.debug.ui.appletParametersTab"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when activated
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when de-activated
