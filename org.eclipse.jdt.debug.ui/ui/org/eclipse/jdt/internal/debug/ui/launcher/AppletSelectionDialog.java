@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -40,7 +39,6 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 /**
  * A dialog to select a type that extends <code>java.applet.Applet</code>.
  */
-@SuppressWarnings("deprecation")
 public class AppletSelectionDialog extends TwoPaneElementSelector {
 
 	private final IRunnableContext fRunnableContext;
@@ -125,7 +123,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 					monitor.beginTask(LauncherMessages.AppletSelectionDialog_Searching____1, projectCount);
 					for (int i = 0; i < projectCount; i++) {
 						IJavaProject javaProject = javaProjects[i];
-						SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+						IProgressMonitor subMonitor = monitor.slice(1);
 						results.addAll(AppletLaunchConfigurationUtils.collectAppletTypesInProject(subMonitor, javaProject));
 						monitor.worked(1);
 					}

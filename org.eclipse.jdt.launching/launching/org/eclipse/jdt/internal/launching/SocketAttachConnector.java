@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -47,7 +46,6 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 /**
  * A standard socket attaching connector
  */
-@SuppressWarnings("deprecation")
 public class SocketAttachConnector implements IVMConnector {
 
 	/**
@@ -111,7 +109,7 @@ public class SocketAttachConnector implements IVMConnector {
 			monitor = new NullProgressMonitor();
 		}
 
-		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		IProgressMonitor subMonitor = monitor.slice(1);
 		subMonitor.beginTask(LaunchingMessages.SocketAttachConnector_Connecting____1, 2);
 		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Configuring_connection____1);
 

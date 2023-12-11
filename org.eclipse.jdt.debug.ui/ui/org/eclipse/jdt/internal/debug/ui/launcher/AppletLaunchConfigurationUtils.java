@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -45,7 +44,6 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 
-@SuppressWarnings("deprecation")
 public class AppletLaunchConfigurationUtils {
 
 	/**
@@ -112,7 +110,7 @@ public class AppletLaunchConfigurationUtils {
 		HashSet<IType> result = new HashSet<>(5);
 		try {
 			IType javaLangApplet = AppletLaunchConfigurationUtils.getMainType("java.applet.Applet", project); //$NON-NLS-1$
-			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, new SubProgressMonitor(monitor, 1));
+			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, monitor.slice(1));
 			types = hierarchy.getAllSubtypes(javaLangApplet);
 			int length = types.length;
 			if (length != 0) {
@@ -218,7 +216,7 @@ public class AppletLaunchConfigurationUtils {
 					try {
 						for (int i= 0; i < nElements; i++) {
 							try {
-								collectTypes(elements[i], new SubProgressMonitor(pm, 1), result);
+								collectTypes(elements[i], pm.slice(1), result);
 							} catch (JavaModelException jme) {
 								JDIDebugUIPlugin.log(jme.getStatus());
 							}
