@@ -21,8 +21,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -30,7 +29,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,7 +38,6 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 /**
  * A dialog to select a type that extends <code>java.applet.Applet</code>.
  */
-@SuppressWarnings("deprecation")
 public class AppletSelectionDialog extends TwoPaneElementSelector {
 
 	private final IRunnableContext fRunnableContext;
@@ -119,18 +116,12 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		final Set<IType> results = new HashSet<>(projectCount);
 		boolean canceled = false;
 		try {
-			fRunnableContext.run(true, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(LauncherMessages.AppletSelectionDialog_Searching____1, projectCount);
-					for (int i = 0; i < projectCount; i++) {
-						IJavaProject javaProject = javaProjects[i];
-						SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-						results.addAll(AppletLaunchConfigurationUtils.collectAppletTypesInProject(subMonitor, javaProject));
-						monitor.worked(1);
-					}
-					monitor.done();
+			fRunnableContext.run(true, true, monitor -> {
+				SubMonitor subMon = SubMonitor.convert(monitor, LauncherMessages.AppletSelectionDialog_Searching____1, projectCount);
+				for (IJavaProject javaProject : javaProjects) {
+					results.addAll(AppletLaunchConfigurationUtils.collectAppletTypesInProject(subMon.split(1), javaProject));
 				}
+				subMon.done();
 			});
 		} catch (InvocationTargetException ite) {
 		} catch (InterruptedException ie) {
@@ -141,9 +132,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		if (canceled) {
 			return null;
 		}
-		IType[] types = null;
-		types = results.toArray(new IType[results.size()]);
-		return types;
+		return results.toArray(IType[]::new);
 	}
 
 	/**

@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -45,7 +45,6 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 
-@SuppressWarnings("deprecation")
 public class AppletLaunchConfigurationUtils {
 
 	/**
@@ -112,7 +111,7 @@ public class AppletLaunchConfigurationUtils {
 		HashSet<IType> result = new HashSet<>(5);
 		try {
 			IType javaLangApplet = AppletLaunchConfigurationUtils.getMainType("java.applet.Applet", project); //$NON-NLS-1$
-			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, new SubProgressMonitor(monitor, 1));
+			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, monitor);
 			types = hierarchy.getAllSubtypes(javaLangApplet);
 			int length = types.length;
 			if (length != 0) {
@@ -209,26 +208,23 @@ public class AppletLaunchConfigurationUtils {
 	public static IType[] findApplets(IRunnableContext context, final Object[] elements) throws InvocationTargetException, InterruptedException {
 		final Set<Object> result= new HashSet<>();
 
-		if (elements.length > 0) {
-			IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor pm) throws InterruptedException {
-					int nElements= elements.length;
-					pm.beginTask(LauncherMessages.appletlauncher_search_task_inprogress, nElements);
-					try {
-						for (int i= 0; i < nElements; i++) {
-							try {
-								collectTypes(elements[i], new SubProgressMonitor(pm, 1), result);
-							} catch (JavaModelException jme) {
-								JDIDebugUIPlugin.log(jme.getStatus());
-							}
-							if (pm.isCanceled()) {
-								throw new InterruptedException();
-							}
+		int nElements = elements.length;
+		if (nElements > 0) {
+			IRunnableWithProgress runnable = pm -> {
+				SubMonitor subMon = SubMonitor.convert(pm, LauncherMessages.appletlauncher_search_task_inprogress, nElements);
+				try {
+					for (Object o : elements) {
+						try {
+							collectTypes(o, subMon.split(1), result);
+						} catch (JavaModelException jme) {
+							JDIDebugUIPlugin.log(jme.getStatus());
 						}
-					} finally {
-						pm.done();
+						if (pm.isCanceled()) {
+							throw new InterruptedException();
+						}
 					}
+				} finally {
+					pm.done();
 				}
 			};
 			context.run(true, true, runnable);
