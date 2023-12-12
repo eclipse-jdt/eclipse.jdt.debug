@@ -22,9 +22,8 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -56,7 +55,6 @@ import org.eclipse.ui.PartInitException;
  *
  * @since 3.4.0
  */
-@SuppressWarnings("deprecation")
 public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**
@@ -95,10 +93,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		if (!isValid(query)) {
 			return;
 		}
-		if(monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask("", 11); //$NON-NLS-1$
+		SubMonitor subMon = SubMonitor.convert(monitor, 8);
 		try {
 			Pattern pattern = null;
 			if (query instanceof ElementQuerySpecification) {
@@ -133,13 +128,13 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 				String quotedPattern = quotePattern(patternQuery.getPattern());
 				pattern = Pattern.compile(quotedPattern, flags);
 			}
-			if(monitor.isCanceled()) {
+			if (subMon.isCanceled()) {
 				return;
 			}
-			monitor.worked(1);
-			searchLaunchConfigurations(query.getScope(), requestor, pattern, new SubProgressMonitor(monitor, 7));
+			subMon.worked(1);
+			searchLaunchConfigurations(query.getScope(), requestor, pattern, subMon.newChild(7));
 		} finally {
-			monitor.done();
+			subMon.done();
 		}
 	}
 

@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -37,7 +36,6 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 /**
  * A 1.1.x VM runner
  */
-@SuppressWarnings("deprecation")
 public class Standard11xVMRunner extends StandardVMRunner {
 
 	public Standard11xVMRunner(IVMInstall vmInstance) {
@@ -49,11 +47,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 	 */
 	@Override
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2); //
 
 		String program= constructProgramString(config);
@@ -104,7 +98,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		arguments.toArray(cmdLine);
 
 		// check for cancellation
-		if (monitor.isCanceled()) {
+		if (subMonitor.isCanceled()) {
 			return;
 		}
 		File workingDir = getWorkingDir(config);
@@ -128,7 +122,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		}
 
 		// check for cancellation
-		if (monitor.isCanceled()) {
+		if (subMonitor.isCanceled()) {
 			p.destroy();
 			return;
 		}

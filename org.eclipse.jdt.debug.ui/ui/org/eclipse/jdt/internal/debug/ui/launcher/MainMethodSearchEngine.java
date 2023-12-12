@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -40,7 +40,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-@SuppressWarnings("deprecation")
 public class MainMethodSearchEngine{
 
 	private class MethodCollector extends SearchRequestor {
@@ -80,7 +79,7 @@ public class MainMethodSearchEngine{
 	 * @param includeSubtypes whether to consider types that inherit a main method
 	 */
 	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, boolean includeSubtypes) {
-		pm.beginTask(LauncherMessages.MainMethodSearchEngine_1, 100);
+		SubMonitor subMon = SubMonitor.convert(pm, LauncherMessages.MainMethodSearchEngine_1, 100);
 		int searchTicks = 100;
 		if (includeSubtypes) {
 			searchTicks = 25;
@@ -89,16 +88,16 @@ public class MainMethodSearchEngine{
 		SearchPattern pattern = SearchPattern.createPattern("main void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE); //$NON-NLS-1$
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		MethodCollector collector = new MethodCollector();
-		IProgressMonitor searchMonitor = new SubProgressMonitor(pm, searchTicks);
+
 		try {
-			new SearchEngine().search(pattern, participants, scope, collector, searchMonitor);
+			new SearchEngine().search(pattern, participants, scope, collector, subMon.newChild(searchTicks));
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
 
 		List<IType> result = collector.getResult();
 		if (includeSubtypes) {
-			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);
+			IProgressMonitor subtypesMonitor = subMon.newChild(75);
 			subtypesMonitor.beginTask(LauncherMessages.MainMethodSearchEngine_2, result.size());
 			Set<IType> set = addSubtypes(result, subtypesMonitor, scope);
 			return set.toArray(new IType[set.size()]);
