@@ -54,22 +54,6 @@
     </profile>
   </profiles>
   
-  <build>
-	  <plugins>
-	      <plugin>
-	        <groupId>org.eclipse.tycho</groupId>
-	        <artifactId>target-platform-configuration</artifactId>
-	        <configuration>
-	            <dependency-resolution>
-	                <profileProperties>
-	                    <org.eclipse.jdt.buildtime>true</org.eclipse.jdt.buildtime>
-	                </profileProperties>
-	            </dependency-resolution>
-	        </configuration>
-	    	</plugin>
-	  </plugins>
-  </build>
-
   <modules>
     <module>org.eclipse.jdt.debug</module>
     <module>org.eclipse.jdt.launching</module>
