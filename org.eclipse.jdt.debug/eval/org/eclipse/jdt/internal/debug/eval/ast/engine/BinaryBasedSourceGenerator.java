@@ -14,8 +14,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -50,6 +53,8 @@ public class BinaryBasedSourceGenerator {
 
 	private String fCompilationUnitName;
 
+	private Set<String> fImports;
+
 	/**
 	 * Level of source code to generate (major, minor). For example 1 and 4
 	 * indicates 1.4.
@@ -63,6 +68,7 @@ public class BinaryBasedSourceGenerator {
 		fLocalVariableTypeNames = localTypesNames;
 		fLocalVariableNames = localVariables;
 		fIsInStaticMethod = isInStaticMethod;
+		fImports = new HashSet<>();
 		int index = sourceLevel.indexOf('.');
 		String num;
 		if (index != -1) {
@@ -101,9 +107,16 @@ public class BinaryBasedSourceGenerator {
 		fSource = buildTypeDeclaration(refType, buildRunMethod(refType), null,
 				false);
 		String packageName = getPackageName(refType.name());
+		int packageEndPos = 0;
 		if (packageName != null) {
 			fSource.insert(0, "package " + packageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			fCodeSnippetPosition += 10 + packageName.length();
+			packageEndPos = 10 + packageName.length();
+			fCodeSnippetPosition += packageEndPos;
+		}
+		if (!fImports.isEmpty()) {
+			String importBlock = fImports.stream().collect(Collectors.joining(";\nimport ", "import ", ";")).concat("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			fSource.insert(packageEndPos, importBlock);
+			fCodeSnippetPosition += importBlock.length();
 		}
 		fCompilationUnitName = getSimpleName(refType.name());
 	}
@@ -128,7 +141,9 @@ public class BinaryBasedSourceGenerator {
 		source.append(getUniqueMethodName(RUN_METHOD_NAME, type));
 		source.append('(');
 		for (int i = 0, length = fLocalVariableNames.length; i < length; i++) {
-			source.append(getDotName(fLocalVariableTypeNames[i]));
+			String varType = getDotName(fLocalVariableTypeNames[i]);
+			addToImports(varType);
+			source.append(varType);
 			source.append(' ');
 			source.append(fLocalVariableNames[i]);
 			if (i + 1 < length)
@@ -145,6 +160,12 @@ public class BinaryBasedSourceGenerator {
 		source.append('}').append('\n');
 		fRunMethodLength = source.length();
 		return source;
+	}
+
+	private void addToImports(String type) {
+		if (!type.equals(getSimpleName(type))) {
+			fImports.add(Signature.getTypeErasure(type));
+		}
 	}
 
 	private StringBuilder buildTypeDeclaration(ReferenceType referenceType,
@@ -164,9 +185,16 @@ public class BinaryBasedSourceGenerator {
 
 		if (thisField == null) {
 			String packageName = getPackageName(referenceType.name());
+			int packageEndPos = 0;
 			if (packageName != null) {
 				source.insert(0, "package " + packageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$
-				fCodeSnippetPosition += 10 + packageName.length();
+				packageEndPos = 10 + packageName.length();
+				fCodeSnippetPosition += packageEndPos;
+			}
+			if (!fImports.isEmpty()) {
+				String importBlock = fImports.stream().collect(Collectors.joining(";\nimport ", "import ", ";")).concat("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				source.insert(packageEndPos, importBlock);
+				fCodeSnippetPosition += importBlock.length();
 			}
 			if (isAnonymousTypeName(referenceType.name())) {
 				fCompilationUnitName = ANONYMOUS_CLASS_NAME;
@@ -338,6 +366,8 @@ public class BinaryBasedSourceGenerator {
 			if (!method.isConstructor() && !method.isStaticInitializer()
 				&& !method.isBridge()) {
 				source.append(buildMethodDeclaration(method));
+			} else if (method.isConstructor()) {
+				source.append(buildMethodDeclaration(method, getSimpleName(referenceType.name())));
 			}
 		}
 
@@ -387,13 +417,19 @@ public class BinaryBasedSourceGenerator {
 			source.append("protected "); //$NON-NLS-1$
 		}
 
-		source.append(getDotName(field.typeName())).append(' ')
+		String dotName = getDotName(field.typeName());
+		addToImports(dotName);
+		source.append(dotName).append(' ')
 				.append(field.name()).append(';').append('\n');
 
 		return source;
 	}
 
 	private StringBuilder buildMethodDeclaration(Method method) {
+		return buildMethodDeclaration(method, null);
+	}
+
+	private StringBuilder buildMethodDeclaration(Method method, String methodName) {
 		StringBuilder source = new StringBuilder();
 
 		if (method.isFinal()) {
@@ -444,11 +480,10 @@ public class BinaryBasedSourceGenerator {
 				source.append("> "); //$NON-NLS-1$
 			}
 
-			source.append(
-					Signature.toString(
-							Signature.getReturnType(genericSignature)).replace(
-							'/', '.')).append(' ').append(method.name())
-					.append('(');
+			if (!method.isConstructor()) {
+				source.append(Signature.toString(Signature.getReturnType(genericSignature)).replace('/', '.')).append(' ');
+			}
+			source.append((methodName == null) ? method.name() : methodName).append('(');
 
 			String[] parameterTypes = Signature
 					.getParameterTypes(genericSignature);
@@ -481,8 +516,10 @@ public class BinaryBasedSourceGenerator {
 			}
 			source.append(')');
 		} else {
-			source.append(getDotName(method.returnTypeName())).append(' ')
-					.append(method.name()).append('(');
+			if (!method.isConstructor()) {
+				source.append(getDotName(method.returnTypeName())).append(' ');
+			}
+			source.append((methodName == null) ? method.name() : methodName).append('(');
 
 			List<String> arguments = method.argumentTypeNames();
 			int i = 0;
