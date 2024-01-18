@@ -23,35 +23,26 @@ public class Bootstrap {
 	public Bootstrap() {
 	}
 
-	@SuppressWarnings("deprecation")
 	public static synchronized com.sun.jdi.VirtualMachineManager virtualMachineManager() {
 		if (fVirtualMachineManager != null) {
 			return fVirtualMachineManager;
 		}
 
+		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
+		String className = null;
+		if (extensionRegistry != null) { // is null if the platform was not started
+			className = extensionRegistry.getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), "jdiclient").getLabel(); //$NON-NLS-1$
+		}
+		Class<?> clazz = null;
 		try {
-			IExtensionRegistry extensionRegistry = Platform
-					.getExtensionRegistry();
-			String className = null;
-			if (extensionRegistry != null) { // is null if the platform was not
-												// started
-				className = extensionRegistry
-						.getExtensionPoint(
-								JDIDebugPlugin.getUniqueIdentifier(),
-								"jdiclient").getLabel(); //$NON-NLS-1$
-			}
-			Class<?> clazz = null;
 			if (className != null) {
 				clazz = Class.forName(className);
 			}
 			if (clazz != null) {
-				fVirtualMachineManager = (com.sun.jdi.VirtualMachineManager) clazz
-						.newInstance();
+				fVirtualMachineManager = (com.sun.jdi.VirtualMachineManager) clazz.getDeclaredConstructor().newInstance();
 			}
-		} catch (ClassNotFoundException e) {
-		} catch (NoClassDefFoundError e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
+			throw new RuntimeException("Could not instantiate " + className, e); //$NON-NLS-1$
 		}
 
 		if (fVirtualMachineManager == null) {
