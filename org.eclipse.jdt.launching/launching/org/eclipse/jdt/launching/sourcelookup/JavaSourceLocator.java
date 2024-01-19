@@ -447,10 +447,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 
 						IJavaSourceLocation location = null;
 						try {
-							location = (IJavaSourceLocation)clazz.newInstance();
-						} catch (IllegalAccessException e) {
-							abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location__12, e);
-						} catch (InstantiationException e) {
+							location = (IJavaSourceLocation) clazz.getDeclaredConstructor().newInstance();
+						} catch (Exception e) {
 							abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location__12, e);
 						}
 						location.initializeFrom(data);
