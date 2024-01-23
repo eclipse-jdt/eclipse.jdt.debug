@@ -663,7 +663,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 						JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_failed,
 						exception);
 			}
-			target.reinstallBreakpointsIn(resources, qualifiedNames);
+			target.reinstallBreakpointsIn(qualifiedNames);
 		} else {
 			target.notSupported(JDIDebugHCRMessages.JavaHotCodeReplaceManager_does_not_support_hcr);
 		}

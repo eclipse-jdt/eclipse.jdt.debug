@@ -704,10 +704,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 		try {
 			if (item instanceof JDIReferenceListVariable) {
-				return getReferencesImage(item);
+				return getReferencesImage();
 			}
 			if (item instanceof JDIReferenceListEntryVariable){
-				return getReferenceImage(item);
+				return getReferenceImage();
 			}
 			if (item instanceof IJavaVariable) {
 				return getVariableImage((IAdaptable) item);
@@ -938,7 +938,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 *
 	 * @return image associated with reference variables
 	 */
-	protected Image getReferencesImage(Object element){
+	private Image getReferencesImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_ELCL_ALL_REFERENCES);
 	}
 
@@ -948,7 +948,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 *
 	 * @return image associated with reference variables
 	 */
-	protected Image getReferenceImage(Object element){
+	private Image getReferenceImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_REFERENCE);
 	}
 

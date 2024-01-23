@@ -272,7 +272,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 		try {
 			String sig = Signature.createTypeSignature("org.test.MyClass", false);
 			TestIJavaType type = new TestIJavaType("barfoo", sig);
-			TestIJavaArrayValue value = new TestIJavaArrayValue(type, "org.test.MyArrayClass[]", null, "org.test.MyClass", "My Array", 3);
+			TestIJavaArrayValue value = new TestIJavaArrayValue(type, "org.test.MyArrayClass[]", null, "org.test.MyClass", "My Array");
 			value.setValues(new IJavaValue[] {
 					new TestIJavaValue(type, "I", null, "org.test.MyArrayClass", "Array Value 1")
 			});

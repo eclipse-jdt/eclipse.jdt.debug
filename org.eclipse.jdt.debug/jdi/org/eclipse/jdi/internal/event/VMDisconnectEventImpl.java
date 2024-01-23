@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-import java.io.DataInputStream;
-
 import org.eclipse.jdi.internal.MirrorImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.request.RequestID;
@@ -42,8 +40,7 @@ public class VMDisconnectEventImpl extends EventImpl implements
 	 *         already been read.
 	 * @return the new event
 	 */
-	public static VMDisconnectEventImpl read(MirrorImpl target,
-			RequestID requestID, DataInputStream dataInStream) {
+	static VMDisconnectEventImpl read(MirrorImpl target, RequestID requestID) {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		VMDisconnectEventImpl event = new VMDisconnectEventImpl(vmImpl,
 				requestID);

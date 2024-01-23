@@ -174,11 +174,10 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 			result = ThreadStartEventImpl.read(target, requestID, dataInStream);
 			break;
 		case VMDeathEventImpl.EVENT_KIND:
-			result = VMDeathEventImpl.read(target, requestID, dataInStream);
+			result = VMDeathEventImpl.read(target, requestID);
 			break;
 		case VMDisconnectEventImpl.EVENT_KIND:
-			result = VMDisconnectEventImpl
-					.read(target, requestID, dataInStream);
+			result = VMDisconnectEventImpl.read(target, requestID);
 			break;
 		case VMStartEventImpl.EVENT_KIND:
 			result = VMStartEventImpl.read(target, requestID, dataInStream);
@@ -190,8 +189,9 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 		}
 
 		// Find and store original request.
-		if (!requestID.isNull())
+		if (!requestID.isNull()) {
 			result.fRequest = target.virtualMachineImpl().eventRequestManagerImpl().findRequest(result);
+		}
 
 		return result;
 	}
@@ -209,16 +209,18 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fEventKindMap != null)
+		if (fEventKindMap != null) {
 			return;
+		}
 
 		java.lang.reflect.Field[] fields = EventImpl.class.getDeclaredFields();
 		fEventKindMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0
-					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+					|| (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0) {
 				continue;
+			}
 
 			try {
 				String name = field.getName();

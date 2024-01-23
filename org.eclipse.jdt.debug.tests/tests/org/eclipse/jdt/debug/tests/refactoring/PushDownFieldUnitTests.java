@@ -34,7 +34,7 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 			//create Breakpoint to test
 			createWatchpoint("a.b.c.Movee", "anInt", true, true);
 			//refactor
-			Refactoring ref = setupRefactor("Movee","anInt","src","a.b.c","Movee.java");
+			Refactoring ref = setupRefactor("Movee", "src", "a.b.c", "Movee.java");
 			performRefactor(ref);
 			//test breakpoints
 			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
@@ -52,7 +52,7 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 
 /////////////////////////////////////////
 
-	private Refactoring setupRefactor(String parentClassName, String className, String root, String targetPackageName, String cuName) throws Exception {
+private Refactoring setupRefactor(String parentClassName, String root, String targetPackageName, String cuName) throws Exception {
 
 		IJavaProject javaProject = get14Project();
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
