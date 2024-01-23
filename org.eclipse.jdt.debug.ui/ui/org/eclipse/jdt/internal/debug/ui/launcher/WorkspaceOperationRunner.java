@@ -63,16 +63,16 @@ class WorkspaceOperationRunner implements IRunnableContext {
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (runnable instanceof ISchedulingRuleProvider) {
-			run(fork, cancelable, runnable, ((ISchedulingRuleProvider)runnable).getSchedulingRule());
+			run(runnable, ((ISchedulingRuleProvider) runnable).getSchedulingRule());
 		} else {
-			run(fork, cancelable, runnable, ResourcesPlugin.getWorkspace().getRoot());
+			run(runnable, ResourcesPlugin.getWorkspace().getRoot());
 		}
 	}
 
 	/**
 	 * Runs a new {@link WorkspaceModifyDelegatingOperation}
 	 */
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable, ISchedulingRule schedulingRule) throws InvocationTargetException, InterruptedException {
+	private void run(IRunnableWithProgress runnable, ISchedulingRule schedulingRule) throws InvocationTargetException, InterruptedException {
 		WorkspaceModifyDelegatingOperation operation= new WorkspaceModifyDelegatingOperation(runnable, schedulingRule);
 		operation.run(getProgressMonitor());
 	}

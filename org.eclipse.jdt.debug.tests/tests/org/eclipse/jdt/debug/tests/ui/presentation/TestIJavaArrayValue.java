@@ -24,10 +24,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	int size = 0;
 	IJavaValue[] values;
 
-	/**
-	 * Constructor
-	 */
-	public TestIJavaArrayValue(IJavaType type, String sig, String gsig,	String rtname, String vstring, int size) {
+	TestIJavaArrayValue(IJavaType type, String sig, String gsig, String rtname, String vstring) {
 		super(type, sig, gsig, rtname, vstring);
 	}
 
