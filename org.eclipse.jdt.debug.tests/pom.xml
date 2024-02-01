@@ -21,7 +21,6 @@
   <version>3.12.300-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
-    <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
     <testSuite>${project.artifactId}</testSuite>
     <testClass>org.eclipse.jdt.debug.tests.AutomatedSuite</testClass>
   </properties>
