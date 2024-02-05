@@ -59,6 +59,7 @@ public class AccessibleTest extends AbstractJDITest {
 	 * Test JDI isPackagePrivate().
 	 */
 	public void testJDIIsPackagePrivate() {
+		assertFalse("testFAIL", true);
 		assertFalse("1", fArrayType.isPackagePrivate());
 		assertFalse("2", fClassType.isPackagePrivate());
 		assertFalse("3", fInterfaceType.isPackagePrivate());
