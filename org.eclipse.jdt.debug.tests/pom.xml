@@ -23,13 +23,13 @@
   <properties>
     <testSuite>${project.artifactId}</testSuite>
     <testClass>org.eclipse.jdt.debug.tests.AutomatedSuite</testClass>
+  	<defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
-        <version>${tycho.version}</version>
         <configuration>
           <useUIHarness>true</useUIHarness>
           <useUIThread>true</useUIThread>
