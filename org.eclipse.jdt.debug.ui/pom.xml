@@ -9,15 +9,78 @@
   Contributors:
      Igor Fedorenko - initial implementation
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>eclipse.jdt.debug</artifactId>
-    <groupId>eclipse.jdt.debug</groupId>
-    <version>4.31.0-SNAPSHOT</version>
-  </parent>
-  <groupId>org.eclipse.jdt</groupId>
-  <artifactId>org.eclipse.jdt.debug.ui</artifactId>
-  <version>3.13.300-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>eclipse.jdt.debug</artifactId>
+		<groupId>eclipse.jdt.debug</groupId>
+		<version>4.31.0-SNAPSHOT</version>
+	</parent>
+	<groupId>org.eclipse.jdt</groupId>
+	<artifactId>org.eclipse.jdt.debug.ui</artifactId>
+	<version>3.13.300-SNAPSHOT</version>
+	<packaging>eclipse-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.12.1</version>
+				<executions>
+					<execution>
+						<id>compile-snippetsupport</id>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<!-- make sure we use minimum source/target level as
+							this code will be run in old JVMs -->
+							<source>1.7</source>
+							<target>1.7</target>
+							<compilerId>jdt</compilerId>
+							<compileSourceRoots>${project.basedir}/Snippet Support</compileSourceRoots>
+							<outputDirectory>${project.build.directory}/snippetsupport</outputDirectory>
+							<useIncrementalCompilation>false</useIncrementalCompilation>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-compiler-jdt</artifactId>
+						<version>${tycho.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>jar-snippetsupport</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<classesDirectory>${project.build.directory}/snippetsupport</classesDirectory>
+							<outputDirectory>${project.basedir}</outputDirectory>
+							<finalName>snippetsupport</finalName>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+								<manifest>
+									<addDefaultEntries>false</addDefaultEntries>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
