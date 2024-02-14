@@ -161,7 +161,7 @@ public class FileHashing {
 					}
 				}
 				// don't hold cache lock while hashing file
-				HashCode hashCode = sha1(file);
+				HashCode hashCode = computeHash(file);
 				synchronized (cache) {
 					cache.put(cacheKey, hashCode);
 				}
@@ -174,10 +174,10 @@ public class FileHashing {
 
 	}
 
-	private static HashCode sha1(File file) throws IOException {
+	private static HashCode computeHash(File file) throws IOException {
 		MessageDigest digest;
 		try {
-			digest = MessageDigest.getInstance("SHA1"); //$NON-NLS-1$
+			digest = MessageDigest.getInstance("SHA-256"); //$NON-NLS-1$
 		}
 		catch (NoSuchAlgorithmException e) {
 			throw new IllegalStateException("Unsupported JVM", e); //$NON-NLS-1$
