@@ -38,9 +38,6 @@ public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguratio
 		super(tools.getColorManager(), preferenceStore, editor, IJavaPartitions.JAVA_PARTITIONING);
 	}
 
-	/**
-	 * @see JDIViewerConfiguration#getContentAssistantProcessor()
-	 */
 	public IContentAssistProcessor getContentAssistantProcessor() {
 		return new JavaSnippetCompletionProcessor((JavaSnippetEditor)getEditor());
 	}

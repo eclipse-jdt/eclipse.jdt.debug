@@ -28,8 +28,6 @@ public class JavaLaunchingUtils {
 	/**
 	 * Returns the argument file for a launch within the given temp directory
 	 *
-	 * @param launch
-	 *            The launch
 	 * @param processTempFilesDir
 	 *            The processing file directory
 	 * @param optionalString

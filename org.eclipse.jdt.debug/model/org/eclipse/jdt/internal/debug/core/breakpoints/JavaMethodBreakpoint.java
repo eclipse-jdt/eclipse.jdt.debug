@@ -190,14 +190,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * Returns a new method entry request for this breakpoint's criteria
 	 *
-	 * @param the
-	 *            target in which to create the request
-	 * @param type
-	 *            the type on which to create the request
+	 * @param target
+	 *            the target in which to create the request
+	 * @param typePattern
+	 *            type the type on which to create the request
 	 * @return method entry request
 	 * @exception CoreException
-	 *                if an exception occurs accessing this breakpoint's
-	 *                underlying marker
+	 *                if an exception occurs accessing this breakpoint's underlying marker
 	 */
 	protected MethodEntryRequest createMethodEntryRequest(
 			JDIDebugTarget target, String typePattern) throws CoreException {
@@ -210,12 +209,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 *
 	 * @param target
 	 *            the target in which to create the request
-	 * @param type
+	 * @param typePattern
 	 *            the type on which to create the request
 	 * @return method exit request
 	 * @exception CoreException
-	 *                if an exception occurs accessing this breakpoint's
-	 *                underlying marker
+	 *                if an exception occurs accessing this breakpoint's underlying marker
 	 */
 	protected MethodExitRequest createMethodExitRequest(JDIDebugTarget target,
 			String typePattern) throws CoreException {
@@ -226,14 +224,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * Returns a new method entry request for this breakpoint's criteria
 	 *
-	 * @param the
-	 *            target in which to create the request
+	 * @param target
+	 *            the target in which to create the request
 	 * @param type
 	 *            the type on which to create the request
 	 * @return method entry request
 	 * @exception CoreException
-	 *                if an exception occurs accessing this breakpoint's
-	 *                underlying marker
+	 *                if an exception occurs accessing this breakpoint's underlying marker
 	 */
 	protected EventRequest createMethodEntryRequest(JDIDebugTarget target,
 			ReferenceType type) throws CoreException {
@@ -339,7 +336,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest, ThreadReference)
 	 */
 	@Override
 	protected void setRequestThreadFilter(EventRequest request,
@@ -419,8 +416,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget,
-	 *      JDIThread)
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIThread, boolean)
 	 */
 	@Override
 	public boolean handleBreakpointEvent(Event event, JDIThread thread,
@@ -567,7 +563,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see IJavaMethodBreakpoint#isNative()
+	 * @see IJavaMethodBreakpoint#isNativeOnly()
 	 */
 	@Override
 	public boolean isNativeOnly() throws CoreException {
@@ -670,12 +666,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * Sets the default entry and exit attributes of the method breakpoint The
-	 * default values are:
+	 * Sets the default entry and exit attributes of the method breakpoint The default values are:
 	 * <ul>
 	 * <li>entry = <code>true</code>
 	 * <li>exit = <code>false</code>
-	 * <ul>
+	 * </ul>
 	 */
 	protected void setDefaultEntryAndExit() throws CoreException {
 		Object[] values = new Object[] { Boolean.TRUE, Boolean.FALSE };

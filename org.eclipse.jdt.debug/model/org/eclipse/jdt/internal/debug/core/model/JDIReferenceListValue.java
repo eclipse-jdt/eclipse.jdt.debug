@@ -50,8 +50,6 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	/**
 	 * Constructor, initializes this value with its debug target and root object
 	 *
-	 * @param target
-	 *            The debug target associated with this value
 	 * @param root
 	 *            The root object that the elements in the array refer to.
 	 */

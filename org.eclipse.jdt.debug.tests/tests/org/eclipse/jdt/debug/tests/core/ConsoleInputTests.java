@@ -280,9 +280,6 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
-	 */
 	@Override
 	public void consoleClosed() {
 	    synchronized (fLock) {

@@ -159,7 +159,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	}
 
 	/**
-	 * @see IJavaVariable#isVolatile()
+	 * @see IJavaFieldVariable#isVolatile()
 	 */
 	@Override
 	public boolean isVolatile() {
@@ -167,7 +167,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	}
 
 	/**
-	 * @see IJavaVariable#isTransient()
+	 * @see IJavaFieldVariable#isTransient()
 	 */
 	@Override
 	public boolean isTransient() {

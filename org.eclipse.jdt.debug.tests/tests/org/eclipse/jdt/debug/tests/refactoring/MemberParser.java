@@ -74,8 +74,9 @@ public class MemberParser{
 	 * @return a handle to all compilation units contained by the given fragments
 	 */
 	private static ICompilationUnit[] getAllCompilationUnits(IPackageFragment[] fragments) throws JavaModelException {
-		if(fragments == null)
+		if(fragments == null) {
 			return null;
+		}
 		final Set<ICompilationUnit> results = new HashSet<>();
 		for (int fragmentNum = 0; fragmentNum < fragments.length; fragmentNum++) {
 			if(fragments[fragmentNum].containsJavaResources()){
@@ -85,8 +86,9 @@ public class MemberParser{
 				}
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		return results.toArray(new ICompilationUnit[results.size()]);
 	}
 
@@ -106,8 +108,9 @@ public class MemberParser{
 	 * @return an array of all declared methods for the given types
 	 */
 	private static IMethod[] getAllMethods(IType[] types) throws JavaModelException{
-		if(types==null)
+		if(types==null) {
 			return null;
+		}
 
 		final Set<IMethod> results = new HashSet<>();
 		for (int typeNum = 0; typeNum < types.length; typeNum++) {
@@ -116,8 +119,9 @@ public class MemberParser{
 				results.add(methods[methodNum]);
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		return results.toArray(new SourceMethod[results.size()]);
 	}
 
@@ -136,8 +140,9 @@ public class MemberParser{
 				}
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		return results.toArray(new IPackageFragment[results.size()]);
 	}
 	/**
@@ -152,8 +157,9 @@ public class MemberParser{
 	 * @return all types within the scope
 	 */
 	private static IType[] getAllTypes(ICompilationUnit[] cunits) throws JavaModelException {
-		if(cunits == null)
+		if(cunits == null) {
 			return null;
+		}
 
 		final Set<IType> results = new HashSet<>();
 		for (int cunitNum = 0; cunitNum < cunits.length; cunitNum++) {
@@ -162,8 +168,9 @@ public class MemberParser{
 				results.add(types[typeNum]);
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		return results.toArray(new IType[results.size()]);
 	}
 
@@ -172,18 +179,21 @@ public class MemberParser{
 	 * @return an array of all types declared within the given methods.
 	 */
 	private static IType[] getAllTypes(IMethod[] methods) throws JavaModelException {
-		if(methods==null)
+		if(methods==null) {
 			return null;
+		}
 		final Set<IJavaElement> results = new HashSet<>();
 		for (int methodNum = 0; methodNum < methods.length; methodNum++) {
 			IJavaElement[] children = methods[methodNum].getChildren();
 			for (int childNum = 0; childNum < children.length; childNum++) {
-				if(children[childNum] instanceof IType)
+				if(children[childNum] instanceof IType) {
 					results.add(children[childNum]);
+				}
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		return results.toArray(new SourceType[results.size()]);
 	}
 
@@ -193,8 +203,9 @@ public class MemberParser{
 	 * @return all types within the given scope
 	 */
 	public static IType[] getAllTypes(IType[] types) throws JavaModelException{
-		if(types == null)
+		if(types == null) {
 			return null;
+		}
 		IType[] newtypes = types;
 		final Set<IType> results = new HashSet<>();
 		//get all the obvious type declarations
@@ -209,19 +220,13 @@ public class MemberParser{
 				results.add(newtypes[methodTypes]);
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		//else
 		return results.toArray(new SourceType[results.size()]);//possibly change to new IType
 	}
 
-
-	/**
-	 * Returns the Java project with the given name.
-	 *
-	 * @param name project name
-	 * @return the Java project with the given name
-	 */
 	static protected IJavaProject getJavaProject() {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject();
 		return JavaCore.create(project);
@@ -239,13 +244,15 @@ public class MemberParser{
 			if(javaProj!= null && javaProj.exists() && javaProj.hasChildren()){
 				IPackageFragment fragments[] = javaProj.getPackageFragments();
 				for (int fragmentNum = 0; fragmentNum < fragments.length; fragmentNum++) {
-					if(fragments[fragmentNum].getElementName().equalsIgnoreCase(packageName))
+					if(fragments[fragmentNum].getElementName().equalsIgnoreCase(packageName)) {
 						results.add(fragments[fragmentNum]);
+					}
 				}
 			}
 		}
-		if(results.isEmpty())
+		if(results.isEmpty()) {
 			return null;
+		}
 		//else
 		return results.toArray(new IPackageFragment[results.size()]);
 	}
@@ -282,14 +289,17 @@ public class MemberParser{
 					targetIsAnonymous = Character.isDigit(typeList.get(0).toString().charAt(0));
 					typeNum = 0;//start again.
 				}
-				else
+				else { //yay!
 					typeNum++;//check the next type
+				}
 			}
 
 			//else, it is not in the top-level types - check in methods
 			types = getAllTypes(getAllMethods(types));
 			if(types==null)
+			 {
 				return null;//couldn't find it.
+			}
 		}//end while
 	}
 
@@ -304,8 +314,9 @@ public class MemberParser{
 	 * @return the IType handle to the requested type
 	 */
 	public static IType getType(String typeName, String packageName, String projectName) throws JavaModelException{
-		if(typeName == null)
+		if(typeName == null) {
 			return null;
+		}
 		//make list of types to find, in order
 		ArrayList<String> typeList = createTypeList(typeName);
 		//get the proper project(s)
@@ -344,8 +355,9 @@ public class MemberParser{
 			{//EnclosingType$InnerType$MoreInner
 				String tail = target.substring(i+1);
 				IType enclosure = cu.getType(target.substring(0, i));
-				if(enclosure.exists())
+				if(enclosure.exists()) {
 					return getDeepest(enclosure,tail);
+				}
 			}
 		}
 		//has no inner type
@@ -363,11 +375,13 @@ public class MemberParser{
 	 */
 	protected IMember getDeepest(IMember top, String tail) {
 		String newtail = tail;
-		if(newtail==null || newtail.length()==0 )
+		if(newtail==null || newtail.length()==0 ) {
 			return top;
+		}
 
-		if(!top.exists())
+		if(!top.exists()) {
 			return null;
+		}
 
 		//check if there are more nested elements
 		String head=null;
@@ -386,14 +400,15 @@ public class MemberParser{
 			newtail = null;
 		}
 
-		if(top instanceof IType)
+		if(top instanceof IType) {
 			return getNextFromType(top, head, newtail);
-		else
-			if(top instanceof IMethod)
+		} else
+			if(top instanceof IMethod) {
 				return getNextFromMethod(top, head, newtail);
-			else
-				if(top instanceof IField)
+			} else
+				if(top instanceof IField) {
 					return getNextFromField(top, head, newtail);
+				}
 		//else there is a problem!
 		return getDeepest(top,newtail);
 	}
@@ -423,8 +438,9 @@ public class MemberParser{
 	protected int getLocalTypeOccurrence(String head) {
 		for(int i=0;i<head.length();i++)
 		{
-			if(!Character.isDigit(head.charAt(i)))
+			if(!Character.isDigit(head.charAt(i))) {
 				return Integer.parseInt(head.substring(0, i));
+			}
 		}
 		return Integer.parseInt(head);//entire thing is a number
 	}
@@ -438,8 +454,9 @@ public class MemberParser{
 	protected String getName(String head) {
 		for(int i=0;i<head.length();i++)
 		{
-			if(head.charAt(i)=='(')//nested Item?
+			if(head.charAt(i)=='(') { //nested Item?
 				return head.substring(0,i);
+			}
 		}
 		return null;
 	}
@@ -454,8 +471,9 @@ public class MemberParser{
 		IField current = (IField)top;
 
 		IType type = current.getType(getLocalTypeName(head),getLocalTypeOccurrence(head));
-		if(type.exists())
+		if(type.exists()) {
 			return getDeepest(type,tail);
+		}
 		//else
 		return null;//something failed.
 	}
@@ -472,8 +490,9 @@ public class MemberParser{
 
 		//is next part a Type?
 		IType type = current.getType(getLocalTypeName(head), getLocalTypeOccurrence(head));
-		if(type.exists())
+		if(type.exists()) {
 			return getDeepest(type,tail);
+		}
 		//else
 		return null;
 	}
@@ -489,16 +508,19 @@ public class MemberParser{
 
 		//is next part a Type?
 		IMember next = current.getType(head);
-		if(next.exists())
+		if(next.exists()) {
 			return getDeepest(next,tail);
+		}
 		//else, is next part a Field?
 		next = current.getField(head);
-		if(next.exists())
+		if(next.exists()) {
 			return getDeepest(next,tail);
+		}
 		//else, is next part a Method?
 		next = current.getMethod(getName(head),getSignature(head));
-		if(next.exists())
+		if(next.exists()) {
 			return getDeepest(next,tail);
+		}
 		//else
 		return null;//something failed.
 	}
@@ -512,8 +534,9 @@ public class MemberParser{
 	protected String[] getSignature(String head) {
 		for(int i=0;i<head.length();i++)
 		{
-			if(head.charAt(i)=='(')//nested Item?
+			if(head.charAt(i)=='(') { //nested Item?
 				return Signature.getParameterTypes(head.substring(i));
+			}
 		}
 		return null;
 	}

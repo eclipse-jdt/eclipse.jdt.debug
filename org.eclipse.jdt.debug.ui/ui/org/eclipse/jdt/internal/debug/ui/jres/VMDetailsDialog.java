@@ -50,7 +50,7 @@ public class VMDetailsDialog extends Dialog {
 	}
 
 	/**
-	 * @see Windows#configureShell
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {

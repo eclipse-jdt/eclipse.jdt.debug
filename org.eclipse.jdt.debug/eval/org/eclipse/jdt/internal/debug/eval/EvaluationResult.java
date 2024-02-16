@@ -96,7 +96,7 @@ public class EvaluationResult implements IEvaluationResult {
 	}
 
 	/**
-	 * @see IEvaluationResult#hasProblems()
+	 * @see IEvaluationResult#hasErrors()
 	 */
 	@Override
 	public boolean hasErrors() {
@@ -104,7 +104,7 @@ public class EvaluationResult implements IEvaluationResult {
 	}
 
 	/**
-	 * @see IEvaluationResult#getProblems()
+	 * @see IEvaluationResult#getErrors()
 	 * @deprecated
 	 */
 	@Override

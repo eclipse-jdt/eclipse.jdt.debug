@@ -104,7 +104,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * A listener to know if another page has added a VM install
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=237709
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=237709"
 	 * @since 3.6.300
 	 */
 	class InstallListener implements IVMInstallChangedListener {
@@ -381,9 +381,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Creates this block's control in the given control.
 	 *
 	 * @param ancestor containing control
-	 * @param useManageButton whether to present a single 'manage...' button to
-	 *  the user that opens the installed JREs pref page for JRE management,
-	 *  or to provide 'add, remove, edit, and search' buttons.
 	 */
 	public void createControl(Composite ancestor) {
 		Font font = ancestor.getFont();

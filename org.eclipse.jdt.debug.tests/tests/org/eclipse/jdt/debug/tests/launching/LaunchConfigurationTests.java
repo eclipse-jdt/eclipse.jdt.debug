@@ -60,7 +60,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 	/**
 	 * Tests the {@link LaunchConfiguration#getSimpleName} method
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=332410
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=332410"
 	 */
 	public void testGetSimpleName() throws Exception {
 		//filenames with the ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION as an extension

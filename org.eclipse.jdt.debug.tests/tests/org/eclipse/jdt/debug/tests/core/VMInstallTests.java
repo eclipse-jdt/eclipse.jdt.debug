@@ -101,7 +101,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * Tests the new support for {@link ILibraryLocationResolver}s asking for {@link LibraryLocation}s
 	 * using the {@link JavaRuntime#getLibraryLocations(IVMInstall)}s API
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798"
 	 */
 	public void testLibraryResolver1() throws Exception {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;
@@ -127,7 +127,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	/**
 	 * Tests the {@link ILibraryLocationResolver} asking for libs using an EE description file
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798"
 	 */
 	public void testLibraryResolver2() throws Exception {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;
@@ -149,7 +149,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	/**
 	 * Tests the {@link ILibraryLocationResolver} asking for libs directly from the backing type of the {@link IVMInstall}
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798"
 	 */
 	public void testLibraryResolver3() throws Exception {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;
@@ -174,7 +174,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * Tests the {@link ILibraryLocationResolver} asking for libs using an EE description file that provides
 	 * a source path for the ext dirs does *not* get overridden by the resolver
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798"
 	 */
 	public void testLibraryResolver4() throws Exception {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;

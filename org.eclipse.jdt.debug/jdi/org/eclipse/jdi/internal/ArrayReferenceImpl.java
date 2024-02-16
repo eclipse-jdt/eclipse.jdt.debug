@@ -68,7 +68,6 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 * @param index the index
 	 * @return the {@link Value} at the given index
 	 * @throws IndexOutOfBoundsException if the index is outside the bounds of the array
-	 * @return Returns an array component value.
 	 */
 	@Override
 	public Value getValue(int index) throws IndexOutOfBoundsException {
@@ -90,7 +89,6 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 * @param length the  number of values to return
 	 * @return the list of {@link Value}s
 	 * @throws IndexOutOfBoundsException if the index is outside the bounds of the array
-	 * @return Returns a range of array components.
 	 */
 	@Override
 	public List<Value> getValues(int firstIndex, int length)

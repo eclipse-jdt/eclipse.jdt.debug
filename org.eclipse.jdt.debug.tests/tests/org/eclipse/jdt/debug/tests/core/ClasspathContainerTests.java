@@ -171,7 +171,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 	/**
 	 * Tests that an index can be added to a {@link LibraryLocation}
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098"
 	 * @since 3.8.100
 	 */
 	public void testJREContainerIndex() throws Exception {
@@ -213,10 +213,10 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Tests that an index can be added to a {@link LibraryLocation} and that successive calls to
-	 * {@link JavaRuntime#getLibraryLocations(IVMInstall)} does not erase the index infos
+	 * Tests that an index can be added to a {@link LibraryLocation} and that successive calls to {@link JavaRuntime#getLibraryLocations(IVMInstall)}
+	 * does not erase the index infos
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098"
 	 * @since 3.8.100
 	 */
 	public void testJREContainerIndex2() throws Exception {

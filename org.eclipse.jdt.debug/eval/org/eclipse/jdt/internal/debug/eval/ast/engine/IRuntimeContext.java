@@ -42,50 +42,44 @@ public interface IRuntimeContext {
 	IJavaDebugTarget getVM();
 
 	/**
-	 * Returns the receiving object context in which to perform the evaluation -
-	 * equivalent to 'this'. Returns <code>null</code> if the context of an
+	 * Returns the receiving object context in which to perform the evaluation - equivalent to 'this'. Returns <code>null</code> if the context of an
 	 * evaluation is in a class rather than an object.
 	 *
 	 * @return 'this', or <code>null</code>
-	 * @exception EvaluationException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The exception's
-	 *                status code contains the underlying exception responsible
-	 *                for the failure.</li>
-	 *                </ul>
+	 * @throws CoreException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The exception's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	IJavaObject getThis() throws CoreException;
 
 	/**
-	 * Returns the receiving type context in which to perform the evaluation.
-	 * The type of 'this', or in the case of a static context, the class or
+	 * Returns the receiving type context in which to perform the evaluation. The type of 'this', or in the case of a static context, the class or
 	 * interface in which the evaluation is being performed.
 	 *
 	 * @return receiving class
-	 * @exception EvaluationException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The exception's
-	 *                status code contains the underlying exception responsible
-	 *                for the failure.</li>
-	 *                </ul>
+	 * @throws CoreException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The exception's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	IJavaReferenceType getReceivingType() throws CoreException;
 
 	/**
-	 * Returns the local variables visible for the evaluation. This includes
-	 * method arguments, if any. Does not return <code>null</code> returns an
+	 * Returns the local variables visible for the evaluation. This includes method arguments, if any. Does not return <code>null</code> returns an
 	 * empty collection if there are no locals.
 	 *
 	 * @return local variables
-	 * @exception EvaluationException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The exception's
-	 *                status code contains the underlying exception responsible
-	 *                for the failure.</li>
-	 *                </ul>
+	 * @throws CoreException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The exception's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	IJavaVariable[] getLocals() throws CoreException;
 
@@ -108,13 +102,12 @@ public interface IRuntimeContext {
 	 * Returns whether the context of this evaluation is within a constructor.
 	 *
 	 * @return whether the context of this evaluation is within a constructor
-	 * @exception EvaluationException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The exception's
-	 *                status code contains the underlying exception responsible
-	 *                for the failure.</li>
-	 *                </ul>
+	 * @throws CoreException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The exception's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	public boolean isConstructor() throws CoreException;
 

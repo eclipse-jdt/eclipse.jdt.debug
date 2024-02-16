@@ -594,7 +594,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 
 	/**
 	 * Figure out whether suspending on an exceptionBreakpoint should be skipped due to the user's choice regarding
-	 * {@link IJavaExceptionBreakpoint#setSuspendOnRecurrenceStrategy(int)}.
+	 * {@link IJavaExceptionBreakpoint#setSuspendOnRecurrenceStrategy(SuspendOnRecurrenceStrategy)}.
 	 * <p>
 	 * If the current hit is indeed recurrence of an already-seen exception instance, and if the user has not yet made a choice for this breakpoint,
 	 * then a question dialog will be opened to request the user's choice.
@@ -713,7 +713,6 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 *
 	 * @param frame stack frame
 	 * @return marker representing compilation problem, or <code>null</code>
-	 * @throws DebugException if an exception occurrs retrieveing the problem
 	 */
 	public IMarker getProblem(IJavaStackFrame frame) {
 		ILaunch launch = frame.getLaunch();

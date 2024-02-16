@@ -71,12 +71,11 @@ public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest 
 	}
 
 	/**
-	 * Tests that we can have N working set shown in the view and add additional breakpoints
-	 * to the default ones without causing exceptions
+	 * Tests that we can have N working set shown in the view and add additional breakpoints to the default ones without causing exceptions
 	 *
 	 * In this test we have to open / show the view to cause the insert update to occur
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=380614
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=380614"
 	 * @since 3.8.100
 	 */
 	public void testInsertIntoDefaultSet() throws Exception {

@@ -27,7 +27,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Resolves variables of the form ${ee_home:<id>}
+ * Resolves variables of the form {@code ${ee_home:<id>}}
  */
 public class ExecutionEnvironmentVariableResolver implements IDynamicVariableResolver {
 

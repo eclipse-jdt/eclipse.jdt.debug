@@ -68,7 +68,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	/**
 	 * JRE path segment descriptor
 	 *
-	 * String equals the word: <code>jre</code>
+	 * String equals the word: {@code jre}
 	 *
 	 * @since 3.3.1
 	 */
@@ -77,7 +77,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	/**
 	 * Bin path segment descriptor
 	 *
-	 * String equals the word: <code>bin</code>
+	 * String equals the word: {@code bin}
 	 *
 	 * @since 3.3.1
 	 */
@@ -117,16 +117,16 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 
 		/**
-		 * Returns the VM that was attached to, or <code>null</code> if none.
+		 * Returns the VM that was attached to, or {@code null} if none.
 		 *
-		 * @return the VM that was attached to, or <code>null</code> if none
+		 * @return the VM that was attached to, or {@code null} if none
 		 */
 		public VirtualMachine getVirtualMachine() {
 			return fVirtualMachine;
 		}
 
 		/**
-		 * Returns any exception that occurred while attaching, or <code>null</code>.
+		 * Returns any exception that occurred while attaching, or {@code null}.
 		 *
 		 * @return IOException or IllegalConnectorArgumentsException
 		 */
@@ -464,24 +464,23 @@ public class StandardVMDebugger extends StandardVMRunner {
 	}
 
 	/**
-	 * This method performs platform specific operations to modify the runtime path for JREs prior to launching.
-	 * Nothing is written back to the original system path.
+	 * This method performs platform specific operations to modify the runtime path for JREs prior to launching. Nothing is written back to the
+	 * original system path.
 	 *
 	 * <p>
-	 * For Windows:
-	 * Prepends the location of the JRE bin directory for the given JDK path to the PATH variable in Windows.
-	 * This method assumes that the JRE is located within the JDK install directory
-	 * in: <code><JDK install dir>/jre/bin/</code> where the JRE itself would be located
-	 * in: <code><JDK install dir>/bin/</code>  where the JDK itself is located
+	 * For Windows: Prepends the location of the JRE bin directory for the given JDK path to the PATH variable in Windows. This method assumes that
+	 * the JRE is located within the JDK install directory in: {@code <JDK install dir>/jre/bin/} where the JRE itself would be located in:
+	 * {@code <JDK install dir>/bin/} where the JDK itself is located
 	 * </p>
 	 * <p>
-	 * For Mac OS:
-	 * Searches for and sets the correct state of the JAVA_VM_VERSION environment variable to ensure it matches
-	 * the currently chosen VM of the launch config
+	 * For Mac OS: Searches for and sets the correct state of the JAVA_VM_VERSION environment variable to ensure it matches the currently chosen VM of
+	 * the launch config
 	 * </p>
 	 *
-	 * @param env the current array of environment variables to run with
-	 * @param jdkpath the path to the executable (javaw).
+	 * @param env
+	 *            the current array of environment variables to run with
+	 * @param jdkpath
+	 *            the path to the executable (javaw).
 	 * @return the altered JRE path
 	 * @since 3.3
 	 */

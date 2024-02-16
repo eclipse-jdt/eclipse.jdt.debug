@@ -35,7 +35,6 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.3
  * @see VariableContentProvider
  * @see IJavaVariable
- * @see JavaVariableAdapterFactory
  * @see JavaExpressionContentProvider
  */
 public class JavaVariableContentProvider extends VariableContentProvider {

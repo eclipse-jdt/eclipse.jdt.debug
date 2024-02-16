@@ -124,11 +124,12 @@ public class ExpressionInputDialog extends TrayDialog {
     }
 
     /**
-     * Returns the composite that will be used to contain the
-     * input widgetry.
-     * @param composite the parent composite
-     * @return the composite that will contain the input widgets
-     */
+	 * Returns the composite that will be used to contain the input widgetry.
+	 *
+	 * @param parent
+	 *            the parent composite
+	 * @return the composite that will contain the input widgets
+	 */
     protected Composite createInputArea(Composite parent) {
     	Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
     	Dialog.applyDialogFont(composite);

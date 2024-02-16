@@ -36,11 +36,6 @@ public class ShowInPackageViewAction extends Action {
 
 	private JavaSnippetEditor fEditor;
 
-	/**
-	 * Creates a new <code>ShowInPackageViewAction</code>.
-	 *
-	 * @param site the site providing context information for this action
-	 */
 	public ShowInPackageViewAction() {
 		super(SnippetMessages.getString("ShowInPackageViewAction.label")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("ShowInPackageViewAction.description")); //$NON-NLS-1$

@@ -128,8 +128,9 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMember target = getMember(cunit, type);
 		//if this was a non-typed test, get's it's parent type
-		if(!(target instanceof IType))
+		if(!(target instanceof IType)) {
 			target = (IMember)target.getParent();
+		}
 
 		IType targetType = (IType)target;
 		JavaRenameProcessor proc = new RenameTypeProcessor(targetType);
@@ -192,8 +193,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 
 
 	/**
-	 * Creates an exception breakpoint and adds a filter. Refactors & checks
-	 * if the filter changed appropriately w/ the refactor.
+	 * Creates an exception breakpoint and adds a filter. Refactors and checks if the filter changed appropriately w/ the refactor.
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String exceptionName) throws Exception {
 		try {

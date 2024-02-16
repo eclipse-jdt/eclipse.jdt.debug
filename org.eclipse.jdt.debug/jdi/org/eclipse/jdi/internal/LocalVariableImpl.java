@@ -84,9 +84,8 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	}
 
 	/**
-	 * @return Returns true if two mirrors refer to the same entity in the
-	 *         target VM.
-	 * @see java.lang.Object#equals(Object).
+	 * @return Returns true if two mirrors refer to the same entity in the target VM.
+	 * @see java.lang.Object#equals(Object)
 	 */
 	@Override
 	public boolean equals(Object object) {
@@ -103,31 +102,35 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	 */
 	@Override
 	public int compareTo(LocalVariable variable) {
-		if (variable == null || !variable.getClass().equals(this.getClass()))
+		if (variable == null || !variable.getClass().equals(this.getClass())) {
 			throw new ClassCastException(
 					JDIMessages.LocalVariableImpl_Can__t_compare_local_variable_to_given_object_1);
+		}
 
 		// See if methods are the same, if not return comparison between
 		// methods.
 		LocalVariableImpl var2 = (LocalVariableImpl) variable;
-		if (!method().equals(var2.method()))
+		if (!method().equals(var2.method())) {
 			return method().compareTo(var2.method());
+		}
 
 		// Return comparison between the index of each local variable in its
 		// stack frame.
 		// Code indexes must be treated as unsigned. This matters if you have to
 		// compare them.
-		if (fCodeIndex < 0 || var2.fCodeIndex < 0)
+		if (fCodeIndex < 0 || var2.fCodeIndex < 0) {
 			throw new InternalError(
 					JDIMessages.LocalVariableImpl_Code_indexes_are_assumed_to_be_always_positive_2);
+		}
 
 		long index2 = var2.fCodeIndex;
-		if (fCodeIndex < index2)
+		if (fCodeIndex < index2) {
 			return -1;
-		else if (fCodeIndex > index2)
+		} else if (fCodeIndex > index2) {
 			return 1;
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	/**
@@ -143,9 +146,10 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 			VMMismatchException {
 		checkVM(frame);
 		StackFrameImpl frameImpl = (StackFrameImpl) frame;
-		if (!fMethod.equals(frameImpl.location().method()))
+		if (!fMethod.equals(frameImpl.location().method())) {
 			throw new IllegalArgumentException(
 					JDIMessages.LocalVariableImpl_The_stack_frame__s_method_does_not_match_this_variable__s_method_3);
+		}
 
 		if (fLength == -1) {
 			// inferred argument - assume visible for entire method
@@ -155,9 +159,10 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 
 		// Code indexes must be treated as unsigned. This matters if you have to
 		// compare them.
-		if (currentIndex >= 0 && fCodeIndex >= 0 && fCodeIndex + fLength >= 0)
+		if (currentIndex >= 0 && fCodeIndex >= 0 && fCodeIndex + fLength >= 0) {
 			return fCodeIndex <= currentIndex
 					&& currentIndex < fCodeIndex + fLength;
+		}
 
 		throw new InternalError(
 				JDIMessages.LocalVariableImpl_Code_indexes_are_assumed_to_be_always_positive_4);

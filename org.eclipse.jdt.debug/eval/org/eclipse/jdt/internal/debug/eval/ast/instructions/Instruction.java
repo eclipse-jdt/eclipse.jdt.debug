@@ -76,10 +76,9 @@ public abstract class Instruction {
 	}
 
 	/**
-	 * Create and return a new internal variable with the given name and the
-	 * given type.
+	 * Create and return a new internal variable with the given name and the given type.
 	 *
-	 * @see Interpreter#createInternalVariable(String, String)
+	 * @see Interpreter#createInternalVariable(String, IJavaType)
 	 */
 	protected IVariable createInternalVariable(String name,
 			IJavaType referencType) {

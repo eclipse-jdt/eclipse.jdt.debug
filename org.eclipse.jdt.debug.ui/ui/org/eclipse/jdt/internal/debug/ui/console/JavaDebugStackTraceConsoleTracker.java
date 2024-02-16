@@ -23,7 +23,7 @@ import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
 
 /**
- * Creates hyper-links of type {@link JavaDebugStackTraceHyperLink}.
+ * Creates hyper-links of type {@link JavaDebugStackTraceHyperlink}.
  */
 public class JavaDebugStackTraceConsoleTracker extends JavaConsoleTracker {
 	@Override

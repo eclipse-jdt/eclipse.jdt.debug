@@ -183,7 +183,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Sets a zero-length array as the new values
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetZeroLengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -216,7 +217,7 @@ public class ArrayTests extends AbstractDebugTest {
 	/**
 	 * Tries to set a new array with a starting index of -1
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadLowerIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -254,7 +255,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with an index greater than the total length of the source array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadUpperIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -293,7 +295,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with an index greater than the total length of the soure array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetExactUpperIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -332,7 +335,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadLowerSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -371,7 +375,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadUpperSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -410,7 +415,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetExactSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -449,7 +455,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a length less than -1
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadLowerLengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -488,7 +495,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array with a length equal to -1
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetMinus1LengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -525,7 +533,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array where the given length and index combined exceed the length of the array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadLengthPlusIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -564,7 +573,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array where the given length and source index combined exceed the length of the array
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetBadLengthPlusSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
@@ -602,7 +612,8 @@ public class ArrayTests extends AbstractDebugTest {
 
 	/**
 	 * Tries to set an array where the source array is longer than the array to set the values into
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450"
 	 */
 	public void testSetLongerSrcArray() throws Exception {
 		String typeName = "ByteArrayTests";

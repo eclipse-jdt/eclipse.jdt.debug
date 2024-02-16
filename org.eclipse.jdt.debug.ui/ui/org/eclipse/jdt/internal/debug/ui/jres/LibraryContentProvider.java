@@ -334,8 +334,6 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 *
 	 * @param annotationsAttachmentPath
 	 *            the path of the new attachment
-	 * @param annotationsAttachmentRootPath
-	 *            the root path of the new attachment
 	 * @param selection
 	 *            the selection of libraries to set the new paths in
 	 */

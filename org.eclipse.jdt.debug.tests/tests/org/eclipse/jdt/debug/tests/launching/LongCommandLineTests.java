@@ -29,7 +29,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test JVM startup with long classpath / system properties by explicitly enabling {@link IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE} option
+ * Test JVM startup with long classpath / system properties by explicitly enabling {@link IJavaLaunchConfigurationConstants#ATTR_USE_ARGFILE} option
  * in the "Arguments" part of the process launch configuration
  */
 public class LongCommandLineTests extends LongClassPathTests {

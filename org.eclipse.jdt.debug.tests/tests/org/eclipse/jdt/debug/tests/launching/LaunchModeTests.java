@@ -16,8 +16,6 @@ package org.eclipse.jdt.debug.tests.launching;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -45,6 +43,8 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaUI;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * LaunchModeTests
@@ -378,8 +378,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Tests that the default launch perspective for the 'run' modeset and java launch delegate
-	 * is <code>null/code> using the new API
+	 * Tests that the default launch perspective for the 'run' modeset and java launch delegate is <code>null</code> using the new API
 	 *
 	 * @since 3.3
 	 */

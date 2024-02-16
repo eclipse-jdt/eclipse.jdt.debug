@@ -159,17 +159,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Binds this frame to the given underlying frame on the target VM or
-	 * returns a new frame representing the given frame. A frame can only be
-	 * re-bound to an underlying frame if it refers to the same depth on the
-	 * stack in the same method.
+	 * Binds this frame to the given underlying frame on the target VM or returns a new frame representing the given frame. A frame can only be
+	 * re-bound to an underlying frame if it refers to the same depth on the stack in the same method.
 	 *
 	 * @param frame
 	 *            underlying frame, or <code>null</code>
 	 * @param depth
-	 *            depth in the call stack, or -1 to indicate the frame should
-	 *            become invalid
-	 * @param return a frame to refer to the given frame or <code>null</code>
+	 *            depth in the call stack, or -1 to indicate the frame should become invalid
+	 * @return a frame to refer to the given frame or <code>null</code>
 	 */
 	protected JDIStackFrame bind(StackFrame frame, int depth) {
 		synchronized (fThread) {

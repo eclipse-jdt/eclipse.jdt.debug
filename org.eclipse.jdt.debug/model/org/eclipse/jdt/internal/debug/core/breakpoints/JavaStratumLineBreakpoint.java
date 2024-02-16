@@ -58,71 +58,46 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * Creates and returns a line breakpoint identified by its source file name
-	 * and/or path, and stratum that it is relative to.
+	 * Creates and returns a line breakpoint identified by its source file name and/or path, and stratum that it is relative to.
 	 *
 	 * @param resource
-	 *            the resource on which to create the associated breakpoint
-	 *            marker
+	 *            the resource on which to create the associated breakpoint marker
 	 * @param stratum
-	 *            the stratum in which the source name, source path and line
-	 *            number are relative, or <code>null</code>. If
-	 *            <code>null</code> or if the specified stratum is not defined
-	 *            for a type, the source name, source path and line number are
-	 *            relative to the type's default stratum.
+	 *            the stratum in which the source name, source path and line number are relative, or <code>null</code>. If <code>null</code> or if the
+	 *            specified stratum is not defined for a type, the source name, source path and line number are relative to the type's default
+	 *            stratum.
 	 * @param sourceName
-	 *            the simple name of the source file in which the breakpoint is
-	 *            set, or <code>null</code>. The breakpoint will install itself
-	 *            in classes that have a source file name debug attribute that
-	 *            matches this value in the specified stratum, and satisfies the
-	 *            class name pattern and source path attribute. When
-	 *            <code>null</code>, the source file name debug attribute is not
-	 *            considered.
+	 *            the simple name of the source file in which the breakpoint is set, or <code>null</code>. The breakpoint will install itself in
+	 *            classes that have a source file name debug attribute that matches this value in the specified stratum, and satisfies the class name
+	 *            pattern and source path attribute. When <code>null</code>, the source file name debug attribute is not considered.
 	 * @param sourcePath
-	 *            the qualified source file name in which the breakpoint is set,
-	 *            or <code>null</code>. The breakpoint will install itself in
-	 *            classes that have a source file path in the specified stratum
-	 *            that matches this value, and satisfies the class name pattern
-	 *            and source name attribute. When <code>null</code>, the source
-	 *            path attribute is not considered.
+	 *            the qualified source file name in which the breakpoint is set, or <code>null</code>. The breakpoint will install itself in classes
+	 *            that have a source file path in the specified stratum that matches this value, and satisfies the class name pattern and source name
+	 *            attribute. When <code>null</code>, the source path attribute is not considered.
 	 * @param classNamePattern
-	 *            the class name pattern to which the breakpoint should be
-	 *            restricted, or <code>null</code>. The breakpoint will install
-	 *            itself in each type that matches this class name pattern, with
-	 *            a satisfying source name and source path. Patterns may begin
-	 *            or end with '*', which matches 0 or more characters. A pattern
-	 *            that does not contain a '*' is equivalent to a pattern ending
-	 *            in '*'. Specifying <code>null</code>, or an empty string is
-	 *            the equivalent to "*".
+	 *            the class name pattern to which the breakpoint should be restricted, or <code>null</code>. The breakpoint will install itself in
+	 *            each type that matches this class name pattern, with a satisfying source name and source path. Patterns may begin or end with '*',
+	 *            which matches 0 or more characters. A pattern that does not contain a '*' is equivalent to a pattern ending in '*'. Specifying
+	 *            <code>null</code>, or an empty string is the equivalent to "*".
 	 * @param lineNumber
-	 *            the lineNumber on which the breakpoint is set - line numbers
-	 *            are 1 based, associated with the source file (stratum) in
-	 *            which the breakpoint is set
+	 *            the lineNumber on which the breakpoint is set - line numbers are 1 based, associated with the source file (stratum) in which the
+	 *            breakpoint is set
 	 * @param charStart
-	 *            the first character index associated with the breakpoint, or
-	 *            -1 if unspecified, in the source file in which the breakpoint
-	 *            is set
+	 *            the first character index associated with the breakpoint, or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param charEnd
-	 *            the last character index associated with the breakpoint, or -1
-	 *            if unspecified, in the source file in which the breakpoint is
-	 *            set
+	 *            the last character index associated with the breakpoint, or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param hitCount
-	 *            the number of times the breakpoint will be hit before
-	 *            suspending execution - 0 if it should always suspend
+	 *            the number of times the breakpoint will be hit before suspending execution - 0 if it should always suspend
 	 * @param register
 	 *            whether to add this breakpoint to the breakpoint manager
 	 * @param attributes
-	 *            a map of client defined attributes that should be assigned to
-	 *            the underlying breakpoint marker on creation, or
-	 *            <code>null</code> if none.
-	 * @return a stratum breakpoint
-	 * @exception CoreException
-	 *                If this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure creating underlying marker. The exception's
-	 *                status contains the underlying exception responsible for
-	 *                the failure.</li>
-	 *                </ul>
+	 *            a map of client defined attributes that should be assigned to the underlying breakpoint marker on creation, or <code>null</code> if
+	 *            none.
+	 * @throws DebugException
+	 *             If this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's status contains the underlying exception responsible for the failure.</li>
+	 *             </ul>
 	 * @since 3.0
 	 */
 	public JavaStratumLineBreakpoint(IResource resource, String stratum,

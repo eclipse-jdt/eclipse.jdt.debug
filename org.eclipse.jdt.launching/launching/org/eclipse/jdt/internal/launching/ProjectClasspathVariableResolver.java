@@ -36,8 +36,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Resolver for ${project_classpath:<project_name>}. Returns a string corresponding to the
- * class path of the corresponding Java project.
+ * Resolver for {@code ${project_classpath:<project_name>}}. Returns a string corresponding to the class path of the corresponding Java project.
  */
 public class ProjectClasspathVariableResolver implements IDynamicVariableResolver {
 

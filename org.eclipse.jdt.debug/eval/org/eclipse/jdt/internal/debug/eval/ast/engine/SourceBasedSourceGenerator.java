@@ -177,13 +177,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	}
 
 	/**
-	 * if the <code>createInAnInstanceMethod</code> flag is set, the method
-	 * created which contains the code snippet is an no-static method, even if
+	 * if the <code>createInAnInstanceMethod</code> flag is set, the method created which contains the code snippet is an no-static method, even if
 	 * <code>position</code> is in a static method.
 	 *
 	 * @param type
 	 *            the root {@link IType}
-	 * @param sourcePosition
+	 * @param line
 	 *            the reference position in the type's source
 	 * @param createInAStaticMethod
 	 *            if the source should be generated

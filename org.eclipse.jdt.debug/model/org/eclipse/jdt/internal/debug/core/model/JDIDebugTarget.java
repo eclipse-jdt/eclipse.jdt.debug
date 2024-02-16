@@ -340,20 +340,16 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @param jvm
 	 *            the underlying VM
 	 * @param name
-	 *            the name to use for this VM, or <code>null</code> if the name
-	 *            should be retrieved from the underlying VM
-	 * @param supportsTerminate
+	 *            the name to use for this VM, or <code>null</code> if the name should be retrieved from the underlying VM
+	 * @param supportTerminate
 	 *            whether the terminate action is supported by this debug target
-	 * @param supportsDisconnect
-	 *            whether the disconnect action is supported by this debug
-	 *            target
+	 * @param supportDisconnect
+	 *            whether the disconnect action is supported by this debug target
 	 * @param process
-	 *            the system process associated with the underlying VM, or
-	 *            <code>null</code> if no system process is available (for
-	 *            example, a remote VM)
+	 *            the system process associated with the underlying VM, or <code>null</code> if no system process is available (for example, a remote
+	 *            VM)
 	 * @param resume
-	 *            whether the VM should be resumed on startup. Has no effect if
-	 *            the VM is already resumed/running when the connection is made.
+	 *            whether the VM should be resumed on startup. Has no effect if the VM is already resumed/running when the connection is made.
 	 */
 	public JDIDebugTarget(ILaunch launch, VirtualMachine jvm, String name,
 			boolean supportTerminate, boolean supportDisconnect,
@@ -1045,11 +1041,10 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 	/**
-	 * Finds and returns the JDI thread for the associated thread reference, or
-	 * <code>null</code> if not found.
+	 * Finds and returns the JDI thread for the associated thread reference, or <code>null</code> if not found.
 	 *
-	 * @param the
-	 *            underlying thread reference
+	 * @param tr
+	 *            the underlying thread reference
 	 * @return the associated model thread
 	 */
 	public JDIThread findThread(ThreadReference tr) {

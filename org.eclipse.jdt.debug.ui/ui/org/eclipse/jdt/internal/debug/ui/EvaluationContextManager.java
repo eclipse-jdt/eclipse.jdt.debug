@@ -208,7 +208,6 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 *  <code>null</code> if the current window should be consulted
 	 * @return the stack frame that supplies an evaluation context, or <code>null</code>
 	 *   if none
-	 * @return IJavaStackFrame
 	 */
 	public static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window) {
 		List<IWorkbenchWindow> alreadyVisited= new ArrayList<>();

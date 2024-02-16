@@ -74,7 +74,7 @@ public class JDINullValue extends JDIObjectValue {
 	}
 
 	/**
-	 * @see IJavaValue#getArrayLength()
+	 * @see JDIObjectValue#getArrayLength()
 	 */
 	@Override
 	public int getArrayLength() {
