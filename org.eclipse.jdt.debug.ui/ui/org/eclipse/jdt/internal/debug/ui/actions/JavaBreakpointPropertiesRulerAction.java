@@ -45,8 +45,9 @@ public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction i
 		super(editor, info);
 		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1 + '\t' + DebugUIPlugin.formatKeyBindingString(SWT.MOD1, ActionMessages.JavaBreakpointPropertiesRulerAction_0));
 	}
+	
 	/**
-	 * @see Action#run()
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	@Override
 	public void run() {

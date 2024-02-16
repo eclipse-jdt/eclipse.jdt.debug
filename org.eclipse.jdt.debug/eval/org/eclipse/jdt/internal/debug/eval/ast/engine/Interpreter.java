@@ -203,12 +203,11 @@ public class Interpreter {
 	}
 
 	/**
-	 * Create a new variable in the interpreter with the given name and the
-	 * given type.
+	 * Create a new variable in the interpreter with the given name and the given type.
 	 *
 	 * @param name
 	 *            the name of the variable to create.
-	 * @param type
+	 * @param referencType
 	 *            the type of the variable to create.
 	 * @return the created variable.
 	 */

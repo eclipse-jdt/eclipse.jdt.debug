@@ -36,7 +36,6 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	 *            Java project context used to compile expressions in
 	 * @param frame
 	 *            stack frame used to define locals and receiving type context
-	 * @return a new runtime context
 	 */
 	public RuntimeContext(IJavaProject project, IJavaStackFrame frame) {
 		super(project);
@@ -80,10 +79,7 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	}
 
 	/**
-	 * Sets the stack frame context used to compile/run expressions
-	 *
-	 * @param frame
-	 *            the stack frame context used to compile/run expressions
+	 * @return the stack frame context used to compile/run expressions
 	 */
 	@Override
 	public IJavaStackFrame getFrame() {

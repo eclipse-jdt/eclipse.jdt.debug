@@ -683,7 +683,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * objects which represent the same stack frame as on the previous suspend.
 	 * Stack frames are cached until a subsequent call to preserve or dispose
 	 * stack frames.
-	 * </p>
 	 *
 	 * @return list of <code>IJavaStackFrame</code>
 	 * @exception DebugException
@@ -1247,17 +1246,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/**
-	 * Called when a method invocation has returned, successfully or not. This
-	 * method performs cleanup:
+	 * Called when a method invocation has returned, successfully or not. This method performs cleanup:
 	 * <ul>
 	 * <li>Resets the state of this thread to suspended</li>
 	 * <li>Restores the communication timeout value</li>
-	 * <li>Computes the new set of stack frames for this thread</code>
+	 * <li>Computes the new set of stack frames for this thread</li>
 	 * </ul>
 	 *
 	 * @param restoreTimeout
-	 *            the communication timeout value, in milliseconds, that should
-	 *            be reset
+	 *            the communication timeout value, in milliseconds, that should be reset
 	 * @see #invokeMethod(ClassType, ObjectReference, Method, List, boolean)
 	 * @see #newInstance(ClassType, Method, List)
 	 */

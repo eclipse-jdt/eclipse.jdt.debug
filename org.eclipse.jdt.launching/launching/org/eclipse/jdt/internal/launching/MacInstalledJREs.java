@@ -146,10 +146,10 @@ public class MacInstalledJREs {
 	}
 
 	/**
-	 * Parse {@link JREDescriptor}s from the given input stream. The stream is expected to be in the
-	 * XML properties format.
+	 * Parse JREDescriptor from the given input stream. The stream is expected to be in the XML properties format (plist.xml).
 	 *
-	 * @param monitor the {@link IProgressMonitor} or <code>null</code>
+	 * @param monitor
+	 *            the {@link IProgressMonitor} or <code>null</code>
 	 * @return the array of {@link VMStandin}s or an empty array never <code>null</code>
 	 * @since 3.8
 	 */

@@ -349,7 +349,9 @@ public class TypeNameBreakpointTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Tests the {@link JDIModelPresentation#getStratumLineBreakpointText} with a null type name
+	 * Tests the
+	 * {@link org.eclipse.jdt.debug.core.JDIDebugModel#createStratumBreakpoint(IResource, String, String, String, String, int, int, int, int, boolean, java.util.Map)}
+	 * with a null type name
 	 */
 	public void testGetPresentationTypeNameNull7() throws Exception {
 		try {

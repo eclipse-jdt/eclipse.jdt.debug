@@ -54,7 +54,6 @@ public class JDTDebugRefactoringUtil {
 
 	/**
 	 * Returns the new container name for the given project and launch configuration
-	 * @param javaProject the java to get the new container name for
 	 * @param launchConfiguration the associated launch configuration
 	 * @return the new container name
 	 * @since 3.2
@@ -99,8 +98,11 @@ public class JDTDebugRefactoringUtil {
 
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for moving a package
-	 * @param packageFragment the fragment to move
-	 * @param destination the destination to move it to
+	 *
+	 * @param pfragment
+	 *            the fragment to move
+	 * @param destination
+	 *            the destination to move it to
 	 * @return the <code>Change</code> for moving the package
 	 * @since 3.2
 	 */
@@ -121,8 +123,11 @@ public class JDTDebugRefactoringUtil {
 
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for renaming a package
-	 * @param packageFragment the fragment to rename
-	 * @param newName the new name for the fragment
+	 *
+	 * @param pfragment
+	 *            the fragment to rename
+	 * @param newname
+	 *            the new name for the fragment
 	 * @return the Change for the renaming
 	 * @since 3.2
 	 */
@@ -152,8 +157,11 @@ public class JDTDebugRefactoringUtil {
 
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for renaming a project
-	 * @param javaProject the project to rename
-	 * @param newProjectName the new name for the project
+	 *
+	 * @param project
+	 *            the project to rename
+	 * @param newname
+	 *            the new name for the project
 	 * @return the Change for the project rename
 	 * @since 3.2
 	 */

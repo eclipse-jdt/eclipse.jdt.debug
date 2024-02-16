@@ -50,8 +50,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JDIDebugModel#createPatternBreakpoint(IResource, String, int, int,
-	 *      int, int, boolean, Map)
+	 * @see JDIDebugModel#createPatternBreakpoint(IResource, String, String, int, int, int, int, boolean, Map)
 	 */
 	public JavaPatternBreakpoint(IResource resource, String sourceName,
 			String pattern, int lineNumber, int charStart, int charEnd,
@@ -82,7 +81,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#getReferenceTypeName()
+	 * @see JavaBreakpoint#getEnclosingReferenceTypeName()
 	 */
 	protected String getReferenceTypeName() {
 		String name = ""; //$NON-NLS-1$
@@ -95,7 +94,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#installableReferenceType(ReferenceType)
+	 * @see JavaBreakpoint#installableReferenceType(ReferenceType, JDIDebugTarget)
 	 */
 	@Override
 	protected boolean installableReferenceType(ReferenceType type,

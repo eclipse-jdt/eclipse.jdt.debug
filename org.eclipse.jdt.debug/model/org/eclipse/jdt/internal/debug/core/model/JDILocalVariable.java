@@ -88,7 +88,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	}
 
 	/**
-	 * @see JDIModificationVariable#setValue(Value)
+	 * @see JDIModificationVariable#setJDIValue(Value)
 	 */
 	@Override
 	protected void setJDIValue(Value value) throws DebugException {

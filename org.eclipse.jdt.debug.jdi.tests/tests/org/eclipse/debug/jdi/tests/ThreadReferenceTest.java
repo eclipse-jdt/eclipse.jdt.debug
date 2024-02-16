@@ -233,7 +233,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	}
 
 	/**
-	 * Test JDI addPlatformThreadsOnlyFilter() is skipped in old JDK version (<=18).
+	 * Test JDI addPlatformThreadsOnlyFilter() is skipped in old JDK version ({@code <=18}).
 	 */
 	public void testJDIPlatformThreadsOnlyFilter() {
 		// Make sure the entire VM is not suspended before we start a new thread

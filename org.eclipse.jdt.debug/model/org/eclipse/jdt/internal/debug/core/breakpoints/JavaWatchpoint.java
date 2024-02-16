@@ -171,7 +171,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest, ThreadReference)
 	 */
 	@Override
 	protected void setRequestThreadFilter(EventRequest request,
@@ -257,7 +257,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
+	 * @see JavaBreakpoint#recreate(JDIDebugTarget)
 	 */
 	protected EventRequest recreateRequest(EventRequest request,
 			JDIDebugTarget target) throws CoreException {
@@ -368,12 +368,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * Sets the default access and modification attributes of the watchpoint.
-	 * The default values are:
+	 * Sets the default access and modification attributes of the watchpoint. The default values are:
 	 * <ul>
 	 * <li>access = <code>false</code>
 	 * <li>modification = <code>true</code>
-	 * <ul>
+	 * </ul>
 	 */
 	protected void setDefaultAccessAndModification() throws CoreException {
 		boolean[] def = getDefaultAccessAndModificationValues();
@@ -426,13 +425,12 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * Adds the default access and modification attributes of the watchpoint to
-	 * the given map
+	 * Adds the default access and modification attributes of the watchpoint to the given map
 	 * <ul>
 	 * <li>access = true
 	 * <li>modification = true
 	 * <li>auto disabled = false
-	 * <ul>
+	 * </ul>
 	 */
 	protected void addDefaultAccessAndModification(Map<String, Object> attributes) {
 		boolean[] values = getDefaultAccessAndModificationValues();

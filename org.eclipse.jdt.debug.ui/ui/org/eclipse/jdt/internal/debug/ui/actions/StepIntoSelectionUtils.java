@@ -53,7 +53,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Utility class for aiding step into selection actions and hyper-linking
  *
- * @see StepIntoSelectionActionDelegate
+ * @see StepIntoSelectionHandler
  * @see StepIntoSelectionHyperlinkDetector
  *
  * @since 3.3
@@ -151,8 +151,8 @@ public class StepIntoSelectionUtils {
 	/**
 	 * Steps into the selection described by the given {@link IRegion}
 	 *
-	 * @param region the region of the selection or <code>null</code> if we should use the page's selection service to compute
-	 * the selection
+	 * @param selection
+	 *            the region of the selection or <code>null</code> if we should use the page's selection service to compute the selection
 	 *
 	 * @since 3.6.200
 	 */

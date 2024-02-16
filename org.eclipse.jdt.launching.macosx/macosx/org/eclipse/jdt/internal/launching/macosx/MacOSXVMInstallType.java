@@ -39,10 +39,11 @@ import org.eclipse.osgi.util.NLS;
  * This class provides the implementation of the {@link IVMInstallType} for Mac OSX.
  *
  * The default VM locations are outlined below. each VM except for developer VMs provide links in the
- * <code>/System/Library/Frameworks/JavaVM.framework/Versions/</code> folder, with a link named
- * <code>CurrentJDK</code> that points to the VM you have set using the Java preference tool in the system preferences.
- * <br><br>
+ * <code>/System/Library/Frameworks/JavaVM.framework/Versions/</code> folder, with a link named <code>CurrentJDK</code> that points to the VM you have
+ * set using the Java preference tool in the system preferences. <br>
+ * <br>
  * The directory structure for Java VMs prior to Snow Leopard is as follows:
+ * 
  * <pre>
  * /System/Library/Frameworks/JavaVM.framework/Versions/
  *   1.3.1/
@@ -54,6 +55,7 @@ import org.eclipse.osgi.util.NLS;
  * </pre>
  *
  * The directory structure for developer VMs is:
+ * 
  * <pre>
  * /Library/Java/JavaVirtualMachines/
  *   1.7.0.jdk/
@@ -66,6 +68,7 @@ import org.eclipse.osgi.util.NLS;
  * </pre>
  *
  * The directory structure for Snow Leopard and Lion VMs is:
+ * 
  * <pre>
  * /System/Library/Java/JavaVirtualMachines/
  *   1.6.0.jdk/
@@ -75,8 +78,8 @@ import org.eclipse.osgi.util.NLS;
  *         src.zip
  * </pre>
  *
- * @see http://developer.apple.com/library/mac/#qa/qa1170/_index.html
- * @see http://developer.apple.com/library/mac/#releasenotes/Java/JavaSnowLeopardUpdate3LeopardUpdate8RN/NewandNoteworthy/NewandNoteworthy.html#//apple_ref/doc/uid/TP40010380-CH4-SW1
+ * @see "http://developer.apple.com/library/mac/#qa/qa1170/_index.html"
+ * @see "http://developer.apple.com/library/mac/#releasenotes/Java/JavaSnowLeopardUpdate3LeopardUpdate8RN/NewandNoteworthy/NewandNoteworthy.html#//apple_ref/doc/uid/TP40010380-CH4-SW1"
  */
 public class MacOSXVMInstallType extends StandardVMType {
 

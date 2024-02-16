@@ -819,8 +819,6 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 * @param value object or primitive data type the 'toString'
 	 *  is required for
 	 * @return the result of evaluating toString
-	 * @exception DebugException if an exception occurs during the
-	 *  evaluation.
 	 */
 	protected synchronized String evaluateToString(IJavaValue value) {
 		this.fResult= null;

@@ -111,8 +111,6 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      *
      * @param variable the variable whose value should be set
      * @param expression the expression to evaluate
-     * @throws DebugException if an exception occurs evaluating the expression
-     *  or setting the variable's value
      */
     protected void setValue(final IVariable variable, final String expression){
         UIJob job = new UIJob("Setting Variable Value"){ //$NON-NLS-1$

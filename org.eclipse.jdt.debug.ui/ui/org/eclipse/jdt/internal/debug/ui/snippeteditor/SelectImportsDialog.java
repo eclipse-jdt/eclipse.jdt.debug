@@ -122,7 +122,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	/**
 	 * Sets the title for the dialog and establishes the help context.
 	 *
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
 	@Override
 	protected void configureShell(Shell shell) {

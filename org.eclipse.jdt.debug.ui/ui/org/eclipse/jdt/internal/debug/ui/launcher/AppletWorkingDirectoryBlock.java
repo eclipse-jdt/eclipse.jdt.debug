@@ -21,7 +21,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class AppletWorkingDirectoryBlock extends JavaWorkingDirectoryBlock {
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#setDefaultWorkingDir()
+	 * @see org.eclipse.debug.ui.WorkingDirectoryBlock#setDefaultWorkingDir
 	 */
 	@Override
 	protected void setDefaultWorkingDir() {

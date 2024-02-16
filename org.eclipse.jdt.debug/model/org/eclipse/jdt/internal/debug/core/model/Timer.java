@@ -75,16 +75,13 @@ public class Timer {
 	}
 
 	/**
-	 * Starts this timer, and notifies the given listener when the time has
-	 * passed. A call to <code>stop</code>, before the time expires, will cancel
-	 * the the timer and timeout callback. This method can only be called if
-	 * this timer is idle (i.e. <code>isStarted() == false<code>).
+	 * Starts this timer, and notifies the given listener when the time has passed. A call to <code>stop</code>, before the time expires, will cancel
+	 * the the timer and timeout callback. This method can only be called if this timer is idle (i.e. <code>isStarted() == false</code>).
 	 *
 	 * @param listener
 	 *            The timer listener
 	 * @param ms
-	 *            The number of milliseconds to wait before notifying the
-	 *            listener
+	 *            The number of milliseconds to wait before notifying the listener
 	 */
 	public void start(ITimeoutListener listener, int ms) {
 		if (isStarted()) {

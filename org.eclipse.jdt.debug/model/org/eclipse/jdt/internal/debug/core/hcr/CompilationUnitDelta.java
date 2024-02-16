@@ -66,9 +66,7 @@ public class CompilationUnitDelta {
 	private boolean fHasHistory = false;
 
 	/**
-	 * Creates a new
-	 * <code>CompilationUnitDelta object that calculates and stores
-	 * the changes of the given CU since some point in time.
+	 * Creates a new <code>CompilationUnitDelta</code> object that calculates and stores the changes of the given CU since some point in time.
 	 */
 	public CompilationUnitDelta(ICompilationUnit cu, long timestamp)
 			throws CoreException {

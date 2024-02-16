@@ -81,7 +81,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	/**
 	 * Tests setting a line breakpoint on a final field that is initialized
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations");
@@ -90,44 +90,43 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	/**
 	 * Tests setting a line breakpoint on a final field that is initialized looking for best match
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecla() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
 	}
 
 	/**
-	 * Tests setting a line breakpoint on an inner type member for the initializer of
-	 * a final local field variable
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * Tests setting a line breakpoint on an inner type member for the initializer of a final local field variable
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl3() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations");
 	}
 
 	/**
-	 * Tests setting a line breakpoint on an inner type member for the initializer of looking
-	 * for best match
-	 * a final local field variable
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * Tests setting a line breakpoint on an inner type member for the initializer of looking for best match a final local field variable
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl3a() throws Exception {
 		testLocation(17, 17, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
 	}
 
 	/**
-	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of
-	 * a final local field variable
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of a final local field variable
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl4() throws Exception {
 		testLocation(20, 20, "FinalBreakpointLocations");
 	}
 
 	/**
-	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of
-	 * a final local field variable looking for best match
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of a final local field variable looking for best match
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl4a() throws Exception {
 		testLocation(20, 20, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
@@ -135,16 +134,17 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 
 	/**
 	 * Tests setting a line breakpoint on a final field that has not been initialized
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl5() throws Exception {
 		testLocation(30, 33, "FinalBreakpointLocations");
 	}
 
 	/**
-	 * Tests setting a line breakpoint on a final field that has not been initialized looking
-	 * for best match
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * Tests setting a line breakpoint on a final field that has not been initialized looking for best match
+	 *
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354"
 	 */
 	public void testFinalFieldWithTypeDecl5a() throws Exception {
 		testLocation(30, 33, "FinalBreakpointLocations", "FinalBreakpointLocations", true);

@@ -30,7 +30,7 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#getLineNumber()
+	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#getLineNumber(String)
 	 */
 	@Override
 	protected int getLineNumber(String linkText) {
@@ -46,8 +46,9 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 			// remove the method name
 			index = typeName.lastIndexOf('.');
 			int innerClassIndex = typeName.lastIndexOf('$', index);
-			if (innerClassIndex != -1)
+			if (innerClassIndex != -1) {
 				index = innerClassIndex;
+			}
 			if (index >= 0) {
 				typeName = typeName.substring(0, index);
 			}

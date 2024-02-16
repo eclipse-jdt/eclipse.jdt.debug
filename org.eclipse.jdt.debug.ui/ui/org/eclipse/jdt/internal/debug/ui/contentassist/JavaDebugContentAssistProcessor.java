@@ -132,7 +132,7 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 	}
 
 	/**
-	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
+	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {

@@ -368,7 +368,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest, ThreadReference)
 	 */
 	@Override
 	protected void setRequestThreadFilter(EventRequest request,

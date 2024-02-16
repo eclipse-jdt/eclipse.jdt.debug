@@ -177,7 +177,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	private IHandlerActivation fHandlerActivation;
 
 	/**
-	 * @see ViewPart#createChild(IWorkbenchPartContainer)
+	 * @see ViewPart#createPartControl(Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {

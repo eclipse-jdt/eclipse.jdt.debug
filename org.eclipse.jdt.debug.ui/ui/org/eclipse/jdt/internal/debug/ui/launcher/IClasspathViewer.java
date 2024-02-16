@@ -53,12 +53,11 @@ public interface IClasspathViewer extends ISelectionProvider {
 	public boolean isEnabled();
 
 	/**
-	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list,
-	 * otherwise the new entries are added before the (first) selected
-	 * entry. The new entries are selected.
+	 * Adds the given entries to the list. If there is no selection in the list, the entries are added at the end of the list, otherwise the new
+	 * entries are added before the (first) selected entry. The new entries are selected.
 	 *
-	 * @param entries additions
+	 * @param res
+	 *            entries additions
 	 */
 	public void addEntries(IRuntimeClasspathEntry[] res);
 

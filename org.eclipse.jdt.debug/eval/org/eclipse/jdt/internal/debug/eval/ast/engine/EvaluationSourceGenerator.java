@@ -36,14 +36,17 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
 /**
- * Creates the source code necessary to evaluate a code snippet. The
- * (simplified) structure of the source is as follows: [package <package name>;]
- * [import <import name>;]* public class
- * <code snippet class name> extends <global variable class name> {
+ * Creates the source code necessary to evaluate a code snippet. The (simplified) structure of the source is as follows:
+ *
+ * <pre>{@code
+ * [package <package name>;]
+ * [import <import name>;]
+ * public class <code snippet class name> extends <global variable class name> {
  *   public void run() {
  *     <code snippet>
  *   }
  * }
+ * }</pre>
  */
 public class EvaluationSourceGenerator {
 
@@ -339,12 +342,11 @@ public class EvaluationSourceGenerator {
 	/**
 	 * Returns the compiler options used for compiling the expression.
 	 * <p>
-	 * Turns all errors and warnings into ignore and disables task tags. The
-	 * customizable set of compiler options only contains additional Eclipse
+	 * Turns all errors and warnings into ignore and disables task tags. The customizable set of compiler options only contains additional Eclipse
 	 * options. The standard JDK compiler options can't be changed anyway.
 	 *
-	 * @param element
-	 *            an element (not the Java model)
+	 * @param project
+	 *            the IJavaProject
 	 * @return compiler options
 	 */
 	public static Map<String, String> getCompilerOptions(IJavaProject project) {

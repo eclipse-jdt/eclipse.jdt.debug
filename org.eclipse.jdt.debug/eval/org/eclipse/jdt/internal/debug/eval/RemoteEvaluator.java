@@ -180,8 +180,6 @@ public class RemoteEvaluator {
 	 * Constructs and returns a new instance of the specified class on the
 	 * target VM.
 	 *
-	 * @param className
-	 *            fully qualified class name
 	 * @return a new instance on the target, as an <code>IJavaValue</code>
 	 * @exception DebugException
 	 *                if creation fails
@@ -225,28 +223,19 @@ public class RemoteEvaluator {
 	}
 
 	/**
-	 * Interprets and returns the result of the running the snippet class file.
-	 * The type of the result is described by an instance of
-	 * <code>java.lang.Class</code>. The value is interpreted based on the
-	 * result type.
+	 * Interprets and returns the result of the running the snippet class file. The type of the result is described by an instance of
+	 * <code>java.lang.Class</code>. The value is interpreted based on the result type.
 	 * <p>
-	 * Objects as well as primitive data types (boolean, int, etc.), have class
-	 * objects, which are created by the VM. If the class object represents a
-	 * primitive data type, then the associated value is stored in an instance
-	 * of its "object" class. For example, when the result type is the class
-	 * object for <code>int</code>, the result object is an instance of
-	 * <code>java.lang.Integer</code>, and the actual <code>int</code> is stored
-	 * in the </code>intValue()</code>. When the result type is the class object
-	 * for <code>java.lang.Integer</code> the result object is an instance of
-	 * <code>java.lang.Integer</code>, to be interpreted as a
-	 * <code>java.lang.Integer</code>.
-	 * </p>
+	 * Objects as well as primitive data types (boolean, int, etc.), have class objects, which are created by the VM. If the class object represents a
+	 * primitive data type, then the associated value is stored in an instance of its "object" class. For example, when the result type is the class
+	 * object for <code>int</code>, the result object is an instance of <code>java.lang.Integer</code>, and the actual <code>int</code> is stored in
+	 * the <code>intValue()</code>. When the result type is the class object for <code>java.lang.Integer</code> the result object is an instance of
+	 * <code>java.lang.Integer</code>, to be interpreted as a <code>java.lang.Integer</code>.
 	 *
 	 * @param resultType
 	 *            the class of the result
-	 * @param resultValue
-	 *            the value of the result, to be interpreted based on
-	 *            resultType
+	 * @param result
+	 *            the value of the result, to be interpreted based on resultType
 	 * @return the result of running the code snippet class file
 	 */
 	protected IJavaValue convertResult(IJavaDebugTarget debugTarget, IJavaClassObject resultType,

@@ -38,7 +38,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 
 	/**
 	 * Tests if the correct local variable is found when it shadows a field variable
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=384458
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=384458"
 	 */
 	public void testFindConflicting1() throws Exception {
 		String typeName = "LocalVariableTests2";
@@ -63,7 +63,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 
 	/**
 	 * Tests if the correct parameter variable is found when it shadows a field variable
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=384458
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=384458"
 	 */
 	public void testFindConflicting2() throws Exception {
 		String typeName = "LocalVariableTests2";

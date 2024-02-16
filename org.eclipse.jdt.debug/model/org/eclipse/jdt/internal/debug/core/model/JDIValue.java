@@ -408,7 +408,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	}
 
 	/**
-	 * @see IJavaValue#getArrayLength()
+	 * @see IJavaValue#getVariables()
 	 */
 	public int getArrayLength() throws DebugException {
 		if (isArray()) {
@@ -444,12 +444,12 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 * Returns this value's underlying type.
 	 *
 	 * @return type
-	 * @exception DebugException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 * @throws DebugException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	protected Type getUnderlyingType() throws DebugException {
 		try {
@@ -494,9 +494,6 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * Returns the value that is the original non-logical value that this child
 	 * value was computed for or <code>null</code> if none
-	 *
-	 * @param logicalParent
-	 *            parent value or <code>null</code>
 	 */
 	public IJavaValue getLogicalParent() {
 		return fLogicalParent;

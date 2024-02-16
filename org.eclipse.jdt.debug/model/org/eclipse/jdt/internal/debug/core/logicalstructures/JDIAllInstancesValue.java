@@ -36,7 +36,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
  * list of all instances of a specific java type.
  *
  * @since 3.3
- * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate
  */
 public class JDIAllInstancesValue extends JDIArrayValue {
 

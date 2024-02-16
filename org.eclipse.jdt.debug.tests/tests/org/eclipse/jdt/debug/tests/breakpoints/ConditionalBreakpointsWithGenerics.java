@@ -44,7 +44,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * multiple use of the same generic type 'T'
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testDuplicateGenericTypes() throws Exception {
 		String typeName = "a.b.c.ConditionalsNearGenerics";
@@ -66,7 +66,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with many inner types with generics
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testNestedTypes1() throws Exception {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";
@@ -86,7 +86,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with many inner types with generics
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testNestedTypes2() throws Exception {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";
@@ -106,7 +106,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with many inner types with generics
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testNestedTypes3() throws Exception {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";
@@ -126,7 +126,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with multiple generic types 'T', 'E', 'K'
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testMultipleGenericTypes1() throws Exception {
 		String type = "a.b.c.MethodBreakpoints";
@@ -146,7 +146,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with multiple generic types 'T', 'E', 'K'
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testMultipleGenericTypes2() throws Exception {
 		String type = "a.b.c.MethodBreakpoints";
@@ -165,7 +165,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	/**
 	 * Tests a breakpoint with a condition that includes generics
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testBreakpointWithGenericsCondition1() throws Exception {
 		String type = "a.b.c.MethodBreakpoints";
@@ -188,7 +188,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 * Tests a breakpoint with a generified condition in a type that includes
 	 * duplicate generic declarations
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testBreakpointWithGenericCondition2() throws Exception {
 		String type = "a.b.c.ConditionalsNearGenerics";
@@ -209,7 +209,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	/**
 	 * Tests a breakpoint with a condition that includes generics from nested classes
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232"
 	 */
 	public void testBreakpointWithGenericCondition3() throws Exception {
 		String type = "a.b.c.StepIntoSelectionWithGenerics";

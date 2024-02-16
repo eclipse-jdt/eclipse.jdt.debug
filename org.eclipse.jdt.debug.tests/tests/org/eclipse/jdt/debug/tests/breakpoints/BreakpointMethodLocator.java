@@ -69,16 +69,15 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	 * Return <code>null</code> if there is no method declaration at the given position or
 	 * if not possible to compute the signature of the method declared at the given
 	 * position.
-	 * @see BreakpointFieldLocator#getMethodName()
 	 */
 	public String getMethodSignature() {
 		return fMethodSignature;
 	}
 
 	/**
-	 * Return the name of type in which the method is declared.
-	 * Return <code>null</code> if there is no method declaration at the given position.
-	 * @see BreakpointFieldLocator#getMethodName()
+	 * Return the name of type in which the method is declared. Return <code>null</code> if there is no method declaration at the given position.
+	 *
+	 * @see BreakpointFieldLocator#getTypeName()
 	 */
 	public String getTypeName() {
 		return fTypeName;

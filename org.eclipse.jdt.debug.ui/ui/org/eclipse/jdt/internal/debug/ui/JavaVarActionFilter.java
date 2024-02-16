@@ -132,7 +132,8 @@ public class JavaVarActionFilter implements IActionFilter {
 	/**
 	 * Determines if the ref type of the value is primitive
 	 *
-	 * @param var the variable to inspect
+	 * @param value
+	 *            the variable to inspect
 	 * @return true if the the values ref type is primitive, false otherwise
 	 */
 	protected boolean isValuePrimitiveType(IValue value) {
@@ -146,7 +147,8 @@ public class JavaVarActionFilter implements IActionFilter {
 	/**
 	 * Method removes the array declaration characters to return just the type
 	 *
-	 * @param typeName the type name we want to strip the array delimiters from
+	 * @param type
+	 *            the type name we want to strip the array delimiters from
 	 * @return the altered type
 	 */
 	protected String removeArray(String type) {

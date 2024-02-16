@@ -154,9 +154,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	private JavaTextTools fTextTools = null;
 
-	/**
-	 * @see Plugin()
-	 */
 	public JDIDebugUIPlugin() {
 		super();
 		setDefault(this);

@@ -664,18 +664,17 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	}
 
 	/**
-	 * Check for differences between the old & new sets of installed JREs.
-	 * Differences may include additions, deletions and changes.  Take
+	 * Check for differences between the old and new sets of installed JREs. Differences may include additions, deletions and changes. Take
 	 * appropriate action for each type of difference.
 	 *
-	 * When importing preferences, TWO propertyChange events are fired.  The first
-	 * has an old value but an empty new value.  The second has a new value, but an empty
-	 * old value.  Normal user changes to the preferences result in a single propertyChange
-	 * event, with both old and new values populated.  This method handles both types
-	 * of notification.
+	 * When importing preferences, TWO propertyChange events are fired. The first has an old value but an empty new value. The second has a new value,
+	 * but an empty old value. Normal user changes to the preferences result in a single propertyChange event, with both old and new values populated.
+	 * This method handles both types of notification.
 	 *
-	 * @param oldValue the old preference value
-	 * @param newValue the new preference value
+	 * @param oldValue
+	 *            the old preference value
+	 * @param newValue
+	 *            the new preference value
 	 */
 	protected void processVMPrefsChanged(String oldValue, String newValue) {
 

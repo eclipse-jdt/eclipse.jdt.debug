@@ -59,7 +59,7 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 	}
 
 	/**
-	 * @see IJavaArray#getComponentType()
+	 * @see IJavaArrayType#getComponentType()
 	 */
 	@Override
 	public IJavaType getComponentType() throws DebugException {

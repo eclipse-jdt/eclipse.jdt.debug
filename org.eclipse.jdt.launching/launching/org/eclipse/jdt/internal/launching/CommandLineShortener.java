@@ -62,13 +62,8 @@ public class CommandLineShortener implements IProcessTempFileCreator {
 	 *            the launch
 	 * @param cmdLine
 	 *            the command line (java executable + VM arguments + program arguments)
-	 * @param lastJavaArgumentIndex
-	 *            the index of the last java argument in cmdLine (next arguments if any are program arguments)
 	 * @param workingDir
 	 *            the working dir to use for the launched VM or null
-	 * @param envp
-	 *            array of strings, each element of which has environment variable settings in the format name=value, or null if the subprocess should
-	 *            inherit the environment of the current process.
 	 */
 	public CommandLineShortener(IVMInstall vmInstall, ILaunch launch, String[] cmdLine, File workingDir) {
 		this(getJavaVersion(vmInstall), launch, cmdLine, workingDir);

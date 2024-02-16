@@ -125,7 +125,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#getReferenceTypeName()
+	 * @see JavaBreakpoint#getEnclosingReferenceTypeName()
 	 */
 	protected String getReferenceTypeName() {
 		String name = "*"; //$NON-NLS-1$
@@ -138,7 +138,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#installableReferenceType(ReferenceType)
+	 * @see JavaBreakpoint#installableReferenceType(ReferenceType, JDIDebugTarget)
 	 */
 	@Override
 	protected boolean installableReferenceType(ReferenceType type,

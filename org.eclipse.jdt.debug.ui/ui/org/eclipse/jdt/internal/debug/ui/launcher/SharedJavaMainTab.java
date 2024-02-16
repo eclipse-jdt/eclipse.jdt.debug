@@ -105,7 +105,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	protected abstract void handleSearchButtonSelected();
 
 	/**
-	 * Set the main type & name attributes on the working copy based on the IJavaElement
+	 * Set the main type and name attributes on the working copy based on the IJavaElement
 	 */
 	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = null;

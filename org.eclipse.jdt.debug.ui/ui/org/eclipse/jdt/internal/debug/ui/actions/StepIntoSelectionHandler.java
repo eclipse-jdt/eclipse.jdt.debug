@@ -130,7 +130,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent)
+	 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(DebugEvent[])
 	 */
 	@Override
 	public DebugEvent[] filterDebugEvents(DebugEvent[] events) {

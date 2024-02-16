@@ -81,7 +81,6 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 	 *            set
 	 * @param add
 	 *            whether to add this breakpoint to the breakpoint manager
-	 * @return a Java class prepare breakpoint
 	 * @exception DebugException
 	 *                if unable to create the associated marker due to a lower
 	 *                level exception.

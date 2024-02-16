@@ -61,7 +61,7 @@ public class JDIVoidValue extends JDIValue {
 	}
 
 	/**
-	 * @see IJavaValue#getArrayLength()
+	 * @see JDIValue#getArrayLength()
 	 */
 	@Override
 	public int getArrayLength() {

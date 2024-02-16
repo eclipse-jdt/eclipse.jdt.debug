@@ -341,23 +341,20 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	}
 
 	/**
-	 * Returns a variable representing the field in this object with the given
-	 * name, or <code>null</code> if there is no field with the given name, or
+	 * Returns a variable representing the field in this object with the given name, or <code>null</code> if there is no field with the given name, or
 	 * the name is ambiguous.
 	 *
 	 * @param name
 	 *            field name
 	 * @param superClassLevel
-	 *            the level of the desired field in the hierarchy. Level 0
-	 *            returns the field from the current type, level 1 from the
-	 *            super type, etc.
+	 *            the level of the desired field in the hierarchy. Level 0 returns the field from the current type, level 1 from the super type, etc.
 	 * @return the variable representing the field, or <code>null</code>
-	 * @exception DebugException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 * @throws DebugException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	public IJavaFieldVariable getField(String name, int superClassLevel)
 			throws DebugException {
@@ -384,12 +381,12 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * Returns the underlying reference type for this object.
 	 *
-	 * @exception DebugException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                <li>Failure communicating with the VM. The
-	 *                DebugException's status code contains the underlying
-	 *                exception responsible for the failure.</li>
+	 * @throws DebugException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure communicating with the VM. The DebugException's status code contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
 	 */
 	protected ReferenceType getUnderlyingReferenceType() throws DebugException {
 		try {

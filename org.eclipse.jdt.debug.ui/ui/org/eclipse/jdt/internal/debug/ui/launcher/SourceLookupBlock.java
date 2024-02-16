@@ -331,8 +331,6 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	/**
 	 * Sets the configuration associated with this source lookup
 	 * block.
-	 *
-	 * @param configuration launch configuration
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration() {
 		return fConfig;

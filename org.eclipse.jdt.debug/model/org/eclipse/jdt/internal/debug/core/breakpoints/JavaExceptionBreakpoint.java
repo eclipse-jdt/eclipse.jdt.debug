@@ -159,7 +159,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 *            whether the exception is a checked exception
 	 * @param add
 	 *            whether to add this breakpoint to the breakpoint manager
-	 * @return a Java exception breakpoint
 	 * @exception DebugException
 	 *                if unable to create the associated marker due to a lower
 	 *                level exception.
@@ -349,7 +348,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest, ThreadReference)
 	 */
 	@Override
 	protected void setRequestThreadFilter(EventRequest request,
@@ -358,8 +357,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	}
 
 	/**
-	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget,
-	 *      JDIThread) Decides how to handle an exception being thrown
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIThread, boolean) Decides how to handle an exception being thrown
 	 *
 	 * @return true if we do not want to suspend false otherwise
 	 */

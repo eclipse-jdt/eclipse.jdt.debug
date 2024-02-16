@@ -69,7 +69,6 @@ public abstract class OpenDialogAction extends RuntimeClasspathAction {
 	 * action.
 	 *
 	 * @param settingName unqualified setting name
-	 * @return value or <code>null</code> if none
 	 */
 	protected void setDialogSetting(String settingName, String value) {
 		getDialogSettings().put(getDialogSettingsPrefix() + "." + settingName, value); //$NON-NLS-1$

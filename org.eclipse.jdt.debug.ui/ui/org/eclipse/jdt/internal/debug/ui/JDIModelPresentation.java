@@ -180,12 +180,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	/**
-	 * Returns a thread from the specified VM that can be
-	 * used for an evaluation or <code>null</code> if
-	 * none.
+	 * Returns a thread from the specified VM that can be used for an evaluation or <code>null</code> if none.
 	 *
-	 * @param debug target the target in which a thread is
-	 * 	required
+	 * @param target
+	 *            the target in which a thread is required
 	 * @return thread or <code>null</code>
 	 */
 	public static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
@@ -1344,11 +1342,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	/**
-	 * Returns whether or not details should be shown in the
-	 * label of the given variable.
-	 * @param variable the variable
-	 * @return whether or not details should be shown in the label
-	 *  of the given variable
+	 * Returns whether or not details should be shown in the label of the given variable.
+	 *
+	 * @param value
+	 *            the variable
+	 * @return whether or not details should be shown in the label of the given variable
 	 */
 	public boolean isShowLabelDetails(IJavaValue value) {
 		boolean showDetails= false;
