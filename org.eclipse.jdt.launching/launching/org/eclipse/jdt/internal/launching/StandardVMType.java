@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -845,8 +845,11 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if (version.startsWith(JavaCore.VERSION_21)) {
-				return new URL("https://docs.oracle.com/en/java/javase/20/docs/api/"); //$NON-NLS-1$
+			if (version.startsWith(JavaCore.VERSION_22)) {
+				// To modify to version 22 after the release
+				return new URL("https://docs.oracle.com/en/java/javase/22/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_21)) {
+				return new URL("https://docs.oracle.com/en/java/javase/21/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_20)) {
 				return new URL("https://docs.oracle.com/en/java/javase/20/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_19)) {
