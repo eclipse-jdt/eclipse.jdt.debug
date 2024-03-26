@@ -34,12 +34,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -76,6 +80,7 @@ import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.compiler.util.SuffixConstants;
 import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.launching.CompositeId;
@@ -3458,6 +3463,112 @@ public final class JavaRuntime {
 			return standin;
 		}
 		throw new CoreException(status);
+	}
+
+	/**
+	 * Returns the names of all packages provided by the given {@link IVMInstall vmInstall}, optionally restricted to the given
+	 * {@link IExecutionEnvironment execution-environment}.
+	 * <p>
+	 * The returned collection contains only distinct names, sorted in alphabetical order.<br>
+	 * The specified execution-environment is only considered for {@link #isModularJava(IVMInstall) modular} VM-Installs, for non-modular installs it
+	 * is ignored, and then must correspond to Java version 9 or higher.
+	 * </p>
+	 *
+	 * @param vm
+	 *            the vm-install to query
+	 * @param environment
+	 *            the EE to restrict the packages for, ignored for non-modular VMs. If {@code null} the VMInstall's release is used.
+	 * @return the distinct and alphabetically sorted collection of names of all packages in the VM
+	 * @throws CoreException
+	 *             if an error occurs or a modular VM is queried for packages of Java-8 or lower
+	 * @since 3.21
+	 */
+	public static Collection<String> providedVMRuntimePackages(IVMInstall vm, IExecutionEnvironment environment) throws CoreException {
+		String release = environment != null ? environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE) : null;
+		return providedVMRuntimePackages(vm, release);
+	}
+
+	/**
+	 * Returns the names of all packages provided by the given {@link IVMInstall vmInstall}, optionally restricted to the given
+	 * {@link IExecutionEnvironment execution-environment}.
+	 * <p>
+	 * The returned collection contains only distinct names, sorted in alphabetical order.<br>
+	 * The specified release is only considered for {@link #isModularJava(IVMInstall) modular} VM-Installs, for non-modular installs it is ignored,
+	 * and then must correspond to Java version 9 or higher.
+	 * </p>
+	 *
+	 * @param vm
+	 *            the vm-install to query
+	 * @param release
+	 *            the release to restrict the packages for, ignored for non-modular VMs. Possible values are {@code "9"}, {@code "10"}, {@code "11"}
+	 *            or so on. If {@code null} the VMInstall's release is used.
+	 * @return the distinct and alphabetically sorted collection of names of all packages in the VM
+	 * @throws CoreException
+	 *             if an error occurs or a modular VM is queried for packages of Java-8 or lower
+	 * @since 3.21
+	 */
+	public static Collection<String> providedVMRuntimePackages(IVMInstall vm, String release) throws CoreException {
+		if (vm instanceof AbstractVMInstall vmInstall) {
+			try {
+				return vmInstall.systemPackagesCache.computeIfAbsent(release, r -> {
+					try {
+						return querySystemPackages(vmInstall, r);
+					} catch (CoreException e) {
+						throw new IllegalArgumentException(e);
+					}
+				});
+			} catch (IllegalArgumentException e) {
+				if (e.getCause() instanceof CoreException coreException) {
+					throw coreException; // throw passed through exception
+				}
+				throw e;
+			}
+		}
+		return querySystemPackages(vm, release);
+	}
+
+	@SuppressWarnings("restriction")
+	private static final String JRT_PATH = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
+
+	@SuppressWarnings("restriction")
+	private static Collection<String> querySystemPackages(IVMInstall vm, String release) throws CoreException {
+		Stream<String> systemPackages;
+		if (!JavaRuntime.isModularJava(vm)) {
+			Set<String> classFileDirectories = new HashSet<>();
+			for (LibraryLocation libLocation : JavaRuntime.getLibraryLocations(vm)) {
+				IPath path = libLocation.getSystemLibraryPath();
+				if (path != null) {
+					try (ZipFile zip = new ZipFile(path.toFile())) {
+						// Collect names of all directories that contain a .class file
+						zip.stream().filter(e -> !e.isDirectory()).map(ZipEntry::getName) //
+								.filter(n -> n.endsWith(SuffixConstants.SUFFIX_STRING_class)) //
+								.<String> mapMulti((n, downstream) -> {
+									int lastIndex = n.lastIndexOf('/');
+									if (lastIndex > -1) {
+										downstream.accept(n.substring(0, lastIndex));
+									}
+								}).forEach(classFileDirectories::add);
+					} catch (Exception e) {
+						throw new CoreException(Status.error("Failed to read packages in JVM library for " + vm + ", at " + path, e)); //$NON-NLS-1$//$NON-NLS-2$
+					}
+				}
+			}
+			systemPackages = classFileDirectories.stream().map(n -> n.replace('/', '.'));
+		} else {
+			if (JavaCore.compareJavaVersions(release, JavaCore.VERSION_1_8) <= 0) {
+				throw new CoreException(Status.error("Cannot query a modular VM (JavaSE-9 or higher) for packages of JavaSE-1.8 and lower")); //$NON-NLS-1$
+			}
+			String path = new File(vm.getInstallLocation(), JRT_PATH).toString();
+			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
+			systemPackages = jrt.getModuleNames(null).stream().flatMap(moduleName -> {
+				var module = jrt.getModule(moduleName);
+				return Stream.ofNullable(module).flatMap(m -> Arrays.stream(m.exports())) //
+						.filter(e -> !e.isQualified()) //
+						.map(org.eclipse.jdt.internal.compiler.env.IModule.IPackageExport::name).map(String::new);
+			});
+		}
+		Set<String> packagesSet = systemPackages.distinct().sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+		return Collections.unmodifiableSet(packagesSet);
 	}
 
 	private static final String BLANK = " "; //$NON-NLS-1$

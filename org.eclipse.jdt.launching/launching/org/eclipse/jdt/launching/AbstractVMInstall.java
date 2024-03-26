@@ -19,9 +19,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -63,6 +65,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private volatile LibraryLocation[] fSystemLibraryDescriptions;
 	private volatile URL fJavadocLocation;
 	private volatile String fVMArgs;
+	final Map<String, Collection<String>> systemPackagesCache = new ConcurrentHashMap<>();
 	/**
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
