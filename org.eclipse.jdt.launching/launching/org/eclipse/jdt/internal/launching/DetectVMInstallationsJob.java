@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,7 +83,7 @@ public class DetectVMInstallationsJob extends Job {
 			VMStandin workingCopy = new VMStandin(standardType, f.getAbsolutePath());
 			workingCopy.setInstallLocation(f);
 			String name = f.getName();
-			int i = 1;
+			int i = 2;
 			while (isDuplicateName(name)) {
 				name = f.getName() + '(' + i++ + ')';
 			}
@@ -103,7 +104,7 @@ public class DetectVMInstallationsJob extends Job {
 			}
 			SubMonitor subMon = SubMonitor.convert(monitor, systemVM.getInstallLocation().getAbsolutePath(), 1);
 			String name = systemVM.getName();
-			int i = 1;
+			int i = 2;
 			while (isDuplicateName(name)) {
 				name = systemVM.getName() + '(' + i++ + ')';
 			}
@@ -129,7 +130,9 @@ public class DetectVMInstallationsJob extends Job {
 	private Collection<File> computeCandidateVMs(StandardVMType standardType) {
 		// parent directories containing a collection of VM installations
 		Collection<File> rootDirectories = new HashSet<>();
-		if (!Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			computeWindowsCandidates(rootDirectories);
+		} else {
 			rootDirectories.add(new File("/usr/lib/jvm")); //$NON-NLS-1$
 		}
 		rootDirectories.add(new File(System.getProperty("user.home"), ".sdkman/candidates/java")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -162,6 +165,18 @@ public class DetectVMInstallationsJob extends Job {
 			}).filter(Objects::nonNull)
 			.filter(location -> standardType.validateInstallLocation(location).isOK())
 			.collect(Collectors.toCollection(HashSet::new));
+	}
+
+	private void computeWindowsCandidates(Collection<File> rootDirectories) {
+		List<String> progFiles = List.of("ProgramFiles", "ProgramFiles(x86)"); //$NON-NLS-1$//$NON-NLS-2$
+		List<String> subDirs = List.of("Eclipse Adoptium", "RedHat");  //$NON-NLS-1$//$NON-NLS-2$
+		rootDirectories.addAll(
+		progFiles.stream()
+			.map(name -> System.getenv(name))
+			.filter(Objects::nonNull)
+			.distinct()
+			.flatMap(progFilesDir -> subDirs.stream().map(subDir -> new File(progFilesDir, subDir)))
+			.collect(Collectors.toList()));
 	}
 
 	private static Set<File> knownVMs() {
