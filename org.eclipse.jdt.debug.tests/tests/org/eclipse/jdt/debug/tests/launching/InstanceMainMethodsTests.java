@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Red Hat Inc. and others.
+ * Copyright (c) 2022, 2024 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ public class InstanceMainMethodsTests extends AbstractDebugTest {
 
 	@Override
 	protected IJavaProject getProjectContext() {
-		return super.get21Project();
+		return super.get22Project();
 	}
 
 	public void testStaticMainWithoutArgs() throws Exception {
@@ -44,7 +44,7 @@ public class InstanceMainMethodsTests extends AbstractDebugTest {
 		assertNotNull("Missing VM process.", process);
 		assertEquals("Process finished with error code", 0, process.getExitValue());
 	}
-	
+
 	public void testDefaultMainWithoutArgs() throws Exception {
 		String type = "Main2";
 		IJavaDebugTarget target = null;

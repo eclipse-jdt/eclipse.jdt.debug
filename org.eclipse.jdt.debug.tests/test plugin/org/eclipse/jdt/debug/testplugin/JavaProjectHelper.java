@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2023 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -65,6 +65,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_9_EE_NAME = "JavaSE-9";
 	public static final String JAVA_SE_16_EE_NAME = "JavaSE-16";
 	public static final String JAVA_SE_21_EE_NAME = "JavaSE-21";
+	public static final String JAVA_SE_22_EE_NAME = "JavaSE-22";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -95,6 +96,10 @@ public class JavaProjectHelper {
 	 * path to the 21 test source
 	 */
 	public static final IPath TEST_21_SRC_DIR = new Path("java21");
+	/**
+	 * path to the 22 test source
+	 */
+	public static final IPath TEST_22_SRC_DIR = new Path("java22");
 
 	/**
 	 * path to the compiler error java file
@@ -165,7 +170,7 @@ public class JavaProjectHelper {
 	public static boolean isJava19_Compatible() {
 		return isCompatible(19);
 	}
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 21
 	 *
@@ -173,6 +178,15 @@ public class JavaProjectHelper {
 	 */
 	public static boolean isJava21_Compatible() {
 		return isCompatible(21);
+	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 22
+	 *
+	 * @return <code>true</code> if a Java 22 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava22_Compatible() {
+		return isCompatible(22);
 	}
 
 	/**
