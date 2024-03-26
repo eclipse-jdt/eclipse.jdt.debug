@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -180,6 +180,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String NINE_PROJECT_NAME = "Nine";
 	public static final String ONESIX_PROJECT_NAME = "One_Six";
 	public static final String TWENTYONE_PROJECT_NAME = "Two_One";
+	public static final String TWENTYTWO_PROJECT_NAME = "Two_Two";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -235,6 +236,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded9 = false;
 	private static boolean loaded16_ = false;
 	private static boolean loaded21 = false;
+	private static boolean loaded22 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -615,6 +617,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
+	 * Creates the Java 21 compliant project
+	 */
+	synchronized void assert22Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded22) {
+				jp = createProject(TWENTYTWO_PROJECT_NAME, JavaProjectHelper.TEST_22_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_22_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+				cfgs.add(createLaunchConfiguration(jp, "Main1"));
+				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				loaded22 = true;
+				waitForBuild();
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, TWENTYTWO_PROJECT_NAME, jp);
+		}
+	}
+
+	/**
 	 * Creates the 'BoundJRE' project used for the JRE testing
 	 */
 	synchronized void assertBoundJreProject() {
@@ -908,6 +940,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get21Project() {
 		assert21Project();
 		return getJavaProject(TWENTYONE_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'Two_One' project, used for Java 21 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get22Project() {
+		assert22Project();
+		return getJavaProject(TWENTYTWO_PROJECT_NAME);
 	}
 
 	/**
