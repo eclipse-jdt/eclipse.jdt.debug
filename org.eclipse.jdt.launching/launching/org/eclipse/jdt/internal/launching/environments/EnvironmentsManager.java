@@ -8,6 +8,10 @@
  *
  *  SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *
@@ -196,7 +200,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
 		String desc = executionEnvironment.getId();
-		if (desc.indexOf(JavaCore.VERSION_22) != -1) {
+		if (desc.indexOf(JavaCore.VERSION_23) != -1) {
+			return JavaCore.VERSION_23;
+		} else if (desc.indexOf(JavaCore.VERSION_22) != -1) {
 			return JavaCore.VERSION_22;
 		} else if (desc.indexOf(JavaCore.VERSION_21) != -1) {
 			return JavaCore.VERSION_21;
