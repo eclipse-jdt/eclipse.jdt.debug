@@ -3381,7 +3381,7 @@ public final class JavaRuntime {
 						&& (javaVersion.length() == JavaCore.VERSION_23.length() || javaVersion.charAt(JavaCore.VERSION_23.length()) == '.')) {
 					compliance = JavaCore.VERSION_23;
 				} else {
-					compliance = JavaCore.VERSION_22; // use latest by default
+					compliance = JavaCore.VERSION_23; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();
