@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
+
+import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Arrays;
 
@@ -55,9 +57,7 @@ public class StratumTests extends AbstractDebugTest {
 				assertEquals("Wrong number of available strata", 1, strata.length);
 				assertEquals("Wrong strata", "Java", strata[0]);
 			} else {
-				assertEquals("Wrong number of available strata", 2, strata.length);
-				assertEquals("Wrong strata", "Java", strata[0]);
-				assertEquals("Wrong strata", JDIHelpers.STRATA_ID, strata[1]);
+				assertArrayEquals("Available strata mismatch", new String[] { "Java", JDIHelpers.STRATA_ID }, strata);
 			}
 		} finally {
 			terminateAndRemove(thread);
