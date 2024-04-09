@@ -492,7 +492,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	private static final String JAVASE = "JavaSE"; //$NON-NLS-1$
 
 	private String calculateVMExecutionEnvs(Version javaVersion) {
-		StringBuilder result = new StringBuilder("OSGi/Minimum-1.0, OSGi/Minimum-1.1, OSGi/Minimum-1.2, JavaSE/compact1-1.8, JavaSE/compact2-1.8, JavaSE/compact3-1.8, JRE-1.1, J2SE-1.2, J2SE-1.3, J2SE-1.4, J2SE-1.5, JavaSE-1.6, JavaSE-1.7, JavaSE-1.8"); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder("OSGi/Minimum-1.0, OSGi/Minimum-1.1, OSGi/Minimum-1.2, JavaSE/compact1-1.8, JavaSE/compact2-1.8, JavaSE/compact3-1.8, J2SE-1.2, J2SE-1.3, J2SE-1.4, J2SE-1.5, JavaSE-1.6, JavaSE-1.7, JavaSE-1.8"); //$NON-NLS-1$
 		Version v = new Version(9, 0, 0);
 		while (v.compareTo(javaVersion) <= 0) {
 			result.append(',').append(' ').append(JAVASE).append('-').append(v.getMajor());
