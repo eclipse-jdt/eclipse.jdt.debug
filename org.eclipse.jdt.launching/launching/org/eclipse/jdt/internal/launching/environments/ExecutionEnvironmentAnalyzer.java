@@ -41,6 +41,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 
+	private static final String JavaSE_23 = "JavaSE-23"; //$NON-NLS-1$
 	private static final String JavaSE_22 = "JavaSE-22"; //$NON-NLS-1$
 	private static final String JavaSE_21 = "JavaSE-21"; //$NON-NLS-1$
 	private static final String JavaSE_20 = "JavaSE-20"; //$NON-NLS-1$
@@ -108,6 +109,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_20, new String[] { JavaSE_19 });
 		mappings.put(JavaSE_21, new String[] { JavaSE_20 });
 		mappings.put(JavaSE_22, new String[] { JavaSE_21 });
+		mappings.put(JavaSE_23, new String[] { JavaSE_22 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -133,7 +135,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("22")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("23")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_23);
+				} else if (javaVersion.startsWith("22")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_22);
 				} else if (javaVersion.startsWith("21")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_21);
