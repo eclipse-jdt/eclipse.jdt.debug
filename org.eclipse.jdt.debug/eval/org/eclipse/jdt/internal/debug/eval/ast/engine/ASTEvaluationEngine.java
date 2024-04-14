@@ -390,7 +390,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			Map<String, String> extraOptions = Collections.emptyMap();
 			// if target runtime is above java 1.8 then switch the compiler to debug mode to ignore java 9 module system
 			if (JavaCore.compareJavaVersions(((IJavaDebugTarget) frame.getDebugTarget()).getVersion(), JavaCore.VERSION_1_8) > 0) {
-				extraOptions = Collections.singletonMap(CompilerOptions.OPTION_IgnoreUnnamedModuleForSplitPackage, JavaCore.ENABLED);
+				extraOptions = Collections.singletonMap(CompilerOptions.OPTION_JdtDebugCompileMode, JavaCore.ENABLED);
 			}
 
 			unit = parseCompilationUnit(
