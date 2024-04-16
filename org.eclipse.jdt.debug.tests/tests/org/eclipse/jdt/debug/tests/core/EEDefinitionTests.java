@@ -15,8 +15,12 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -42,7 +46,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 
 	public static IPath TEST_EE_FILE = null;
 	{
-		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (Platform.OS.isWindows()) {
 			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11-win32.ee");
 		} else {
 			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11.ee");
@@ -155,17 +159,12 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests that a javadoc location can be specified.
 	 */
-	public void testJavadocLocation() throws CoreException {
+	public void testJavadocLocation() throws CoreException, MalformedURLException {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		URL location = EEVMType.getJavadocLocation(ee);
-		URL expectedLocation = null;
-		try {
-			expectedLocation = new URL("http://a.javadoc.location");
-		} catch (MalformedURLException e) {
-			fail();
-		}
+		URL expectedLocation = new URL("http://a.javadoc.location");
 		assertEquals("Incorrect javadoc location", expectedLocation, location);
 	}
 
@@ -179,12 +178,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		URL location = EEVMType.getIndexLocation(ee);
-		URL expectedLocation = null;
-		try {
-			expectedLocation = new URL("http://a.index.location");
-		} catch (MalformedURLException e) {
-			fail();
-		}
+		URL expectedLocation = new URL("http://a.index.location");
 		assertEquals("Incorrect index location", expectedLocation, location);
 	}
 
@@ -291,5 +285,24 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		validateProperty("-Dee.empty", "", ee);
+	}
+
+	public void testNoEEHomeRequiredForAbsolutePaths() throws IOException {
+		IVMInstall jre = JavaRuntime.getDefaultVMInstall();
+		IExecutionEnvironment ee = Arrays.stream(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()) //
+				.filter(e -> e.isStrictlyCompatible(jre)).findFirst().orElseThrow();
+		String installLocation = jre.getInstallLocation().getCanonicalPath();
+		File exePath = new File(jre.getInstallLocation(), "bin/" + (Platform.OS.isWindows() ? "java.exe" : "java"));
+		List<String> libraryPaths = Arrays.stream(JavaRuntime.getLibraryLocations(jre)) //
+				.map(LibraryLocation::getSystemLibraryPath).map(IPath::toOSString).toList();
+
+		ExecutionEnvironmentDescription description = new ExecutionEnvironmentDescription(Map.of( //
+				ExecutionEnvironmentDescription.JAVA_HOME, installLocation, //
+				ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, ee.getId(), //
+				ExecutionEnvironmentDescription.EXECUTABLE, exePath.toString(), //
+				ExecutionEnvironmentDescription.BOOT_CLASS_PATH, String.join(File.pathSeparator, libraryPaths)));
+
+		assertTrue(description.getLibraryLocations().length > 0);
+		assertNotNull(description.getExecutable());
 	}
 }
