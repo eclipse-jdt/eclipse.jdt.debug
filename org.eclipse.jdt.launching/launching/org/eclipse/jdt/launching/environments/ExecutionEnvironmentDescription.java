@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +33,6 @@ import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -232,6 +232,10 @@ public final class ExecutionEnvironmentDescription {
 		return fProperties.get(property);
 	}
 
+	private Optional<String> getEEHomePath() {
+		return Optional.ofNullable(getProperty(EE_HOME));
+	}
+
 	/**
 	 * Returns the location of the system libraries defined in this execution environment.
 	 * Libraries are generated from the endorsed directories, boot class path, additional
@@ -259,10 +263,10 @@ public final class ExecutionEnvironmentDescription {
 			URL url = getJavadocLocation();
 			URL indexurl = getIndexLocation();
 			for (int i = 0; i < bootpath.length; i++) {
-				IPath path = new Path(bootpath[i]);
+				IPath path = IPath.fromOSString(bootpath[i]);
 				File lib = path.toFile();
 				if (lib.exists() && lib.isFile()) {
-					LibraryLocation libraryLocation = new LibraryLocation(path,	src, Path.EMPTY, url, indexurl);
+					LibraryLocation libraryLocation = new LibraryLocation(path, src, IPath.EMPTY, url, indexurl);
 					boot.add(libraryLocation);
 				}
 			}
@@ -302,7 +306,7 @@ public final class ExecutionEnvironmentDescription {
 	 */
 	public String getVMArguments() {
 		StringBuilder arguments = new StringBuilder();
-		String eeHome = fProperties.get(EE_HOME);
+		Optional<String> eeHome = getEEHomePath();
 		fProperties.forEach((key, value) -> {
 			boolean appendArgument = !key.startsWith(EE_ARG_FILTER);
 			if (appendArgument) {
@@ -390,7 +394,7 @@ public final class ExecutionEnvironmentDescription {
 	}
 
 	private static Map<String, String> resolveEEHome(Map<String, String> eeProperties) { // resolve things with ${ee.home} in them
-		String eeHome = eeProperties.get(EE_HOME);
+		Optional<String> eeHome = Optional.ofNullable(eeProperties.get(EE_HOME));
 		eeProperties.replaceAll((k, value) -> value != null ? resolveHome(value, eeHome) : ""); //$NON-NLS-1$
 		return eeProperties;
 	}
@@ -402,7 +406,7 @@ public final class ExecutionEnvironmentDescription {
 	 * @param value string to process
 	 * @return resolved string
 	 */
-	private static String resolveHome(String value, String eeHome) {
+	private static String resolveHome(String value, Optional<String> eeHome) {
 		int start = 0;
 		int index = value.indexOf(VAR_EE_HOME, start);
 		StringBuilder replaced = null;
@@ -411,7 +415,7 @@ public final class ExecutionEnvironmentDescription {
 				replaced = new StringBuilder();
 			}
 			replaced.append(value.substring(start, index));
-			replaced.append(eeHome);
+			replaced.append(eeHome.orElseThrow());
 			start = index + VAR_EE_HOME.length();
 			index = value.indexOf(VAR_EE_HOME, start);
 		}
@@ -431,8 +435,7 @@ public final class ExecutionEnvironmentDescription {
 	 */
 	private String[] resolvePaths(String paths) {
 		String[] strings = paths.split(File.pathSeparator, -1);
-		String eeHome = getProperty(EE_HOME);
-		IPath root = new Path(eeHome);
+		Optional<String> root = getEEHomePath();
 		for (int i = 0; i < strings.length; i++) {
 			strings[i] = makePathAbsolute(strings[i], root);
 		}
@@ -448,10 +451,10 @@ public final class ExecutionEnvironmentDescription {
 	 * @param root root to append non-absolute paths to
 	 * @return absolute, OS specific path
 	 */
-	private String makePathAbsolute(String pathString, IPath root){
-		IPath path = new Path(pathString.trim());
+	private String makePathAbsolute(String pathString, Optional<String> root) {
+		IPath path = IPath.fromOSString(pathString.trim());
 		if (!path.isEmpty() && !path.isAbsolute()) {
-			IPath filePath = root.append(path);
+			IPath filePath = IPath.fromOSString(root.orElseThrow()).append(path);
 			return filePath.toOSString();
 		}
 		return path.toOSString();
@@ -483,7 +486,7 @@ public final class ExecutionEnvironmentDescription {
 			for (int i = 0; i < entries.length; i++) {
 				int index = entries[i].indexOf('=');
 				if (index > 0 && index < entries[i].length()-1){
-					IPath root = new Path(getProperty(EE_HOME));
+					Optional<String> root = getEEHomePath();
 					String key = entries[i].substring(0,index);
 					String value = entries[i].substring(index+1);
 					key = makePathAbsolute(key, root);
@@ -562,7 +565,7 @@ public final class ExecutionEnvironmentDescription {
 				if (matcher.find()) {
 					// Found a file that the pattern applies to, use the map to get the source location
 					String sourceLocation = matcher.replaceAll(value);
-					IPath sourcePath = new Path(sourceLocation);
+					IPath sourcePath = IPath.fromOSString(sourceLocation);
 					// Only add the source archive if it exists
 					if (sourcePath.toFile().exists()) {
 						currentLibrary.setSystemLibrarySource(sourcePath);
@@ -582,11 +585,11 @@ public final class ExecutionEnvironmentDescription {
 	private IPath getSourceLocation() {
 		String src = getProperty(ExecutionEnvironmentDescription.SOURCE_DEFAULT);
 		if (src != null) {
-			String eeHome = getProperty(ExecutionEnvironmentDescription.EE_HOME);
-			src = makePathAbsolute(src, new Path(eeHome));
-			return new Path(src);
+			Optional<String> eeHome = getEEHomePath();
+			src = makePathAbsolute(src, eeHome);
+			return IPath.fromOSString(src);
 		}
-		return Path.EMPTY;
+		return IPath.EMPTY;
 	}
 
 	/**
