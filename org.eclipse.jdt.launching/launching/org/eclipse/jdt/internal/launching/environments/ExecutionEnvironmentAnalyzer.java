@@ -65,6 +65,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	private static final String J2SE_1_4 = "J2SE-1.4"; //$NON-NLS-1$
 	private static final String J2SE_1_3 = "J2SE-1.3"; //$NON-NLS-1$
 	private static final String J2SE_1_2 = "J2SE-1.2"; //$NON-NLS-1$
+	private static final String JRE_1_1 = "JRE-1.1"; //$NON-NLS-1$
 
 	private static final String CDC_FOUNDATION_1_1 = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
 	private static final String CDC_FOUNDATION_1_0 = "CDC-1.0/Foundation-1.0"; //$NON-NLS-1$
@@ -87,7 +88,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(CDC_FOUNDATION_1_1, new String[] {CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_2});
 		mappings.put(OSGI_MINIMUM_1_1, new String[] {OSGI_MINIMUM_1_0});
 		mappings.put(OSGI_MINIMUM_1_2, new String[] {OSGI_MINIMUM_1_1});
-		mappings.put(J2SE_1_2, new String[] { CDC_FOUNDATION_1_1 });
+		mappings.put(J2SE_1_2, new String[] {JRE_1_1});
 		mappings.put(J2SE_1_3, new String[] {J2SE_1_2, CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_0});
 		mappings.put(J2SE_1_4, new String[] {J2SE_1_3, CDC_FOUNDATION_1_1, OSGI_MINIMUM_1_2});
 		mappings.put(J2SE_1_5, new String[] {J2SE_1_4});
@@ -183,7 +184,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) {
 						types = getTypes(CDC_FOUNDATION_1_1);
 					} else {
-						types = getTypes(CDC_FOUNDATION_1_0);
+						types = getTypes(JRE_1_1);
 					}
 				} else if (javaVersion.startsWith("1.0")) { //$NON-NLS-1$
 					if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) {

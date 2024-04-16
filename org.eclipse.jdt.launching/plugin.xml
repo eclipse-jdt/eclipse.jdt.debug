@@ -279,6 +279,10 @@
             id="OSGi/Minimum-1.2"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>            
       <environment
+            description="%environment.description.2"
+            id="JRE-1.1"
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
+      <environment
             description="%environment.description.3"
             id="J2SE-1.2"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
