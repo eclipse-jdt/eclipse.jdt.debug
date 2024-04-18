@@ -55,8 +55,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	@Override
 	public synchronized IVMInstall[] getVMInstalls() {
-		IVMInstall[] vms= new IVMInstall[fVMs.size()];
-		return fVMs.toArray(vms);
+		return fVMs.toArray(IVMInstall[]::new);
 	}
 
 	/* (non-Javadoc)
@@ -84,13 +83,10 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see IVMType#getVM(String)
 	 */
 	@Override
-	public IVMInstall findVMInstall(String id) {
-		synchronized (this) {
-			for (int i = 0; i < fVMs.size(); i++) {
-				IVMInstall vm = fVMs.get(i);
-				if (vm.getId().equals(id)) {
-					return vm;
-				}
+	public synchronized IVMInstall findVMInstall(String id) {
+		for (IVMInstall vm : fVMs) {
+			if (vm.getId().equals(id)) {
+				return vm;
 			}
 		}
 		return null;
@@ -104,7 +100,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	public synchronized IVMInstall createVMInstall(String id) throws IllegalArgumentException {
 		if (findVMInstall(id) != null) {
 			String format= LaunchingMessages.vmInstallType_duplicateVM;
-			throw new IllegalArgumentException(NLS.bind(format, new String[] { id }));
+			throw new IllegalArgumentException(NLS.bind(format, id));
 		}
 		IVMInstall vm = doCreateVMInstall(id);
 		fVMs.add(vm);
@@ -154,13 +150,10 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see org.eclipse.jdt.launching.IVMInstallType#findVMInstallByName(java.lang.String)
 	 */
 	@Override
-	public IVMInstall findVMInstallByName(String name) {
-		synchronized (this) {
-			for (int i = 0; i < fVMs.size(); i++) {
-				IVMInstall vm = fVMs.get(i);
-				if (Objects.equals(vm.getName(), name)) {
-					return vm;
-				}
+	public synchronized IVMInstall findVMInstallByName(String name) {
+		for (IVMInstall vm : fVMs) {
+			if (Objects.equals(vm.getName(), name)) {
+				return vm;
 			}
 		}
 		return null;
