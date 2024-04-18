@@ -15,7 +15,6 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
@@ -68,10 +67,7 @@ public class EEVMType extends AbstractVMInstallType {
 					url = file.getCanonicalFile().toURI().toURL();
 				}
 				return url;
-			} catch (MalformedURLException e){
-				LaunchingPlugin.log(e);
-				return null;
-			} catch (IOException e){
+			} catch (IOException e) {
 				LaunchingPlugin.log(e);
 				return null;
 			}
@@ -101,10 +97,7 @@ public class EEVMType extends AbstractVMInstallType {
 					url = file.getCanonicalFile().toURI().toURL();
 				}
 				return url;
-			} catch (MalformedURLException e){
-				LaunchingPlugin.log(e);
-				return null;
-			} catch (IOException e){
+			} catch (IOException e) {
 				LaunchingPlugin.log(e);
 				return null;
 			}
@@ -120,11 +113,10 @@ public class EEVMType extends AbstractVMInstallType {
 	 */
 	public static IStatus validateDefinitionFile(ExecutionEnvironmentDescription description) {
 		// validate required properties
-		for (int i = 0; i < REQUIRED_PROPERTIES.length; i++) {
-			String key = REQUIRED_PROPERTIES[i];
+		for (String key : REQUIRED_PROPERTIES) {
 			String property = description.getProperty(key);
 			if (property == null) {
-				return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), NLS.bind(LaunchingMessages.EEVMType_1, new String[]{key} ));
+				return Status.error(NLS.bind(LaunchingMessages.EEVMType_1, key));
 			}
 		}
 		return Status.OK_STATUS;
@@ -170,7 +162,7 @@ public class EEVMType extends AbstractVMInstallType {
 		if (installLocation.exists()) {
 			return new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.EEVMType_4);
 		}
-		return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.EEVMType_3, new String[]{installLocation.getPath()}));
+		return Status.error(NLS.bind(LaunchingMessages.EEVMType_3, installLocation.getPath()));
 	}
 
 }

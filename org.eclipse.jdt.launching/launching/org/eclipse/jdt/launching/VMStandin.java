@@ -13,10 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 /**
  * An implementation of IVMInstall that is used for manipulating VMs without necessarily
  * committing changes.
@@ -89,22 +85,15 @@ public class VMStandin extends AbstractVMInstall {
 		setInstallLocation(realVM.getInstallLocation());
 		setLibraryLocations(realVM.getLibraryLocations());
 		setJavadocLocation(realVM.getJavadocLocation());
-		if (realVM instanceof IVMInstall2) {
-			IVMInstall2 vm2 = (IVMInstall2) realVM;
+		if (realVM instanceof IVMInstall2 vm2) {
 			setVMArgs(vm2.getVMArgs());
 	        fJavaVersion = vm2.getJavaVersion();
 		} else {
 			setVMArguments(realVM.getVMArguments());
 			fJavaVersion = null;
 		}
-		if (realVM instanceof AbstractVMInstall) {
-			AbstractVMInstall vm2 = (AbstractVMInstall) realVM;
-			Map<String, String> attributes = vm2.getAttributes();
-			Iterator<Entry<String, String>> iterator = attributes.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<String, String> entry = iterator.next();
-				setAttribute(entry.getKey(), entry.getValue());
-			}
+		if (realVM instanceof AbstractVMInstall avm) {
+			avm.getAttributes().forEach(this::setAttribute);
 		}
 	}
 
@@ -125,27 +114,21 @@ public class VMStandin extends AbstractVMInstall {
 			notify = false;
 		}
 		// do not notify of property changes on new VMs
-		if (realVM instanceof AbstractVMInstall) {
-			 ((AbstractVMInstall)realVM).setNotify(notify);
+		if (realVM instanceof AbstractVMInstall avm) {
+			avm.setNotify(notify);
 		}
 		realVM.setName(getName());
 		realVM.setInstallLocation(getInstallLocation());
 		realVM.setLibraryLocations(getLibraryLocations());
 		realVM.setJavadocLocation(getJavadocLocation());
-		if (realVM instanceof IVMInstall2) {
-			IVMInstall2 vm2 = (IVMInstall2) realVM;
+		if (realVM instanceof IVMInstall2 vm2) {
 			vm2.setVMArgs(getVMArgs());
 		} else {
 			realVM.setVMArguments(getVMArguments());
 		}
 
-		if (realVM instanceof AbstractVMInstall) {
-			AbstractVMInstall avm = (AbstractVMInstall) realVM;
-			Iterator<Entry<String, String>> iterator = getAttributes().entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<String, String> entry = iterator.next();
-				avm.setAttribute(entry.getKey(), entry.getValue());
-			}
+		if (realVM instanceof AbstractVMInstall avm) {
+			getAttributes().forEach(avm::setAttribute);
 			avm.setNotify(true);
 		}
 		if (!notify) {
