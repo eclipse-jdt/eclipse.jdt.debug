@@ -17,21 +17,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -65,21 +64,12 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	private final IVMInstallChangedListener fListener = new IVMInstallChangedListener() {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void vmAdded(IVMInstall newVm) {}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
-		 */
 		@Override
 		public void vmChanged(PropertyChangeEvent event) {
 			if (event.getSource() != null) {
@@ -88,9 +78,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void vmRemoved(IVMInstall removedVm) {
 			fParticipantMap.remove(removedVm);
@@ -157,7 +144,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Wild card pattern matching all files
 	 */
-	private static final IPath ALL_PATTERN = new Path("**/*"); //$NON-NLS-1$
+	static final IPath ALL_PATTERN = IPath.fromOSString("**/*"); //$NON-NLS-1$
 
 	/**
 	 * Prefix of compiler settings in properties file
@@ -185,57 +172,39 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		EnvironmentsManager.getDefault().initializeCompatibilities();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getId()
-	 */
 	@Override
 	public String getId() {
 		return fElement.getAttribute("id"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return fElement.getAttribute("description"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getCompatibleVMs()
-	 */
 	@Override
 	public IVMInstall[] getCompatibleVMs() {
 		init();
 		return fCompatibleVMs.toArray(new IVMInstall[fCompatibleVMs.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#isStrictlyCompatible(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public boolean isStrictlyCompatible(IVMInstall vm) {
 		init();
 		return fStrictlyCompatible.contains(vm);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getDefaultVM()
-	 */
 	@Override
 	public IVMInstall getDefaultVM() {
 		init();
 		return fDefault;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#setDefaultVM(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void setDefaultVM(IVMInstall vm) {
 		init();
 		if (vm != null && !fCompatibleVMs.contains(vm)) {
-			throw new IllegalArgumentException(NLS.bind(EnvironmentMessages.EnvironmentsManager_0, new String[]{getId()}));
+			throw new IllegalArgumentException(NLS.bind(EnvironmentMessages.EnvironmentsManager_0, getId()));
 		}
 		if (vm != null && vm.equals(fDefault)) {
 			return;
@@ -256,15 +225,11 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				List<IJavaProject> updates = new ArrayList<>();
 				IJavaProject[] javaProjects = model.getJavaProjects();
 				IPath path = JavaRuntime.newJREContainerPath(this);
-				for (int i = 0; i < javaProjects.length; i++) {
-					IJavaProject project = javaProjects[i];
+				for (IJavaProject project : javaProjects) {
 					IClasspathEntry[] rawClasspath = project.getRawClasspath();
-					for (int j = 0; j < rawClasspath.length; j++) {
-						IClasspathEntry entry = rawClasspath[j];
-						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-							if (entry.getPath().equals(path)) {
-								updates.add(project);
-							}
+					for (IClasspathEntry entry : rawClasspath) {
+						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER && entry.getPath().equals(path)) {
+							updates.add(project);
 						}
 					}
 				}
@@ -314,9 +279,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		fDefault = vm;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getAccessRules(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
-	 */
 	@Override
 	public IAccessRule[][] getAccessRules(IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		IAccessRuleParticipant[] participants = getParticipants();
@@ -324,19 +286,13 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		synchronized (this) {
 			Map<IAccessRuleParticipant, IAccessRule[][]> cachedRules = fParticipantMap.get(vm);
 			if (cachedRules == null || !cachedRules.equals(rulesByParticipant)) {
-				ArrayList<List<IAccessRule>> libLists = new ArrayList<>(); // array of lists of access rules
-				for (int i = 0; i < libraries.length; i++) {
-					libLists.add(new ArrayList<>());
-				}
-				for (int i = 0; i < participants.length; i++) {
-					IAccessRuleParticipant participant = participants[i];
+				List<List<IAccessRule>> libLists = IntStream.range(0, libraries.length) // array of lists of access rules
+						.<List<IAccessRule>> mapToObj(i -> new ArrayList<>()).toList();
+
+				for (IAccessRuleParticipant participant : participants) {
 					addRules(rulesByParticipant.get(participant), libLists);
 				}
-				IAccessRule[][] allRules = new IAccessRule[libraries.length][];
-				for (int i = 0; i < libLists.size(); i++) {
-					List<IAccessRule> l = libLists.get(i);
-					allRules[i] = l.toArray(new IAccessRule[l.size()]);
-				}
+				IAccessRule[][] allRules = libLists.stream().map(l -> l.toArray(IAccessRule[]::new)).toArray(IAccessRule[][]::new);
 				fParticipantMap.put(vm, rulesByParticipant);
 				fRuleCache.put(vm, allRules);
 				return allRules;
@@ -358,10 +314,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			IAccessRuleParticipant[] participants = EnvironmentsManager.getDefault().getAccessRuleParticipants();
 			if (fRuleParticipant != null) {
 				// ensure environment specific provider is last and not duplicated
-				LinkedHashSet<IAccessRuleParticipant> set = new LinkedHashSet<>();
-				for (int i = 0; i < participants.length; i++) {
-					set.add(participants[i]);
-				}
+				Set<IAccessRuleParticipant> set = new LinkedHashSet<>();
+				Collections.addAll(set, participants);
 				// remove, add to make last
 				set.remove(fRuleParticipant);
 				set.add(fRuleParticipant);
@@ -384,9 +338,9 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	private Map<IAccessRuleParticipant, IAccessRule[][]> collectRulesByParticipant(IAccessRuleParticipant[] participants, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		Map<IAccessRuleParticipant, IAccessRule[][]> map = new HashMap<>();
-		for (int i = 0; i < participants.length; i++) {
+		for (IAccessRuleParticipant participant : participants) {
 			// TODO: use safe runnable
-			map.put(participants[i], participants[i].getAccessRules(this, vm, libraries, project));
+			map.put(participant, participant.getAccessRules(this, vm, libraries, project));
 		}
 		return map;
 	}
@@ -398,9 +352,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * @param accessRules the list of {@link IAccessRule}s
 	 * @param collect the array of lists to collect the {@link IAccessRule}s in
 	 */
-	private void addRules(IAccessRule[][] accessRules, ArrayList<List<IAccessRule>> collect) {
+	private void addRules(IAccessRule[][] accessRules, List<List<IAccessRule>> collect) {
 		for (int i = 0; i < accessRules.length; i++) {
-			IAccessRule[] libRules = accessRules[i];
 			List<IAccessRule> list = collect.get(i);
 			// if the last rule is a **/* pattern, don't add any more rules, as they will have no effect
 			if (!list.isEmpty()) {
@@ -409,15 +362,10 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 					continue;
 				}
 			}
-			for (int j = 0; j < libRules.length; j++) {
-				list.add(libRules[j]);
-			}
+			Collections.addAll(list, accessRules[i]);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getProfileProperties()
-	 */
 	@Override
 	public Properties getProfileProperties() {
 		if (!fPropertiesInitialized) {
@@ -432,7 +380,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				// read provided file
 				bundle = Platform.getBundle(fElement.getContributor().getName());
 			}
-			if (bundle != null && path != null) {
+			if (bundle != null) {
 				fProfileProperties = getJavaProfileProperties(bundle, path);
 			}
 		}
@@ -453,7 +401,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		URL profileURL = bundle.getEntry(path);
 		if (profileURL != null) {
 			try (InputStream is = profileURL.openStream()) {
-				profileURL = FileLocator.resolve(profileURL);
 				if (is != null) {
 					profile.load(is);
 					fixJavaSE9ComplianceSourceTargetLevels(profile);
@@ -481,31 +428,38 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		}
 		// For below Java 9 EE, compiler release option should be disabled by default
 		String property = profile.getProperty(JavaCore.COMPILER_COMPLIANCE);
-		if (property != null) {
-			if (JavaCore.compareJavaVersions(property, JavaCore.VERSION_9) < 0) {
-				profile.setProperty(JavaCore.COMPILER_RELEASE, JavaCore.DISABLED);
-			}
+		if (property != null && JavaCore.compareJavaVersions(property, JavaCore.VERSION_9) < 0) {
+			profile.setProperty(JavaCore.COMPILER_RELEASE, JavaCore.DISABLED);
 		}
 		return profile;
 	}
 
 	private static final String JAVASE = "JavaSE"; //$NON-NLS-1$
+	private static final List<String> PRE_JAVA9_OSGI_EES = List.of( //
+			"OSGi/Minimum-1.0", //$NON-NLS-1$
+			"OSGi/Minimum-1.1", //$NON-NLS-1$
+			"OSGi/Minimum-1.2", //$NON-NLS-1$
+			"JavaSE/compact2-1.8", //$NON-NLS-1$
+			"JavaSE/compact3-1.8", //$NON-NLS-1$
+			"JRE-1.1", //$NON-NLS-1$
+			"J2SE-1.2", //$NON-NLS-1$
+			"J2SE-1.3", //$NON-NLS-1$
+			"J2SE-1.4", //$NON-NLS-1$
+			"J2SE-1.5", //$NON-NLS-1$
+			"JavaSE-1.6", //$NON-NLS-1$
+			"JavaSE-1.7", //$NON-NLS-1$
+			"JavaSE-1.8"); //$NON-NLS-1$
 
 	private String calculateVMExecutionEnvs(Version javaVersion) {
-		StringBuilder result = new StringBuilder("OSGi/Minimum-1.0, OSGi/Minimum-1.1, OSGi/Minimum-1.2, JavaSE/compact1-1.8, JavaSE/compact2-1.8, JavaSE/compact3-1.8, JRE-1.1, J2SE-1.2, J2SE-1.3, J2SE-1.4, J2SE-1.5, JavaSE-1.6, JavaSE-1.7, JavaSE-1.8"); //$NON-NLS-1$
-		Version v = new Version(9, 0, 0);
-		while (v.compareTo(javaVersion) <= 0) {
-			result.append(',').append(' ').append(JAVASE).append('-').append(v.getMajor());
-			if (v.getMinor() > 0) {
-				result.append('.').append(v.getMinor());
-			}
-			if (v.getMajor() == javaVersion.getMajor()) {
-				v = new Version(v.getMajor(), v.getMinor() + 1, 0);
-			} else {
-				v = new Version(v.getMajor() + 1, 0, 0);
-			}
+		List<String> environments = new ArrayList<>(PRE_JAVA9_OSGI_EES);
+		int targetMajor = javaVersion.getMajor();
+		for (int major = 9; major <= targetMajor; major++) {
+			environments.add(JAVASE + '-' + major);
 		}
-		return result.toString();
+		for (int minor = 1; minor <= javaVersion.getMinor(); minor++) {
+			environments.add(JAVASE + '-' + targetMajor + '.' + minor);
+		}
+		return String.join(", ", environments); //$NON-NLS-1$
 	}
 
 
@@ -523,9 +477,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getSubEnvironments()
-	 */
 	@Override
 	public IExecutionEnvironment[] getSubEnvironments() {
 		Properties properties = getProfileProperties();
@@ -535,8 +486,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			String subsets = properties.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 			if (subsets != null) {
 				String[] ids = subsets.split(","); //$NON-NLS-1$
-				for (int i = 0; i < ids.length; i++) {
-					IExecutionEnvironment sub = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(ids[i].trim());
+				for (String id : ids) {
+					IExecutionEnvironment sub = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id.trim());
 					if (sub != null && !sub.getId().equals(getId())) {
 						subenv.add(sub);
 					}
@@ -546,21 +497,17 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		return subenv.toArray(new IExecutionEnvironment[subenv.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getComplianceOptions()
-	 */
 	@Override
 	public Map<String, String> getComplianceOptions() {
 		Properties properties = getProfileProperties();
 		if (properties != null) {
 			Map<String, String> map = new HashMap<>();
-			Iterator<?> iterator = properties.keySet().iterator();
-			while (iterator.hasNext()) {
-				String key = (String) iterator.next();
+			properties.forEach((name, value) -> {
+				String key = name.toString();
 				if (key.startsWith(COMPILER_SETTING_PREFIX)) {
-					map.put(key, properties.getProperty(key));
+					map.put(key, value.toString());
 				}
-			}
+			});
 			if (!map.isEmpty()) {
 				return map;
 			}

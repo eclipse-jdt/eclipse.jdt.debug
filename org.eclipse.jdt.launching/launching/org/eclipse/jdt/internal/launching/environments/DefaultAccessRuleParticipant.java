@@ -16,10 +16,10 @@ package org.eclipse.jdt.internal.launching.environments;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -42,9 +42,6 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 	 */
 	private static Map<String, IAccessRule[][]> fgRules = new HashMap<>();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
-	 */
 	@Override
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		Map<String, String> complianceOptions = environment.getComplianceOptions();
@@ -54,19 +51,19 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 				return new IAccessRule[0][]; // in 9+ access rules are superseded by limit-modules
 			}
 		}
-		IAccessRule[][] allRules = null;
-		allRules = fgRules.get(environment.getId());
+		IAccessRule[][] allRules = fgRules.get(environment.getId());
 		if (allRules == null || allRules.length != libraries.length) {
 			// if a different number of libraries, create a new set of rules
 			String[] packages = retrieveSystemPackages(environment);
-			IAccessRule[] packageRules = null;
+			IAccessRule[] packageRules;
 			if (packages.length > 0) {
 				packageRules = new IAccessRule[packages.length + 1];
 				for (int i = 0; i < packages.length; i++) {
-					packageRules[i] = JavaCore.newAccessRule(new Path(packages[i].replace('.', IPath.SEPARATOR)), IAccessRule.K_ACCESSIBLE);
+					IPath pattern = IPath.fromPortableString(packages[i].replace('.', IPath.SEPARATOR));
+					packageRules[i] = JavaCore.newAccessRule(pattern, IAccessRule.K_ACCESSIBLE);
 				}
 				// add IGNORE_IF_BETTER flag in case another explicit entry allows access (see bug 228488)
-				packageRules[packages.length] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
+				packageRules[packages.length] = JavaCore.newAccessRule(ExecutionEnvironment.ALL_PATTERN, IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER);
 			} else {
 				packageRules = new IAccessRule[0];
 			}
@@ -79,18 +76,16 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 		return allRules;
 	}
 
+	private static final Pattern COMMA = Pattern.compile(","); //$NON-NLS-1$
+
 	private String[] retrieveSystemPackages(IExecutionEnvironment environment) {
 		Properties profile = environment.getProfileProperties();
 		if (profile != null) {
 			String packages = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 			if (packages != null) {
-				StringTokenizer tokenizer = new StringTokenizer(packages, ","); //$NON-NLS-1$
-				String[] result = new String[tokenizer.countTokens() + 1];
-				result[0] = "java.**"; //$NON-NLS-1$
-				for (int i = 1; i < result.length; i++) {
-					result[i] = tokenizer.nextToken().trim() + ".*"; //$NON-NLS-1$
-				}
-				return result;
+				return Stream.concat(Stream.of("java.**"), //$NON-NLS-1$
+						COMMA.splitAsStream(packages).map(p -> p.trim() + ".*"))//$NON-NLS-1$
+						.toArray(String[]::new);
 			}
 		}
 		return new String[0];

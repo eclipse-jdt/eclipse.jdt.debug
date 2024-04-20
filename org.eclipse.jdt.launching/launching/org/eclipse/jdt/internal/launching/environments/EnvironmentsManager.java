@@ -17,7 +17,6 @@ package org.eclipse.jdt.internal.launching.environments;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -154,9 +153,6 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).addPreferenceChangeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getExecutionEnvironments()
-	 */
 	@Override
 	public synchronized IExecutionEnvironment[] getExecutionEnvironments() {
 		initializeExtensions();
@@ -174,9 +170,6 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		return fRuleParticipants.toArray(new IAccessRuleParticipant[fRuleParticipants.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getEnvironment(java.lang.String)
-	 */
 	@Override
 	public synchronized IExecutionEnvironment getEnvironment(String id) {
 		initializeExtensions();
@@ -252,23 +245,19 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		if (fEnvironments == null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-			fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
-				@Override
-				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
-					String compliance1 = getExecutionEnvironmentCompliance(o1);
-					String compliance2 = getExecutionEnvironmentCompliance(o2);
-					int result = JavaCore.compareJavaVersions(compliance1, compliance2);
-					if (result == 0) {
-						return o1.getId().compareTo(o2.getId());
-					}
-					return result;
+			fEnvironments = new TreeSet<>((o1, o2) -> {
+				String compliance1 = getExecutionEnvironmentCompliance(o1);
+				String compliance2 = getExecutionEnvironmentCompliance(o2);
+				int result = JavaCore.compareJavaVersions(compliance1, compliance2);
+				if (result == 0) {
+					return o1.getId().compareTo(o2.getId());
 				}
+				return result;
 			});
 			fRuleParticipants = new LinkedHashSet<>();
 			fEnvironmentsMap = new HashMap<>(configs.length);
 			fAnalyzers = new HashMap<>(configs.length);
-			for (int i = 0; i < configs.length; i++) {
-				IConfigurationElement element = configs[i];
+			for (IConfigurationElement element : configs) {
 				String name = element.getName();
 				switch (name) {
 					case ENVIRONMENT_ELEMENT:
@@ -316,11 +305,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
         synchronized (this) {
         	if (!fInitializedCompatibilities) {
 	        	fInitializedCompatibilities = true;
-	            for (int i = 0; i < installTypes.length; i++) {
-	                IVMInstallType type = installTypes[i];
+	            for (IVMInstallType type : installTypes) {
 	                IVMInstall[] installs = type.getVMInstalls();
-	                for (int j = 0; j < installs.length; j++) {
-	                    IVMInstall install = installs[j];
+	                for (IVMInstall install : installs) {
 	                    // TODO: progress reporting?
 	                    analyze(install, new NullProgressMonitor());
 	                }
@@ -362,11 +349,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 					}
 				}
 			}
-		} catch (CoreException e) {
-			LaunchingPlugin.log(e);
-		} catch (SAXException e) {
-			LaunchingPlugin.log(e);
-		} catch (IOException e) {
+		} catch (CoreException | SAXException | IOException e) {
 			LaunchingPlugin.log(e);
 		}
 	}
@@ -384,8 +367,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			Element envs = doc.createElement(DEFAULT_ENVIRONMENTS);
 			doc.appendChild(envs);
 			IExecutionEnvironment[] environments = getExecutionEnvironments();
-			for (int i = 0; i < environments.length; i++) {
-				IExecutionEnvironment env = environments[i];
+			for (IExecutionEnvironment env : environments) {
 				IVMInstall vm = env.getDefaultVM();
 				if (vm != null) {
 					count++;
@@ -412,12 +394,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 */
 	private void analyze(IVMInstall vm, IProgressMonitor monitor) {
 		Analyzer[] analyzers = getAnalyzers();
-		for (int i = 0; i < analyzers.length; i++) {
-			Analyzer analyzer = analyzers[i];
+		for (Analyzer analyzer : analyzers) {
 			try {
 				CompatibleEnvironment[] environments = analyzer.analyze(vm, monitor);
-				for (int j = 0; j < environments.length; j++) {
-					CompatibleEnvironment compatibleEnvironment = environments[j];
+				for (CompatibleEnvironment compatibleEnvironment : environments) {
 					ExecutionEnvironment environment = (ExecutionEnvironment) compatibleEnvironment.getCompatibleEnvironment();
 					environment.add(vm, compatibleEnvironment.isStrictlyCompatbile());
 				}
@@ -427,17 +407,11 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		// nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
-	 */
 	@Override
 	public synchronized void vmChanged(PropertyChangeEvent event) {
 		IVMInstall vm = (IVMInstall) event.getSource();
@@ -448,9 +422,6 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		vmAdded(vm);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public synchronized void vmAdded(IVMInstall vm) {
 		// TODO: progress reporting?
@@ -460,18 +431,14 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		analyze(vm, new NullProgressMonitor());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public synchronized void vmRemoved(IVMInstall vm) {
 		if (vm instanceof VMStandin) {
 			return;
 		}
 		IExecutionEnvironment[] environments = getExecutionEnvironments();
-		for (int i = 0; i < environments.length; i++) {
-			ExecutionEnvironment environment = (ExecutionEnvironment) environments[i];
-			environment.remove(vm);
+		for (IExecutionEnvironment environment : environments) {
+			((ExecutionEnvironment) environment).remove(vm);
 		}
 	}
 
@@ -484,9 +451,6 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-	 */
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		// don't respond to myself
