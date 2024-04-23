@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
@@ -765,11 +764,8 @@ public class StandardVMType extends AbstractVMInstallType {
 		return null;
 	}
 
-	private static final Pattern WINDOWS_LINE_SEPARATOR = Pattern.compile("\\\\"); //$NON-NLS-1$
-
 	protected String[] parsePaths(String paths) {
-		// Windows separator '\' is a RegEx meta-character, while the UNIX separator is not
-		return File.pathSeparatorChar == '/' ? paths.split(File.pathSeparator) : WINDOWS_LINE_SEPARATOR.split(paths);
+		return paths.split(File.pathSeparator);
 	}
 
 	/* (non-Javadoc)
