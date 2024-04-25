@@ -14,6 +14,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -246,7 +247,8 @@ public class VMInstallTests extends AbstractDebugTest {
 		CoreException e1 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, "1.8"));
 		assertEquals("Cannot query a modular VM (JavaSE-9 or higher) for packages of release: 1.8", e1.getMessage());
 
-		String nextJavaVersion = Integer.toString(Integer.parseInt(javaVersion.substring(0, javaVersion.indexOf('.'))) + 1);
+		String majorJavaVersion = javaVersion.contains(".") ? javaVersion.substring(0, javaVersion.indexOf('.')) : javaVersion;
+		String nextJavaVersion = Integer.toString(Integer.parseInt(majorJavaVersion) + 1);
 		CoreException e2 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, nextJavaVersion));
 		assertEquals("release " + nextJavaVersion + " is not found in the system", e2.getMessage());
 
@@ -318,7 +320,15 @@ public class VMInstallTests extends AbstractDebugTest {
 				vmType.disposeVMInstall(id);
 			}
 		}
-		assertNotNull("No non-modular VM (<=Java-1.8) found.", candidate);
+		if (nonModularJavaHome != null) {
+			assertNotNull("Non-modular VM (<=Java-1.8) not found.", candidate);
+		} else {
+			// Disable test if no non-modular VM is found if non is explicitly specified
+			if (candidate == null) {
+				System.err.println("No non-modular VM (<=Java-1.8) found.");
+			}
+			assumeNotNull(candidate);
+		}
 		IVMInstall vm = candidate;
 		System.out.println(getName() + ": found non-modular JVM: " + vm.getInstallLocation());
 		return new AutoCloseableSupplier<>() {
