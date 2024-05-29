@@ -47,12 +47,12 @@ public class DetectVMInstallationsJob extends Job {
 
 	private static final Object FAMILY = DetectVMInstallationsJob.class;
 
-	private DetectVMInstallationsJob() {
+	public DetectVMInstallationsJob() {
 		super(LaunchingMessages.lookupInstalledJVMs);
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+	public IStatus run(IProgressMonitor monitor) {
 		StandardVMType standardType = (StandardVMType) JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
 		Collection<File> candidates = computeCandidateVMs(standardType);
 		if (monitor.isCanceled()) {

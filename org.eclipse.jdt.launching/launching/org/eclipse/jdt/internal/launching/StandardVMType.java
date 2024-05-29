@@ -22,6 +22,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -809,7 +811,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		try {
 			if (version.startsWith(JavaCore.VERSION_22)) {
 				// To modify to version 22 after the release
-				return new URL("https://docs.oracle.com/en/java/javase/22/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/22/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_21)) {
 				return new URL("https://docs.oracle.com/en/java/javase/21/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_20)) {
@@ -851,7 +853,7 @@ public class StandardVMType extends AbstractVMInstallType {
 				// archived: http://download.oracle.com/javase/1.3/docs/api/
 				return new URL("https://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
 			}
-		} catch (MalformedURLException e) {
+		} catch (URISyntaxException | MalformedURLException e) {
 		}
 		return null;
 	}
