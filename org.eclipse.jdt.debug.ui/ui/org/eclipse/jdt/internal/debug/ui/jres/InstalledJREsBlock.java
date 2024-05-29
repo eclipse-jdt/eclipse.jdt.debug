@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.DetectVMInstallationsJob;
 import org.eclipse.jdt.internal.launching.MacInstalledJREs;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
@@ -192,6 +193,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private Button fEditButton;
 	private Button fCopyButton;
 	private Button fSearchButton;
+	private Button detectJvmButton;
 
 	// index of column used for sorting
 	private int fSortColumn = 0;
@@ -519,7 +521,30 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				search();
 			}
 		});
-
+		detectJvmButton = SWTFactory.createPushButton(buttons, JREMessages.JREsPreferencePage_DetectJVMsNow, null);
+		detectJvmButton.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event evt) {
+				IRunnableWithProgress r = new IRunnableWithProgress() {
+					@Override
+					public void run(IProgressMonitor monitor) {
+						new DetectVMInstallationsJob().run(monitor);
+					}
+				};
+				try {
+					runWithStopButton(r);
+				} catch (InvocationTargetException e) {
+					JDIDebugUIPlugin.log(e);
+				} catch (InterruptedException e) {
+					// canceled
+					return;
+				}
+				fillWithWorkspaceJREs();
+				// fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
+				// initDefaultVM();
+				// fJREBlock.initializeTimeStamp();
+			}
+		});
 		fillWithWorkspaceJREs();
 		enableButtons();
 		fAddButton.setEnabled(JavaRuntime.getVMInstallTypes().length > 0);
@@ -892,24 +917,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		};
 
 		try {
-            ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell()) {
-                /*
-                 * Overridden createCancelButton to replace Cancel label with Stop label
-                 * More accurately reflects action taken when button pressed.
-                 * Bug [162902]
-                 */
-                @Override
-				protected void createCancelButton(Composite parent) {
-                    cancel = createButton(parent, IDialogConstants.CANCEL_ID,
-                            IDialogConstants.STOP_LABEL, true);
-                    if (arrowCursor == null) {
-            			arrowCursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
-            		}
-                    cancel.setCursor(arrowCursor);
-                    setOperationCancelButtonEnabled(enableCancelButton);
-                }
-            };
-            progress.run(true, true, r);
+			runWithStopButton(r);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {
@@ -942,6 +950,25 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				vmAdded(vm);
 			}
 		}
+	}
+
+	private void runWithStopButton(IRunnableWithProgress r) throws InvocationTargetException, InterruptedException {
+		ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell()) {
+			/*
+			 * Overridden createCancelButton to replace Cancel label with Stop label More accurately reflects action taken when button pressed. Bug
+			 * [162902]
+			 */
+			@Override
+			protected void createCancelButton(Composite parent) {
+				cancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.STOP_LABEL, true);
+				if (arrowCursor == null) {
+					arrowCursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
+				}
+				cancel.setCursor(arrowCursor);
+				setOperationCancelButtonEnabled(enableCancelButton);
+			}
+		};
+		progress.run(true, true, r);
 	}
 
 	/**
