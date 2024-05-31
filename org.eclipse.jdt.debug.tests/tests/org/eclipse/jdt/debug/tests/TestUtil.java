@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -133,12 +134,16 @@ public class TestUtil {
 	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
+		return waitForJobs(owner, null, minTimeMs, maxTimeMs, excludedFamilies);
+	}
+
+	public static boolean waitForJobs(@SuppressWarnings("unused") String owner, Object jobFamily, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
-		wakeUpSleepingJobs(null);
-		final long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < minTimeMs) {
+		wakeUpSleepingJobs(jobFamily);
+		final long start = System.nanoTime();
+		while (System.nanoTime() - start < minTimeMs * 1_000_000) {
 			runEventLoop();
 			try {
 				Thread.sleep(Math.min(10, minTimeMs));
@@ -147,29 +152,28 @@ public class TestUtil {
 			}
 		}
 		while (!Job.getJobManager().isIdle()) {
+			List<Job> jobs = getRunningOrWaitingJobs(jobFamily, excludedFamilies);
+			if (jobs.isEmpty()) {
+				// only uninteresting jobs running
+				break;
+			}
+			if (!Collections.disjoint(runningJobs, jobs)) {
+				// There is a job which runs already quite some time, don't wait for it to avoid test timeouts
+				dumpRunningOrWaitingJobs(jobs);
+				return true;
+			}
+
+			if (System.nanoTime() - start >= maxTimeMs * 1_000_000) {
+				dumpRunningOrWaitingJobs(jobs);
+				return true;
+			}
+			wakeUpSleepingJobs(jobFamily);
 			runEventLoop();
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
-			List<Job> jobs = getRunningOrWaitingJobs(null, excludedFamilies);
-			if (jobs.isEmpty()) {
-				// only uninteresting jobs running
-				break;
-			}
-
-			if (!Collections.disjoint(runningJobs, jobs)) {
-				// There is a job which runs already quite some time, don't wait for it to avoid test timeouts
-				dumpRunningOrWaitingJobs(owner, jobs);
-				return true;
-			}
-
-			if (System.currentTimeMillis() - start >= maxTimeMs) {
-				dumpRunningOrWaitingJobs(owner, jobs);
-				return true;
-			}
-			wakeUpSleepingJobs(null);
 		}
 		runningJobs.clear();
 		return false;
@@ -184,12 +188,12 @@ public class TestUtil {
 
 	static Set<Job> runningJobs = new LinkedHashSet<>();
 
-	private static void dumpRunningOrWaitingJobs(String owner, List<Job> jobs) {
-		String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs(jobs);
-		log(IStatus.ERROR, owner, message);
+	private static void dumpRunningOrWaitingJobs(List<Job> jobs) {
+		new IllegalStateException("Some job is still running or waiting to run.").printStackTrace();
+		System.err.println("JobList:" + getDump(jobs));
 	}
 
-	private static String dumpRunningOrWaitingJobs(List<Job> jobs) {
+	private static String getDump(List<Job> jobs) {
 		if (jobs.isEmpty()) {
 			return "";
 		}
@@ -200,6 +204,7 @@ public class TestUtil {
 			runningJobs.add(job);
 			sb.append("\n'").append(job.toString()).append("'/");
 			sb.append(job.getClass().getName());
+			sb.append(":").append(JobManager.printState(job));
 			Thread thread = job.getThread();
 			if (thread != null) {
 				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
@@ -212,7 +217,7 @@ public class TestUtil {
 
 		Thread thread = Display.getDefault().getThread();
 		ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
-		if (threadInfos[0] != null) {
+		if (!Thread.currentThread().equals(thread) && threadInfos[0] != null) {
 			sb.append("\n").append("UI thread info: ").append(threadInfos[0]);
 		}
 		return sb.toString();

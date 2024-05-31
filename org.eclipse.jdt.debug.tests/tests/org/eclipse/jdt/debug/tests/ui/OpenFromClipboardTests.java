@@ -15,8 +15,8 @@ package org.eclipse.jdt.debug.tests.ui;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.core.internal.resources.CharsetDeltaJob;
 import org.eclipse.core.internal.resources.ValidateProjectEncoding;
@@ -97,8 +97,8 @@ public class OpenFromClipboardTests {
 	}
 
 	private static void waitForEncodingRelatedJobs() {
-		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, ValidateProjectEncoding.class);
-		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, CharsetDeltaJob.FAMILY_CHARSET_DELTA);
+		TestUtil.waitForJobs("OpenFromClipboardTests", ValidateProjectEncoding.class, 0, 5_000);
+		TestUtil.waitForJobs("OpenFromClipboardTests", CharsetDeltaJob.FAMILY_CHARSET_DELTA, 0, 5_000);
 	}
 
 	private static IJavaProject createProject(String name) throws CoreException {
@@ -136,7 +136,7 @@ public class OpenFromClipboardTests {
 
 	private List<?> getJavaElementMatches(final String textData) throws Exception {
 		JavaModelManager.getIndexManager().waitForIndex(false, null);
-		final List<Object> matches = new ArrayList<>();
+		final List<Object> matches = new CopyOnWriteArrayList<>();
 		Display.getDefault().syncCall(() -> OpenFromClipboardAction.getJavaElementMatches(textData, matches));
 		return matches;
 	}
