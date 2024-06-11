@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.resources.IFile;
@@ -134,7 +135,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * TODO investigate making this a synchronized collection, to remove all this copying
 	 * @see #getThreadIterator()
 	 */
-	private List<JDIThread> fThreads;
+	private final List<JDIThread> fThreads;
 
 	/**
 	 * List of thread groups in this target.
@@ -154,55 +155,55 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * example, a VM that was attached to remotely may not allow the user to
 	 * terminate it.
 	 */
-	private boolean fSupportsTerminate;
+	private final boolean fSupportsTerminate;
 	/**
 	 * Whether terminated
 	 */
-	private boolean fTerminated;
+	private volatile boolean fTerminated;
 
 	/**
 	 * Whether in the process of terminating
 	 */
-	private boolean fTerminating;
+	private volatile boolean fTerminating;
 
 	/**
 	 * Whether in the process of disconnecting
 	 */
-	private boolean fDisconnecting;
+	private volatile boolean fDisconnecting;
 
 	/**
 	 * Whether disconnected
 	 */
-	private boolean fDisconnected;
+	private volatile boolean fDisconnected;
 	/**
 	 * Whether disconnect is supported.
 	 */
-	private boolean fSupportsDisconnect;
+	private final boolean fSupportsDisconnect;
 	/**
 	 * Whether enable/disable object GC is allowed
 	 */
-	private boolean fSupportsDisableGC;
+	private volatile boolean fSupportsDisableGC;
 	/**
 	 * Collection of breakpoints added to this target. Values are of type
 	 * <code>IJavaBreakpoint</code>.
 	 */
-	private List<IBreakpoint> fBreakpoints;
+	private final List<IBreakpoint> fBreakpoints;
 
 	/**
 	 * Collection of types that have attempted HCR, but failed. The types are
 	 * stored by their fully qualified names.
 	 */
-	private Set<String> fOutOfSynchTypes;
+	private final Set<String> fOutOfSynchTypes;
 	/**
 	 * Whether or not this target has performed a hot code replace.
 	 */
-	private boolean fHasHCROccurred;
+	private volatile boolean fHasHCROccurred;
 
 	/**
 	 * The name of this target - set by the client on creation, or retrieved
 	 * from the underlying VM.
 	 */
-	private String fName;
+	private volatile String fName;
 
 	/**
 	 * The event dispatcher for this debug target, which runs in its own thread.
@@ -222,39 +223,42 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Whether this VM is suspended.
 	 */
-	private boolean fSuspended = true;
+	private volatile boolean fSuspended = true;
 
 	/**
 	 * Whether the VM should be resumed on startup
 	 */
-	private boolean fResumeOnStartup;
+	private volatile boolean fResumeOnStartup;
 
 	/**
 	 * The launch this target is contained in
 	 */
-	private ILaunch fLaunch;
+	private final ILaunch fLaunch;
 
 	/**
 	 * Count of the number of suspend events in this target
 	 */
-	private int fSuspendCount;
+	private final AtomicInteger fSuspendCount = new AtomicInteger(0);
+
+	/** Number of extra VM.resume operations needed due SUSPEND_VM breakpoints */
+	private final AtomicInteger extraResumeCount = new AtomicInteger(0);
 
 	/**
 	 * Evaluation engine cache by Java project. Engines are disposed when this
 	 * target terminates.
 	 */
-	private Map<IJavaProject, IAstEvaluationEngine> fEngines;
+	private final Map<IJavaProject, IAstEvaluationEngine> fEngines = new HashMap<>(2);
 
 	/**
 	 * List of step filters - each string is a pattern/fully qualified name of a
 	 * type to filter.
 	 */
-	private String[] fStepFilters;
+	private volatile String[] fStepFilters;
 
 	/**
 	 * Step filter state mask.
 	 */
-	private int fStepFilterMask;
+	private volatile int fStepFilterMask;
 
 	/**
 	 * Step filter bit mask - indicates if step filters are enabled.
@@ -305,7 +309,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Whether this debug target is currently performing a hot code replace
 	 */
-	private boolean fIsPerformingHotCodeReplace;
+	private volatile boolean fIsPerformingHotCodeReplace;
 
 	/**
 	 * Target specific HCR listeners
@@ -317,7 +321,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Java scope of the current launch, "null" means everything is in scope
 	 */
-	private IJavaSearchScope fScope;
+	private final IJavaSearchScope fScope;
 
 	/**
 	 * Java projects of the current launch, "null" means everything is in scope
@@ -327,7 +331,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Java types from breakpoints with the flag if they are in scope for current launch
 	 */
-	private Map<String, Boolean> fKnownTypes = new HashMap<>();
+	private final Map<String, Boolean> fKnownTypes = new ConcurrentHashMap<>();
 
 	/**
 	 * Labels given by the user is stored in this map, where the key is the unique ID of the object.
@@ -355,11 +359,11 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			boolean supportTerminate, boolean supportDisconnect,
 			IProcess process, boolean resume) {
 		super(null);
-		setLaunch(launch);
+		fLaunch = launch;
 		setResumeOnStartup(resume);
-		setSupportsTerminate(supportTerminate);
-		setSupportsDisconnect(supportDisconnect);
-		setVM(jvm);
+		fSupportsTerminate = supportTerminate;
+		fSupportsDisconnect = supportDisconnect;
+		fVirtualMachine = jvm;
 		jvm.setDebugTraceMode(VirtualMachine.TRACE_NONE);
 		setProcess(process);
 		setTerminated(false);
@@ -367,11 +371,11 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setDisconnected(false);
 		setDisconnecting(false);
 		setName(name);
-		prepareBreakpointsSearchScope();
-		setBreakpoints(new ArrayList<>(5));
-		setThreadList(new ArrayList<>());
-		fGroups = new ArrayList<>(5);
-		setOutOfSynchTypes(new ArrayList<>(0));
+		fScope = prepareBreakpointsSearchScope();
+		fBreakpoints = Collections.synchronizedList(new ArrayList<>(5));
+		fThreads = Collections.synchronizedList(new ArrayList<>());
+		fGroups = Collections.synchronizedList(new ArrayList<>(5));
+		fOutOfSynchTypes = Collections.synchronizedSet(new HashSet<>());
 		setHCROccurred(false);
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
@@ -380,7 +384,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 
-	private void prepareBreakpointsSearchScope() {
+	private IJavaSearchScope prepareBreakpointsSearchScope() {
 		boolean enableFiltering = Platform.getPreferencesService().getBoolean(
 				JDIDebugPlugin.getUniqueIdentifier(),
 				JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES,
@@ -388,33 +392,32 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				null);
 		ILaunchConfiguration config = getLaunch().getLaunchConfiguration();
 		if (!enableFiltering || config == null) {
-			return;
+			return null;
 		}
 		try {
 			// See IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH
 			boolean defaultClasspath = config.getAttribute("org.eclipse.jdt.launching.DEFAULT_CLASSPATH", true); //$NON-NLS-1$
 			if(!defaultClasspath){
-				return;
+				return null;
 			}
 
 			IResource[] resources = config.getMappedResources();
 			if (resources != null && resources.length != 0) {
 				Set<IJavaProject> javaProjects = getJavaProjects(resources);
 				fProjects = collectReferencedJavaProjects(javaProjects);
-				fScope = createSourcesOnlyScope();
-				return;
+				return createSourcesOnlyScope();
 			}
 			// See IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME
 			String projectName = config.getAttribute("org.eclipse.jdt.launching.PROJECT_ATTR", (String)null); //$NON-NLS-1$
 			if(projectName != null && !projectName.isEmpty()){
 				Set<IJavaProject> javaProjects = getJavaProjects(ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
 				fProjects = collectReferencedJavaProjects(javaProjects);
-				fScope = createSourcesOnlyScope();
-				return;
+				return createSourcesOnlyScope();
 			}
 		} catch (CoreException e) {
 			logError(e);
 		}
+		return null;
 	}
 
 	private IJavaSearchScope createSourcesOnlyScope() {
@@ -462,19 +465,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 	/**
-	 * Sets the list of threads contained in this debug target. Set to an empty
-	 * collection on creation. Threads are added and removed as they start and
-	 * end. On termination this collection is set to the immutable singleton
-	 * empty list.
-	 *
-	 * @param threads
-	 *            empty list
-	 */
-	private void setThreadList(List<JDIThread> threads) {
-		fThreads = threads;
-	}
-
-	/**
 	 * Returns the collection of breakpoints installed in this debug target.
 	 *
 	 * @return list of installed breakpoints - instances of
@@ -482,17 +472,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	public List<IBreakpoint> getBreakpoints() {
 		return fBreakpoints;
-	}
-
-	/**
-	 * Sets the list of breakpoints installed in this debug target. Set to an
-	 * empty list on creation.
-	 *
-	 * @param breakpoints
-	 *            empty list
-	 */
-	private void setBreakpoints(List<IBreakpoint> breakpoints) {
-		fBreakpoints = breakpoints;
 	}
 
 	/**
@@ -751,34 +730,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 	/**
-	 * Sets whether this debug target supports disconnection. Set on creation.
-	 *
-	 * @param supported
-	 *            <code>true</code> if this target supports disconnection,
-	 *            otherwise <code>false</code>
-	 */
-	private void setSupportsDisconnect(boolean supported) {
-		fSupportsDisconnect = supported;
-	}
-
-	/**
 	 * Returns whether this debug target supports termination.
 	 *
 	 * @return whether this debug target supports termination
 	 */
 	protected boolean supportsTerminate() {
 		return fSupportsTerminate;
-	}
-
-	/**
-	 * Sets whether this debug target supports termination. Set on creation.
-	 *
-	 * @param supported
-	 *            <code>true</code> if this target supports termination,
-	 *            otherwise <code>false</code>
-	 */
-	private void setSupportsTerminate(boolean supported) {
-		fSupportsTerminate = supported;
 	}
 
 	@Override
@@ -926,17 +883,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 	/**
-	 * Sets the underlying VM associated with this debug target. Set on
-	 * creation.
-	 *
-	 * @param vm
-	 *            underlying VM
-	 */
-	private void setVM(VirtualMachine vm) {
-		fVirtualMachine = vm;
-	}
-
-	/**
 	 * Sets whether this debug target has performed a hot code replace.
 	 */
 	public void setHCROccurred(boolean occurred) {
@@ -945,14 +891,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	public void removeOutOfSynchTypes(List<String> qualifiedNames) {
 		fOutOfSynchTypes.removeAll(qualifiedNames);
-	}
-
-	/**
-	 * Sets the list of out of synch types to the given list.
-	 */
-	private void setOutOfSynchTypes(List<String> qualifiedNames) {
-		fOutOfSynchTypes = new HashSet<>();
-		fOutOfSynchTypes.addAll(qualifiedNames);
 	}
 
 	/**
@@ -967,7 +905,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Returns whether the given type is out of synch in this target.
 	 */
 	public boolean isOutOfSynch(String qualifiedName) {
-		if (fOutOfSynchTypes == null || fOutOfSynchTypes.isEmpty()) {
+		if (fOutOfSynchTypes.isEmpty()) {
 			return false;
 		}
 		return fOutOfSynchTypes.contains(qualifiedName);
@@ -1003,7 +941,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * HCR has failed if there are any out of synch types
 	 */
 	public boolean hasHCRFailed() {
-		return fOutOfSynchTypes != null && !fOutOfSynchTypes.isEmpty();
+		return !fOutOfSynchTypes.isEmpty();
 	}
 
 	/**
@@ -1340,6 +1278,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			resumeThreads();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
+				// Extra resume call per each VM_SUSPEND breakpoint hit before
+				while (extraResumeCount.getAndUpdate(count -> count > 0 ? --count : 0) > 0) {
+					vm.resume();
+				}
+
+				// "regular" resume
 				vm.resume();
 			}
 			if (fireNotification) {
@@ -1412,23 +1356,18 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			}
 		}
 
-		Map<String, Boolean> knownTypes = fKnownTypes;
-		if(knownTypes == null){
-			return true;
-		}
-
 		// breakpoint belongs to resource outside of referenced projects?
 		// This can be also an incomplete resource mapping.
 		// Try to see if the type available multiple times in workspace
 		try {
 			String typeName = typeNameSupplier.call();
 			if(typeName != null){
-				Boolean known = knownTypes.get(typeName);
+				Boolean known = fKnownTypes.get(typeName);
 				if(known != null){
 					return known.booleanValue();
 				}
 				boolean supportedBreakpoint = !hasMultipleMatchesInWorkspace(typeName);
-				knownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
+				fKnownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
 				return supportedBreakpoint;
 			}
 		}
@@ -1770,6 +1709,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		} else {
 			fireSuspendEvent(DebugEvent.BREAKPOINT);
 		}
+		// We need to remember how many times VM was suspended, to call
+		// resume as many times as needed
+		extraResumeCount.incrementAndGet();
 	}
 
 	/**
@@ -1869,23 +1811,20 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		removeAllBreakpoints();
 		DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, true);
 		fOutOfSynchTypes.clear();
-		if (fEngines != null) {
-			Iterator<IAstEvaluationEngine> engines = fEngines.values().iterator();
-			while (engines.hasNext()) {
-				IAstEvaluationEngine engine = engines
-						.next();
-				engine.dispose();
-			}
-			fEngines.clear();
+		Iterator<IAstEvaluationEngine> engines = fEngines.values().iterator();
+		while (engines.hasNext()) {
+			IAstEvaluationEngine engine = engines.next();
+			engine.dispose();
 		}
+		fEngines.clear();
 		fVirtualMachine = null;
 		setThreadStartHandler(null);
 		setEventDispatcher(null);
 		setStepFilters(new String[0]);
 		fHCRListeners.clear();
-		fKnownTypes = null;
+		fKnownTypes.clear();
 		fProjects = null;
-		fScope = null;
+		fBreakpoints.clear();
 	}
 
 	/**
@@ -2809,35 +2748,25 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 	/**
-	 * Sets the launch this target is contained in
-	 *
-	 * @param launch
-	 *            the launch this target is contained in
-	 */
-	private void setLaunch(ILaunch launch) {
-		fLaunch = launch;
-	}
-
-	/**
 	 * Returns the number of suspend events that have occurred in this target.
 	 *
 	 * @return the number of suspend events that have occurred in this target
 	 */
 	protected int getSuspendCount() {
-		return fSuspendCount;
+		return fSuspendCount.get();
 	}
 
 	/**
 	 * Increments the suspend counter for this target based on the reason for
 	 * the suspend event. The suspend count is not updated for implicit
-	 * evaluations.
+	 * evaluations. This count is for both suspend kinds - single thread or entire VM.
 	 *
 	 * @param eventDetail
 	 *            the reason for the suspend event
 	 */
 	protected void incrementSuspendCount(int eventDetail) {
 		if (eventDetail != DebugEvent.EVALUATION_IMPLICIT) {
-			fSuspendCount++;
+			fSuspendCount.getAndIncrement();
 		}
 	}
 
@@ -2850,11 +2779,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @return evaluation engine
 	 */
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project) {
-		if (fEngines == null) {
-			fEngines = new HashMap<>(2);
-		}
-		IAstEvaluationEngine engine = fEngines
-				.get(project);
+		IAstEvaluationEngine engine = fEngines.get(project);
 		if (engine == null) {
 			engine = EvaluationManager.newAstEvaluationEngine(project, this);
 			fEngines.put(project, engine);

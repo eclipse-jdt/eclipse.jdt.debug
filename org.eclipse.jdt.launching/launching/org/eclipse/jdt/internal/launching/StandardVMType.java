@@ -26,21 +26,21 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -104,12 +103,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 *
 	 * @since 3.7.0
 	 */
-	private static FilenameFilter fgArchiveFilter = new FilenameFilter() {
-		@Override
-		public boolean accept(File arg0, String arg1) {
-			return arg1.endsWith(".zip") || arg1.endsWith(".jar");  //$NON-NLS-1$//$NON-NLS-2$
-		}
-	};
+	private static FilenameFilter fgArchiveFilter = (arg0, arg1) -> arg1.endsWith(".zip") || arg1.endsWith(".jar"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * The root path for the attached source
@@ -135,9 +129,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * The list of locations in which to look for the java executable in candidate
 	 * VM install locations, relative to the VM install location. From Java 9 onwards, there may not be a jre directory.
 	 */
-	private static final String[] fgCandidateJavaFiles = {"javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-	private static final String[] fgCandidateJavaLocations = { File.separator, "bin" + File.separatorChar, //$NON-NLS-1$
-			JRE + File.separatorChar + "bin" + File.separatorChar };//$NON-NLS-1$
+	private static final List<Path> CANDIDATE_JAVA_FILES = Stream.of("javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe").map(Path::of).toList(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+	private static final Path[] CANDIDATE_JAVA_LOCATIONS = { Path.of(""), Path.of("bin"), Path.of(JRE, "bin") }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	private static final Path BIN = Path.of("bin"); //$NON-NLS-1$
 
 	private static ILibraryLocationResolver[] fgLibraryLocationResolvers = null;
 
@@ -152,21 +146,17 @@ public class StandardVMType extends AbstractVMInstallType {
 		// Try each candidate in order.  The first one found wins.  Thus, the order
 		// of fgCandidateJavaLocations and fgCandidateJavaFiles is significant.
 
-		boolean isBin = false;
-		String filePath = vmInstallLocation.getPath();
-		int index = filePath.lastIndexOf(File.separatorChar);
-		if (index > 0 && filePath.substring(index + 1).equals("bin")) { //$NON-NLS-1$
-			isBin = true;
-		}
-		for (int i = 0; i < fgCandidateJavaFiles.length; i++) {
-			for (int j = 0; j < fgCandidateJavaLocations.length; j++) {
+		Path filePath = vmInstallLocation.toPath();
+		boolean isBin = filePath.endsWith(BIN);
+		for (Path exeName : CANDIDATE_JAVA_FILES) {
+			for (int j = 0; j < CANDIDATE_JAVA_LOCATIONS.length; j++) {
 				if (!isBin && j == 0) {
 					// search in "." only under bin for java executables for Java 9 and above
 					continue;
 				}
-				File javaFile = new File(vmInstallLocation, fgCandidateJavaLocations[j] + fgCandidateJavaFiles[i]);
-				if (javaFile.isFile()) {
-					return javaFile;
+				Path javaFile = filePath.resolve(CANDIDATE_JAVA_LOCATIONS[j]).resolve(exeName);
+				if (Files.isRegularFile(javaFile)) {
+					return javaFile.toFile();
 				}
 			}
 		}
@@ -185,15 +175,9 @@ public class StandardVMType extends AbstractVMInstallType {
 			IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
 			// The "libraryLocationResolvers" extension point doesn't have any conflict resolution.
 			// Sorting by namespace at least makes makes the order predictable.
-			Arrays.sort(configs, new Comparator<IConfigurationElement>() {
-				@Override
-				public int compare(IConfigurationElement e1, IConfigurationElement e2) {
-					return e1.getNamespaceIdentifier().compareTo(e2.getNamespaceIdentifier());
-				}
-			});
+			Arrays.sort(configs, Comparator.comparing(IConfigurationElement::getNamespaceIdentifier));
 			List<ILibraryLocationResolver> resolvers = new ArrayList<>(configs.length);
-			for( int i = 0; i < configs.length; i++ ) {
-				IConfigurationElement e = configs[i];
+			for (IConfigurationElement e : configs) {
 				try {
 					resolvers.add((ILibraryLocationResolver) e.createExecutableExtension("class")); //$NON-NLS-1$
 				}
@@ -357,11 +341,12 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @return the {@link IPath} to the <code>rt.jar</code> file
 	 */
 	protected IPath getDefaultSystemLibrary(File javaHome) {
-		IPath jreLibPath= new Path(javaHome.getPath()).append(LIB).append(RT_JAR);
+		IPath home = IPath.fromFile(javaHome);
+		IPath jreLibPath = home.append(LIB).append(RT_JAR);
 		if (jreLibPath.toFile().isFile()) {
 			return jreLibPath;
 		}
-		return new Path(javaHome.getPath()).append(JRE).append(LIB).append(RT_JAR);
+		return home.append(JRE).append(LIB).append(RT_JAR);
 	}
 
 	/**
@@ -378,12 +363,12 @@ public class StandardVMType extends AbstractVMInstallType {
 			File parentsrc= new File(parent, SRC_JAR);
 			if (parentsrc.isFile()) {
 				setDefaultRootPath(SRC);
-				return new Path(parentsrc.getPath());
+				return IPath.fromFile(parentsrc);
 			}
 			parentsrc= new File(parent, SRC_ZIP);
 			if (parentsrc.isFile()) {
 				setDefaultRootPath(""); //$NON-NLS-1$
-				return new Path(parentsrc.getPath());
+				return IPath.fromFile(parentsrc);
 			}
 			parent = parent.getParentFile();
 		}
@@ -393,11 +378,11 @@ public class StandardVMType extends AbstractVMInstallType {
 			return result;
 		}
 		// check for <lib>-src.jar pattern
-		IPath libName = new Path(libLocation.getName());
+		IPath libName = IPath.fromOSString(libLocation.getName());
 		String extension = libName.getFileExtension();
 		String prefix = libName.removeFileExtension().lastSegment();
 		if (extension != null) {
-			IPath srcPath = new Path(libLocation.getPath());
+			IPath srcPath = IPath.fromFile(libLocation);
 			srcPath = srcPath.removeLastSegments(1);
 			StringBuilder buf = new StringBuilder();
 			buf.append(prefix);
@@ -409,7 +394,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 		}
 		setDefaultRootPath(""); //$NON-NLS-1$
-		return Path.EMPTY;
+		return IPath.EMPTY;
 	}
 
 	// J9 has a known/fixed structure for its libraries and source locations.  Here just
@@ -419,15 +404,15 @@ public class StandardVMType extends AbstractVMInstallType {
 		String name = libLocation.getName();
 		if (name.equalsIgnoreCase("classes.zip")) { //$NON-NLS-1$
 			File source = new File(parent, "source/source.zip"); //$NON-NLS-1$
-			return source.isFile() ? new Path(source.getPath()) : Path.EMPTY;
+			return source.isFile() ? IPath.fromFile(source) : IPath.EMPTY;
 		}
 		if (name.equalsIgnoreCase("locale.zip")) { //$NON-NLS-1$
 			File source = new File(parent, "source/locale-src.zip"); //$NON-NLS-1$
-			return source.isFile() ? new Path(source.getPath()) : Path.EMPTY;
+			return source.isFile() ? IPath.fromFile(source) : IPath.EMPTY;
 		}
 		if (name.equalsIgnoreCase("charconv.zip")) { //$NON-NLS-1$
 			File source = new File(parent, "charconv-src.zip"); //$NON-NLS-1$
-			return source.isFile() ? new Path(source.getPath()) : Path.EMPTY;
+			return source.isFile() ? IPath.fromFile(source) : IPath.EMPTY;
 		}
 		return null;
 	}
@@ -438,7 +423,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @return the package root path
 	 */
 	protected IPath getDefaultPackageRootPath() {
-		return new Path(getDefaultRootPath());
+		return IPath.fromOSString(getDefaultRootPath());
 	}
 
 	/* (non-Javadoc)
@@ -468,25 +453,25 @@ public class StandardVMType extends AbstractVMInstallType {
 				// TODO: Bug 489207: Temporary workaround for Jigsaw-previews that don't declare a bootpath.
 				// JDT Core currently requires a non-empty library path, so let's give it jrt-fs.jar as a stand-in for now.
 				// Code referencing org.eclipse.jdt.internal.compiler.util.JimageUtil.JRT_FS_JAR looks for this file.
-				IPath sourceRootPath = Path.EMPTY;
+				IPath sourceRootPath = IPath.EMPTY;
 				// src zip moved to lib folder from JDK 9 EA Build 151
-				IPath path = new Path(installLocation.getAbsolutePath()).append(LIB).append(SRC_ZIP);
+				IPath path = IPath.fromFile(installLocation.getAbsoluteFile()).append(LIB).append(SRC_ZIP);
 				File lib = path.toFile();
 				if (lib.exists() && lib.isFile()) {
 					sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
 				} else {
-					path = new Path(installLocation.getAbsolutePath()).append(SRC_ZIP);
+					path = IPath.fromFile(installLocation.getAbsoluteFile()).append(SRC_ZIP);
 					lib = path.toFile();
 					if (lib.exists() && lib.isFile()) {
 						sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
 					}
 				}
-				IPath pathName = new Path(installLocation.getAbsolutePath()).append(LIB).append(JRT_FS_JAR);
+				IPath pathName = IPath.fromFile(installLocation.getAbsoluteFile()).append(LIB).append(JRT_FS_JAR);
 				// From Java 9 149 version, we see that jrt-fs.jar is moved to lib directory so we need to look at both places
 				File jrtfsJar = pathName.toFile();
 				boolean exists = jrtfsJar.exists();
 				if (!exists) {
-					pathName = new Path(installLocation.getAbsolutePath()).append(JRT_FS_JAR);
+					pathName = IPath.fromFile(installLocation.getAbsoluteFile()).append(JRT_FS_JAR);
 					exists = pathName.toFile().exists();
 				}
 
@@ -500,8 +485,8 @@ public class StandardVMType extends AbstractVMInstallType {
 			String[] bootpath = libInfo.getBootpath();
 			List<LibraryLocation> boot = new ArrayList<>(bootpath.length);
 
-			for (int i = 0; i < bootpath.length; i++) {
-				IPath path = new Path(bootpath[i]);
+			for (String element : bootpath) {
+				IPath path = IPath.fromOSString(element);
 				File lib = path.toFile();
 				if (lib.exists() && lib.isFile()) {
 					LibraryLocation libraryLocation = new LibraryLocation(path,
@@ -570,18 +555,18 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static List<LibraryLocation> gatherAllLibraries(String[] dirPaths) {
 		List<LibraryLocation> libraries = new ArrayList<>();
-		for (int i = 0; i < dirPaths.length; i++) {
-			File extDir = new File(dirPaths[i]);
+		for (String dirPath : dirPaths) {
+			File extDir = new File(dirPath);
 			if (extDir.isDirectory()) {
 				String[] names = extDir.list(fgArchiveFilter);
 				if (names != null) {
-					for (int j = 0; j < names.length; j++) {
-						File jar = new File(extDir, names[j]);
+					for (String name : names) {
+						File jar = new File(extDir, name);
 						if (jar.isFile()) {
 							try {
-								IPath libPath = new Path(jar.getCanonicalPath());
-								IPath sourcePath = Path.EMPTY;
-								IPath packageRoot = Path.EMPTY;
+								IPath libPath = IPath.fromFile(jar.getCanonicalFile());
+								IPath sourcePath = IPath.EMPTY;
+								IPath packageRoot = IPath.EMPTY;
 								URL javadocLocation = null;
 								URL indexLocation = null;
 								for (ILibraryLocationResolver resolver : getLibraryLocationResolvers()) {
@@ -590,7 +575,8 @@ public class StandardVMType extends AbstractVMInstallType {
 										packageRoot = resolver.getPackageRoot(libPath);
 										javadocLocation = resolver.getJavadocLocation(libPath);
 										indexLocation = resolver.getIndexLocation(libPath);
-										if (sourcePath != Path.EMPTY || packageRoot != Path.EMPTY || javadocLocation != null || indexLocation != null) {
+										if (sourcePath != IPath.EMPTY || packageRoot != IPath.EMPTY || javadocLocation != null
+												|| indexLocation != null) {
 											break;
 										}
 									} catch(Exception e) {
@@ -640,8 +626,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	protected File getDefaultEndorsedDirectory(File installLocation) {
 		File lib = new File(installLocation, LIB);
-		File ext = new File(lib, "endorsed"); //$NON-NLS-1$
-		return ext;
+		return new File(lib, "endorsed"); //$NON-NLS-1$
 	}
 
 	protected String getDefaultRootPath() {
@@ -657,20 +642,14 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	@Override
 	public IStatus validateInstallLocation(File javaHome) {
-		IStatus status = null;
 		File javaExecutable = findJavaExecutable(javaHome);
 		if (javaExecutable == null) {
-			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1, null); //
-		} else {
-			File javaHomeNew = javaHome;
-
-			if (canDetectDefaultSystemLibraries(javaHomeNew, javaExecutable)) {
-				status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null);
-			} else {
-				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1, null);
-			}
+			return Status.error(LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1);
 		}
-		return status;
+		if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
+			return new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null);
+		}
+		return Status.error(LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1);
 	}
 
 	/**
@@ -689,12 +668,12 @@ public class StandardVMType extends AbstractVMInstallType {
 		LibraryInfo info = null;
 
 		// if this is 1.1.X, the properties will not exist
-		IPath classesZip = new Path(javaHome.getAbsolutePath()).append(LIB).append("classes.zip"); //$NON-NLS-1$
+		IPath classesZip = IPath.fromFile(javaHome.getAbsoluteFile()).append(LIB).append("classes.zip"); //$NON-NLS-1$
 		if (classesZip.toFile().exists()) {
 			return new LibraryInfo("1.1.x", new String[] {classesZip.toOSString()}, new String[0], new String[0]); //$NON-NLS-1$
 		}
 		//locate the launching support jar - it contains the main program to run
-		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
+		File file = LaunchingPlugin.getFileInPlugin(IPath.fromPortableString("lib/launchingsupport.jar")); //$NON-NLS-1$
 		if (file != null && file.exists()) {
 			String javaExecutablePath = javaExecutable.getAbsolutePath();
 			String[] cmdLine = new String[] { javaExecutablePath, MIN_VM_SIZE,
@@ -706,10 +685,8 @@ public class StandardVMType extends AbstractVMInstallType {
 					Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
 					if (map.remove(StandardVMDebugger.JAVA_JVM_VERSION) != null) {
 						envp = new String[map.size()];
-						Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
 						int i = 0;
-						while (iterator.hasNext()) {
-							Entry<String, String> entry = iterator.next();
+						for (Entry<String, String> entry : map.entrySet()) {
 							envp[i] = entry.getKey() + "=" + entry.getValue(); //$NON-NLS-1$
 							i++;
 						}
@@ -742,15 +719,15 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 		}
 		if (info == null) {
-		    // log error that we were unable to generate library information - see bug 70011
-		    LaunchingPlugin.log(NLS.bind("Failed to retrieve default libraries for {0}", new String[]{javaHome.getAbsolutePath()})); //$NON-NLS-1$
+			// log error that we were unable to generate library information - see bug 70011
+			LaunchingPlugin.log(NLS.bind("Failed to retrieve default libraries for {0}", javaHome.getAbsolutePath())); //$NON-NLS-1$
 		}
 		return info;
 	}
 
 	private boolean isReadingDone(IStreamMonitor monitor) {
-		if (monitor instanceof OutputStreamMonitor) {
-			return ((OutputStreamMonitor) monitor).isReadingDone();
+		if (monitor instanceof OutputStreamMonitor streamMonitor) {
+			return streamMonitor.isReadingDone();
 		}
 		return true;
 	}
@@ -794,20 +771,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	}
 
 	protected String[] parsePaths(String paths) {
-		List<String> list = new ArrayList<>();
-		int pos = 0;
-		int index = paths.indexOf(File.pathSeparatorChar, pos);
-		while (index > 0) {
-			String path = paths.substring(pos, index);
-			list.add(path);
-			pos = index + 1;
-			index = paths.indexOf(File.pathSeparatorChar, pos);
-		}
-		String path = paths.substring(pos);
-		if (!path.equals("null")) { //$NON-NLS-1$
-			list.add(path);
-		}
-		return list.toArray(new String[list.size()]);
+		return paths.split(File.pathSeparator);
 	}
 
 	/* (non-Javadoc)
@@ -851,9 +815,9 @@ public class StandardVMType extends AbstractVMInstallType {
 		try {
 			if (version.startsWith(JavaCore.VERSION_23)) {
 				// To modify to version 23 after the release
-				return new URL("https://docs.oracle.com/en/java/javase/22/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/22/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_22)) {
-				return new URL("https://docs.oracle.com/en/java/javase/22/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/22/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_21)) {
 				return new URL("https://docs.oracle.com/en/java/javase/21/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_20)) {
@@ -895,31 +859,25 @@ public class StandardVMType extends AbstractVMInstallType {
 				// archived: http://download.oracle.com/javase/1.3/docs/api/
 				return new URL("https://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
 			}
-		} catch (MalformedURLException e) {
+		} catch (URISyntaxException | MalformedURLException e) {
 		}
 		return null;
 	}
 
 	public synchronized String readReleaseVersion(File javaHome) {
-
 		String version = ""; //$NON-NLS-1$
-
-		if (Files.notExists(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE))) {
+		Path releaseFile = javaHome.getAbsoluteFile().toPath().resolve(RELEASE_FILE);
+		if (Files.notExists(releaseFile)) {
 			return version;
 		}
-		try (Stream<String> lines = Files.lines(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE), Charset.defaultCharset()).filter(s -> s.contains(JAVA_VERSION))) {
-			Optional<String> hasVersion = lines.findFirst();
-			if (hasVersion.isPresent()) {
-				String line = hasVersion.get();
-				version = line.substring(14, line.length() - 1); // length of JAVA_VERSION + 2 in JAVA_VERSION="9"
-			}
-		}
-		catch (UncheckedIOException | IOException e) {
+		try (Stream<String> lines = Files.lines(releaseFile, Charset.defaultCharset())) {
+			version = lines.filter(s -> s.contains(JAVA_VERSION)).findFirst() //
+					.map(line -> line.substring(JAVA_VERSION.length() + 2, line.length() - 1)) // actual version in JAVA_VERSION="9"
+					.orElse(""); //$NON-NLS-1$
+		} catch (UncheckedIOException | IOException e) {
 			LaunchingPlugin.log(e);
 		}
-
 		return version;
-
 	}
 
 	/*
@@ -929,10 +887,9 @@ public class StandardVMType extends AbstractVMInstallType {
 		boolean isTerminated = process.isTerminated();
 		if (!isTerminated) {
 			String output = getOutput(process);
-			Object[] errorInfo = { process.getAttribute(IProcess.ATTR_CMDLINE), output };
-			String errorMessage = NLS.bind("Process not finished.\n Command line arguments: {0}\nOutput: {1}", errorInfo); //$NON-NLS-1$
-			IllegalStateException exception = new IllegalStateException(errorMessage);
-			LaunchingPlugin.log(exception);
+			String errorMessage = NLS.bind("Process not finished.\n Command line arguments: {0}\nOutput: {1}", //$NON-NLS-1$
+					process.getAttribute(IProcess.ATTR_CMDLINE), output);
+			LaunchingPlugin.log(new IllegalStateException(errorMessage));
 		} else {
 			int exitCode = process.getExitValue();
 			if (exitCode != 0) {

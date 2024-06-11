@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,8 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -63,6 +64,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private volatile LibraryLocation[] fSystemLibraryDescriptions;
 	private volatile URL fJavadocLocation;
 	private volatile String fVMArgs;
+	final Map<String, Set<String>> systemPackages = new ConcurrentHashMap<>();
 	/**
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
@@ -231,11 +233,9 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		if (url == fJavadocLocation) {
 			return;
 		}
-		if (url != null && fJavadocLocation != null) {
-			if (url.toExternalForm().equals(fJavadocLocation.toExternalForm())) {
-				// no change
-				return;
-			}
+		if (url != null && fJavadocLocation != null && url.toExternalForm().equals(fJavadocLocation.toExternalForm())) {
+			// no change
+			return;
 		}
 
 		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_JAVADOC_LOCATION, fJavadocLocation, url);
@@ -261,8 +261,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 */
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof IVMInstall) {
-			IVMInstall vm = (IVMInstall)object;
+		if (object instanceof IVMInstall vm) {
 			return getVMInstallType().equals(vm.getVMInstallType()) &&
 				getId().equals(vm.getId());
 		}
@@ -301,13 +300,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		if (vmArgs == null) {
 			setVMArgs(null);
 		} else {
-		    StringBuilder buf = new StringBuilder();
-		    for (int i = 0; i < vmArgs.length; i++) {
-	            String string = vmArgs[i];
-	            buf.append(string);
-	            buf.append(" "); //$NON-NLS-1$
-	        }
-			setVMArgs(buf.toString().trim());
+			setVMArgs(String.join(" ", vmArgs).trim()); //$NON-NLS-1$
 		}
 	}
 
@@ -364,8 +357,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		boolean cached = true;
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
-			for (int i = 0; i < properties.length; i++) {
-				String property = properties[i];
+			for (String property : properties) {
 				String key = getSystemPropertyKey(property);
 				String value = prefs.get(key, null);
 				if (value != null) {
@@ -453,10 +445,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 								}
 							}
 						}
-					} catch (SAXException e) {
-						String commandLine = process.getAttribute(IProcess.ATTR_CMDLINE);
-						abort(NLS.bind(LaunchingMessages.AbstractVMInstall_4, commandLine), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-					} catch (IOException e) {
+					} catch (SAXException | IOException e) {
 						String commandLine = process.getAttribute(IProcess.ATTR_CMDLINE);
 						abort(NLS.bind(LaunchingMessages.AbstractVMInstall_4, commandLine), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 					}
@@ -469,13 +458,10 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				abort(NLS.bind(LaunchingMessages.AbstractVMInstall_0, file), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
 			// cache for future reference
-			Iterator<String> keys = map.keySet().iterator();
-			while (keys.hasNext()) {
-				String property = keys.next();
-				String value = map.get(property);
+			map.forEach((property, value) -> {
 				String key = getSystemPropertyKey(property);
 				prefs.put(key, value);
-			}
+			});
 		}
 		monitor.done();
 		return map;
@@ -489,15 +475,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @return preference store key
 	 */
 	private String getSystemPropertyKey(String property) {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(PREF_VM_INSTALL_SYSTEM_PROPERTY);
-		buffer.append("."); //$NON-NLS-1$
-		buffer.append(getVMInstallType().getId());
-		buffer.append("."); //$NON-NLS-1$
-		buffer.append(getId());
-		buffer.append("."); //$NON-NLS-1$
-		buffer.append(property);
-		return buffer.toString();
+		return PREF_VM_INSTALL_SYSTEM_PROPERTY + '.' + getVMInstallType().getId() + '.' + getId() + '.' + property;
 	}
 
 	/**

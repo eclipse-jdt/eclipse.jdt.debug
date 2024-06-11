@@ -17,7 +17,6 @@ package org.eclipse.jdt.internal.launching;
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 
@@ -32,7 +31,7 @@ public class Standard11xVMType extends StandardVMType {
 	 */
 	@Override
 	protected IPath getDefaultSystemLibrary(File installLocation) {
-		return new Path(installLocation.getPath()).append("lib").append("classes.zip"); //$NON-NLS-2$ //$NON-NLS-1$
+		return IPath.fromFile(installLocation).append("lib").append("classes.zip"); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	/**
@@ -49,7 +48,7 @@ public class Standard11xVMType extends StandardVMType {
 	@Override
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		setDefaultRootPath(""); //$NON-NLS-1$
-		return Path.EMPTY;
+		return IPath.EMPTY;
 	}
 
 	/* (non-Javadoc)

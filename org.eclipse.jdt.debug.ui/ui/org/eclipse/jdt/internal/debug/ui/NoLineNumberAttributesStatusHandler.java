@@ -19,6 +19,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 import com.sun.jdi.ReferenceType;
 
@@ -32,7 +33,7 @@ public class NoLineNumberAttributesStatusHandler implements IStatusHandler {
 		ReferenceType type= (ReferenceType) source;
 		IPreferenceStore preferenceStore= JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		if (preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT)) {
-			final ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(JDIDebugUIPlugin.getActiveWorkbenchShell(),
+			final ErrorDialogWithToggle dialog = new ErrorDialogWithToggle(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(),
 					DebugUIMessages.NoLineNumberAttributesStatusHandler_Java_Breakpoint_1,
 					NLS.bind(DebugUIMessages.NoLineNumberAttributesStatusHandler_2, new String[] {type.name()}),
 					status, IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT,

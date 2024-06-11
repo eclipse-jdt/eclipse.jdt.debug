@@ -135,7 +135,7 @@ public class JavaLogicalStructure implements ILogicalStructureType, ILogicalStru
 		 */
 		public IJavaValue evaluate(String snippet) throws DebugException {
 			Map<String, String> compileOptions =
-					Collections.singletonMap(CompilerOptions.OPTION_IgnoreUnnamedModuleForSplitPackage, JavaCore.ENABLED);
+					Collections.singletonMap(CompilerOptions.OPTION_JdtDebugCompileMode, JavaCore.ENABLED);
 			ICompiledExpression compiledExpression = fEvaluationEngine
 					.getCompiledExpression(snippet, fEvaluationType, compileOptions);
 			if (compiledExpression.hasErrors()) {
