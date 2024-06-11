@@ -1060,7 +1060,9 @@ public final class JavaRuntime {
 			return isModularJava(vm);
 		}
 		catch (CoreException e) {
-			e.printStackTrace();
+			if (e.getStatus().getCode() != IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED) {
+				LaunchingPlugin.log(e);
+			}
 		}
 		return false;
 
