@@ -198,7 +198,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			fCompliance.setVisible(true);
 		}
 		else {
-			List<String> allVersions = JavaCore.getAllVersions();
+			List<String> allVersions = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 			String latest = allVersions.get(allVersions.size() - 1);
 			String vmver = null;
 			if (vmInstall instanceof AbstractVMInstall) {
