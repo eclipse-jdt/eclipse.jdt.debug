@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
+import java.util.List;
+
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Manager for execution environments. The singleton manager is available
@@ -31,6 +34,17 @@ public interface IExecutionEnvironmentsManager {
 	 * @return all registered execution environments sorted by their id
 	 */
 	public IExecutionEnvironment[] getExecutionEnvironments();
+
+	/**
+	 * Returns all execution environments supported by Java projects, <b>reverse</b> sorted by their id.
+	 *
+	 * @see IExecutionEnvironment#getId()
+	 * @see JavaCore#isJavaSourceVersionSupportedByCompiler(String)
+	 *
+	 * @return all registered execution environments sorted by their id
+	 * @since 3.23
+	 */
+	public List<IExecutionEnvironment> getSupportedExecutionEnvironments();
 
 	/**
 	 * Returns the execution environment associated with the given

@@ -17,9 +17,12 @@ package org.eclipse.jdt.internal.launching.environments;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -89,6 +92,8 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 */
 	private TreeSet<IExecutionEnvironment> fEnvironments = null;
 
+	private List<IExecutionEnvironment> supportedEnvironments;
+
 	/**
 	 * List of access rule participants
 	 */
@@ -154,13 +159,16 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).addPreferenceChangeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getExecutionEnvironments()
-	 */
 	@Override
 	public synchronized IExecutionEnvironment[] getExecutionEnvironments() {
 		initializeExtensions();
 		return fEnvironments.toArray(new IExecutionEnvironment[fEnvironments.size()]);
+	}
+
+	@Override
+	public synchronized List<IExecutionEnvironment> getSupportedExecutionEnvironments() {
+		initializeExtensions();
+		return supportedEnvironments;
 	}
 
 	/**
@@ -249,63 +257,74 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	}
 
 	private synchronized void initializeExtensions() {
-		if (fEnvironments == null) {
-			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
-			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-			fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
-				@Override
-				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
-					String compliance1 = getExecutionEnvironmentCompliance(o1);
-					String compliance2 = getExecutionEnvironmentCompliance(o2);
-					int result = JavaCore.compareJavaVersions(compliance1, compliance2);
-					if (result == 0) {
-						return o1.getId().compareTo(o2.getId());
+		if (fEnvironments != null) {
+			return;
+		}
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
+		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
+		fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
+			@Override
+			public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
+				String compliance1 = getExecutionEnvironmentCompliance(o1);
+				String compliance2 = getExecutionEnvironmentCompliance(o2);
+				int result = JavaCore.compareJavaVersions(compliance1, compliance2);
+				if (result == 0) {
+					return o1.getId().compareTo(o2.getId());
+				}
+				return result;
+			}
+		});
+		fRuleParticipants = new LinkedHashSet<>();
+		fEnvironmentsMap = new HashMap<>(configs.length);
+		fAnalyzers = new HashMap<>(configs.length);
+		for (int i = 0; i < configs.length; i++) {
+			IConfigurationElement element = configs[i];
+			String name = element.getName();
+			switch (name) {
+				case ENVIRONMENT_ELEMENT:
+					String id = element.getAttribute("id"); //$NON-NLS-1$
+					if (id == null) {
+						LaunchingPlugin.log(NLS.bind("Execution environment must specify \"id\" attribute. Contributed by {0}.", new String[] { //$NON-NLS-1$
+								element.getContributor().getName() }));
+					} else {
+						IExecutionEnvironment env = new ExecutionEnvironment(element);
+						fEnvironments.add(env);
+						fEnvironmentsMap.put(id, env);
 					}
-					return result;
-				}
-			});
-			fRuleParticipants = new LinkedHashSet<>();
-			fEnvironmentsMap = new HashMap<>(configs.length);
-			fAnalyzers = new HashMap<>(configs.length);
-			for (int i = 0; i < configs.length; i++) {
-				IConfigurationElement element = configs[i];
-				String name = element.getName();
-				switch (name) {
-					case ENVIRONMENT_ELEMENT:
-						String id = element.getAttribute("id"); //$NON-NLS-1$
-						if (id == null) {
-							LaunchingPlugin.log(NLS.bind("Execution environment must specify \"id\" attribute. Contributed by {0}.", new String[] { //$NON-NLS-1$
-									element.getContributor().getName() }));
-						} else {
-							IExecutionEnvironment env = new ExecutionEnvironment(element);
-							fEnvironments.add(env);
-							fEnvironmentsMap.put(id, env);
-						}
-						break;
-					case ANALYZER_ELEMENT:
-						id = element.getAttribute("id"); //$NON-NLS-1$
-						if (id == null) {
-							LaunchingPlugin.log(NLS.bind("Execution environment analyzer must specify \"id\" attribute. Contributed by {0}", new String[] { //$NON-NLS-1$
-									element.getContributor().getName() }));
-						} else {
-							fAnalyzers.put(id, new Analyzer(element));
-						}
-						break;
-					case RULE_PARTICIPANT_ELEMENT:
-						id = element.getAttribute("id"); //$NON-NLS-1$
-						if (id == null) {
-							LaunchingPlugin.log(NLS.bind("Execution environment rule participant must specify \"id\" attribute. Contributed by {0}", new String[] { //$NON-NLS-1$
-									element.getContributor().getName() }));
-						} else {
-							// use a linked hash set to avoid duplicate rule participants
-							fRuleParticipants.add(new AccessRuleParticipant(element));
-						}
-						break;
-					default:
-						break;
-				}
+					break;
+				case ANALYZER_ELEMENT:
+					id = element.getAttribute("id"); //$NON-NLS-1$
+					if (id == null) {
+						LaunchingPlugin.log(NLS.bind("Execution environment analyzer must specify \"id\" attribute. Contributed by {0}", new String[] { //$NON-NLS-1$
+								element.getContributor().getName() }));
+					} else {
+						fAnalyzers.put(id, new Analyzer(element));
+					}
+					break;
+				case RULE_PARTICIPANT_ELEMENT:
+					id = element.getAttribute("id"); //$NON-NLS-1$
+					if (id == null) {
+						LaunchingPlugin.log(NLS.bind("Execution environment rule participant must specify \"id\" attribute. Contributed by {0}", new String[] { //$NON-NLS-1$
+								element.getContributor().getName() }));
+					} else {
+						// use a linked hash set to avoid duplicate rule participants
+						fRuleParticipants.add(new AccessRuleParticipant(element));
+					}
+					break;
+				default:
+					break;
 			}
 		}
+
+		List<IExecutionEnvironment> filtered = new LinkedList<>();
+		for (IExecutionEnvironment environment : fEnvironments) {
+			Map<String, String> options = environment.getComplianceOptions();
+			if (options != null && JavaCore.isJavaSourceVersionSupportedByCompiler(options.get(JavaCore.COMPILER_COMPLIANCE))) {
+				filtered.add(environment);
+			}
+		}
+		Collections.reverse(filtered);
+		supportedEnvironments = Collections.unmodifiableList(filtered);
 	}
 
 	/**
