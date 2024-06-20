@@ -46,9 +46,6 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 		fElement = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
-	 */
 	@Override
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		try {
@@ -93,29 +90,19 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 		return fElement.getAttribute("class"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AccessRuleParticipant) {
-			AccessRuleParticipant participant = (AccessRuleParticipant) obj;
+		if (obj instanceof AccessRuleParticipant participant) {
 			return participant.getDelegateClassName().equals(getDelegateClassName());
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getDelegateClassName().hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getDelegateClassName();

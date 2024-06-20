@@ -114,11 +114,10 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
-		ArrayList<CompatibleEnvironment> result = new ArrayList<>();
-		if (!(vm instanceof IVMInstall2)) {
+		List<CompatibleEnvironment> result = new ArrayList<>();
+		if (!(vm instanceof IVMInstall2 vm2)) {
 			return new CompatibleEnvironment[0];
 		}
-		IVMInstall2 vm2 = (IVMInstall2) vm;
 		List<String> types = null;
 		if (EEVMType.ID_EE_VM_TYPE.equals(vm.getVMInstallType().getId())) {
 			String eeId = ((EEVMInstall)vm).getAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID);
@@ -130,9 +129,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			String javaVersion = vm2.getJavaVersion();
 			if (javaVersion == null) {
 				// We have a contributed VM type. Check to see if its a foundation VM, if we can.
-				if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) {
+				if ((vm instanceof IVMInstall3 vm3) && isFoundation1_0(vm3)) {
 					types = getTypes(CDC_FOUNDATION_1_0);
-				} else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) {
+				} else if ((vm instanceof IVMInstall3 vm3) && isFoundation1_1(vm3)) {
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
@@ -181,13 +180,13 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				} else if (javaVersion.startsWith("1.2")) { //$NON-NLS-1$
 					types = getTypes(J2SE_1_2);
 				} else if (javaVersion.startsWith("1.1")) { //$NON-NLS-1$
-					if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) {
+					if ((vm instanceof IVMInstall3 vm3) && isFoundation1_1(vm3)) {
 						types = getTypes(CDC_FOUNDATION_1_1);
 					} else {
 						types = getTypes(JRE_1_1);
 					}
 				} else if (javaVersion.startsWith("1.0")) { //$NON-NLS-1$
-					if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) {
+					if ((vm instanceof IVMInstall3 vm3) && isFoundation1_0(vm3)) {
 						types = getTypes(CDC_FOUNDATION_1_0);
 					}
 				} else if (javaVersion.startsWith("1") && javaVersion.length() >= 2 && javaVersion.charAt(1) != '.') { //$NON-NLS-1$
@@ -209,8 +208,8 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	 * Check a couple of known system properties for the word "foundation".
 	 */
 	private boolean isFoundation(Map<String, String> properties) {
-		for (int i=0; i < VM_PROPERTIES.length; i++) {
-			String value = properties.get(VM_PROPERTIES[i]);
+		for (String vmProperty : VM_PROPERTIES) {
+			String value = properties.get(vmProperty);
 			if (value == null) {
 				continue;
 			}
@@ -233,7 +232,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		return isFoundation(map) ? "1.1".equals(map.get(JAVA_SPEC_VERSION)) : false; //$NON-NLS-1$
 	}
 
-	private void addEnvironment(ArrayList<CompatibleEnvironment> result, String id, boolean strict) {
+	private void addEnvironment(List<CompatibleEnvironment> result, String id, boolean strict) {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment env = manager.getEnvironment(id);
 		if (env != null) {
@@ -247,8 +246,8 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		result.add(type);
 		String[] values = mappings.get(type);
 		if (values != null) {
-			for (int i=0; i<values.length; i++) {
-				result.addAll(getTypes(values[i]));
+			for (String value : values) {
+				result.addAll(getTypes(value));
 			}
 		}
 		return result;
