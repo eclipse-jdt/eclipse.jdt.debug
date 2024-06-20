@@ -40,7 +40,7 @@ public class SpecificDebugElementEventWaiter extends DebugEventWaiter {
 	public boolean accept(DebugEvent event) {
 		Object o = event.getSource();
 		if (o instanceof IDebugElement) {
-			return super.accept(event) && ((IDebugElement)o).equals(fDebugElement);
+			return super.accept(event) && o.equals(fDebugElement);
 		}
 		return false;
 	}

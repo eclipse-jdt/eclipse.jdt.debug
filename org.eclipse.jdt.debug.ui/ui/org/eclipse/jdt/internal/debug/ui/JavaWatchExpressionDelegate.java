@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -61,7 +60,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			fListener.watchEvaluationFinished(null);
 		} else {
 			// consult the adapter in case of a wrappered debug model
-			final IJavaStackFrame javaStackFrame = ((IAdaptable) frame).getAdapter(IJavaStackFrame.class);
+			final IJavaStackFrame javaStackFrame = frame.getAdapter(IJavaStackFrame.class);
 			if (javaStackFrame != null) {
 				doEvaluation(javaStackFrame);
 			} else {
