@@ -135,7 +135,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 	 */
 	@Override
 	public String getReferenceTypeName() throws DebugException {
-		return ((IJavaValue) getValue()).getReferenceTypeName();
+		return getValue().getReferenceTypeName();
 	}
 
 	/*
@@ -235,7 +235,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 	 */
 	@Override
 	public IDebugTarget getDebugTarget() {
-		return ((IJavaValue) getValue()).getDebugTarget();
+		return getValue().getDebugTarget();
 	}
 
 	/*

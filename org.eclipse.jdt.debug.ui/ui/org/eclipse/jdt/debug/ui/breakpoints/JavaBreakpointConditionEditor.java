@@ -58,7 +58,6 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -821,7 +820,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @since 3.1
 	 */
 	private IUndoContext getUndoContext() {
-		IUndoManager undoManager= ((ITextViewerExtension6)fViewer).getUndoManager();
+		IUndoManager undoManager= fViewer.getUndoManager();
 		if (undoManager instanceof IUndoManagerExtension) {
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
 		}

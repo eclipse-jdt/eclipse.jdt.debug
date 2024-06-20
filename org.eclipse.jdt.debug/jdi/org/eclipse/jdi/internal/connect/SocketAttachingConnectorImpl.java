@@ -99,8 +99,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 		String attribute = ""; //$NON-NLS-1$
 		try {
 			attribute = "hostname"; //$NON-NLS-1$
-			fHostname = ((Connector.StringArgument) connectionArgs
-					.get(attribute)).value();
+			fHostname = connectionArgs.get(attribute).value();
 			attribute = "port"; //$NON-NLS-1$
 			fPort = ((Connector.IntegerArgument) connectionArgs.get(attribute))
 					.intValue();
