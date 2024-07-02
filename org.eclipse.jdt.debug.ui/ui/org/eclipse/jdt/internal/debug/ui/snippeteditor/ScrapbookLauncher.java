@@ -16,10 +16,10 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -192,10 +192,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e); //$NON-NLS-1$
 				return null;
 			}
-			catch(UnsupportedEncodingException usee) {
-				JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", usee); //$NON-NLS-1$
-				return null;
-			}
 			String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(p);
 			String[] urls = new String[defaultClasspath.length + 1];
 			urls[0] = u.toExternalForm();
@@ -206,10 +202,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				} catch (MalformedURLException e) {
 					JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e);				 //$NON-NLS-1$
 				 	return null;
-				}
-				catch(UnsupportedEncodingException usee) {
-					JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", usee); //$NON-NLS-1$
-					return null;
 				}
 			}
 
@@ -347,7 +339,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	}
 
 	@SuppressWarnings("deprecation")
-	protected URL getEncodedURL(File file) throws MalformedURLException, UnsupportedEncodingException {
+	protected URL getEncodedURL(File file) throws MalformedURLException {
 		//looking at File.toURL the delimiter is always '/'
 		// NOT File.separatorChar
 		String urlDelimiter= "/"; //$NON-NLS-1$
@@ -362,7 +354,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			encoded.append(urlDelimiter);
 			String token= tokenizer.nextToken();
 			// should use same encoding as org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain.getClasspath(String[])
-			encoded.append(URLEncoder.encode(token, "UTF-8")); //$NON-NLS-1$
+			encoded.append(URLEncoder.encode(token, StandardCharsets.UTF_8));
 		}
 		if (file.isDirectory()) {
 			encoded.append(urlDelimiter);
