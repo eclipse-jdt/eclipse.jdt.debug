@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -108,7 +108,7 @@ public class VirtualThreadTest extends AbstractJDITest {
 
 	private static void compileFiles(String sourceFilePath, String outputPath) {
 		DiagnosticCollector<? super JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"));
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, StandardCharsets.UTF_8);
 		Iterable<? extends JavaFileObject> javaFileObjects = fileManager.getJavaFileObjects(new File(sourceFilePath));
 		File outputFolder = new File(outputPath);
 		if (!outputFolder.exists()) {

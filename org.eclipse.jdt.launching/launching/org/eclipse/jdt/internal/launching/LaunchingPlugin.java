@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -768,7 +769,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	private VMDefinitionsContainer getVMDefinitions(String xml) {
 		if (xml.length() > 0) {
 			try {
-				ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
+				ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 				return VMDefinitionsContainer.parseXMLIntoContainer(stream);
 			} catch (IOException e) {
 				LaunchingPlugin.log(e);
@@ -926,7 +927,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 				file.createNewFile();
 			}
 			try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file))) {
-				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+				stream.write(xml.getBytes(StandardCharsets.UTF_8));
 			}
 		} catch (IOException e) {
 			log(e);
@@ -1109,7 +1110,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 					file.createNewFile();
 				}
 				try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file))) {
-					stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+					stream.write(xml.getBytes(StandardCharsets.UTF_8));
 				}
 			} catch (IOException e) {
 				log(e);

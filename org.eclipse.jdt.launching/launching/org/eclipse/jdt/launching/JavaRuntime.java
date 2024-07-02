@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1956,7 +1957,7 @@ public final class JavaRuntime {
 		// If the preference was found, load VMs from it into memory
 		if (vmXMLString.length() > 0) {
 			try {
-				ByteArrayInputStream inputStream = new ByteArrayInputStream(vmXMLString.getBytes("UTF8")); //$NON-NLS-1$
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(vmXMLString.getBytes(StandardCharsets.UTF_8));
 				VMDefinitionsContainer.parseXMLIntoContainer(inputStream, vmDefs);
 				return false;
 			} catch (IOException ioe) {
