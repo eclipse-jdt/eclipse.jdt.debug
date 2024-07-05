@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -280,8 +280,8 @@ public class ClasspathShortenerTests extends AbstractDebugTest {
 		assertArrayEquals(new String[] { JAVA_8_PATH, ENCODING_ARG, MAIN_CLASS, "-arg1", "arg2" }, classpathShortener.getCmdLine());
 	}
 
-	private String getFileContents(File file) throws UnsupportedEncodingException, IOException {
-		return new String(Files.readAllBytes(file.toPath()), "UTF-8");
+	private String getFileContents(File file) throws IOException {
+		return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 	}
 
 	private String getClasspathAttributeFromJarManifest(File jarFile) throws FileNotFoundException, IOException {

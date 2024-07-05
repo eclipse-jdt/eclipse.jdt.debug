@@ -149,22 +149,19 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		String attribute = ""; //$NON-NLS-1$
 		try {
 			attribute = "home"; //$NON-NLS-1$
-			fHome = ((Connector.StringArgument) connectionArgs.get(attribute))
-					.value();
+			fHome = connectionArgs.get(attribute).value();
 			attribute = "options"; //$NON-NLS-1$
-			fOptions = ((Connector.StringArgument) connectionArgs
-					.get(attribute)).value();
+			fOptions = connectionArgs.get(attribute).value();
 			attribute = "main"; //$NON-NLS-1$
-			fMain = ((Connector.StringArgument) connectionArgs.get(attribute))
+			fMain = connectionArgs.get(attribute)
 					.value();
 			attribute = "suspend"; //$NON-NLS-1$
 			fSuspend = ((Connector.BooleanArgument) connectionArgs
 					.get(attribute)).booleanValue();
 			attribute = "quote"; //$NON-NLS-1$
-			((Connector.StringArgument) connectionArgs.get(attribute)).value();
+			connectionArgs.get(attribute).value();
 			attribute = "vmexec"; //$NON-NLS-1$
-			fLauncher = ((Connector.StringArgument) connectionArgs
-					.get(attribute)).value();
+			fLauncher = connectionArgs.get(attribute).value();
 			attribute = "includevirtualthreads"; //$NON-NLS-1$
 			fIncludeVirtualThreads = ((Connector.BooleanArgument) connectionArgs
 					.get(attribute)).booleanValue();
@@ -229,8 +226,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		} catch (InterruptedIOException e) {
 			proc.destroy();
 			String message = NLS.bind(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
-							new String[] { ((Connector.IntegerArgument) args
-									.get("timeout")).value() }); //$NON-NLS-1$
+							new String[] { args.get("timeout").value() }); //$NON-NLS-1$
 			throw new VMStartException(message, proc);
 		}
 

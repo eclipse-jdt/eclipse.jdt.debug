@@ -577,7 +577,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 		if (partRef instanceof IViewReference && changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
-			String id = ((IViewReference) partRef).getId();
+			String id = partRef.getId();
 			if (id.equals(getViewSite().getId())) {
 				// Display view closed. Persist contents.
 			    String contents= getContents();

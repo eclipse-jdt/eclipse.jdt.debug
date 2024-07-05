@@ -15,6 +15,7 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					Set<String> ids = new HashSet<>();
 					if (pref.length() > 0) {
 						try {
-							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes("UTF8"))); //$NON-NLS-1$
+							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes(StandardCharsets.UTF_8)));
 							List<IVMInstall> validVMList = container.getValidVMList();
 							Iterator<IVMInstall> iterator = validVMList.iterator();
 							while (iterator.hasNext()) {
@@ -71,7 +72,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					}
 					// merge valid VMs with existing VMs
 					try {
-						ByteArrayInputStream inputStream = new ByteArrayInputStream(jresXML.getBytes("UTF8")); //$NON-NLS-1$
+						ByteArrayInputStream inputStream = new ByteArrayInputStream(jresXML.getBytes(StandardCharsets.UTF_8));
 						VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(inputStream);
 						List<IVMInstall> validVMList = container.getValidVMList();
 						Iterator<IVMInstall> iterator = validVMList.iterator();
