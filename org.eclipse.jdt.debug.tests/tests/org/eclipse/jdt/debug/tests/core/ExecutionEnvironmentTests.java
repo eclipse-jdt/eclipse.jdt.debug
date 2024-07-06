@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -259,4 +264,18 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		}
 		assertNotNull("Test should have thrown an exception", null);
 	}
+
+	public void testSerializability() throws Exception {
+		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-21");
+		ByteArrayOutputStream bs = new ByteArrayOutputStream();
+		try (ObjectOutputStream out = new ObjectOutputStream(bs);) {
+			out.writeObject(ee);
+		}
+		byte[] bytes = bs.toByteArray();
+		try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes));) {
+			IExecutionEnvironment readEE = (IExecutionEnvironment) in.readObject();
+			assertSame(ee, readEE);
+		}
+	}
+
 }

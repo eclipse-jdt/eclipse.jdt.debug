@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2022 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,8 @@ package org.eclipse.jdt.internal.launching.environments;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +61,18 @@ import org.osgi.framework.Version;
  * @since 3.2
  */
 class ExecutionEnvironment implements IExecutionEnvironment {
+
+	record SerializationSurrogate(String id) implements Serializable {
+		@SuppressWarnings("unused") // called during de-serialization
+		Object readResolve() throws ObjectStreamException {
+			return JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id);
+		}
+	}
+
+	@SuppressWarnings("unused") // called during serialization
+	Object writeReplace() throws ObjectStreamException {
+		return new SerializationSurrogate(getId());
+	}
 
 	/**
 	 * Add a VM changed listener to clear cached values when a VM changes or is removed

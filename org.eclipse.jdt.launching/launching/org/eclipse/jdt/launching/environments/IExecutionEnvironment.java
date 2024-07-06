@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Properties;
 
@@ -38,7 +39,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IExecutionEnvironment {
+public interface IExecutionEnvironment extends Serializable {
 
 	/**
 	 * Returns a unique identifier for this execution environment.
