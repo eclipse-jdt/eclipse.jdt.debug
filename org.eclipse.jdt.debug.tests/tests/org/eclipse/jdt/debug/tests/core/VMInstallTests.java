@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,22 +13,37 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeNotNull;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstall3;
+import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
@@ -201,6 +216,143 @@ public class VMInstallTests extends AbstractDebugTest {
 		}
 	}
 
+	private static final Set<String> COMMON_JAVA_PACKAGES = Set.of("java.lang", "java.lang.reflect", "java.util", "java.io");
+	private static final String JAVA9_OR_LATER_PACKAGE = "java.lang.module";
+	private static final String JAVA11_OR_LATER_PACKAGE = "java.net.http";
+	private static final String NON_MODULAR_JDK_PACKAGE = "javax.annotation";
+
+	public void testJavaRuntimeQuerySystemPackages_modularJDK() throws CoreException {
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		String javaVersion = ((IVMInstall2) vm).getJavaVersion();
+		assertTrue("At least a JDK 11 expected", JavaRuntime.compareJavaVersions(vm, JavaCore.VERSION_11) > 0);
+
+		Set<String> defaultVersionPackages = JavaRuntime.getProvidedVMPackages(vm, null);
+
+		assertContainsAllCommonPackages(vm, defaultVersionPackages);
+		assertTrue(defaultVersionPackages.contains(JAVA9_OR_LATER_PACKAGE));
+		assertTrue(defaultVersionPackages.contains(JAVA11_OR_LATER_PACKAGE));
+		assertFalse(defaultVersionPackages.contains(NON_MODULAR_JDK_PACKAGE));
+
+		Set<String> java9Packages = JavaRuntime.getProvidedVMPackages(vm, "9");
+
+		assertContainsAllCommonPackages(vm, java9Packages);
+		assertTrue(defaultVersionPackages.contains(JAVA9_OR_LATER_PACKAGE));
+		assertFalse(java9Packages.contains(JAVA11_OR_LATER_PACKAGE));
+		assertFalse(java9Packages.contains(NON_MODULAR_JDK_PACKAGE));
+
+		// Test that a null release is equals to the actual version of the VM
+		assertEquals(defaultVersionPackages, JavaRuntime.getProvidedVMPackages(vm, javaVersion));
+
+		// Test failure if non-modular VM is asked for packages of Java<=1.8 or not yet available versions
+		CoreException e1 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, "1.8"));
+		assertEquals("Cannot query a modular VM (JavaSE-9 or higher) for packages of release: 1.8", e1.getMessage());
+
+		int majorJavaVersion = Integer.parseInt(javaVersion.contains(".") ? javaVersion.substring(0, javaVersion.indexOf('.')) : javaVersion);
+		int latestSupportedJavaVersion = Integer.parseInt(JavaCore.latestSupportedJavaVersion());
+		if (majorJavaVersion < latestSupportedJavaVersion) {
+			// The following test-cases don't work if the VMInstall has the latest supported version. Internally jdt.core limits higher versions to
+			// the latest supported one. Consequently these intended error-scenarios, testing too high versions don't fail (as expected).
+			String nextJavaVersion = Integer.toString(majorJavaVersion + 1);
+			CoreException e2 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, nextJavaVersion));
+			assertEquals("release " + nextJavaVersion + " is not found in the system", e2.getMessage());
+
+			String versionAfterLatestSupported = String.valueOf(latestSupportedJavaVersion + 1);
+			CoreException e3 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, versionAfterLatestSupported));
+			// Passing a release not yet supported by JDT should not fail if the JDK actually provides it (e.g. if one uses early-access builds).
+			// Since EA-builds are not generally available in all test setups we check at least that the method passes the initial validation
+			assertEquals("release " + versionAfterLatestSupported + " is not found in the system", e3.getMessage());
+		}
+		CoreException e4 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, "definitivly-not-a-version"));
+		assertEquals("Invalid release: definitivly-not-a-version", e4.getMessage());
+	}
+
+	public void testJavaRuntimeQuerySystemPackages_nonModularJDK() throws Exception {
+		try (AutoCloseableSupplier<IVMInstall> nonModularVM = searchFirstNonModularVM()) {
+			IVMInstall vm = nonModularVM.get();
+
+			Set<String> packages = JavaRuntime.getProvidedVMPackages(vm, null);
+
+			assertContainsAllCommonPackages(vm, packages);
+			assertTrue("Not found: " + NON_MODULAR_JDK_PACKAGE, packages.contains(NON_MODULAR_JDK_PACKAGE));
+			assertFalse("Found unexpected package: " + JAVA9_OR_LATER_PACKAGE, packages.contains(JAVA9_OR_LATER_PACKAGE));
+			assertFalse("Found unexpected package: " + JAVA11_OR_LATER_PACKAGE, packages.contains(JAVA11_OR_LATER_PACKAGE));
+
+			// Test that for non-modular VMs the release information is just ignored
+			assertEquals(packages, JavaRuntime.getProvidedVMPackages(vm, "1.6"));
+			assertEquals(packages, JavaRuntime.getProvidedVMPackages(vm, "definitivly-not-a-version"));
+		} catch (org.junit.AssumptionViolatedException e) {
+			// Ignore this test. TODO: remove this once this is a JUnit-4 or later test that handles assumptions correctly
+		}
+	}
+
+	private void assertContainsAllCommonPackages(IVMInstall vm, Set<String> packages) {
+		Set<String> missing = new LinkedHashSet<>(COMMON_JAVA_PACKAGES);
+		missing.removeAll(packages);
+		assertTrue("Not all packages found in " + vm.getInstallLocation() + ", missing " + missing, missing.isEmpty());
+	}
+
+	private AutoCloseableSupplier<IVMInstall> searchFirstNonModularVM() throws IOException {
+		IVMInstallType vmType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+
+		Set<File> candidateDirectories;
+		String nonModularJavaHome = System.getenv("NON_MODULAR_JAVA_HOME");
+		if (nonModularJavaHome != null) {
+			System.out.println(getName() + ": NON_MODULAR_JAVA_HOME: " + nonModularJavaHome);
+			candidateDirectories = Set.of(new File(nonModularJavaHome));
+		} else {
+			Path defaultVMLocation = JavaRuntime.getDefaultVMInstall().getInstallLocation().toPath();
+			int maxSearchDepth = 1;
+			Path root = Stream.iterate(defaultVMLocation, Objects::nonNull, Path::getParent) //
+					.skip(maxSearchDepth).findFirst().orElseThrow();
+			try (Stream<Path> directories = Files.walk(root, maxSearchDepth);) {
+				candidateDirectories = directories.map(Path::toFile).collect(Collectors.toSet());
+			}
+			Arrays.stream(JavaRuntime.getVMInstallTypes()).flatMap(t -> Arrays.stream(t.getVMInstalls())) //
+					.map(IVMInstall::getInstallLocation) //
+					.forEach(candidateDirectories::remove);
+		}
+		System.out.println(getName() + ": found JVM candidates: " + candidateDirectories);
+
+		IVMInstall candidate = null;
+		for (File file : candidateDirectories) {
+			if (vmType.validateInstallLocation(file).isOK()) {
+				String id = "test-vm-" + System.nanoTime();
+				IVMInstall vmCandidate = vmType.createVMInstall(id);
+				vmCandidate.setInstallLocation(file);
+				if (!JavaRuntime.isModularJava(vmCandidate)) {
+					candidate = (vmCandidate);
+					break;
+				}
+				vmType.disposeVMInstall(id);
+			}
+		}
+		if (nonModularJavaHome != null) {
+			assertNotNull("Non-modular VM (<=Java-1.8) not found.", candidate);
+		} else {
+			// Disable test if no non-modular VM is found if non is explicitly specified
+			if (candidate == null) {
+				System.err.println("No non-modular VM (<=Java-1.8) found.");
+			}
+			assumeNotNull(candidate);
+		}
+		IVMInstall vm = candidate;
+		System.out.println(getName() + ": found non-modular JVM: " + vm.getInstallLocation());
+		return new AutoCloseableSupplier<>() {
+			@Override
+			public IVMInstall get() {
+				return vm;
+			}
+
+			@Override
+			public void close() throws Exception {
+				vmType.disposeVMInstall(vm.getId());
+			}
+		};
+	}
+
+	private interface AutoCloseableSupplier<T> extends AutoCloseable, Supplier<T> {
+	}
+
 	/**
 	 * Checks the given {@link LibraryLocation}s to ensure they reference the testing resolver paths
 	 */
@@ -231,7 +383,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * @return the {@link VMStandin}
 	 */
 	VMStandin getEEStandin(String filename) throws CoreException {
-		File ee = JavaTestPlugin.getDefault().getFileInPlugin(new Path(filename));
+		File ee = JavaTestPlugin.getDefault().getFileInPlugin(IPath.fromOSString(filename));
 		assertNotNull("The EE file "+filename+" was not found", ee);
 		VMStandin vm = JavaRuntime.createVMFromDefinitionFile(ee, "resolver-ee", "resolver-ee-id");
 		assertNotNull("the VM standin should exist for "+filename, vm);

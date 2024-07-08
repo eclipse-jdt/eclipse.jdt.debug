@@ -14,11 +14,11 @@
   <parent>
     <artifactId>eclipse.jdt.debug</artifactId>
     <groupId>eclipse.jdt.debug</groupId>
-    <version>4.32.0-SNAPSHOT</version>
+    <version>4.33.0-SNAPSHOT</version>
   </parent>
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.debug.tests</artifactId>
-  <version>3.12.400-SNAPSHOT</version>
+  <version>3.12.500-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
     <testSuite>${project.artifactId}</testSuite>

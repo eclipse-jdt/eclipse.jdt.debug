@@ -247,7 +247,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		}
 		detectJavadocLocation();
 		if (s.isOK()) {
-			List<String> allVersions = JavaCore.getAllVersions();
+			List<String> allVersions = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 			String latest = allVersions.get(allVersions.size() - 1);
 			IVMInstallType vmType = fVM.getVMInstallType();
 			if (vmType instanceof StandardVMType) {

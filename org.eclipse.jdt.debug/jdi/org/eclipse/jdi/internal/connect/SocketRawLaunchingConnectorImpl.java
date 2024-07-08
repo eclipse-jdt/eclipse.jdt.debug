@@ -105,13 +105,11 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 		String attribute = ""; //$NON-NLS-1$
 		try {
 			attribute = "command"; //$NON-NLS-1$
-			fCommand = DebugPlugin.parseArguments(((Connector.StringArgument) connectionArgs
-					.get(attribute)).value());
+			fCommand = DebugPlugin.parseArguments(connectionArgs.get(attribute).value());
 			attribute = "address"; //$NON-NLS-1$
-			fAddress = ((Connector.StringArgument) connectionArgs
-					.get(attribute)).value();
+			fAddress = connectionArgs.get(attribute).value();
 			attribute = "quote"; //$NON-NLS-1$
-			((Connector.StringArgument) connectionArgs.get(attribute)).value();
+			connectionArgs.get(attribute).value();
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException(
 					ConnectMessages.SocketRawLaunchingConnectorImpl_Connection_argument_is_not_of_the_right_type_8,
@@ -141,7 +139,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 		SocketListeningConnectorImpl listenConnector = new SocketListeningConnectorImpl(
 				virtualMachineManager());
 		Map<String, Connector.Argument> args = listenConnector.defaultArguments();
-		((Connector.IntegerArgument) args.get("port")).setValue(fAddress); //$NON-NLS-1$
+		args.get("port").setValue(fAddress); //$NON-NLS-1$
 		((Connector.IntegerArgument) args.get("timeout")).setValue(ACCEPT_TIMEOUT); //$NON-NLS-1$
 		listenConnector.startListening(args);
 
@@ -155,8 +153,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 		} catch (InterruptedIOException e) {
 			proc.destroy();
 			String message = NLS.bind(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
-							new String[] { ((Connector.IntegerArgument) args
-									.get("timeout")).value() }); //$NON-NLS-1$
+							new String[] { args.get("timeout").value() }); //$NON-NLS-1$
 			throw new VMStartException(message, proc);
 		}
 

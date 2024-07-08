@@ -303,9 +303,9 @@ public class JavaLaunchableTester extends PropertyTester {
 			IBuffer buffer= null;
 			IOpenable openable= type.getOpenable();
 			if (openable instanceof ICompilationUnit) {
-				buffer= ((ICompilationUnit) openable).getBuffer();
+				buffer= openable.getBuffer();
 			} else if (openable instanceof IClassFile) {
-				buffer= ((IClassFile) openable).getBuffer();
+				buffer= openable.getBuffer();
 			}
 			if (buffer == null) {
 				return false;
@@ -370,9 +370,9 @@ public class JavaLaunchableTester extends PropertyTester {
 			IBuffer buffer= null;
 			IOpenable openable= type.getOpenable();
 			if (openable instanceof ICompilationUnit) {
-				buffer= ((ICompilationUnit) openable).getBuffer();
+				buffer= openable.getBuffer();
 			} else if (openable instanceof IClassFile) {
-				buffer= ((IClassFile) openable).getBuffer();
+				buffer= openable.getBuffer();
 			}
 			if (buffer == null) {
 				return false;

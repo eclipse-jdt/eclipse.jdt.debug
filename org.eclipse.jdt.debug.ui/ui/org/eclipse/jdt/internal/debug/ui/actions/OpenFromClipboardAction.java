@@ -139,9 +139,10 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Pattern to match a method e.g.
 	 * <code>org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction.run(IAction)</code> ,
+	 * <code>org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction.run (IAction)</code> ,
 	 * <code>Worker.run()</code>
 	 */
-	private static final String METHOD_PATTERN = QUALIFIED_NAME_PATTERN + "\\(.*\\)"; //$NON-NLS-1$
+	private static final String METHOD_PATTERN = QUALIFIED_NAME_PATTERN + "\\s*\\(.*\\)"; //$NON-NLS-1$
 
 	/**
 	 * Pattern to match a stack element e.g. <code>java.lang.String.valueOf(char) line: 1456</code>
@@ -712,23 +713,29 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		try {
 			int workPerSearch = work / noOfSearches;
 			if (searchForMethods) {
-				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.METHOD, scope, requestor, progress.newChild(workPerSearch));
+				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.METHOD, scope, requestor, progress.newChild(workPerSearch), matches);
 			}
 			if (searchForConstructors) {
-				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.CONSTRUCTOR, scope, requestor, progress.newChild(workPerSearch));
+				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.CONSTRUCTOR, scope, requestor, progress.newChild(workPerSearch), matches);
 			}
 			if (searchForFields) {
-				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.FIELD, scope, requestor, progress.newChild(workPerSearch));
+				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.FIELD, scope, requestor, progress.newChild(workPerSearch), matches);
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
 
-	private static void doMemberSearch(SearchEngine searchEngine, String memberName, int searchFor, IJavaSearchScope scope, SearchRequestor requestor, SubMonitor progressMonitor) throws CoreException {
+	private static void doMemberSearch(SearchEngine searchEngine, String memberName, int searchFor, IJavaSearchScope scope, SearchRequestor requestor, SubMonitor progressMonitor, List<Object> matches) throws CoreException {
 		SearchPattern pattern = createSearchPattern(memberName, searchFor);
 		if (pattern != null) {
 			searchEngine.search(pattern, createSearchParticipant(), scope, requestor, progressMonitor);
+			if (matches.isEmpty() && memberName.contains("()")) { //$NON-NLS-1$
+				// if no arguments given try also to find methods with any argument
+				memberName = memberName.replace("()", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+				pattern = createSearchPattern(memberName, searchFor);
+				searchEngine.search(pattern, createSearchParticipant(), scope, requestor, progressMonitor);
+			}
 		}
 	}
 

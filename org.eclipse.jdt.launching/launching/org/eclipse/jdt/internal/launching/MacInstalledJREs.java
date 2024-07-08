@@ -16,13 +16,12 @@ package org.eclipse.jdt.internal.launching;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -90,9 +89,9 @@ public class MacInstalledJREs {
 		SubMonitor smonitor = SubMonitor.convert(monitor);
 		try {
 			// locate the "java_home" executable
-			File java_home = new File(JAVA_HOME_PLIST);
-			if (!java_home.exists()) {
-				throw new CoreException(new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), "The java_home executable does not exist")); //$NON-NLS-1$
+			File javaHome = new File(JAVA_HOME_PLIST);
+			if (!javaHome.exists()) {
+				throw new CoreException(Status.warning("The java_home executable does not exist")); //$NON-NLS-1$
 			}
 			String[] cmdLine = new String[] {JAVA_HOME_PLIST, "-X"}; //$NON-NLS-1$
 			Process p = null;
@@ -132,7 +131,7 @@ public class MacInstalledJREs {
 	 * @return array JRE descriptions installed in the OS
 	 * @exception CoreException if unable to parse the output
 	 */
-	private static VMStandin[] parseJREInfo(IProcess process, IProgressMonitor monitor) throws CoreException {
+	private static VMStandin[] parseJREInfo(IProcess process, IProgressMonitor monitor) {
 		IStreamsProxy streamsProxy = process.getStreamsProxy();
 		String text = null;
 		if (streamsProxy != null) {
@@ -157,39 +156,30 @@ public class MacInstalledJREs {
 		SubMonitor smonitor = SubMonitor.convert(monitor, LaunchingMessages.MacInstalledJREs_0, 10);
 		try {
 			Object result = new PListParser().parse(stream);
-			if (result instanceof Object[]) {
-				Object[] maps = (Object[]) result;
+			if (result instanceof Object[] maps) {
 				smonitor.setWorkRemaining(maps.length);
-				List<VMStandin> jres= new ArrayList<>();
+				Set<VMStandin> jres = new LinkedHashSet<>(); // prevent duplicates
 				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType("org.eclipse.jdt.internal.launching.macosx.MacOSXType"); //$NON-NLS-1$
 				if(mactype != null) {
-					for (int i = 0; i < maps.length; i++) {
+					for (Object entry : maps) {
 						if(smonitor.isCanceled()) {
 							///stop processing and return what we found
 							return jres.toArray(new VMStandin[jres.size()]);
 						}
-						Object object = maps[i];
-						if (object instanceof Map) {
-							Map<?, ?> map = (Map<?, ?>) object;
-							Object home = map.get(PLIST_JVM_HOME_PATH);
-							Object name = map.get(PLIST_JVM_NAME);
-							Object version = map.get(PLIST_JVM_VERSION);
-							if (home instanceof String && name instanceof String && version instanceof String) {
-								smonitor.setTaskName(NLS.bind(LaunchingMessages.MacInstalledJREs_1, new String[] {(String) name, (String) version}));
-								String ver = (String) version;
-								File loc = new File((String)home);
-								//10.8.2+ can have more than one of the same VM, which will have the same name
-								//augment it with the version to make it easier to distinguish
-								StringBuilder namebuff = new StringBuilder(name.toString());
-								namebuff.append(" [").append(ver).append("]");  //$NON-NLS-1$//$NON-NLS-2$
-								MacVMStandin vm = new MacVMStandin(mactype, loc, namebuff.toString(), ver, computeId(map, ver));
-								vm.setJavadocLocation(mactype.getDefaultJavadocLocation(loc));
-								vm.setLibraryLocations(mactype.getDefaultLibraryLocations(loc));
-								vm.setVMArgs(mactype.getDefaultVMArguments(loc));
-								if (!jres.contains(vm)) { // remove duplicates
-									jres.add(vm);
-								}
-							}
+						if (entry instanceof Map<?, ?> map //
+								&& map.get(PLIST_JVM_HOME_PATH) instanceof String home //
+								&& map.get(PLIST_JVM_NAME) instanceof String name //
+								&& map.get(PLIST_JVM_VERSION) instanceof String version) {
+							smonitor.setTaskName(NLS.bind(LaunchingMessages.MacInstalledJREs_1, name, version));
+							File loc = new File(home);
+							// 10.8.2+ can have more than one of the same VM, which will have the same name
+							// augment it with the version to make it easier to distinguish
+							String vmName = name + " [" + version + "]"; //$NON-NLS-1$//$NON-NLS-2$
+							MacVMStandin vm = new MacVMStandin(mactype, loc, vmName, version, computeId(map, version));
+							vm.setJavadocLocation(mactype.getDefaultJavadocLocation(loc));
+							vm.setLibraryLocations(mactype.getDefaultLibraryLocations(loc));
+							vm.setVMArgs(mactype.getDefaultVMArguments(loc));
+							jres.add(vm);
 						}
 						smonitor.worked(1);
 					}
@@ -215,9 +205,6 @@ public class MacInstalledJREs {
 	 */
 	static String computeId(Map<?, ?> map, String version) {
 		Object o = map.get(PLIST_JVM_BUNDLE_ID);
-		if(o instanceof String) {
-			return (String) o;
-		}
-		return version;
+		return o instanceof String id ? id : version;
  	}
 }

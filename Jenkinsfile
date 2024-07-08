@@ -12,10 +12,13 @@ pipeline {
 		maven 'apache-maven-latest'
 		jdk 'openjdk-jdk21-latest'
 	}
+	environment {
+		NON_MODULAR_JAVA_HOME = tool(type:'jdk', name:'temurin-jdk8-latest')
+	}
 	stages {
 		stage('Build') {
 			steps {
-				wrap([$class: 'Xvnc', useXauthority: true]) {
+				xvnc(useXauthority: true) {
 					sh """
 					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 						-Ptest-on-javase-21 -Pbree-libs -Papi-check -Pjavadoc\

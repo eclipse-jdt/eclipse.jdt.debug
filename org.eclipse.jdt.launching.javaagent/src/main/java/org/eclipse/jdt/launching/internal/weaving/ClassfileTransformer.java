@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2022 Igor Fedorenko
+ * Copyright (c) 2014, 2024 Igor Fedorenko
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,7 +25,7 @@ public class ClassfileTransformer {
 	private static final String STRATA_ID = "jdt"; //$NON-NLS-1$
 
 	/** max supported java class format major version, must match {@link #ASM_API} below **/
-	public static final int MAX_CLASS_MAJOR = Opcodes.V21;
+	public static final int MAX_CLASS_MAJOR = Opcodes.V22;
 
 	/** supported ASM API version, must match {@link #MAX_CLASS_MAJOR} above */
 	private static final int ASM_API = Opcodes.ASM9;

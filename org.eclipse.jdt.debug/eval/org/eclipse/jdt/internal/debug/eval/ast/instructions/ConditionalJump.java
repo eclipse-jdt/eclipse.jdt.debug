@@ -36,7 +36,7 @@ public class ConditionalJump extends Jump {
 		if (conditionValue instanceof IJavaPrimitiveValue) {
 			condition = (IJavaPrimitiveValue) conditionValue;
 		} else if (conditionValue instanceof IJavaObject) {
-			if (((IJavaObject) conditionValue).getJavaType().getName().equals("java.lang.Boolean")) { //$NON-NLS-1$
+			if (conditionValue.getJavaType().getName().equals("java.lang.Boolean")) { //$NON-NLS-1$
 				condition = (IJavaPrimitiveValue) ((IJavaObject) conditionValue).getField("value", false).getValue(); //$NON-NLS-1$
 			}
 		}

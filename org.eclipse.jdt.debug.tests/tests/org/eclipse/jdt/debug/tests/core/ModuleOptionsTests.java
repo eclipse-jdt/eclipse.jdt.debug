@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2023 GK Software SE and others.
+ * Copyright (c) 2019, 2024 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -177,7 +177,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 	public void testAddModules1() throws JavaModelException {
 		IJavaProject javaProject = getProjectContext();
 		List<String> defaultModules = getDefaultModules(javaProject);
-		defaultModules.add("jdk.crypto.cryptoki"); // requires jdk.crypto.ec
+		defaultModules.add("jdk.crypto.cryptoki"); // requires jdk.crypto.ec up to Java 21
 		try {
 			IClasspathAttribute[] attributes = {
 					JavaCore.newClasspathAttribute(IClasspathAttribute.LIMIT_MODULES, String.join(",", defaultModules))
@@ -186,7 +186,12 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 
 			ILaunchConfiguration launchConfiguration = getLaunchConfiguration(javaProject, "LogicalStructures");
 			String cliOptions = JavaRuntime.getModuleCLIOptions(launchConfiguration);
-			assertEquals("Unexpectd cli options", "--add-modules jdk.crypto.cryptoki,jdk.crypto.ec", cliOptions);
+			if (Runtime.version().feature() > 21) {
+				// https://www.oracle.com/java/technologies/javase/22all-relnotes.html#JDK-8308398 removed jdk.crypto.ec in Java 22
+				assertEquals("Unexpectd cli options", "--add-modules jdk.crypto.cryptoki", cliOptions);
+			} else {
+				assertEquals("Unexpectd cli options", "--add-modules jdk.crypto.cryptoki,jdk.crypto.ec", cliOptions);
+			}
 		} finally {
 			removeClasspathAttributesFromSystemLibrary(javaProject);
 		}
