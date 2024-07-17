@@ -3311,6 +3311,16 @@ public final class JavaRuntime {
 					LaunchingPlugin.log(e);
 				}
 			}
+
+			boolean testsRunning = List.of(JavaCore.getClasspathVariableNames()).contains("TEST_LIB"); //$NON-NLS-1$
+			if (testsRunning) {
+				// Don't try to update compliance if JDT model tests are running,
+				// they need predictable defaults, not based on current JVM
+				// The classpath variable is contributed by org.eclipse.jdt.core.tests.model
+				// See https://github.com/eclipse-jdt/eclipse.jdt.core/issues/84
+				updateCompliance = false;
+			}
+
 			// update compliance if required
 			if (updateCompliance) {
 				updateCompliance(getDefaultVMInstall());
@@ -3331,13 +3341,7 @@ public final class JavaRuntime {
             String javaVersion = ((IVMInstall2)vm).getJavaVersion();
             if (javaVersion != null) {
             	String compliance = null;
-            	if (javaVersion.startsWith(JavaCore.VERSION_1_5)) {
-            		compliance = JavaCore.VERSION_1_5;
-            	} else if (javaVersion.startsWith(JavaCore.VERSION_1_6)) {
-            		compliance = JavaCore.VERSION_1_6;
-            	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
-            		compliance = JavaCore.VERSION_1_7;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_1_8)) {
+				if (javaVersion.startsWith(JavaCore.VERSION_1_8)) {
 					compliance = JavaCore.VERSION_1_8;
 				} else if (javaVersion.startsWith(JavaCore.VERSION_9)
 						&& (javaVersion.length() == JavaCore.VERSION_9.length() || javaVersion.charAt(JavaCore.VERSION_9.length()) == '.')) {
