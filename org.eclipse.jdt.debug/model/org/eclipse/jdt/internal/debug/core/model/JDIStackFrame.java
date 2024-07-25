@@ -204,7 +204,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// invalidate this frame
 			bind(null, -1);
 			// return a new frame
-			return new JDIStackFrame(fThread, frame, depth);
+			return fThread.newJDIStackFrame(frame, depth);
 		}
 
 	}
