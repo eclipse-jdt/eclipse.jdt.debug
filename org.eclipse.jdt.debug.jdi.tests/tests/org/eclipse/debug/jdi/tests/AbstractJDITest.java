@@ -731,7 +731,7 @@ public abstract class AbstractJDITest extends TestCase {
 
 			Vector<String> commandLine = new Vector<>();
 
-			commandLine.add(binDirectory + "javaw");
+			commandLine.add(binDirectory + "java");
 			if (fBootPath.length() > 0) {
 				commandLine.add("-bootpath");
 				commandLine.add(fBootPath);
