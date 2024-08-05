@@ -28,12 +28,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -144,16 +145,16 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 
 	private static LaunchingPlugin fgLaunchingPlugin;
 
-	private HashMap<String, IVMConnector> fVMConnectors = null;
+	private final ConcurrentHashMap<String, IVMConnector> fVMConnectors = new ConcurrentHashMap<>();
 
 	/**
 	 * Runtime classpath extensions
 	 */
-	private HashMap<String, IConfigurationElement> fClasspathEntryExtensions = null;
+	private final ConcurrentHashMap<String, IConfigurationElement> fClasspathEntryExtensions = new ConcurrentHashMap<>();
 
-	private String fOldVMPrefString = EMPTY_STRING;
+	private volatile String fOldVMPrefString = EMPTY_STRING;
 
-	private boolean fIgnoreVMDefPropertyChangeEvents = false;
+	private volatile boolean fIgnoreVMDefPropertyChangeEvents;
 
 	private static final String EMPTY_STRING = "";    //$NON-NLS-1$
 	public static final String PREF_DETECT_VMS_AT_STARTUP = "detectVMsAtStartup"; //$NON-NLS-1$
@@ -162,7 +163,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Mapping of top-level VM installation directories to library info for that
 	 * VM.
 	 */
-	private static Map<String, LibraryInfo> fgLibraryInfoMap = null;
+	private static final ConcurrentHashMap<String, LibraryInfo> fgLibraryInfoMap = new ConcurrentHashMap<>(10);
 
 	/**
 	 * Mapping of the last time the directory of a given SDK was modified.
@@ -170,35 +171,35 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Mapping: <code>Map&lt;String,Long&gt;</code>
 	 * @since 3.7
 	 */
-	private static Map<String, Long> fgInstallTimeMap = null;
+	private static final ConcurrentHashMap<String, Long> fgInstallTimeMap = new ConcurrentHashMap<>();
 	/**
 	 * List of install locations that have been detected to have changed
 	 *
 	 * @since 3.7
 	 */
-	private static HashSet<String> fgHasChanged = new HashSet<>();
+	private static final Set<String> fgHasChanged = ConcurrentHashMap.newKeySet();
 	/**
 	 * Mutex for checking the time stamp of an install location
 	 *
 	 * @since 3.7
 	 */
-	private static Object installLock = new Object();
+	private static final Object installLock = new Object();
 
 	/**
 	 * Whether changes in VM preferences are being batched. When being batched
 	 * the plug-in can ignore processing and changes.
 	 */
-	private boolean fBatchingChanges = false;
+	private volatile boolean fBatchingChanges;
 
 	/**
 	 * Shared XML parser
 	 */
-	private static DocumentBuilder fgXMLParser = null;
+	private static volatile DocumentBuilder fgXMLParser;
 
 	/**
 	 * Service tracker for the workspace service
 	 */
-	private ServiceTracker<IWorkspace, IWorkspace> fWorkspaceServiceTracker = null;
+	private ServiceTracker<IWorkspace, IWorkspace> fWorkspaceServiceTracker;
 
 	/**
 	 * Stores VM changes resulting from a JRE preference change.
@@ -206,10 +207,10 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	class VMChanges implements IVMInstallChangedListener {
 
 		// true if the default VM changes
-		private boolean fDefaultChanged = false;
+		private volatile boolean fDefaultChanged;
 
 		// old container ids to new
-		private final HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<>();
+		private final ConcurrentHashMap<IPath, IPath> fRenamedContainerIds = new ConcurrentHashMap<>();
 
 		/**
 		 * Returns the JRE container id that the given VM would map to, or
@@ -231,24 +232,15 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 			return null;
 		}
 
-		/**
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 			fDefaultChanged = true;
 		}
 
-		/**
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void vmAdded(IVMInstall vm) {
 		}
 
-		/**
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
-		 */
 		@Override
 		public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 			String property = event.getProperty();
@@ -285,9 +277,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 			}
 		}
 
-		/**
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void vmRemoved(IVMInstall vm) {
 		}
@@ -434,7 +423,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * path, or <code>null</code> if none
 	 */
 	public static LibraryInfo getLibraryInfo(String javaInstallPath) {
-		if (fgLibraryInfoMap == null) {
+		if (fgLibraryInfoMap.isEmpty()) {
 			restoreLibraryInfo();
 		}
 		return fgLibraryInfoMap.get(javaInstallPath);
@@ -451,12 +440,12 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		if (isVMLogging()) {
 			LaunchingPlugin.log(LaunchingMessages.VMLogging_2 + javaInstallPath);
 		}
-		if (fgLibraryInfoMap == null) {
+		if (fgLibraryInfoMap.isEmpty()) {
 			restoreLibraryInfo();
 		}
 		if (info == null) {
 			fgLibraryInfoMap.remove(javaInstallPath);
-			if(fgInstallTimeMap != null) {
+			if (!fgInstallTimeMap.isEmpty()) {
 				fgInstallTimeMap.remove(javaInstallPath);
 				writeInstallInfo();
 			}
@@ -628,7 +617,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @return VM connector
 	 */
 	public IVMConnector getVMConnector(String id) {
-		if (fVMConnectors == null) {
+		if (fVMConnectors.isEmpty()) {
 			initializeVMConnectors();
 		}
 		return fVMConnectors.get(id);
@@ -640,10 +629,10 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @return VM connectors
 	 */
 	public IVMConnector[] getVMConnectors() {
-		if (fVMConnectors == null) {
+		if (fVMConnectors.isEmpty()) {
 			initializeVMConnectors();
 		}
-		return fVMConnectors.values().toArray(new IVMConnector[fVMConnectors.size()]);
+		return fVMConnectors.values().toArray(new IVMConnector[0]);
 	}
 
 	/**
@@ -653,7 +642,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, "Exception occurred reading vmConnectors extensions.", null);  //$NON-NLS-1$
-		fVMConnectors = new HashMap<>(configs.length);
+		fVMConnectors.clear();
 		for (int i= 0; i < configs.length; i++) {
 			try {
 				IVMConnector vmConnector= (IVMConnector)configs[i].createExecutableExtension("class"); //$NON-NLS-1$
@@ -675,7 +664,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @throws CoreException if unable to create an entry
 	 */
 	public IRuntimeClasspathEntry2 newRuntimeClasspathEntry(String id) throws CoreException {
-		if (fClasspathEntryExtensions == null) {
+		if (fClasspathEntryExtensions.isEmpty()) {
 			initializeRuntimeClasspathExtensions();
 		}
 		IConfigurationElement config = fClasspathEntryExtensions.get(id);
@@ -692,7 +681,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	private void initializeRuntimeClasspathExtensions() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-		fClasspathEntryExtensions = new HashMap<>(configs.length);
+		fClasspathEntryExtensions.clear();
 		for (int i= 0; i < configs.length; i++) {
 			fClasspathEntryExtensions.put(configs[i].getAttribute("id"), configs[i]); //$NON-NLS-1$
 		}
@@ -812,9 +801,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		return new VMDefinitionsContainer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		if (!fBatchingChanges) {
@@ -824,16 +810,10 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void vmAdded(IVMInstall vm) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
-	 */
 	@Override
 	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 		if (!fBatchingChanges) {
@@ -843,9 +823,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void vmRemoved(IVMInstall vm) {
 		if (!fBatchingChanges) {
@@ -855,9 +832,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		ArchiveSourceLocation.closeArchives();
@@ -974,7 +948,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Restores library information for VMs
 	 */
 	private static void restoreLibraryInfo() {
-		fgLibraryInfoMap = new HashMap<>(10);
+		fgLibraryInfoMap.clear();
 		IPath libPath = getDefault().getStateLocation();
 		libPath = libPath.append("libraryInfos.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
@@ -1012,11 +986,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 						}
 					}
 				}
-			} catch (IOException e) {
-				log(e);
-			} catch (ParserConfigurationException e) {
-				log(e);
-			} catch (SAXException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				log(e);
 			}
 		}
@@ -1040,7 +1010,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 			}
 			File file = new File(location);
 			if(file.exists()) {
-				if(fgInstallTimeMap == null) {
+				if (fgInstallTimeMap.isEmpty()) {
 					readInstallInfo();
 				}
 				Long stamp = fgInstallTimeMap.get(location);
@@ -1068,7 +1038,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @since 3.7
 	 */
 	private static void readInstallInfo() {
-		fgInstallTimeMap = new HashMap<>();
+		fgInstallTimeMap.clear();
 		IPath libPath = getDefault().getStateLocation();
 		libPath = libPath.append(".install.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
@@ -1100,11 +1070,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 						}
 					}
 				}
-			} catch (IOException e) {
-				log(e);
-			} catch (ParserConfigurationException e) {
-				log(e);
-			} catch (SAXException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				log(e);
 			}
 		}
@@ -1117,7 +1083,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @since 3.7
 	 */
 	private static void writeInstallInfo() {
-		if(fgInstallTimeMap != null) {
+		if (!fgInstallTimeMap.isEmpty()) {
 			try {
 				Document doc = DebugPlugin.newDocument();
 				Element root = doc.createElement("dirs");    //$NON-NLS-1$
@@ -1128,7 +1094,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 				for(Iterator<Entry<String, Long>> i = fgInstallTimeMap.entrySet().iterator(); i.hasNext();) {
 					entry = i.next();
 					key = entry.getKey();
-					if(fgLibraryInfoMap == null || fgLibraryInfoMap.containsKey(key)) {
+					if (fgLibraryInfoMap.isEmpty() || fgLibraryInfoMap.containsKey(key)) {
 						//only persist the info if the library map also has info OR is null - prevent persisting deleted JRE information
 						e = doc.createElement("entry"); //$NON-NLS-1$
 						root.appendChild(e);
@@ -1146,9 +1112,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 				try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file))) {
 					stream.write(xml.getBytes(StandardCharsets.UTF_8));
 				}
-			} catch (IOException e) {
-				log(e);
-			}  catch (CoreException e) {
+			} catch (IOException | CoreException e) {
 				log(e);
 			}
 		}
@@ -1193,31 +1157,19 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		return paths.toArray(new String[paths.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		ArchiveSourceLocation.closeArchives();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -1267,9 +1219,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 				DocumentBuilder p = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 				p.setErrorHandler(new DefaultHandler());
 				fgXMLParser = p;
-			} catch (ParserConfigurationException e) {
-				abort(LaunchingMessages.LaunchingPlugin_34, e);
-			} catch (FactoryConfigurationError e) {
+			} catch (ParserConfigurationException | FactoryConfigurationError e) {
 				abort(LaunchingMessages.LaunchingPlugin_34, e);
 			}
 		}
@@ -1341,9 +1291,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-	 */
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		String property = event.getKey();
@@ -1354,9 +1301,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
-	 */
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
