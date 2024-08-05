@@ -635,8 +635,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 													// create, if any
 				int depth = oldSize;
 				for (int i = newFrames - 1; i >= 0; i--) {
-					fStackFrames.add(0, new JDIStackFrame(this,
-							frames.get(i), depth));
+					fStackFrames.add(0, newJDIStackFrame(frames.get(i), depth));
 					depth++;
 				}
 				int numToRebind = Math.min(newSize, oldSize); // number of
@@ -663,6 +662,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return Collections.EMPTY_LIST;
 		}
 		return fStackFrames;
+	}
+
+	/**
+	 * Creates new {@link JDIStackFrame} linked to current thread
+	 *
+	 * @param frame
+	 *            non null, underlying frame
+	 * @param depth
+	 *            on the stack (0 is bottom)
+	 * @return never null
+	 */
+	protected JDIStackFrame newJDIStackFrame(StackFrame frame, int depth) {
+		return new JDIStackFrame(this, frame, depth);
 	}
 
 	/**

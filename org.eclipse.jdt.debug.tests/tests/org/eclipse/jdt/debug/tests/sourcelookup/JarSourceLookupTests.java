@@ -85,7 +85,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		IFile jar = jarProject.getFile("lib/sample.jar");
 		assertTrue("lib/sample.jar is missing in project: " + jarProject.getName(), jar.exists());
 
-		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, true);
+		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, true);
 
 		IProject jarRefProject = fgJarProject.getProject();
 		IFile cp = jarRefProject.getFile(".classpath");
