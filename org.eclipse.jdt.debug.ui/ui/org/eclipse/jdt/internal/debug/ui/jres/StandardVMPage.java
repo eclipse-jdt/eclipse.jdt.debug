@@ -16,7 +16,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -247,8 +246,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		}
 		detectJavadocLocation();
 		if (s.isOK()) {
-			List<String> allVersions = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-			String latest = allVersions.get(allVersions.size() - 1);
+			String latest = JavaCore.getAllJavaSourceVersionsSupportedByCompiler().last();
 			IVMInstallType vmType = fVM.getVMInstallType();
 			if (vmType instanceof StandardVMType) {
 				String vmver = ((StandardVMType) vmType).readReleaseVersion(getInstallLocation());

@@ -15,7 +15,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
-import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -198,8 +197,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			fCompliance.setVisible(true);
 		}
 		else {
-			List<String> allVersions = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-			String latest = allVersions.get(allVersions.size() - 1);
+			String latest = JavaCore.getAllJavaSourceVersionsSupportedByCompiler().last();
 			String vmver = null;
 			if (vmInstall instanceof AbstractVMInstall) {
 				AbstractVMInstall vm = (AbstractVMInstall) vmInstall;
