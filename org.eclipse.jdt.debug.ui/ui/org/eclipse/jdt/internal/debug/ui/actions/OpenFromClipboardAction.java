@@ -304,78 +304,82 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @throws InterruptedException if canceled by the user
 	 */
 	public static int getJavaElementMatches(String inputText, List<Object> matches) throws InterruptedException {
-		String s = inputText.trim();
-		switch (getMatchingPattern(s)) {
-		case JAVA_FILE_LINE: {
-			int index = s.indexOf(':');
-			String typeName = s.substring(0, index);
-			typeName = s.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
-			String lineNumber = s.substring(index + 1, s.length());
-			lineNumber = lineNumber.trim();
-			int line = Integer.parseInt(lineNumber);
-			getTypeMatches(typeName, matches);
-			return line;
-		}
-		case JAVA_FILE: {
-			String typeName = s.substring(0, s.indexOf(".java")); //$NON-NLS-1$
-			getTypeMatches(typeName, matches);
-			return -1;
-		}
-		case TYPE_LINE: {
-			int index = s.indexOf(':');
-			String typeName = s.substring(0, index);
-			typeName = typeName.trim();
-			String lineNumber = s.substring(index + 1, s.length());
-			lineNumber = lineNumber.trim();
-			int line = Integer.parseInt(lineNumber);
-			getTypeMatches(typeName, matches);
-			return line;
-		}
-		case STACK_TRACE_LINE: {
-			int index1 = s.lastIndexOf('(');
-			int index2 = s.lastIndexOf(')');
-			String typeLine = s.substring(index1 + 1, index2).trim();
-			int index = typeLine.indexOf(':');
-			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
-			int line = Integer.parseInt(lineNumber);
+		try {
+			String s = inputText.trim();
+			switch (getMatchingPattern(s)) {
+				case JAVA_FILE_LINE: {
+					int index = s.indexOf(':');
+					String typeName = s.substring(0, index);
+					typeName = s.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
+					String lineNumber = s.substring(index + 1, s.length());
+					lineNumber = lineNumber.trim();
+					int line = Integer.parseInt(lineNumber);
+					getTypeMatches(typeName, matches);
+					return line;
+				}
+				case JAVA_FILE: {
+					String typeName = s.substring(0, s.indexOf(".java")); //$NON-NLS-1$
+					getTypeMatches(typeName, matches);
+					return -1;
+				}
+				case TYPE_LINE: {
+					int index = s.indexOf(':');
+					String typeName = s.substring(0, index);
+					typeName = typeName.trim();
+					String lineNumber = s.substring(index + 1, s.length());
+					lineNumber = lineNumber.trim();
+					int line = Integer.parseInt(lineNumber);
+					getTypeMatches(typeName, matches);
+					return line;
+				}
+				case STACK_TRACE_LINE: {
+					int index1 = s.lastIndexOf('(');
+					int index2 = s.lastIndexOf(')');
+					String typeLine = s.substring(index1 + 1, index2).trim();
+					int index = typeLine.indexOf(':');
+					String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
+					int line = Integer.parseInt(lineNumber);
 
-			Pattern pattern = Pattern.compile(STACK_TRACE_QUALIFIED_LINE_PATTERN);
-			Matcher matcher = pattern.matcher(s);
-			if (matcher.find()) {
-				String qualifiedName = matcher.group(1);
-				index = qualifiedName.lastIndexOf('.');
-				qualifiedName = qualifiedName.substring(0, index);
-				getTypeMatches(qualifiedName, matches);
-			} else {
-				String typeName = typeLine.substring(0, index);
-				typeName = typeLine.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
-				getTypeMatches(typeName, matches);
+					Pattern pattern = Pattern.compile(STACK_TRACE_QUALIFIED_LINE_PATTERN);
+					Matcher matcher = pattern.matcher(s);
+					if (matcher.find()) {
+						String qualifiedName = matcher.group(1);
+						index = qualifiedName.lastIndexOf('.');
+						qualifiedName = qualifiedName.substring(0, index);
+						getTypeMatches(qualifiedName, matches);
+					} else {
+						String typeName = typeLine.substring(0, index);
+						typeName = typeLine.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
+						getTypeMatches(typeName, matches);
+					}
+					return line;
+				}
+				case METHOD: {
+					getMethodMatches(s, matches);
+					return -1;
+				}
+				case STACK: {
+					int index = s.indexOf(')');
+					String method = s.substring(0, index + 1);
+					index = s.indexOf(':');
+					String lineNumber = s.substring(index + 1).trim();
+					int line = Integer.parseInt(lineNumber);
+					getMethodMatches(method, matches);
+					return line;
+				}
+				case MEMBER:
+					getMemberMatches(s.replace('#', '.'), matches);
+					return -1;
+				case METHOD_JAVADOC_REFERENCE:
+					getMethodMatches(s.replace('#', '.'), matches);
+					return -1;
+				case QUALIFIED_NAME:
+					getNameMatches(s, matches);
+					return -1;
+				default:
+					return -1;
 			}
-			return line;
-		}
-		case METHOD: {
-			getMethodMatches(s, matches);
-			return -1;
-		}
-		case STACK: {
-			int index = s.indexOf(')');
-			String method = s.substring(0, index + 1);
-			index = s.indexOf(':');
-			String lineNumber = s.substring(index + 1).trim();
-			int line = Integer.parseInt(lineNumber);
-			getMethodMatches(method, matches);
-			return line;
-		}
-		case MEMBER:
-			getMemberMatches(s.replace('#', '.'), matches);
-			return -1;
-		case METHOD_JAVADOC_REFERENCE:
-			getMethodMatches(s.replace('#', '.'), matches);
-			return -1;
-		case QUALIFIED_NAME:
-			getNameMatches(s, matches);
-			return -1;
-		default:
+		} catch (NumberFormatException e) {
 			return -1;
 		}
 	}
