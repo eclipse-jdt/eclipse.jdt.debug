@@ -21,10 +21,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -92,7 +91,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 */
 	private TreeSet<IExecutionEnvironment> fEnvironments = null;
 
-	private List<IExecutionEnvironment> supportedEnvironments;
+	private SortedSet<IExecutionEnvironment> supportedEnvironments;
 
 	/**
 	 * List of access rule participants
@@ -166,7 +165,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	}
 
 	@Override
-	public synchronized List<IExecutionEnvironment> getSupportedExecutionEnvironments() {
+	public synchronized SortedSet<IExecutionEnvironment> getSupportedExecutionEnvironments() {
 		initializeExtensions();
 		return supportedEnvironments;
 	}
@@ -260,20 +259,15 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		if (fEnvironments != null) {
 			return;
 		}
+		Comparator<IExecutionEnvironment> eeComparator = ((Comparator<IExecutionEnvironment>) (o1, o2) -> {
+			String compliance1 = getExecutionEnvironmentCompliance(o1);
+			String compliance2 = getExecutionEnvironmentCompliance(o2);
+			return JavaCore.compareJavaVersions(compliance1, compliance2);
+		}).thenComparing(IExecutionEnvironment::getId);
+
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
-		fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
-			@Override
-			public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
-				String compliance1 = getExecutionEnvironmentCompliance(o1);
-				String compliance2 = getExecutionEnvironmentCompliance(o2);
-				int result = JavaCore.compareJavaVersions(compliance1, compliance2);
-				if (result == 0) {
-					return o1.getId().compareTo(o2.getId());
-				}
-				return result;
-			}
-		});
+		fEnvironments = new TreeSet<>(eeComparator);
 		fRuleParticipants = new LinkedHashSet<>();
 		fEnvironmentsMap = new HashMap<>(configs.length);
 		fAnalyzers = new HashMap<>(configs.length);
@@ -316,15 +310,14 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			}
 		}
 
-		List<IExecutionEnvironment> filtered = new LinkedList<>();
+		SortedSet<IExecutionEnvironment> filtered = new TreeSet<>(eeComparator);
 		for (IExecutionEnvironment environment : fEnvironments) {
 			Map<String, String> options = environment.getComplianceOptions();
 			if (options != null && JavaCore.isJavaSourceVersionSupportedByCompiler(options.get(JavaCore.COMPILER_COMPLIANCE))) {
 				filtered.add(environment);
 			}
 		}
-		Collections.reverse(filtered);
-		supportedEnvironments = Collections.unmodifiableList(filtered);
+		supportedEnvironments = Collections.unmodifiableSortedSet(filtered);
 	}
 
 	/**

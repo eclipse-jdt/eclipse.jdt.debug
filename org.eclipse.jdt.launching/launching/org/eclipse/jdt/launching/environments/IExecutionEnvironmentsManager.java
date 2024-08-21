@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
-import java.util.List;
+import java.util.SortedSet;
 
 import org.eclipse.jdt.core.JavaCore;
 
@@ -36,7 +36,7 @@ public interface IExecutionEnvironmentsManager {
 	public IExecutionEnvironment[] getExecutionEnvironments();
 
 	/**
-	 * Returns all execution environments supported by Java projects, <b>reverse</b> sorted by their id.
+	 * Returns all execution environments supported by Java projects, sorted by their id.
 	 *
 	 * @see IExecutionEnvironment#getId()
 	 * @see JavaCore#isJavaSourceVersionSupportedByCompiler(String)
@@ -44,7 +44,7 @@ public interface IExecutionEnvironmentsManager {
 	 * @return all registered execution environments sorted by their id
 	 * @since 3.23
 	 */
-	public List<IExecutionEnvironment> getSupportedExecutionEnvironments();
+	public SortedSet<IExecutionEnvironment> getSupportedExecutionEnvironments();
 
 	/**
 	 * Returns the execution environment associated with the given
