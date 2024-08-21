@@ -464,6 +464,7 @@ public class JREsComboBlock {
 	protected void fillWithWorkspaceProfiles() {
 		fEnvironments.clear();
 		fEnvironments.addAll(JavaRuntime.getExecutionEnvironmentsManager().getSupportedExecutionEnvironments());
+		Collections.reverse(fEnvironments);
 		String[] names = new String[fEnvironments.size()];
 		Iterator<Object> iter = fEnvironments.iterator();
 		int i = 0;
