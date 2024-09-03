@@ -138,6 +138,8 @@ public class JREMessages extends NLS {
 
 	public static String EEVMPage_7;
 
+	public static String ExecutionEnvironmentsPreferencePage_performOk;
+
 	public static String VMTypePage_0;
 
 	public static String VMTypePage_1;

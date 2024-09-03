@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
+import org.eclipse.jdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -257,22 +258,30 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@SuppressWarnings("restriction")
 	@Override
 	public boolean performOk() {
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
-		for (int i = 0; i < environments.length; i++) {
-			IExecutionEnvironment environment = environments[i];
-			IVMInstall vm = (IVMInstall) fDefaults.get(environment);
-			// if the VM no longer exists - set to default to avoid illegal argument exception (bug 267914)
-			if (vm != null) {
-				if (vm.getVMInstallType().findVMInstall(vm.getId()) == null) {
-					vm = null;
+		WorkbenchRunnableAdapter op = new WorkbenchRunnableAdapter(monitor -> {
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+			monitor.beginTask(JREMessages.ExecutionEnvironmentsPreferencePage_performOk, environments.length);
+			for (int i = 0; i < environments.length; i++) {
+				IExecutionEnvironment environment = environments[i];
+				monitor.setTaskName(environment.getDescription());
+				IVMInstall vm = (IVMInstall) fDefaults.get(environment);
+				// if the VM no longer exists - set to default to avoid illegal argument exception (bug 267914)
+				if (vm != null) {
+					if (vm.getVMInstallType().findVMInstall(vm.getId()) == null) {
+						vm = null;
+					}
 				}
+				environment.setDefaultVM(vm);
+				monitor.worked(1);
 			}
-			environment.setDefaultVM(vm);
-		}
+		});
+		op.runAsUserJob(JREMessages.ExecutionEnvironmentsPreferencePage_performOk, null);
 		return super.performOk();
 	}
+
 
 }
