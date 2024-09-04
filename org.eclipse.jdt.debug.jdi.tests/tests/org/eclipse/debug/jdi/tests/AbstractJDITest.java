@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -739,8 +739,7 @@ public abstract class AbstractJDITest extends TestCase {
 
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
-			commandLine.add("-Xdebug");
-			commandLine.add("-Xnoagent");
+			addDebugOptions(commandLine);
 			commandLine.add("-Djava.compiler=NONE");
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
@@ -783,8 +782,7 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
-			commandLine.add("-Xdebug");
-			commandLine.add("-Xnoagent");
+			addDebugOptions(commandLine);
 			commandLine.add("-Djava.compiler=NONE");
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
@@ -818,8 +816,7 @@ public abstract class AbstractJDITest extends TestCase {
 
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
-			commandLine.add("-Xdebug");
-			commandLine.add("-Xnoagent");
+			addDebugOptions(commandLine);
 			commandLine.add("-Djava.compiler=NONE");
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
@@ -832,6 +829,26 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 	}
 
+	private void addDebugOptions(Vector<String> commandLine) {
+		int vmVersion = 0;
+		try {
+			String versionString = System.getProperty("java.specification.version");
+			if (versionString != null) {
+				String[] nums = versionString.split("\\.");
+				if (nums.length > 0) {
+					vmVersion = Integer.parseInt(nums[0]);
+				}
+			}
+		} catch (Exception e) {
+			// Ignore
+		}
+		if (vmVersion < 22) {
+			commandLine.add("-Xdebug");
+		}
+		if (vmVersion < 23) {
+			commandLine.add("-Xnoagent");
+		}
+	}
 	protected String getMainClassName() {
 		return "org.eclipse.debug.jdi.tests.program.MainClass";
 	}

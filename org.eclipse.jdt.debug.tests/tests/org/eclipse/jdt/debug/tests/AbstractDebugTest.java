@@ -180,7 +180,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String NINE_PROJECT_NAME = "Nine";
 	public static final String ONESIX_PROJECT_NAME = "One_Six";
 	public static final String TWENTYONE_PROJECT_NAME = "Two_One";
-	public static final String TWENTYTWO_PROJECT_NAME = "Two_Two";
+	public static final String TWENTYTHREE_PROJECT_NAME = "Two_Three";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -236,7 +236,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded9 = false;
 	private static boolean loaded16_ = false;
 	private static boolean loaded21 = false;
-	private static boolean loaded22 = false;
+	private static boolean loaded23 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -617,19 +617,22 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Creates the Java 21 compliant project
+	 * Creates the Java 23 compliant project
 	 */
-	synchronized void assert22Project() {
+	synchronized void assert23Project() {
 		IJavaProject jp = null;
 		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
 		try {
-			if (!loaded22) {
-				jp = createProject(TWENTYTWO_PROJECT_NAME, JavaProjectHelper.TEST_22_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_22_EE_NAME, false);
+			if (!loaded23) {
+				jp = createProject(TWENTYTHREE_PROJECT_NAME, JavaProjectHelper.TEST_23_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_23_EE_NAME, false);
 				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_23);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_23);
 				cfgs.add(createLaunchConfiguration(jp, "Main1"));
 				cfgs.add(createLaunchConfiguration(jp, "Main2"));
-				loaded22 = true;
+				loaded23 = true;
 				waitForBuild();
+				assertNoErrorMarkersExist(jp.getProject());
 			}
 		} catch (Exception e) {
 			try {
@@ -642,7 +645,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (CoreException ce) {
 				// ignore
 			}
-			handleProjectCreationException(e, TWENTYTWO_PROJECT_NAME, jp);
+			handleProjectCreationException(e, TWENTYTHREE_PROJECT_NAME, jp);
 		}
 	}
 
@@ -943,13 +946,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Returns the 'Two_One' project, used for Java 21 tests.
+	 * Returns the 'Two_Three' project, used for Java 23 tests.
 	 *
 	 * @return the test project
 	 */
-	protected IJavaProject get22Project() {
-		assert22Project();
-		return getJavaProject(TWENTYTWO_PROJECT_NAME);
+	protected IJavaProject get23Project() {
+		assert23Project();
+		return getJavaProject(TWENTYTHREE_PROJECT_NAME);
 	}
 
 	/**
