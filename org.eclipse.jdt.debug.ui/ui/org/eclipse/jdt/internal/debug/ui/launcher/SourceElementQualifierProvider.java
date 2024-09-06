@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,12 +15,10 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipFile;
+import java.nio.file.Path;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.core.IJavaElement;
@@ -49,25 +47,17 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 		if (element instanceof IJavaElement) {
 			IJavaElement parent = ((IJavaElement)element).getParent();
 			return fJavaLabels.getText(parent);
-		} else if (element instanceof ZipEntryStorage) {
-			ZipEntryStorage storage = (ZipEntryStorage)element;
-			try (ZipFile archive = storage.getArchive()) {
-				String zipFileName = archive.getName();
-				IPath path = new Path(zipFileName);
-				IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
-				IResource res = entry.getResource();
-				if (res == null) {
-					// external
-					return zipFileName;
-				}
-				// internal
-				return res.getName();
-			} catch (IOException e) {
-				e.printStackTrace();
+		} else if (element instanceof ZipEntryStorage storage) {
+			Path zipFile = storage.getArchivePath();
+			IPath path = IPath.fromPath(zipFile);
+			IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
+			IResource res = entry.getResource();
+			if (res == null) {
+				// external
+				return zipFile.toString();
 			}
-			// ZipFile archive = storage.getArchive();
-			// String zipFileName = archive.getName();
-
+			// internal
+			return res.getName();
 		} else if (element instanceof LocalFileStorage) {
 			LocalFileStorage storage = (LocalFileStorage)element;
 			File extFile = storage.getFile();
