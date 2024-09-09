@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2012, 2022 Eclipse Foundation and others.
+  Copyright (c) 2012, 2024 Eclipse Foundation and others.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@
   </build>
   <profiles>
   	<profile>
-		<id>test-on-javase-21</id>
+		<id>test-on-javase-23</id>
 		<build>
 			<plugins>
 				<plugin>
@@ -76,7 +76,7 @@
 					<configuration>
 						<toolchains>
 							<jdk>
-								<id>JavaSE-21</id>
+								<id>JavaSE-23</id>
 							</jdk>
 						</toolchains>
 					</configuration>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2012, 2023 Eclipse Foundation and others.
+  Copyright (c) 2012, 2024 Eclipse Foundation and others.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.debug.tests</artifactId>
-  <version>3.12.500-SNAPSHOT</version>
+  <version>3.12.550-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
     <testSuite>${project.artifactId}</testSuite>
@@ -48,7 +48,7 @@
   </build>
   <profiles>
 	<profile>
-		<id>test-on-javase-21</id>
+		<id>test-on-javase-23</id>
 		<build>
 			<plugins>
 				<plugin>
@@ -65,7 +65,7 @@
 					<configuration>
 						<toolchains>
 							<jdk>
-								<id>JavaSE-21</id>
+								<id>JavaSE-23</id>
 							</jdk>
 						</toolchains>
 					</configuration>
