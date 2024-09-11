@@ -862,7 +862,9 @@ public abstract class AbstractJDITest extends TestCase {
 	private Process exec(Vector<String> commandLine) throws IOException {
 		String[] vmString = new String[commandLine.size()];
 		commandLine.toArray(vmString);
-		return Runtime.getRuntime().exec(vmString);
+		Process exec = Runtime.getRuntime().exec(vmString);
+		System.out.println("launched with pid=" + exec.pid() + ": " + String.join(" ", vmString));
+		return exec;
 	}
 
 
@@ -874,8 +876,9 @@ public abstract class AbstractJDITest extends TestCase {
 		startConsoleReaders();
 
 
-		// Contact the VM (try 10 times)
-		for (int i = 0; i < 10; i++) {
+		// Contact the VM (try at least 10 times for 5 seconds)
+		long n0 = System.nanoTime();
+		for (int i = 0; i < 10000; i++) {
 			try {
 				VirtualMachineManager manager = Bootstrap.virtualMachineManager();
 				List<AttachingConnector> connectors = manager.attachingConnectors();
@@ -893,15 +896,17 @@ public abstract class AbstractJDITest extends TestCase {
 				}
 				break;
 			} catch (IllegalConnectorArgumentsException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
-//				System.out.println("Got exception: " + e.getMessage());
+				long n1 = System.nanoTime();
+				if (i > 10 && n1 - n0 > 5_000_000_000L) {
+					e.printStackTrace();
+					System.out.println("Could not contact the VM at localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000 + "ms");
+					break;
+				}
 				try {
-					if (i == 9) {
-						System.out.println(
-							"Could not contact the VM at localhost" + ":" + fBackEndPort + ".");
-					}
-					Thread.sleep(200);
-				} catch (InterruptedException e2) {
+					Thread.sleep(10);
+				} catch (InterruptedException interrupted) {
 				}
 			}
 		}
@@ -927,6 +932,8 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 			throw new Error("Could not contact the VM");
 		}
+		long n1 = System.nanoTime(); // for example after ~ 110ms
+		System.out.println("Connected to localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000 + "ms");
 		startEventReader();
 	}
 	/**
@@ -1187,7 +1194,7 @@ public abstract class AbstractJDITest extends TestCase {
 					fLaunchedVM.getInputStream());
 		} else {
 			fConsoleReader =
-				new NullConsoleReader("JDI Tests Console Reader", fLaunchedVM.getInputStream());
+					new NullConsoleReader("JDI Tests Console Reader", fLaunchedVM.getInputStream(), System.out);
 		}
 		fConsoleReader.start();
 
@@ -1201,7 +1208,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fConsoleErrorReader =
 				new NullConsoleReader(
 					"JDI Tests Console Error Reader",
-					fLaunchedVM.getErrorStream());
+							fLaunchedVM.getErrorStream(), System.err);
 		}
 		fConsoleErrorReader.start();
 
@@ -1219,7 +1226,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fProxyReader =
 				new NullConsoleReader(
 					"JDI Tests Proxy Reader",
-					fLaunchedProxy.getInputStream());
+							fLaunchedProxy.getInputStream(), System.out);
 		}
 		fProxyReader.start();
 
@@ -1233,7 +1240,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fProxyErrorReader =
 				new NullConsoleReader(
 					"JDI Tests Proxy Error Reader",
-					fLaunchedProxy.getErrorStream());
+							fLaunchedProxy.getErrorStream(), System.err);
 		}
 		fProxyErrorReader.start();
 	}
@@ -1298,21 +1305,24 @@ public abstract class AbstractJDITest extends TestCase {
 		fEventReader.start();
 
 		// Wait until the program has started
-		Event event = waitForEvent(waiter, 3 * TIMEOUT);
+		Event event = waitForEvent(waiter, TIMEOUT);
 		fEventReader.removeEventListener(waiter);
 		if (event == null) {
-//			try {
 				System.out.println(
-					"\nThe program doesn't seem to have started after " + (3 * TIMEOUT) + "ms");
-//				InputStream errorStream = fLaunchedVM.getErrorStream();
-//				int read;
-//				do {
-//					read = errorStream.read();
-//					if (read != -1)
-//						System.out.print((char) read);
-//				} while (read != -1);
-//			} catch (IOException e) {
-//			}
+						"\nThe program doesn't seem to have started after " + TIMEOUT + "ms");
+		}
+		// silence streams after "Listening for transport dt_socket at address: xyz"
+		if (fConsoleErrorReader instanceof NullConsoleReader r) {
+			r.shutUp();
+		}
+		if (fConsoleReader instanceof NullConsoleReader r) {
+			r.shutUp();
+		}
+		if (fProxyReader instanceof NullConsoleReader r) {
+			r.shutUp();
+		}
+		if (fProxyErrorReader instanceof NullConsoleReader r) {
+			r.shutUp();
 		}
 
 		// Stop class prepare events
