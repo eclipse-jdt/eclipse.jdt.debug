@@ -19,7 +19,7 @@ package org.eclipse.debug.jdi.tests;
 abstract public class AbstractReader {
 	protected String fName;
 	protected Thread fReaderThread;
-	protected boolean fIsStopping = false;
+	protected volatile boolean fIsStopping = false;
 
 	/**
 	 * Constructor

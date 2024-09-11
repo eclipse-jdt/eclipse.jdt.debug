@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 /**
  * A null console reader that continuously reads from the VM input stream
@@ -25,26 +24,38 @@ import java.io.InputStreamReader;
 
 public class NullConsoleReader extends AbstractReader {
 	private final InputStream fInput;
+	private volatile PrintStream out;
+
 	/**
 	 * Constructor
+	 *
+	 * @param out
 	 */
-	public NullConsoleReader(String name, InputStream input) {
+	public NullConsoleReader(String name, InputStream input, PrintStream out) {
 		super(name);
 		fInput = input;
+		this.out = out;
 	}
 	/**
 	 * Continuously reads events that are coming from the event queue.
 	 */
 	@Override
 	protected void readerLoop() {
-		java.io.BufferedReader input =
-			new BufferedReader(new InputStreamReader(fInput));
 		try {
-			int read = 0;
-			while (!fIsStopping && read != -1) {
-				read = input.read();
+			int size = 0;
+			byte[] buffer = new byte[1024];
+			while (!fIsStopping && (size = fInput.read(buffer)) != -1) {
+				if (out instanceof PrintStream o) {
+					o.write(buffer, 0, size);
+				}
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
+
+	public void shutUp() {
+		this.out = null;
+	}
+
 }
