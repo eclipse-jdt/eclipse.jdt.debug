@@ -39,7 +39,11 @@ abstract public class AbstractReader {
 		fReaderThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				readerLoop();
+				try {
+					readerLoop();
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
 			}
 		}, fName);
 		fReaderThread.setDaemon(true);

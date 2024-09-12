@@ -63,33 +63,47 @@ public class EventReader extends AbstractReader {
 	 * Returns whether the VM should be resumed.
 	 */
 	private boolean dispath(Event event, EventListener listener) {
-		if (event instanceof AccessWatchpointEvent)
+		System.out.println(event);
+		if (event instanceof AccessWatchpointEvent) {
 			return listener.accessWatchpoint((AccessWatchpointEvent) event);
-		if (event instanceof BreakpointEvent)
+		}
+		if (event instanceof BreakpointEvent) {
 			return listener.breakpoint((BreakpointEvent) event);
-		if (event instanceof ClassPrepareEvent)
+		}
+		if (event instanceof ClassPrepareEvent) {
 			return listener.classPrepare((ClassPrepareEvent) event);
-		if (event instanceof ClassUnloadEvent)
+		}
+		if (event instanceof ClassUnloadEvent) {
 			return listener.classUnload((ClassUnloadEvent) event);
-		if (event instanceof ExceptionEvent)
+		}
+		if (event instanceof ExceptionEvent) {
 			return listener.exception((ExceptionEvent) event);
-		if (event instanceof MethodEntryEvent)
+		}
+		if (event instanceof MethodEntryEvent) {
 			return listener.methodEntry((MethodEntryEvent) event);
-		if (event instanceof MethodExitEvent)
+		}
+		if (event instanceof MethodExitEvent) {
 			return listener.methodExit((MethodExitEvent) event);
-		if (event instanceof ModificationWatchpointEvent)
+		}
+		if (event instanceof ModificationWatchpointEvent) {
 			return listener.modificationWatchpoint(
 				(ModificationWatchpointEvent) event);
-		if (event instanceof StepEvent)
+		}
+		if (event instanceof StepEvent) {
 			return listener.step((StepEvent) event);
-		if (event instanceof ThreadDeathEvent)
+		}
+		if (event instanceof ThreadDeathEvent) {
 			return listener.threadDeath((ThreadDeathEvent) event);
-		if (event instanceof ThreadStartEvent)
+		}
+		if (event instanceof ThreadStartEvent) {
 			return listener.threadStart((ThreadStartEvent) event);
-		if (event instanceof VMDisconnectEvent)
+		}
+		if (event instanceof VMDisconnectEvent) {
 			return listener.vmDisconnect((VMDisconnectEvent) event);
-		if (event instanceof VMDeathEvent)
+		}
+		if (event instanceof VMDeathEvent) {
 			return listener.vmDeath((VMDeathEvent) event);
+		}
 		return true;
 	}
 	/**
@@ -113,18 +127,20 @@ public class EventReader extends AbstractReader {
 								fEventListeners.elementAt(i);
 							shouldGo = shouldGo & dispath(event, listener);
 						}
-						if (event instanceof VMDeathEvent)
+						if (event instanceof VMDeathEvent) {
 							stop();
+						}
 					}
 
 					// Let the VM go if it was interrupted
 					if ((!fIsStopping)
 						&& (eventSet != null)
 						&& (eventSet.suspendPolicy() == EventRequest.SUSPEND_ALL)
-						&& shouldGo)
+						&& shouldGo) {
 						synchronized (this) {
 							fEventQueue.virtualMachine().resume();
 						}
+					}
 				}
 			} catch (InterruptedException e) {
 				if (!fIsStopping) {
@@ -132,6 +148,7 @@ public class EventReader extends AbstractReader {
 					return;
 				}
 			} catch (VMDisconnectedException e) {
+				e.printStackTrace();
 				return;
 			}
 		}
