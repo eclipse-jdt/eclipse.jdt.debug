@@ -77,4 +77,10 @@ public class ClassPrepareEventImpl extends EventImpl implements
 	public String classSignature() {
 		return referenceType().signature();
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " referenceType=" + referenceType().name(); //$NON-NLS-1$
+	}
+
 }

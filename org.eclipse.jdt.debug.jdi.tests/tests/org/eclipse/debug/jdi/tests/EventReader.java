@@ -63,7 +63,6 @@ public class EventReader extends AbstractReader {
 	 * Returns whether the VM should be resumed.
 	 */
 	private boolean dispath(Event event, EventListener listener) {
-		System.out.println(event);
 		if (event instanceof AccessWatchpointEvent) {
 			return listener.accessWatchpoint((AccessWatchpointEvent) event);
 		}
