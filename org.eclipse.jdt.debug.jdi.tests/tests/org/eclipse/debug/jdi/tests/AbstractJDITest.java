@@ -1308,8 +1308,7 @@ public abstract class AbstractJDITest extends TestCase {
 		Event event = waitForEvent(waiter, TIMEOUT);
 		fEventReader.removeEventListener(waiter);
 		if (event == null) {
-				System.out.println(
-						"\nThe program doesn't seem to have started after " + TIMEOUT + "ms");
+			throw new RuntimeException("ClassPrepareEvent for " + getMainClassName() + " missing after " + TIMEOUT + "ms");
 		}
 		// silence streams after "Listening for transport dt_socket at address: xyz"
 		if (fConsoleErrorReader instanceof NullConsoleReader r) {
