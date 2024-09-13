@@ -22,7 +22,7 @@
   <packaging>eclipse-test-plugin</packaging>
   <properties>
     <testSuite>${project.artifactId}</testSuite>
-    <testClass>org.eclipse.debug.jdi.tests.AutomatedSuite</testClass>
+    <testClass>org.eclipse.debug.jdi.tests.AutomatedSuiteAndroidDalvik</testClass>
   </properties>
   <build>
     <outputDirectory>bin</outputDirectory>
