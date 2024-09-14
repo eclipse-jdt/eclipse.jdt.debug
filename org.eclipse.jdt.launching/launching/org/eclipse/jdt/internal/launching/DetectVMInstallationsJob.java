@@ -133,6 +133,7 @@ public class DetectVMInstallationsJob extends Job {
 			rootDirectories.add(new File("/usr/lib/jvm")); //$NON-NLS-1$
 		}
 		rootDirectories.add(new File(System.getProperty("user.home"), ".sdkman/candidates/java")); //$NON-NLS-1$ //$NON-NLS-2$
+		rootDirectories.add(new File(System.getProperty("user.home"), ".local/share/mise/installs/java")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Set<File> directories = rootDirectories.stream().filter(File::isDirectory)
 			.map(dir -> dir.listFiles(File::isDirectory))
