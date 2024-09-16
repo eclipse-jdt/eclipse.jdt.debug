@@ -16,6 +16,7 @@ package org.eclipse.debug.jdi.tests;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.debug.jdi.tests.program.MainClass;
 import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
@@ -119,7 +121,16 @@ public abstract class AbstractJDITest extends TestCase {
 	static {
 		fTargetAddress = System.getProperty("java.home");
 		fVMLauncherName = "DefaultVMLauncher";
-		fClassPath = new File("./bin").getAbsolutePath();
+		try {
+			String cp = MainClass.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			System.out.println("MainClass path=" + cp);
+			if (new File(cp).isDirectory() && !cp.endsWith(File.separatorChar + "/bin/" + File.separatorChar)) {
+				cp += "bin/" + File.separatorChar;
+			}
+			fClassPath = new File(cp).getAbsolutePath();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 		fBootPath = "";
 		fVMType = "?";
 	}
