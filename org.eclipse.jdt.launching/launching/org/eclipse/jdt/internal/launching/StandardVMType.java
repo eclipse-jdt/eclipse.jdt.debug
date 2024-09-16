@@ -8,10 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Allman - Bug 211648, Bug 156343 - Standard VM not supported on MacOS
@@ -815,7 +811,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		try {
 			if (version.startsWith(JavaCore.VERSION_23)) {
 				// To modify to version 23 after the release
-				return new URI("https://docs.oracle.com/en/java/javase/22/docs/api/").toURL(); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/23/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_22)) {
 				return new URI("https://docs.oracle.com/en/java/javase/22/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_21)) {
