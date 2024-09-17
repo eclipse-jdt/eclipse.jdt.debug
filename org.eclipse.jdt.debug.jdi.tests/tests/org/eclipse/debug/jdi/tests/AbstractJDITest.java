@@ -124,8 +124,8 @@ public abstract class AbstractJDITest extends TestCase {
 		try {
 			String cp = MainClass.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 			System.out.println("MainClass path=" + cp);
-			if (new File(cp).isDirectory() && !cp.endsWith(File.separatorChar + "/bin/" + File.separatorChar)) {
-				cp += "bin/" + File.separatorChar;
+			if (new File(cp).isDirectory() && !cp.endsWith(File.separatorChar + "bin" + File.separatorChar)) {
+				cp += "bin" + File.separatorChar;
 			}
 			fClassPath = new File(cp).getAbsolutePath();
 		} catch (URISyntaxException e) {
@@ -980,7 +980,7 @@ public abstract class AbstractJDITest extends TestCase {
 			vmLauncherName = "DefaultVMLauncher";
 		}
 
-		String classPath = new File("./bin").getAbsolutePath();
+		String classPath = fClassPath;
 		String bootPath = "";
 		String vmType = "?";
 		boolean verbose = false;
@@ -1219,7 +1219,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fConsoleErrorReader =
 				new NullConsoleReader(
 					"JDI Tests Console Error Reader",
-							fLaunchedVM.getErrorStream(), System.err);
+							fLaunchedVM.getErrorStream(), System.out);
 		}
 		fConsoleErrorReader.start();
 
@@ -1251,7 +1251,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fProxyErrorReader =
 				new NullConsoleReader(
 					"JDI Tests Proxy Error Reader",
-							fLaunchedProxy.getErrorStream(), System.err);
+							fLaunchedProxy.getErrorStream(), System.out);
 		}
 		fProxyErrorReader.start();
 	}

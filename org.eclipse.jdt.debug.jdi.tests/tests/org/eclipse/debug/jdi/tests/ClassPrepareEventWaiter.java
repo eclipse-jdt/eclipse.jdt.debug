@@ -35,7 +35,6 @@ public class ClassPrepareEventWaiter extends EventWaiter {
 	 */
 	@Override
 	public boolean classPrepare(ClassPrepareEvent event) {
-		System.out.println("classPrepare:" + event + " " + event.referenceType().name());
 		if (event.referenceType().name().equals(fClassName)) {
 			notifyEvent(event);
 			return fShouldGo;
