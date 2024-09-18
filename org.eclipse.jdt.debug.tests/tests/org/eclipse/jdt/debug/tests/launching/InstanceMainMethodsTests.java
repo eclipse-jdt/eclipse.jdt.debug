@@ -26,7 +26,7 @@ public class InstanceMainMethodsTests extends AbstractDebugTest {
 
 	@Override
 	protected IJavaProject getProjectContext() {
-		return super.get22Project();
+		return super.get23Project();
 	}
 
 	public void testStaticMainWithoutArgs() throws Exception {

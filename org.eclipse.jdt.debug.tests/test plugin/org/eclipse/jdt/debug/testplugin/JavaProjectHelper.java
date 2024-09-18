@@ -65,7 +65,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_9_EE_NAME = "JavaSE-9";
 	public static final String JAVA_SE_16_EE_NAME = "JavaSE-16";
 	public static final String JAVA_SE_21_EE_NAME = "JavaSE-21";
-	public static final String JAVA_SE_22_EE_NAME = "JavaSE-22";
+	public static final String JAVA_SE_23_EE_NAME = "JavaSE-23";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -97,9 +97,9 @@ public class JavaProjectHelper {
 	 */
 	public static final IPath TEST_21_SRC_DIR = new Path("java21");
 	/**
-	 * path to the 22 test source
+	 * path to the 23 test source
 	 */
-	public static final IPath TEST_22_SRC_DIR = new Path("java22");
+	public static final IPath TEST_23_SRC_DIR = new Path("java23");
 
 	/**
 	 * path to the compiler error java file
@@ -181,12 +181,12 @@ public class JavaProjectHelper {
 	}
 
 	/**
-	 * Returns if the currently running VM is version compatible with Java 22
+	 * Returns if the currently running VM is version compatible with Java 23
 	 *
-	 * @return <code>true</code> if a Java 22 (or greater) VM is running <code>false</code> otherwise
+	 * @return <code>true</code> if a Java 23 (or greater) VM is running <code>false</code> otherwise
 	 */
-	public static boolean isJava22_Compatible() {
-		return isCompatible(22);
+	public static boolean isJava23_Compatible() {
+		return isCompatible(23);
 	}
 
 	/**
