@@ -124,7 +124,8 @@ public abstract class AbstractJDITest extends TestCase {
 		try {
 			String cp = MainClass.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 			System.out.println("MainClass path=" + cp);
-			if (new File(cp).isDirectory() && !cp.endsWith(File.separatorChar + "bin" + File.separatorChar)) {
+			if (new File(cp).isDirectory() && !cp.endsWith(File.separatorChar + "bin" + File.separatorChar)
+					&& new File(cp + "bin" + File.separatorChar).isDirectory()) {
 				cp += "bin" + File.separatorChar;
 			}
 			fClassPath = new File(cp).getAbsolutePath();
