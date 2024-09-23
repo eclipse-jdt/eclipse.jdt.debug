@@ -14,10 +14,12 @@
 package org.eclipse.debug.jdi.tests;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -56,10 +58,6 @@ public class VirtualThreadTest extends AbstractJDITest {
 	private ThreadReference fThread;
 	private ThreadReference fMainThread;
 
-	public VirtualThreadTest() {
-		fVmArgs = "--enable-preview";
-	}
-
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -82,7 +80,13 @@ public class VirtualThreadTest extends AbstractJDITest {
 
 	@Override
 	protected void setUp() {
-		compileTestProgram();
+		try {
+			compileTestProgram();
+		} catch (Exception e) {
+			StringWriter err = new StringWriter();
+			e.printStackTrace(new PrintWriter(err));
+			fail("Error in setup: " + err.toString());
+		}
 		super.setUp();
 	}
 
@@ -91,12 +95,12 @@ public class VirtualThreadTest extends AbstractJDITest {
 		// do nothing
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		compileTestProgram();
 		new VirtualThreadTest().runSuite(args);
 	}
 
-	protected static void compileTestProgram() {
+	protected static void compileTestProgram() throws Exception {
 		if (Runtime.version().feature() < 19) {
 			return;
 		}
@@ -106,20 +110,21 @@ public class VirtualThreadTest extends AbstractJDITest {
 		compileFiles(sourceFilePath, outputFilePath);
 	}
 
-	private static void compileFiles(String sourceFilePath, String outputPath) {
+	private static void compileFiles(String sourceFilePath, String outputPath) throws Exception {
 		DiagnosticCollector<? super JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, StandardCharsets.UTF_8);
 		Iterable<? extends JavaFileObject> javaFileObjects = fileManager.getJavaFileObjects(new File(sourceFilePath));
 		File outputFolder = new File(outputPath);
 		if (!outputFolder.exists()) {
-			outputFolder.mkdir();
+			Files.createDirectories(outputFolder.toPath());
 		}
 		String[] options = new String[] { "--release", "21", "-d", outputFolder.getAbsolutePath(), "-g", "-proc:none" };
 		final StringWriter output = new StringWriter();
 		CompilationTask task = compiler.getTask(output, fileManager, diagnosticCollector, Arrays.asList(options), null, javaFileObjects);
 		boolean result = task.call();
 		if (!result) {
-			throw new IllegalArgumentException("Compilation failed:\n" + output);
+			throw new IllegalArgumentException("Compilation failed:\n'" + output + "', compiler name: '" + compiler.name()
+					+ "', supported source versions: " + compiler.getSourceVersions());
 		}
 
 	}
