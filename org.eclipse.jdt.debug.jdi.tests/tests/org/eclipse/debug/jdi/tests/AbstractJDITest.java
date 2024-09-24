@@ -850,18 +850,7 @@ public abstract class AbstractJDITest extends TestCase {
 	}
 
 	private void addDebugOptions(Vector<String> commandLine) {
-		int vmVersion = 0;
-		try {
-			String versionString = System.getProperty("java.specification.version");
-			if (versionString != null) {
-				String[] nums = versionString.split("\\.");
-				if (nums.length > 0) {
-					vmVersion = Integer.parseInt(nums[0]);
-				}
-			}
-		} catch (Exception e) {
-			// Ignore
-		}
+		int vmVersion = Runtime.version().feature();
 		if (vmVersion < 22) {
 			commandLine.add("-Xdebug");
 		}
