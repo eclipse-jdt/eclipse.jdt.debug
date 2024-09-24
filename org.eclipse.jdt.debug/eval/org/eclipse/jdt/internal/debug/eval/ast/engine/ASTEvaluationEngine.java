@@ -568,7 +568,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 		return createExpressionFromAST(snippet, mapper, unit);
 	}
-
 	/**
 	 * Creates a compiled expression for the given snippet using the given mapper and compilation unit (AST).
 	 *

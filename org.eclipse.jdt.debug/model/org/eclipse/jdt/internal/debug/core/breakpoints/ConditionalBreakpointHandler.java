@@ -62,10 +62,8 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 	private boolean fHasErrors = false;
 
 	/**
-	 * Listens for evaluation completion for condition evaluation. If an
-	 * evaluation evaluates <code>true</code> or has an error, this breakpoint
-	 * will suspend the thread in which the breakpoint was hit. If the
-	 * evaluation returns <code>false</code>, the thread is resumed.
+	 * Listens for evaluation completion for condition evaluation. If an evaluation evaluates <code>true</code> or has an error, this breakpoint will
+	 * suspend the thread in which the breakpoint was hit. If the evaluation returns <code>false</code>, the thread is resumed.
 	 */
 	class EvaluationListener implements IEvaluationListener {
 
