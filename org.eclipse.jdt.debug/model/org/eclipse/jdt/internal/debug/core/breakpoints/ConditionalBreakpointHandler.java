@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 IBM Corporation and others.
+ * Copyright (c) 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,9 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,6 +26,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -58,10 +62,8 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 	private boolean fHasErrors = false;
 
 	/**
-	 * Listens for evaluation completion for condition evaluation. If an
-	 * evaluation evaluates <code>true</code> or has an error, this breakpoint
-	 * will suspend the thread in which the breakpoint was hit. If the
-	 * evaluation returns <code>false</code>, the thread is resumed.
+	 * Listens for evaluation completion for condition evaluation. If an evaluation evaluates <code>true</code> or has an error, this breakpoint will
+	 * suspend the thread in which the breakpoint was hit. If the evaluation returns <code>false</code>, the thread is resumed.
 	 */
 	class EvaluationListener implements IEvaluationListener {
 
@@ -217,12 +219,22 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 						.getTopStackFrame();
 				IJavaProject project = lineBreakpoint.getJavaProject(frame);
 				if (project == null) {
-					fireConditionHasErrors(
-							lineBreakpoint,
-							new Message[] { new Message(
-									JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1,
-									-1) });
-					return SUSPEND;
+					IMarker marker = breakpoint.getMarker();
+					if (marker != null) {
+						IResource res = marker.getResource();
+						IProject curProject = res.getProject();
+						if (curProject != null) {
+							project = JavaCore.create(curProject);
+						} else {
+							fireConditionHasErrors(lineBreakpoint, new Message[] {
+									new Message(JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1, -1) });
+							return SUSPEND;
+						}
+					} else {
+						fireConditionHasErrors(lineBreakpoint, new Message[] {
+								new Message(JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1, -1) });
+						return SUSPEND;
+					}
 				}
 				IJavaDebugTarget target = (IJavaDebugTarget) thread
 						.getDebugTarget();

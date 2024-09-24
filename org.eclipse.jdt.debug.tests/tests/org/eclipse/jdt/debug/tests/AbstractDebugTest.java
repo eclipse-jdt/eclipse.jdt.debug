@@ -184,7 +184,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
-	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
+	final String[] LAUNCH_CONFIG_NAMES_1_4 = { "LargeSourceFile", "LotsOfFields",
+			"Breakpoints",
+			"InstanceVariablesTests",
+			"LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
 			"DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
 			"org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.CallLoop", "A",
 			"HitCountLooper", "CompileError", "MultiThreadedLoop", "HitCountException", "MultiThreadedException", "MultiThreadedList", "MethodLoop", "StepFilterOne",
@@ -201,7 +204,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
 			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243",
 			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982",
-			"SuspendVMConditionalBreakpointsTestSnippet" };
+			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2" };
 
 	/**
 	 * the default timeout
@@ -1553,7 +1556,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
 		assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine); //$NON-NLS-1$
-
 		return thread;
 	}
 
