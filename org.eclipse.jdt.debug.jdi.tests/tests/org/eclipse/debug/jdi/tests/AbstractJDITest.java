@@ -752,7 +752,7 @@ public abstract class AbstractJDITest extends TestCase {
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
 			addDebugOptions(commandLine);
-			commandLine.add("-Djava.compiler=NONE");
+			addNoJITCompilerOption(commandLine);
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
 			commandLine.add(getMainClassName());
@@ -795,7 +795,7 @@ public abstract class AbstractJDITest extends TestCase {
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
 			addDebugOptions(commandLine);
-			commandLine.add("-Djava.compiler=NONE");
+			addNoJITCompilerOption(commandLine);
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
 			commandLine.add(getMainClassName());
@@ -829,7 +829,7 @@ public abstract class AbstractJDITest extends TestCase {
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
 			addDebugOptions(commandLine);
-			commandLine.add("-Djava.compiler=NONE");
+			addNoJITCompilerOption(commandLine);
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
 			injectVMArgs(commandLine);
 			commandLine.add(getMainClassName());
@@ -838,6 +838,14 @@ public abstract class AbstractJDITest extends TestCase {
 
 		} catch (IOException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
+		}
+	}
+
+	private void addNoJITCompilerOption(Vector<String> commandLine) {
+		if (Runtime.version().feature() >= 21) {
+			commandLine.add("-Xint");
+		} else {
+			commandLine.add("-Djava.compiler=NONE");
 		}
 	}
 
