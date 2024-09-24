@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -220,10 +221,17 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 						.getTopStackFrame();
 				IJavaProject project = lineBreakpoint.getJavaProject(frame);
 				if (project == null) {
-					IMarker marker = breakpoint.getMarker(); // my changes
+					IMarker marker = breakpoint.getMarker();
 					if (marker != null) {
 						IResource res = marker.getResource();
-						project = JavaCore.create(res.getProject());
+						IProject curProject = res.getProject();
+						if (curProject != null) {
+							project = JavaCore.create(curProject);
+						} else {
+							fireConditionHasErrors(lineBreakpoint, new Message[] {
+									new Message(JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1, -1) });
+							return SUSPEND;
+						}
 					} else {
 						fireConditionHasErrors(lineBreakpoint, new Message[] {
 								new Message(JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1, -1) });

@@ -108,8 +108,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
 			if (events.length == 1) {
 				DebugEvent event = events[0];
-				if (event.getSource() instanceof IJavaVariable && event.getKind() == DebugEvent.CHANGE) {
-					if (((IJavaVariable) event.getSource()).getDebugTarget().equals(getDebugTarget())) {
+				if (event.getSource() instanceof IJavaVariable jvar && event.getKind() == DebugEvent.CHANGE) {
+					if (jvar.getDebugTarget().equals(getDebugTarget())) {
 						return null;
 					}
 				}
