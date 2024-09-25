@@ -16,6 +16,7 @@ package org.eclipse.debug.jdi.tests;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
@@ -1205,7 +1206,16 @@ public abstract class AbstractJDITest extends TestCase {
 		// We want subsequent connections to use different ports, unless a
 		// VM exec sting is given.
 		if (fVmCmd == null) {
-			fBackEndPort += 2;
+			ServerSocket socket;
+			try {
+				socket = new ServerSocket(0);
+				int availablePort = socket.getLocalPort();
+				socket.close(); //Available but always initialized
+				fBackEndPort = availablePort;
+			} catch (IOException e) {
+				fBackEndPort +=2;
+			
+			}
 		}
 	}
 	/**
