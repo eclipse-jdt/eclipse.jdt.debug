@@ -25,16 +25,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -43,6 +47,7 @@ import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -240,6 +245,22 @@ public class LongClassPathTests extends AbstractDebugTest {
 		sb.append(javaProject.getProject().getFile("lib/classpath.jar").getLocation().toString());
 		classpathEntries.addAll(Arrays.asList(javaProject.getRawClasspath()));
 		javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]), null);
+	}
+
+	public static void waitForBuild() {
+		boolean wasInterrupted = false;
+		do {
+			try {
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+				TestUtil.waitForJobs("waitForBuild", 100, 105000, ProcessConsole.class);
+				wasInterrupted = false;
+			} catch (OperationCanceledException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				wasInterrupted = true;
+			}
+		} while (wasInterrupted);
 	}
 
 	/**
