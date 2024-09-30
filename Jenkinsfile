@@ -10,7 +10,7 @@ pipeline {
 	}
 	tools {
 		maven 'apache-maven-latest'
-		jdk 'openjdk-jdk21-latest'
+		jdk 'temurin-jdk21-latest'
 	}
 	environment {
 		NON_MODULAR_JAVA_HOME = tool(type:'jdk', name:'temurin-jdk8-latest')
