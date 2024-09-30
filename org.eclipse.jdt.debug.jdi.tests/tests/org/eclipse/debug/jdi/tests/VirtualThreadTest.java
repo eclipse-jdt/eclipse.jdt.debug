@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.tools.DiagnosticCollector;
@@ -84,6 +84,7 @@ public class VirtualThreadTest extends AbstractJDITest {
 			compileTestProgram();
 		} catch (Exception e) {
 			StringWriter err = new StringWriter();
+			err.append(e.getMessage());
 			e.printStackTrace(new PrintWriter(err));
 			fail("Error in setup: " + err.toString());
 		}
@@ -118,9 +119,9 @@ public class VirtualThreadTest extends AbstractJDITest {
 		if (!outputFolder.exists()) {
 			Files.createDirectories(outputFolder.toPath());
 		}
-		String[] options = new String[] { "--release", "21", "-d", outputFolder.getAbsolutePath(), "-g", "-proc:none" };
+		List<String> options = List.of("--release", "21", "-d", outputFolder.getAbsolutePath(), "-g", "-proc:none");
 		final StringWriter output = new StringWriter();
-		CompilationTask task = compiler.getTask(output, fileManager, diagnosticCollector, Arrays.asList(options), null, javaFileObjects);
+		CompilationTask task = compiler.getTask(output, fileManager, diagnosticCollector, options, null, javaFileObjects);
 		boolean result = task.call();
 		if (!result) {
 			throw new IllegalArgumentException("Compilation failed:\n'" + output + "', compiler name: '" + compiler.name()
@@ -164,8 +165,10 @@ public class VirtualThreadTest extends AbstractJDITest {
 
 	/**
 	 * Test restricting JDI ThreadStartEvent/ThreadDeathEvent to platform threads only
+	 *
+	 * @throws Exception
 	 */
-	public void testJDIPlatformThreadsOnlyFilter() {
+	public void testJDIPlatformThreadsOnlyFilter() throws Exception {
 		// Make sure the entire VM is not suspended before we start a new thread
 		// (otherwise this new thread will start suspended and we will never get the
 		// ThreadStart event)
@@ -173,27 +176,15 @@ public class VirtualThreadTest extends AbstractJDITest {
 
 		// Trigger a thread start event
 		ThreadStartRequest vThreadStartRequest = fVM.eventRequestManager().createThreadStartRequest();
-		try {
-			Method method = vThreadStartRequest.getClass().getMethod("addPlatformThreadsOnlyFilter");
-			method.invoke(vThreadStartRequest);
-		} catch (NoSuchMethodException | SecurityException e) {
-			fail("1");
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			fail("2");
-		}
+		Method method = vThreadStartRequest.getClass().getMethod("addPlatformThreadsOnlyFilter");
+		method.invoke(vThreadStartRequest);
 		ThreadStartEvent startEvent = (ThreadStartEvent) triggerAndWait(vThreadStartRequest, "ThreadStartEvent", true, 3000);
 		assertNull("3", startEvent);
 
 		// Trigger a thread death event
 		ThreadDeathRequest vThreadDeathRequest = fVM.eventRequestManager().createThreadDeathRequest();
-		try {
-			Method method = vThreadDeathRequest.getClass().getMethod("addPlatformThreadsOnlyFilter");
-			method.invoke(vThreadDeathRequest);
-		} catch (NoSuchMethodException | SecurityException e) {
-			fail("4");
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			fail("5");
-		}
+		method = vThreadDeathRequest.getClass().getMethod("addPlatformThreadsOnlyFilter");
+		method.invoke(vThreadDeathRequest);
 		ThreadDeathEvent deathEvent = (ThreadDeathEvent) triggerAndWait(vThreadDeathRequest, "ThreadDeathEvent", true, 3000);
 		assertNull("6", deathEvent);
 	}
