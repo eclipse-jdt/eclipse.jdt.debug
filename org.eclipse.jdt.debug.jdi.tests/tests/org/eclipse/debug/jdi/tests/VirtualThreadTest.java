@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Microsoft Corporation and others.
+ * Copyright (c) 2022, 2024 Microsoft Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Locale;
 
-import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
@@ -112,16 +111,15 @@ public class VirtualThreadTest extends AbstractJDITest {
 	}
 
 	private static void compileFiles(String sourceFilePath, String outputPath) throws Exception {
-		DiagnosticCollector<? super JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, StandardCharsets.UTF_8);
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, Locale.ENGLISH, StandardCharsets.UTF_8);
 		Iterable<? extends JavaFileObject> javaFileObjects = fileManager.getJavaFileObjects(new File(sourceFilePath));
 		File outputFolder = new File(outputPath);
 		if (!outputFolder.exists()) {
 			Files.createDirectories(outputFolder.toPath());
 		}
-		List<String> options = List.of("--release", "21", "-d", outputFolder.getAbsolutePath(), "-g", "-proc:none");
+		List<String> options = List.of("-d", outputFolder.getAbsolutePath(), "-g", "-proc:none");
 		final StringWriter output = new StringWriter();
-		CompilationTask task = compiler.getTask(output, fileManager, diagnosticCollector, options, null, javaFileObjects);
+		CompilationTask task = compiler.getTask(output, fileManager, null, options, null, javaFileObjects);
 		boolean result = task.call();
 		if (!result) {
 			throw new IllegalArgumentException("Compilation failed:\n'" + output + "', compiler name: '" + compiler.name()
