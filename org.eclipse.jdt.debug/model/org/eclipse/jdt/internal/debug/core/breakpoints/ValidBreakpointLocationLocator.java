@@ -1066,9 +1066,15 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 						}
 					}
+
+				// Lambda body can be a block (which is handled above) or an (arbitrary) expression. So maybe the
+				// following cases are insufficient and should be replaced by handling the general
+				// org.eclipse.jdt.core.dom.Expression.
 				} else if (body instanceof LambdaExpression) {
 					body.accept(this);
 				} else if (body instanceof MethodInvocation) {
+					body.accept(this);
+				} else if (body instanceof ClassInstanceCreation) {
 					body.accept(this);
 				}
 			}
