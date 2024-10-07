@@ -18,8 +18,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +31,11 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdi.internal.ThreadReferenceImpl;
+import org.osgi.framework.Bundle;
 
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.event.ThreadDeathEvent;
@@ -56,6 +62,7 @@ public class VirtualThreadTest extends AbstractJDITest {
 	private ThreadReference fVirtualThread;
 	private ThreadReference fThread;
 	private ThreadReference fMainThread;
+	private static Path tempClassesDirectory;
 
 	/**
 	 * Init the fields that are used by this test only.
@@ -95,19 +102,24 @@ public class VirtualThreadTest extends AbstractJDITest {
 		// do nothing
 	}
 
-	public static void main(String[] args) throws Exception {
-		compileTestProgram();
-		new VirtualThreadTest().runSuite(args);
-	}
-
 	protected static void compileTestProgram() throws Exception {
 		if (Runtime.version().feature() < 19) {
 			return;
 		}
+		tempClassesDirectory = Files.createTempDirectory("VirtualThreadTest");
+		tempClassesDirectory.toFile().deleteOnExit();
+		String outputFilePath = tempClassesDirectory.toString();
 
-		String sourceFilePath = new File("./java19/TryVirtualThread.java").getAbsolutePath();
-		String outputFilePath = new File("./bin").getAbsolutePath();
+		Bundle bundle = Platform.getBundle("org.eclipse.jdt.debug.jdi.tests");
+		URL bundleUrl = FileLocator.find(bundle, IPath.fromOSString("java19/TryVirtualThread.java"), null);
+		URL fileURL = FileLocator.toFileURL(bundleUrl);
+		String sourceFilePath = fileURL.getFile();
 		compileFiles(sourceFilePath, outputFilePath);
+	}
+
+	@Override
+	protected String enhanceClasspath(String classPath) {
+		return classPath + File.pathSeparator + tempClassesDirectory;
 	}
 
 	private static void compileFiles(String sourceFilePath, String outputPath) throws Exception {

@@ -751,7 +751,7 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 
 			commandLine.add("-classpath");
-			commandLine.add(fClassPath);
+			commandLine.add(enhanceClasspath(fClassPath));
 			addDebugOptions(commandLine);
 			addNoJITCompilerOption(commandLine);
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
@@ -763,6 +763,15 @@ public abstract class AbstractJDITest extends TestCase {
 		} catch (IOException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
 		}
+	}
+
+	/**
+	 * @param classPath
+	 *            current classpath used for JVM
+	 * @return possibly updated classpath with more entries required by a test
+	 */
+	protected String enhanceClasspath(String classPath) {
+		return fClassPath;
 	}
 
 	/**
@@ -794,7 +803,7 @@ public abstract class AbstractJDITest extends TestCase {
 				commandLine.add(fBootPath);
 			}
 			commandLine.add("-classpath");
-			commandLine.add(fClassPath);
+			commandLine.add(enhanceClasspath(fClassPath));
 			addDebugOptions(commandLine);
 			addNoJITCompilerOption(commandLine);
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
@@ -828,7 +837,7 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 
 			commandLine.add("-classpath");
-			commandLine.add(fClassPath);
+			commandLine.add(enhanceClasspath(fClassPath));
 			addDebugOptions(commandLine);
 			addNoJITCompilerOption(commandLine);
 			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
@@ -1214,7 +1223,7 @@ public abstract class AbstractJDITest extends TestCase {
 				fBackEndPort = availablePort;
 			} catch (IOException e) {
 				fBackEndPort +=2;
-			
+
 			}
 		}
 	}
