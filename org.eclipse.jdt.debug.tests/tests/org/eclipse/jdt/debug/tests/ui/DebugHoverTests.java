@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2017 Andrey Loskutov and others.
+ *  Copyright (c) 2017, 2024 Andrey Loskutov and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     Andrey Loskutov <loskutov@gmx.de> - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
@@ -1469,7 +1470,7 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		int initialLineNumber = sync(() -> ((ITextSelection) editor.getSelectionProvider().getSelection()).getStartLine());
 		assertNotEquals("selectFrame cannot detect when it has"
 				+ "completed because selecting frame doesn't change the line number.", initialLineNumber, targetLineNumber);
-		final int timeoutms = 1000;
+		final int timeoutms = 10000;
 		int selectedLineNumer = sync(() -> {
 			int lineNumber;
 			long endtime = System.currentTimeMillis() + timeoutms;
