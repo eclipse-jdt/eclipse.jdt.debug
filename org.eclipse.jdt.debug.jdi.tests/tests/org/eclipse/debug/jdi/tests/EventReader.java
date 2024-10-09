@@ -146,7 +146,9 @@ public class EventReader extends AbstractReader {
 					return;
 				}
 			} catch (VMDisconnectedException e) {
-				e.printStackTrace();
+				if (!fIsStopping) {
+					e.printStackTrace();
+				}
 				return;
 			}
 		}
