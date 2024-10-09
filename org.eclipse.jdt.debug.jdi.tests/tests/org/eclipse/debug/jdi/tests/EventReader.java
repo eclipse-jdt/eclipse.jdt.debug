@@ -14,7 +14,8 @@
 
 package org.eclipse.debug.jdi.tests;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.AccessWatchpointEvent;
@@ -43,7 +44,7 @@ import com.sun.jdi.request.EventRequest;
 
 public class EventReader extends AbstractReader {
 	private final EventQueue fEventQueue;
-	private final Vector<EventListener> fEventListeners = new Vector<>(); // A Vector of EventListener
+	private final List<EventListener> fEventListeners = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Constructor
@@ -56,7 +57,7 @@ public class EventReader extends AbstractReader {
 	 * Registers the given event listener.
 	 */
 	public synchronized void addEventListener(EventListener listener) {
-		fEventListeners.addElement(listener);
+		fEventListeners.add(listener);
 	}
 	/**
 	 * Dispatches the given event to the given listener.
@@ -121,9 +122,7 @@ public class EventReader extends AbstractReader {
 					EventIterator iterator = eventSet.eventIterator();
 					while (iterator.hasNext()) {
 						Event event = iterator.nextEvent();
-						for (int i = 0; i < fEventListeners.size(); i++) {
-							EventListener listener =
-								fEventListeners.elementAt(i);
+						for (EventListener listener : fEventListeners) {
 							shouldGo = shouldGo & dispath(event, listener);
 						}
 						if (event instanceof VMDeathEvent) {
@@ -156,6 +155,6 @@ public class EventReader extends AbstractReader {
 	 * De-registers the given event listener.
 	 */
 	public synchronized void removeEventListener(EventListener listener) {
-		fEventListeners.removeElement(listener);
+		fEventListeners.remove(listener);
 	}
 }
