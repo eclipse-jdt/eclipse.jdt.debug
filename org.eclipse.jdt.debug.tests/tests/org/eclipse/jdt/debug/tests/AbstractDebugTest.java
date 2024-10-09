@@ -633,6 +633,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_23);
 				cfgs.add(createLaunchConfiguration(jp, "Main1"));
 				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				cfgs.add(createLaunchConfiguration(jp, "Main21"));
 				loaded23 = true;
 				waitForBuild();
 				assertNoErrorMarkersExist(jp.getProject());
