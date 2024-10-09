@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -177,6 +177,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @since 3.3
 	 */
 	private boolean fIsDaemon;
+	private boolean fIsVirtualThread;
 
 	/**
 	 * Lock used to guard access to internal data that need to be updated in atomic manner
@@ -362,6 +363,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// system thread
 		try {
 			determineIfSystemThread();
+			determineIfSVirtualThread();
 		} catch (DebugException e) {
 			Throwable underlyingException = e.getStatus().getException();
 			if (underlyingException instanceof VMDisconnectedException) {
@@ -559,6 +561,25 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 	}
+
+	/**
+	 * Determines whether this is a virtual thread.
+	 *
+	 * @throws DebugException
+	 *             on failure
+	 */
+	protected void determineIfSVirtualThread() throws DebugException {
+		try {
+			ReferenceType referenceType = getUnderlyingThread().referenceType();
+			if (referenceType.name().equals("java.lang.VirtualThread")) { //$NON-NLS-1$
+				fIsVirtualThread = true;
+				fIsSystemThread = false;
+			}
+		} catch (RuntimeException e) {
+			targetRequestFailed("Unable to determine thread daemon status", e); //$NON-NLS-1$
+		}
+	}
+
 
 	/**
 	 * Determines whether this is a daemon thread.
@@ -1582,6 +1603,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return fIsDaemon;
 	}
 
+	public boolean isVirtualThread() {
+		return fIsVirtualThread;
+	}
+
 	@Override
 	public String getThreadGroupName() throws DebugException {
 		if (fThreadGroupName == null) {
@@ -1883,7 +1908,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public void suspend() throws DebugException {
 		// prepare for the suspend request
 		prepareForClientSuspend();
-
 		synchronized (this) {
 			try {
 				// Abort any pending step request

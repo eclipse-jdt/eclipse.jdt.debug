@@ -150,6 +150,7 @@ import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
+import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests18;
 import org.eclipse.jdt.debug.tests.variables.DetailFormatterTests;
@@ -416,6 +417,9 @@ public class AutomatedSuite extends DebugSuite {
 
 		if (JavaProjectHelper.isJava16_Compatible()) {
 			addTest(new TestSuite(RecordBreakpointTests.class));
+		}
+		if (Runtime.version().feature() == 23 && JavaProjectHelper.isJava23_Compatible()) {
+			addTest(new TestSuite(VirtualThreadsDebugViewTests.class));
 		}
 	}
 }
