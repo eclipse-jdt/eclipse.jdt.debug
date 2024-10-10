@@ -72,6 +72,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
@@ -150,6 +151,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	private JavaElementLabelProvider fJavaLabelProvider;
 
+	private StackFramePresentationProvider fStackFrameProvider;
+
 	public JDIModelPresentation() {
 		super();
 	}
@@ -164,6 +167,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fJavaLabelProvider.dispose();
 		}
 		fAttributes.clear();
+		if (fStackFrameProvider != null) {
+			fStackFrameProvider.close();
+		}
 	}
 
 	/**
@@ -186,7 +192,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 *            the target in which a thread is required
 	 * @return thread or <code>null</code>
 	 */
-	public static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
+	private static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
 		IJavaStackFrame frame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
 		IJavaThread thread = null;
 		if (frame != null) {
@@ -243,6 +249,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaOwningTreadText((JavaOwningThread)item);
 			} else if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingTreadText((JavaWaitingThread)item);
+			} else if (item instanceof GroupedStackFrame) {
+				var groupping = (GroupedStackFrame) item;
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_collapsed_frames, String.valueOf(groupping.getFrameCount()));
 			} else if (item instanceof NoMonitorInformationElement) {
                 return DebugUIMessages.JDIModelPresentation_5;
             } else {
@@ -725,7 +734,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
 				}
 			}
-			if (item instanceof IJavaStackFrame || item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
+			if (item instanceof IJavaStackFrame) {
+				return getStackFrameImage((IJavaStackFrame) item);
+			}
+			if (item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
 			}
 			if (item instanceof IJavaValue) {
@@ -747,8 +759,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaWaitingThreadImage((JavaWaitingThread)item);
 			}
             if (item instanceof NoMonitorInformationElement) {
-                return getDebugImageRegistry().get(new JDIImageDescriptor(
-						getImageDescriptor(JavaDebugImages.IMG_OBJS_MONITOR), 0));
+				return getDebugImage(getImageDescriptor(JavaDebugImages.IMG_OBJS_MONITOR), 0);
             }
 		} catch (CoreException e) {
 		    // no need to log errors - elements may no longer exist by the time we render them
@@ -772,38 +783,29 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	private Image getJavaWaitingThreadImage(JavaWaitingThread thread) {
-		JDIImageDescriptor descriptor;
 		int flag= JDIImageDescriptor.IN_CONTENTION_FOR_MONITOR | (thread.getThread().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
 		if (thread.isSuspended()) {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), flag);
-		} else {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flag);
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), flag);
 		}
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flag);
 	}
 
 	private Image getJavaOwningThreadImage(JavaOwningThread thread) {
-		JDIImageDescriptor descriptor;
 		int flag= JDIImageDescriptor.OWNS_MONITOR | (thread.getThread().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
 		if (thread.isSuspended()) {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), flag);
-		} else {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flag);
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), flag);
 		}
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flag);
 	}
 
 	private Image getJavaContendedMonitorImage(JavaContendedMonitor monitor) {
 		int flag= monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0;
-		JDIImageDescriptor descriptor= new JDIImageDescriptor(
-				getImageDescriptor(JavaDebugImages.IMG_OBJS_CONTENDED_MONITOR), flag);
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(getImageDescriptor(JavaDebugImages.IMG_OBJS_CONTENDED_MONITOR), flag);
 	}
 
 	private Image getJavaOwnedMonitorImage(JavaOwnedMonitor monitor) {
 		int flag= monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0;
-		JDIImageDescriptor descriptor= new JDIImageDescriptor(getImageDescriptor(JavaDebugImages.IMG_OBJS_OWNED_MONITOR), flag);
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(getImageDescriptor(JavaDebugImages.IMG_OBJS_OWNED_MONITOR), flag);
 	}
 
 	protected Image getBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
@@ -821,15 +823,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected Image getExceptionBreakpointImage(IJavaExceptionBreakpoint exception) throws CoreException {
 		int flags= computeBreakpointAdornmentFlags(exception);
-		JDIImageDescriptor descriptor= null;
 		if ((flags & JDIImageDescriptor.ENABLED) == 0) {
-			descriptor= new JDIImageDescriptor(getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION_DISABLED), flags);
+			return getDebugImage(getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION_DISABLED), flags);
 		} else if (exception.isChecked()) {
-			descriptor= new JDIImageDescriptor(getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION), flags);
+			return getDebugImage(getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION), flags);
 		} else {
-			descriptor= new JDIImageDescriptor(getImageDescriptor(JavaDebugImages.IMG_OBJS_ERROR), flags);
+			return getDebugImage(getImageDescriptor(JavaDebugImages.IMG_OBJS_ERROR), flags);
 		}
-		return getDebugImageRegistry().get(descriptor);
 	}
 
 	protected Image getJavaBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
@@ -844,81 +844,61 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return getJavaMethodEntryBreakpointImage(meBreakpoint);
 		} else {
 			int flags= computeBreakpointAdornmentFlags(breakpoint);
-			JDIImageDescriptor descriptor= null;
 			if (breakpoint.isEnabled()) {
-				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
-			} else {
-				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+				return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
 			}
-			return getDebugImageRegistry().get(descriptor);
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 		}
 	}
 
 	protected Image getJavaMethodBreakpointImage(IJavaMethodBreakpoint mBreakpoint) throws CoreException {
 		int flags= computeBreakpointAdornmentFlags(mBreakpoint);
-		JDIImageDescriptor descriptor= null;
 		if (mBreakpoint.isEnabled()) {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
-		} else {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
 		}
-
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 	}
 
 	protected Image getJavaMethodEntryBreakpointImage(IJavaMethodEntryBreakpoint mBreakpoint) throws CoreException {
 		int flags= computeBreakpointAdornmentFlags(mBreakpoint);
-		JDIImageDescriptor descriptor= null;
 		if (mBreakpoint.isEnabled()) {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
-		} else {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
 		}
-
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 	}
 
 	protected Image getClassPrepareBreakpointImage(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
 		int flags= computeBreakpointAdornmentFlags(breakpoint);
-		JDIImageDescriptor descriptor= null;
 		if (breakpoint.getMemberType() == IJavaClassPrepareBreakpoint.TYPE_CLASS) {
-			descriptor= new JDIImageDescriptor(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_CLASS), flags);
-		} else {
-			descriptor= new JDIImageDescriptor(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INTERFACE), flags);
+			return getDebugImage(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_CLASS), flags);
 		}
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INTERFACE), flags);
 	}
 
 	protected Image getJavaWatchpointImage(IJavaWatchpoint watchpoint) throws CoreException {
-		int flags= computeBreakpointAdornmentFlags(watchpoint);
-		JDIImageDescriptor descriptor= null;
-		boolean enabled= (flags & JDIImageDescriptor.ENABLED) != 0;
+		final int flags = computeBreakpointAdornmentFlags(watchpoint);
+		final boolean enabled = (flags & JDIImageDescriptor.ENABLED) != 0;
 		if (watchpoint.isAccess()) {
 			if (watchpoint.isModification()) {
 				//access and modification
 				if (enabled) {
-					descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_WATCHPOINT), flags);
-				} else {
-					descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED), flags);
+					return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_WATCHPOINT), flags);
 				}
-			} else {
-				if (enabled) {
-					descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT), flags);
-				} else {
-					descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED), flags);
-				}
+				return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED), flags);
 			}
+			if (enabled) {
+				return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT), flags);
+			}
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED), flags);
 		} else if (watchpoint.isModification()) {
 			if (enabled) {
-				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT), flags);
-			} else {
-				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED), flags);
+				return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT), flags);
 			}
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED), flags);
 		} else {
 			//neither access nor modification
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED), flags);
+			return getDebugImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED), flags);
 		}
-		return getDebugImageRegistry().get(descriptor);
 	}
 
 	protected Image getVariableImage(IAdaptable element) {
@@ -973,10 +953,28 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return null;
 		}
 		int flags= computeJDIAdornmentFlags(element);
-		JDIImageDescriptor descriptor= new JDIImageDescriptor(image, flags);
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(image, flags);
 	}
 
+	private Image getStackFrameImage(IJavaStackFrame stackFrame) {
+		var image = getStackFrameProvider().getStackFrameImage(stackFrame);
+		if (image == null) {
+			image = DebugUITools.getDefaultImageDescriptor(stackFrame);
+		}
+
+		int flags = 0;
+		try {
+			if (stackFrame.isOutOfSynch()) {
+				flags = JDIImageDescriptor.IS_OUT_OF_SYNCH;
+			} else if (!stackFrame.isObsolete() && stackFrame.isSynchronized()) {
+				flags = JDIImageDescriptor.SYNCHRONIZED;
+			}
+		} catch (DebugException e) {
+			// no need to log errors - elements may no longer exist by the time we render them
+		}
+
+		return getDebugImage(image, flags);
+	}
 	/**
 	 * Returns the image associated with the given element or <code>null</code>
 	 * if none is defined.
@@ -995,7 +993,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (bigSize) {
 			descriptor.setSize(BIG_SIZE);
 		}
-		return getDebugImageRegistry().get(descriptor);
+		return getDebugImage(descriptor);
 	}
 
 	/**
@@ -1005,15 +1003,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	private int computeJDIAdornmentFlags(Object element) {
 		try {
-			if (element instanceof IJavaStackFrame) {
-				IJavaStackFrame javaStackFrame = ((IJavaStackFrame)element);
-				if (javaStackFrame.isOutOfSynch()) {
-					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (!javaStackFrame.isObsolete() && javaStackFrame.isSynchronized()) {
-					return JDIImageDescriptor.SYNCHRONIZED;
-				}
-			}
 			if (element instanceof IJavaThread) {
 				int flag= 0;
 				IJavaThread javaThread = ((IJavaThread)element);
@@ -1249,6 +1238,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			show= show == null ? Boolean.FALSE : show;
 			return show.booleanValue();
 		}
+	}
+
+	protected boolean isColorizeStackFrames() {
+		return getStackFrameProvider().isColorizeStackFrames();
 	}
 
 	protected boolean isShowHexValues() {
@@ -2005,14 +1998,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Plug in the single argument to the resource String for the key to get a formatted resource String
 	 */
-	public static String getFormattedString(String key, String arg) {
+	private static String getFormattedString(String key, String arg) {
 		return getFormattedString(key, new String[] {arg});
 	}
 
 	/**
 	 * Plug in the arguments to the resource String for the key to get a formatted resource String
 	 */
-	public static String getFormattedString(String string, String[] args) {
+	private static String getFormattedString(String string, String[] args) {
 		return NLS.bind(string, args);
 	}
 
@@ -2052,11 +2045,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 
-	protected static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
+	private static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
 		if (fgDebugImageRegistry == null) {
 			fgDebugImageRegistry = JDIDebugUIPlugin.getImageDescriptorRegistry();
 		}
 		return fgDebugImageRegistry;
+	}
+
+	private static Image getDebugImage(ImageDescriptor descriptor) {
+		return getDebugImageRegistry().get(descriptor);
+	}
+
+	private static Image getDebugImage(ImageDescriptor descriptor, int flags) {
+		return getDebugImageRegistry().get(new JDIImageDescriptor(descriptor, flags));
 	}
 
 	protected JavaElementLabelProvider getJavaLabelProvider() {
@@ -2066,6 +2067,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return fJavaLabelProvider;
 	}
 
+	private StackFramePresentationProvider getStackFrameProvider() {
+		if (fStackFrameProvider == null) {
+			fStackFrameProvider = new StackFramePresentationProvider();
+		}
+		return fStackFrameProvider;
+	}
 	/**
 	 * Returns whether the given field variable has the same name as any variables
 	 */
@@ -2132,6 +2139,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (element instanceof IJavaThread && ThreadMonitorManager.getDefault().isInDeadlock((IJavaThread)element)) {
 			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
+		if (element instanceof IJavaStackFrame && isColorizeStackFrames()) {
+			IJavaStackFrame frame = (IJavaStackFrame) element;
+
+			return getStackFrameProvider().getForeground(frame);
+		}
 		return null;
 	}
 
@@ -2147,6 +2159,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	@Override
 	public Color getBackground(Object element) {
+		if (element instanceof IJavaStackFrame && isColorizeStackFrames()) {
+			IJavaStackFrame frame = (IJavaStackFrame) element;
+
+			return getStackFrameProvider().getBackground(frame);
+		}
 		return null;
 	}
 
