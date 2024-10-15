@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -243,6 +243,23 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_system_suspended_fieldmodification;
 	public static String thread_daemon_system_suspended_runtoline;
 	public static String thread_daemon_system_suspended_classprepare;
+
+	public static String thread_virtual_terminated;
+	public static String thread_virtual_evaluating;
+	public static String thread_virtual_running;
+	public static String thread_virtual_stepping;
+	public static String thread_virtual_suspended;
+	public static String thread_virtual_suspended_problem;
+	public static String thread_virtual_suspended_fieldaccess;
+	public static String thread_virtual_suspended_linebreakpoint;
+	public static String thread_virtual_suspended_methodentry;
+	public static String thread_virtual_suspended_exception;
+	public static String thread_virtual_suspended_exception_uncaught;
+	public static String thread_virtual_suspended_methodexit;
+	public static String thread_virtual_suspended_fieldmodification;
+	public static String thread_virtual_suspended_runtoline;
+	public static String thread_virtual_suspended_classprepare;
+
 	public static String SuspendTimeoutHandler_suspend;
 	public static String SuspendTimeoutHandler_timeout_occurred;
 	public static String JDIDebugUIPlugin_Searching_1;
