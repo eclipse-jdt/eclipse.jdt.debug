@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.internal.weaving;
 
-import org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassReader;
-import org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassVisitor;
-import org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassWriter;
-import org.eclipse.jdt.launching.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 
 public class ClassfileTransformer {
 
