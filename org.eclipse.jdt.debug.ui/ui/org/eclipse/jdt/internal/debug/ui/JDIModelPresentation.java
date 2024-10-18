@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -318,6 +318,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		if (thread.isSystemThread()) {
 			key.append("system_"); //$NON-NLS-1$
+		} else if (thread instanceof JDIThread jdi) {
+			if (jdi.isVirtualThread()) {
+				key.append("virtual_"); //$NON-NLS-1$
+			}
 		}
 		if (thread.isTerminated()) {
 			key.append("terminated"); //$NON-NLS-1$
@@ -325,7 +329,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else if (thread.isStepping()) {
 			key.append("stepping"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
-		} else if ((thread instanceof JDIThread && ((JDIThread)thread).isSuspendVoteInProgress()) && !thread.getDebugTarget().isSuspended()) {
+		} else if ((thread instanceof JDIThread jdi && jdi.isSuspendVoteInProgress()) && !thread.getDebugTarget().isSuspended()
+				&& !jdi.isVirtualThread()) {
 			// show running when listener notification is in progress
 			key.append("running"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
@@ -415,8 +420,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				args =  new String[] {thread.getName()};
 			}
 		}
+		if (args[0].isEmpty() && thread instanceof JDIThread jdi && jdi.isVirtualThread()) { // Virtual Thread
+			long virtualThreadID = thread.getThreadObject().getUniqueId();
+			String id = "ID#" + virtualThreadID; //$NON-NLS-1$
+			args[0] = id;
+		}
 		try {
-			return getFormattedString((String)DebugUIMessages.class.getDeclaredField(key.toString()).get(null), args);
+
+			return getFormattedString((String) DebugUIMessages.class.getDeclaredField(key.toString()).get(null), args);
+
 		} catch (IllegalArgumentException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (SecurityException e) {

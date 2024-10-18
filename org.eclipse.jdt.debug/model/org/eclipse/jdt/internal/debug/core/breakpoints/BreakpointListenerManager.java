@@ -60,8 +60,7 @@ public class BreakpointListenerManager {
 	/**
 	 * Proxy to a breakpoint listener
 	 */
-	private class JavaBreakpointListenerProxy implements
-			IJavaBreakpointListener {
+	private class JavaBreakpointListenerProxy implements IJavaBreakpointListener {
 
 		private final IConfigurationElement fConfigElement;
 		private IJavaBreakpointListener fDelegate;
@@ -78,8 +77,7 @@ public class BreakpointListenerManager {
 		private synchronized IJavaBreakpointListener getDelegate() {
 			if (fDelegate == null) {
 				try {
-					fDelegate = (IJavaBreakpointListener) fConfigElement
-							.createExecutableExtension(ATTR_CLASS);
+					fDelegate = (IJavaBreakpointListener) fConfigElement.createExecutableExtension(ATTR_CLASS);
 				} catch (CoreException e) {
 					JDIDebugPlugin.log(e);
 				}
@@ -91,14 +89,11 @@ public class BreakpointListenerManager {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see
-		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint
-		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint (org.eclipse.jdt.debug.core.IJavaDebugTarget,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		@Override
-		public void addingBreakpoint(IJavaDebugTarget target,
-				IJavaBreakpoint breakpoint) {
+		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
 				delegate.addingBreakpoint(target, breakpoint);
@@ -121,14 +116,11 @@ public class BreakpointListenerManager {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#
-		 * breakpointHasCompilationErrors
-		 * (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener# breakpointHasCompilationErrors (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
 		 * org.eclipse.jdt.core.dom.Message[])
 		 */
 		@Override
-		public void breakpointHasCompilationErrors(
-				IJavaLineBreakpoint breakpoint, Message[] errors) {
+		public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
 				delegate.breakpointHasCompilationErrors(breakpoint, errors);
@@ -138,14 +130,11 @@ public class BreakpointListenerManager {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#
-		 * breakpointHasRuntimeException
-		 * (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener# breakpointHasRuntimeException (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
 		 * org.eclipse.debug.core.DebugException)
 		 */
 		@Override
-		public void breakpointHasRuntimeException(
-				IJavaLineBreakpoint breakpoint, DebugException exception) {
+		public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
 				delegate.breakpointHasRuntimeException(breakpoint, exception);
@@ -155,9 +144,7 @@ public class BreakpointListenerManager {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see
-		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(
-		 * org.eclipse.jdt.debug.core.IJavaThread,
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit( org.eclipse.jdt.debug.core.IJavaThread,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		@Override
@@ -172,31 +159,26 @@ public class BreakpointListenerManager {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see
-		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointInstalled
-		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointInstalled (org.eclipse.jdt.debug.core.IJavaDebugTarget,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		@Override
-		public void breakpointInstalled(IJavaDebugTarget target,
-				IJavaBreakpoint breakpoint) {
+		public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
 				delegate.breakpointInstalled(target, breakpoint);
 			}
+
 		}
 
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see
-		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved
-		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved (org.eclipse.jdt.debug.core.IJavaDebugTarget,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		@Override
-		public void breakpointRemoved(IJavaDebugTarget target,
-				IJavaBreakpoint breakpoint) {
+		public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
 				delegate.breakpointRemoved(target, breakpoint);
@@ -206,22 +188,17 @@ public class BreakpointListenerManager {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see
-		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint
-		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
-		 * org.eclipse.jdt.debug.core.IJavaBreakpoint,
-		 * org.eclipse.jdt.debug.core.IJavaType)
+		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint (org.eclipse.jdt.debug.core.IJavaDebugTarget,
+		 * org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 		 */
 		@Override
-		public int installingBreakpoint(IJavaDebugTarget target,
-				IJavaBreakpoint breakpoint, IJavaType type) {
+		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
 				return delegate.installingBreakpoint(target, breakpoint, type);
 			}
 			return IJavaBreakpointListener.DONT_CARE;
 		}
-
 	}
 
 	/**
@@ -231,23 +208,15 @@ public class BreakpointListenerManager {
 		if (fgJavaBreakpointListenersMap == null) {
 			fgJavaBreakpointListenersMap = new HashMap<>();
 			List<JavaBreakpointListenerProxy> global = new ArrayList<>();
-			IExtensionPoint extensionPoint = Platform
-					.getExtensionRegistry()
-					.getExtensionPoint(
-							JDIDebugPlugin.getUniqueIdentifier(),
-							JDIDebugPlugin.EXTENSION_POINT_JAVA_BREAKPOINT_LISTENERS);
-			IConfigurationElement[] actionDelegateElements = extensionPoint
-					.getConfigurationElements();
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.EXTENSION_POINT_JAVA_BREAKPOINT_LISTENERS);
+			IConfigurationElement[] actionDelegateElements = extensionPoint.getConfigurationElements();
 			for (IConfigurationElement actionDelegateElement : actionDelegateElements) {
 				try {
 					String id = actionDelegateElement.getAttribute(ATTR_ID);
-					if (id == null)
-						throw new CoreException(
-								new Status(IStatus.ERROR, JDIDebugPlugin
-										.getUniqueIdentifier(),
-										"Java breakpoint listener requires an  identifier attribute.")); //$NON-NLS-1$
-					JavaBreakpointListenerProxy listener = new JavaBreakpointListenerProxy(
-							actionDelegateElement);
+					if (id == null) {
+						throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), "Java breakpoint listener requires an  identifier attribute.")); //$NON-NLS-1$
+					}
+					JavaBreakpointListenerProxy listener = new JavaBreakpointListenerProxy(actionDelegateElement);
 					fgJavaBreakpointListenersMap.put(id, listener);
 					if (listener.isGlobal()) {
 						global.add(listener);
@@ -256,14 +225,12 @@ public class BreakpointListenerManager {
 					JDIDebugPlugin.log(e);
 				}
 			}
-			fgGlobalListeners = global
-					.toArray(new IJavaBreakpointListener[global.size()]);
+			fgGlobalListeners = global.toArray(new IJavaBreakpointListener[global.size()]);
 		}
 	}
 
 	/**
-	 * Returns the listener registered with the given identifier or
-	 * <code>null</code> if none.
+	 * Returns the listener registered with the given identifier or <code>null</code> if none.
 	 *
 	 * @param id
 	 *            extension identifier
@@ -275,8 +242,7 @@ public class BreakpointListenerManager {
 	}
 
 	/**
-	 * Returns breakpoint listener extensions registered to listen for changes
-	 * to all breakpoints.
+	 * Returns breakpoint listener extensions registered to listen for changes to all breakpoints.
 	 *
 	 * @return global listeners
 	 */
