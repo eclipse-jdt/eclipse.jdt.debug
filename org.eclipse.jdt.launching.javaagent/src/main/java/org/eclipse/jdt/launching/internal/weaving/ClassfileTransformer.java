@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.internal.weaving;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
+import org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassReader;
+import org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassVisitor;
+import org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassWriter;
+import org.eclipse.jdt.launching.internal.org.objectweb.asm.Opcodes;
 
 public class ClassfileTransformer {
 
@@ -25,7 +25,7 @@ public class ClassfileTransformer {
 	private static final String STRATA_ID = "jdt"; //$NON-NLS-1$
 
 	/** max supported java class format major version, must match {@link #ASM_API} below **/
-	public static final int MAX_CLASS_MAJOR = Opcodes.V23;
+	public static final int MAX_CLASS_MAJOR = Opcodes.V24;
 
 	/** supported ASM API version, must match {@link #MAX_CLASS_MAJOR} above */
 	private static final int ASM_API = Opcodes.ASM9;
