@@ -208,6 +208,33 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 					List<Object> matches = (List<Object>) source;
 					List<Object> exactMatchesFiltered = new ArrayList<>();
 					String originalHyperLink2 = originalHyperLink;
+					if (originalHyperLink2 == null) {
+						try {
+							if (matches.get(0) instanceof IType b1 && matches.get(1) instanceof IType b2) {
+
+								if ((b1.getClass().getSimpleName().equals("BinaryType") && b2.getClass().getSimpleName().equals("BinaryType")) //$NON-NLS-1$ //$NON-NLS-2$
+										&& (b1.getFullyQualifiedName().equals(b2.getFullyQualifiedName()))) {
+									IVMInstall curr = JavaRuntime.getDefaultVMInstall();
+									String vmPath = curr.getInstallLocation().getAbsolutePath();
+									IVMInstall vmPath1 = JavaRuntime.getVMInstall(b1.getJavaProject());
+									String path1 = vmPath1.getInstallLocation().getAbsolutePath();
+									if (path1.equals(vmPath)) {
+										processSearchResult(matches.get(0), typeName, 0);
+										return Status.OK_STATUS;
+									}
+									processSearchResult(matches.get(1), typeName, 0);
+									return Status.OK_STATUS;
+								}
+							}
+							OpenFromClipboardAction.handleMatches(exactMatchesFiltered, 0, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+							return Status.OK_STATUS;
+
+						} catch (CoreException e) {
+							DebugUIPlugin.log(e);
+							OpenFromClipboardAction.handleMatches(exactMatchesFiltered, 0, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+							return Status.OK_STATUS;
+						}
+					}
 					int firstMethodStartIndex = originalHyperLink2.indexOf('.');
 					int firstMethodClosing = originalHyperLink2.lastIndexOf(')');
 
