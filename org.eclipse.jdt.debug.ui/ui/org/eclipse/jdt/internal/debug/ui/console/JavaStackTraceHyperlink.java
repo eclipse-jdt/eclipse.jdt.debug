@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,10 +25,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.TypeNameMatch;
@@ -57,7 +60,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class JavaStackTraceHyperlink implements IHyperlink {
 
 	private final TextConsole fConsole;
-
+	private String generatedLink;
 	/**
 	 * Constructor
 	 * @param console the {@link TextConsole} this link detector is attached to
@@ -89,6 +92,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
         int lineNumber;
         try {
             String linkText = getLinkText();
+			generatedLink = linkText;
             typeName = getTypeName(linkText);
             lineNumber = getLineNumber(linkText);
         } catch (CoreException e1) {
@@ -188,11 +192,56 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
 					}
 				} else if (source instanceof List) { // ambiguous
+
 					@SuppressWarnings("unchecked")
 					List<Object> matches = (List<Object>) source;
 					int line = lineNumber + 1; // lineNumber starts with 0, but line with 1, see #linkActivated
+					if (generatedLink == null) { // Handles invalid links (without line number)
+						OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+						return Status.OK_STATUS;
+					}
+					List<Object> exactMatchesFiltered = new ArrayList<>();
+					int methodNameStartIndex = generatedLink.indexOf('.');
+					int methodNameEndIndex = generatedLink.lastIndexOf(')');
+					if (methodNameStartIndex != -1 && methodNameEndIndex != -1) {
+						String methodSignature = generatedLink.substring(methodNameStartIndex + 1, methodNameEndIndex + 1).replaceAll(" ", ""); //$NON-NLS-1$//$NON-NLS-2$
+						String methodNameExtracted = methodSignature.substring(0, methodSignature.indexOf('('));
+						for (Object obj : matches) {
+							if (obj instanceof IType type) {
+								try {
+									if (extractFromResults(type, methodSignature, methodNameExtracted)) {
+										exactMatchesFiltered.add(obj);
+									} else if (generatedLink.indexOf('$') != -1) { // checks for inner class
+										IType[] innerClass = type.getTypes();
+										while (innerClass.length > 0) {
+											for (IType innerType : innerClass) {
+												if (innerClass.length > 0) {
+													innerClass = innerType.getTypes();
+												}
+												if (extractFromResults(innerType, methodSignature, methodNameExtracted)) {
+													exactMatchesFiltered.add(obj);
+												}
+											}
+										}
+									}
+								} catch (Exception e) {
+									DebugUIPlugin.log(e);
+									OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+									return Status.OK_STATUS;
+								}
+							}
+						}
+					}
+					if (exactMatchesFiltered.size() == 1) {
+						processSearchResult(exactMatchesFiltered.get(0), typeName, lineNumber);
+						return Status.OK_STATUS;
+					} else if (exactMatchesFiltered.size() > 1) {
+						OpenFromClipboardAction.handleMatches(exactMatchesFiltered, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+						return Status.OK_STATUS;
+					}
 					OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
 					return Status.OK_STATUS;
+
 				} else {
 					processSearchResult(source, typeName, lineNumber);
 				}
@@ -201,6 +250,96 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		};
 		job.setSystem(true);
 		job.schedule();
+	}
+
+	/**
+	 * Filters results based on method signature
+	 *
+	 * @param type
+	 *            Type of the matches
+	 * @param methodSignature
+	 *            entire method declaration
+	 * @param methodNameExtracted
+	 *            method name
+	 * @throws JavaModelException
+	 */
+	private boolean extractFromResults(IType type, String methodSignature, String methodNameExtracted) throws JavaModelException {
+		IMethod[] methods = type.getMethods();
+		for (IMethod method : methods) {
+			int indexOfClosing = method.toString().indexOf(')');
+			int indexOfStart = method.toString().indexOf(method.getElementName());
+			String methodName = method.toString().substring(indexOfStart, indexOfClosing + 1).replaceAll(" ", ""); //$NON-NLS-1$//$NON-NLS-2$
+			int paramCount = methodSignature.substring(methodSignature.indexOf('(')
+					+ 1, methodSignature.lastIndexOf(')')).split(",").length; //$NON-NLS-1$
+			if (methodName.equals(methodSignature)) {
+				return true;
+			} else if (methodNameExtracted.equals(method.getElementName())
+					&& paramCount == method.getNumberOfParameters()) {
+				// Further mining from fully qualified parameter names in method signature
+				StringBuilder methodSignatureBuilder = new StringBuilder(method.getElementName());
+				methodSignatureBuilder.append('(');
+				String[] params = methodName.split(","); //$NON-NLS-1$
+				for (String block : params) {
+					if (block.contains("...")) { //$NON-NLS-1$ Parameter is var args
+						if (params.length > 1) {
+							String sub1 = block.substring(0, block.indexOf("...")); //$NON-NLS-1$
+							sub1 = sub1.substring(sub1.lastIndexOf('.') + 1);
+							methodSignatureBuilder.append(sub1);
+							methodSignatureBuilder.append('.');
+							methodSignatureBuilder.append('.');
+							methodSignatureBuilder.append('.');
+							methodSignatureBuilder.append(',');
+						}
+					} else {
+						if (block.indexOf('.') == -1) {
+							methodSignatureBuilder.append(block.substring(block.lastIndexOf('(') + 1));
+							methodSignatureBuilder.append(',');
+						} else {
+							methodSignatureBuilder.append(block.substring(block.lastIndexOf('.') + 1));
+							methodSignatureBuilder.append(',');
+						}
+					}
+				}
+				methodSignatureBuilder.deleteCharAt(methodSignatureBuilder.length() - 1);
+
+				if (methodSignatureBuilder.charAt(methodSignatureBuilder.length() - 1) != ')') {
+					methodSignatureBuilder.append(')');
+				}
+				if (methodSignatureBuilder.toString().equals(methodSignature)) {
+					return true;
+				}
+				// If paramters includes innerclass
+				if (methodSignature.indexOf('$') != -1) {
+					StringBuilder newSignature = new StringBuilder(methodNameExtracted + "("); //$NON-NLS-1$
+					String paramsExtracted = methodSignature.substring(methodSignature.indexOf('(')
+							+ 1, methodSignature.indexOf(')'));
+					if (paramsExtracted.indexOf(',') != -1) {
+						String[] parameters = paramsExtracted.split(","); //$NON-NLS-1$
+						for (String param : parameters) {
+							newSignature.append(param.substring(param.indexOf('$') + 1));
+							newSignature.append(","); //$NON-NLS-1$
+						}
+						newSignature.deleteCharAt(newSignature.length() - 1);
+						if (newSignature.charAt(newSignature.length() - 1) != ')') {
+							newSignature.append(')');
+						}
+						if (newSignature.toString().equals(methodSignatureBuilder.toString())) {
+							return true;
+						}
+					} else {
+						String param = paramsExtracted.substring(paramsExtracted.indexOf('$') + 1);
+						newSignature.append(param);
+						newSignature.append(')');
+						if (newSignature.toString().equals(methodSignatureBuilder.toString())) {
+							return true;
+						}
+
+					}
+				}
+				return false;
+			}
+		}
+		return false;
 	}
 
 	/**
