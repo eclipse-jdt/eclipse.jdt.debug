@@ -57,6 +57,7 @@ import org.eclipse.jdt.debug.tests.connectors.MultipleConnectionsTest;
 import org.eclipse.jdt.debug.tests.console.ConsoleTerminateAllActionTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
 import org.eclipse.jdt.debug.tests.console.JavaDebugStackTraceConsoleTest;
+import org.eclipse.jdt.debug.tests.console.JavaStackTraceAmbiguityTest;
 import org.eclipse.jdt.debug.tests.console.JavaStackTraceConsoleTest;
 import org.eclipse.jdt.debug.tests.core.AlternateStratumTests;
 import org.eclipse.jdt.debug.tests.core.ArgumentTests;
@@ -275,6 +276,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(JavaDebugStackTraceConsoleTest.class));
 		addTest(new TestSuite(IOConsoleTests.class));
 		addTest(new TestSuite(ConsoleTerminateAllActionTests.class));
+		addTest(new TestSuite(JavaStackTraceAmbiguityTest.class));
 
 	//Core tests
 		addTest(new TestSuite(DebugEventTests.class));
