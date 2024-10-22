@@ -192,56 +192,32 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
 					}
 				} else if (source instanceof List) { // ambiguous
-
 					@SuppressWarnings("unchecked")
 					List<Object> matches = (List<Object>) source;
 					int line = lineNumber + 1; // lineNumber starts with 0, but line with 1, see #linkActivated
 					if (generatedLink == null) { // Handles invalid links (without line number)
-						OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
-						return Status.OK_STATUS;
+						return openClipboard(matches, line, typeName);
 					}
-					List<Object> exactMatchesFiltered = new ArrayList<>();
 					int methodNameStartIndex = generatedLink.indexOf('.');
 					int methodNameEndIndex = generatedLink.lastIndexOf(')');
 					if (methodNameStartIndex != -1 && methodNameEndIndex != -1) {
+						List<Object> exactMatchesFiltered = new ArrayList<>();
 						String methodSignature = generatedLink.substring(methodNameStartIndex + 1, methodNameEndIndex + 1).replaceAll(" ", ""); //$NON-NLS-1$//$NON-NLS-2$
 						String methodNameExtracted = methodSignature.substring(0, methodSignature.indexOf('('));
 						for (Object obj : matches) {
-							if (obj instanceof IType type) {
-								try {
-									if (extractFromResults(type, methodSignature, methodNameExtracted)) {
-										exactMatchesFiltered.add(obj);
-									} else if (generatedLink.indexOf('$') != -1) { // checks for inner class
-										IType[] innerClass = type.getTypes();
-										while (innerClass.length > 0) {
-											for (IType innerType : innerClass) {
-												if (innerClass.length > 0) {
-													innerClass = innerType.getTypes();
-												}
-												if (extractFromResults(innerType, methodSignature, methodNameExtracted)) {
-													exactMatchesFiltered.add(obj);
-												}
-											}
-										}
-									}
-								} catch (Exception e) {
-									DebugUIPlugin.log(e);
-									OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
-									return Status.OK_STATUS;
-								}
+							if (filterClasses(obj, methodSignature, methodNameExtracted)) {
+								exactMatchesFiltered.add(obj);
 							}
 						}
+						if (exactMatchesFiltered.size() == 1) {
+							processSearchResult(exactMatchesFiltered.get(0), typeName, lineNumber);
+							return Status.OK_STATUS;
+						} else if (exactMatchesFiltered.size() > 1) {
+							return openClipboard(exactMatchesFiltered, line, typeName);
+						}
 					}
-					if (exactMatchesFiltered.size() == 1) {
-						processSearchResult(exactMatchesFiltered.get(0), typeName, lineNumber);
-						return Status.OK_STATUS;
-					} else if (exactMatchesFiltered.size() > 1) {
-						OpenFromClipboardAction.handleMatches(exactMatchesFiltered, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
-						return Status.OK_STATUS;
-					}
-					OpenFromClipboardAction.handleMatches(matches, line, typeName, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
-					return Status.OK_STATUS;
 
+					return openClipboard(matches, line, typeName);
 				} else {
 					processSearchResult(source, typeName, lineNumber);
 				}
@@ -253,7 +229,80 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	}
 
 	/**
-	 * Filters results based on method signature
+	 * Filter classes based on matching method name
+	 *
+	 * @param obj
+	 *            Objects of initial results
+	 * @param methodSignature
+	 *            entire method declaration
+	 * @param methodNameExtracted
+	 *            method name
+	 * @return returns <code>true</code> if a found an exact method inside the class, or <code>false</code> if there's no matching methods
+	 */
+	private boolean filterClasses(Object obj,String methodSignature, String methodNameExtracted) {
+		if (obj instanceof IType type) {
+			try {
+				if (extractFromResults(type, methodSignature, methodNameExtracted)) {
+					return true;
+				} else if (generatedLink.indexOf('$') != -1) { // checks for inner class
+					if (extractFromInnerClassResults(type.getTypes(), methodSignature, methodNameExtracted)) {
+						return true;
+					}
+				}
+
+			} catch (Exception e) {
+				DebugUIPlugin.log(e);
+				return false;
+			}
+		}
+		return false;
+
+	}
+
+	/**
+	 * Opens the clipboard action pop-up if there are multiple results
+	 *
+	 * @param results
+	 *            Search results
+	 * @param lineNumber
+	 *            Line number from given stack trace
+	 * @param type
+	 *            Unqualified class name
+	 * @return Returns a standard OK status with an "ok" message.
+	 */
+	private IStatus openClipboard(List<Object> results, int lineNumber, String type) {
+		OpenFromClipboardAction.handleMatches(results, lineNumber, type, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Additional Filtering of classes if the IType has inner classes
+	 *
+	 * @param innerClass
+	 *            Array of inner classes - IType[] arrays
+	 * @param methodSignature
+	 *            entire method declaration
+	 * @param methodNameExtracted
+	 *            method name
+	 * @throws JavaModelException
+	 * @return returns <code>true</code> if a found an exact method inside the class, or <code>false</code> if there's no matching methods
+	 */
+	private boolean extractFromInnerClassResults(IType[] innerClass, String methodSignature, String methodNameExtracted) throws JavaModelException {
+		while (innerClass.length > 0) {
+			for (IType innerType : innerClass) {
+				if (innerClass.length > 0) {
+					innerClass = innerType.getTypes();
+				}
+				if (extractFromResults(innerType, methodSignature, methodNameExtracted)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if there's any matching methods for the given IType
 	 *
 	 * @param type
 	 *            Type of the matches
@@ -262,6 +311,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @param methodNameExtracted
 	 *            method name
 	 * @throws JavaModelException
+	 * @return returns <code>true</code> if a found an exact method inside the class, or <code>false</code> if there's no matching methods
 	 */
 	private boolean extractFromResults(IType type, String methodSignature, String methodNameExtracted) throws JavaModelException {
 		IMethod[] methods = type.getMethods();
@@ -276,64 +326,22 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			} else if (methodNameExtracted.equals(method.getElementName())
 					&& paramCount == method.getNumberOfParameters()) {
 				// Further mining from fully qualified parameter names in method signature
-				StringBuilder methodSignatureBuilder = new StringBuilder(method.getElementName());
-				methodSignatureBuilder.append('(');
-				String[] params = methodName.split(","); //$NON-NLS-1$
-				for (String block : params) {
-					if (block.contains("...")) { //$NON-NLS-1$ Parameter is var args
-						if (params.length > 1) {
-							String sub1 = block.substring(0, block.indexOf("...")); //$NON-NLS-1$
-							sub1 = sub1.substring(sub1.lastIndexOf('.') + 1);
-							methodSignatureBuilder.append(sub1);
-							methodSignatureBuilder.append('.');
-							methodSignatureBuilder.append('.');
-							methodSignatureBuilder.append('.');
-							methodSignatureBuilder.append(',');
-						}
-					} else {
-						if (block.indexOf('.') == -1) {
-							methodSignatureBuilder.append(block.substring(block.lastIndexOf('(') + 1));
-							methodSignatureBuilder.append(',');
-						} else {
-							methodSignatureBuilder.append(block.substring(block.lastIndexOf('.') + 1));
-							methodSignatureBuilder.append(',');
-						}
-					}
-				}
-				methodSignatureBuilder.deleteCharAt(methodSignatureBuilder.length() - 1);
-
-				if (methodSignatureBuilder.charAt(methodSignatureBuilder.length() - 1) != ')') {
-					methodSignatureBuilder.append(')');
-				}
-				if (methodSignatureBuilder.toString().equals(methodSignature)) {
+				String methodSignatureGen = methodSignatureGenerator(method.getElementName(), methodName);
+				if (methodSignatureGen.equals(methodSignature)) {
 					return true;
 				}
 				// If paramters includes innerclass
 				if (methodSignature.indexOf('$') != -1) {
-					StringBuilder newSignature = new StringBuilder(methodNameExtracted + "("); //$NON-NLS-1$
-					String paramsExtracted = methodSignature.substring(methodSignature.indexOf('(')
-							+ 1, methodSignature.indexOf(')'));
-					if (paramsExtracted.indexOf(',') != -1) {
-						String[] parameters = paramsExtracted.split(","); //$NON-NLS-1$
-						for (String param : parameters) {
-							newSignature.append(param.substring(param.indexOf('$') + 1));
-							newSignature.append(","); //$NON-NLS-1$
-						}
-						newSignature.deleteCharAt(newSignature.length() - 1);
-						if (newSignature.charAt(newSignature.length() - 1) != ')') {
-							newSignature.append(')');
-						}
-						if (newSignature.toString().equals(methodSignatureBuilder.toString())) {
-							return true;
-						}
-					} else {
-						String param = paramsExtracted.substring(paramsExtracted.indexOf('$') + 1);
-						newSignature.append(param);
-						newSignature.append(')');
-						if (newSignature.toString().equals(methodSignatureBuilder.toString())) {
-							return true;
-						}
-
+					String methodSignatureInnerClass = innerClassMethodSignatureGen(methodNameExtracted, methodSignature);
+					if (methodSignatureInnerClass.equals(methodSignatureGen)) {
+						return true;
+					}
+					String paramsExtracted = methodSignature.substring(methodSignature.indexOf('('));
+					String param = paramsExtracted.substring(paramsExtracted.indexOf('$') + 1);
+					methodSignatureInnerClass.concat(param);
+					methodSignatureInnerClass.concat(")"); //$NON-NLS-1$
+					if (methodSignatureInnerClass.toString().equals(methodSignatureGen)) {
+						return true;
 					}
 				}
 				return false;
@@ -342,6 +350,84 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		return false;
 	}
 
+	/**
+	 * Additional method signature generation for inner classes
+	 *
+	 * @param extractedMethodName
+	 *            Extracted method name from input
+	 * @param methodSignature
+	 *            generated method signature
+	 * @return returns generated <code>String</code> suitable for inner classes
+	 */
+	private String innerClassMethodSignatureGen(String extractedMethodName, String methodSignature) {
+		StringBuilder newSignature = new StringBuilder(extractedMethodName + "("); //$NON-NLS-1$
+		String paramsExtracted = methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'));
+		if (paramsExtracted.indexOf(',') != -1) {
+			String[] parameters = paramsExtracted.split(","); //$NON-NLS-1$
+			for (String param : parameters) {
+				newSignature.append(param.substring(param.indexOf('$') + 1));
+				newSignature.append(","); //$NON-NLS-1$
+			}
+			newSignature.deleteCharAt(newSignature.length() - 1);
+			if (newSignature.charAt(newSignature.length() - 1) != ')') {
+				newSignature.append(')');
+			}
+		}
+		return newSignature.toString();
+	}
+
+	/**
+	 * Method signature generation for normal classes
+	 *
+	 * @param methodName
+	 *            Extracted method name from input
+	 * @param targetMethod
+	 *            already extracted method signature
+	 * @return returns generated <code>String</code> suitable for normal classes
+	 */
+	private String methodSignatureGenerator(String methodName, String targetMethod) {
+		StringBuilder methodSignatureBuilder = new StringBuilder(methodName);
+		methodSignatureBuilder.append('(');
+		String[] params = targetMethod.split(","); //$NON-NLS-1$
+		for (String block : params) {
+			if (block.contains("...")) { //$NON-NLS-1$ Parameter is var args
+				if (params.length > 1) {
+					methodSignatureBuilder = varArgsParamBuilder(block, methodSignatureBuilder);
+				}
+			} else {
+				if (block.indexOf('.') == -1) {
+					methodSignatureBuilder.append(block.substring(block.lastIndexOf('(') + 1));
+					methodSignatureBuilder.append(',');
+				} else {
+					methodSignatureBuilder.append(block.substring(block.lastIndexOf('.') + 1));
+					methodSignatureBuilder.append(',');
+				}
+			}
+		}
+		methodSignatureBuilder.deleteCharAt(methodSignatureBuilder.length() - 1);
+
+		if (methodSignatureBuilder.charAt(methodSignatureBuilder.length() - 1) != ')') {
+			methodSignatureBuilder.append(')');
+		}
+		return methodSignatureBuilder.toString();
+	}
+
+	/**
+	 * Variable argument's parameter creation
+	 *
+	 * @param parameter
+	 *            Input parameter
+	 * @param current
+	 *            Initial parameters
+	 * @return returns generated <code>Stringbuilder</code> for parameter
+	 */
+	private StringBuilder varArgsParamBuilder(String parameter, StringBuilder current) {
+		String sub1 = parameter.substring(0, parameter.indexOf("...")); //$NON-NLS-1$
+		sub1 = sub1.substring(sub1.lastIndexOf('.') + 1);
+		current.append(sub1);
+		current.append("...,"); //$NON-NLS-1$
+		return current;
+	}
 	/**
 	 * The search succeeded with the given result
 	 *
