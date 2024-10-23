@@ -136,7 +136,7 @@ public class DetectVMInstallationsJob extends Job {
 			rootDirectories.add(new File("/usr/lib/jvm")); //$NON-NLS-1$
 		}
 		rootDirectories.add(new File(System.getProperty("user.home"), ".sdkman/candidates/java")); //$NON-NLS-1$ //$NON-NLS-2$
-		rootDirectories.add(new File(System.getProperty("user.home"), ".local/share/mise/installs/java")); //$NON-NLS-1$ //$NON-NLS-2$
+		rootDirectories.add(new File(miseDataDir(), "installs/java")); //$NON-NLS-1$
 
 		Set<File> directories = rootDirectories.stream().filter(File::isDirectory)
 			.map(dir -> dir.listFiles(File::isDirectory))
@@ -178,6 +178,26 @@ public class DetectVMInstallationsJob extends Job {
 			.distinct()
 			.flatMap(progFilesDir -> subDirs.stream().map(subDir -> new File(progFilesDir, subDir)))
 			.collect(Collectors.toList()));
+	}
+
+	private static File miseDataDir() {
+		String miseDataDir = System.getenv("MISE_DATA_DIR"); //$NON-NLS-1$
+		return miseDataDir != null ? new File(miseDataDir) : new File(xdgDataHome(), "mise"); //$NON-NLS-1$
+	}
+
+	private static File xdgDataHome() {
+		String xdgDataHome = System.getenv("XDG_DATA_HOME"); //$NON-NLS-1$
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			if (xdgDataHome == null) {
+				xdgDataHome = System.getenv("LOCALAPPDATA"); //$NON-NLS-1$
+			}
+			if (xdgDataHome == null) {
+				return new File(System.getProperty("user.home"), "AppData/Local"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} else if (xdgDataHome == null) {
+			return new File(System.getProperty("user.home"), ".local/share"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return new File(xdgDataHome);
 	}
 
 	private static Set<File> knownVMs() {
