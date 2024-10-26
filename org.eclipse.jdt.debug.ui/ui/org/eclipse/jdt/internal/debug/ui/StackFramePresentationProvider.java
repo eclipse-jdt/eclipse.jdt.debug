@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
  * preference storage.
  *
  */
-public class StackFramePresentationProvider implements IPropertyChangeListener, AutoCloseable {
+public final class StackFramePresentationProvider implements IPropertyChangeListener {
 
 	private final static EnumMap<Category, String> fgKeyMap = new EnumMap<>(Map.of(
 			Category.CUSTOM_FILTERED, IJDIPreferencesConstants.PREF_CUSTOM_FILTERED_STACK_FRAME_FG_COLOR,
@@ -267,7 +267,6 @@ public class StackFramePresentationProvider implements IPropertyChangeListener, 
 		return Category.UNKNOWN;
 	}
 
-	@Override
 	public void close() {
 		store.removePropertyChangeListener(this);
 	}
