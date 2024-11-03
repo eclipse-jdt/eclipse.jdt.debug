@@ -6,6 +6,10 @@
  *  which accompanies this distribution, and is available at
  *  https://www.eclipse.org/legal/epl-2.0/
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
@@ -66,6 +70,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_16_EE_NAME = "JavaSE-16";
 	public static final String JAVA_SE_21_EE_NAME = "JavaSE-21";
 	public static final String JAVA_SE_23_EE_NAME = "JavaSE-23";
+	public static final String JAVA_SE_24_EE_NAME = "JavaSE-24";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -100,6 +105,10 @@ public class JavaProjectHelper {
 	 * path to the 23 test source
 	 */
 	public static final IPath TEST_23_SRC_DIR = new Path("java23");
+	/**
+	 * path to the 24 test source
+	 */
+	public static final IPath TEST_24_SRC_DIR = new Path("java24");
 
 	/**
 	 * path to the compiler error java file
