@@ -197,7 +197,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
-		if (JavaProjectHelper.isJava23_Compatible()) {
+		if (JavaProjectHelper.isJava24_Compatible()) {
 			addTest(new TestSuite(InstanceMainMethodsTests.class));
 		}
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
@@ -416,7 +416,7 @@ public class AutomatedSuite extends DebugSuite {
 		if (JavaProjectHelper.isJava16_Compatible()) {
 			addTest(new TestSuite(RecordBreakpointTests.class));
 		}
-		if (Runtime.version().feature() == 23 && JavaProjectHelper.isJava23_Compatible()) {
+		if (Runtime.version().feature() == 24 && JavaProjectHelper.isJava24_Compatible()) {
 			addTest(new TestSuite(VirtualThreadsDebugViewTests.class));
 		}
 	}
