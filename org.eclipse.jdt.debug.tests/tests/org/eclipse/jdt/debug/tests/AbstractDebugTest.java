@@ -6,6 +6,10 @@
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -180,7 +184,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String NINE_PROJECT_NAME = "Nine";
 	public static final String ONESIX_PROJECT_NAME = "One_Six";
 	public static final String TWENTYONE_PROJECT_NAME = "Two_One";
-	public static final String TWENTYTHREE_PROJECT_NAME = "Two_Three";
+	public static final String TWENTYFOUR_PROJECT_NAME = "Two_Four";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -239,7 +243,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded9 = false;
 	private static boolean loaded16_ = false;
 	private static boolean loaded21 = false;
-	private static boolean loaded23 = false;
+	private static boolean loaded24 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -620,21 +624,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Creates the Java 23 compliant project
+	 * Creates the Java 24 compliant project
 	 */
-	synchronized void assert23Project() {
+	synchronized void assert24Project() {
 		IJavaProject jp = null;
 		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
 		try {
-			if (!loaded23) {
-				jp = createProject(TWENTYTHREE_PROJECT_NAME, JavaProjectHelper.TEST_23_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_23_EE_NAME, false);
+			if (!loaded24) {
+				jp = createProject(TWENTYFOUR_PROJECT_NAME, JavaProjectHelper.TEST_24_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_24_EE_NAME, false);
 				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
-				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_23);
-				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_23);
+				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_24);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_24);
 				cfgs.add(createLaunchConfiguration(jp, "Main1"));
 				cfgs.add(createLaunchConfiguration(jp, "Main2"));
 				cfgs.add(createLaunchConfiguration(jp, "Main21"));
-				loaded23 = true;
+				loaded24 = true;
 				waitForBuild();
 				assertNoErrorMarkersExist(jp.getProject());
 			}
@@ -649,7 +653,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (CoreException ce) {
 				// ignore
 			}
-			handleProjectCreationException(e, TWENTYTHREE_PROJECT_NAME, jp);
+			handleProjectCreationException(e, TWENTYFOUR_PROJECT_NAME, jp);
 		}
 	}
 
@@ -950,13 +954,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Returns the 'Two_Three' project, used for Java 23 tests.
+	 * Returns the 'Two_Four' project, used for Java 24 tests.
 	 *
 	 * @return the test project
 	 */
-	protected IJavaProject get23Project() {
-		assert23Project();
-		return getJavaProject(TWENTYTHREE_PROJECT_NAME);
+	protected IJavaProject get24Project() {
+		assert24Project();
+		return getJavaProject(TWENTYFOUR_PROJECT_NAME);
 	}
 
 	/**
