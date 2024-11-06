@@ -40,8 +40,7 @@ import org.eclipse.jdt.launching.IVMInstall2;
  */
 public class CommandLineShortener implements IProcessTempFileCreator {
 	public static String getJavaVersion(IVMInstall vmInstall) {
-		if (vmInstall instanceof IVMInstall2) {
-			IVMInstall2 install = (IVMInstall2) vmInstall;
+		if (vmInstall instanceof IVMInstall2 install) {
 			return install.getJavaVersion();
 		}
 		return null;

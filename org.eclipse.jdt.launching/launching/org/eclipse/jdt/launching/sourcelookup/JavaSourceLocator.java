@@ -217,8 +217,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @since 2.1
 	 */
 	public Object[] getSourceElements(IStackFrame stackFrame) {
-		if (stackFrame instanceof IJavaStackFrame) {
-			IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
+		if (stackFrame instanceof IJavaStackFrame frame) {
 			String name = null;
 			try {
 				name = getFullyQualfiedName(frame);
@@ -255,8 +254,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 */
 	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
-		if (stackFrame instanceof IJavaStackFrame) {
-			IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
+		if (stackFrame instanceof IJavaStackFrame frame) {
 			String name = null;
 			try {
 				name = getFullyQualfiedName(frame);

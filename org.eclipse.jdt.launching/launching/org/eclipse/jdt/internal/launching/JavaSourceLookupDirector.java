@@ -54,9 +54,7 @@ public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 
 	@Override
 	public boolean equalSourceElements(Object o1, Object o2) {
-		if (o1 instanceof AbstractClassFile && o2 instanceof AbstractClassFile) {
-			AbstractClassFile c1 = (AbstractClassFile) o1;
-			AbstractClassFile c2 = (AbstractClassFile) o2;
+		if (o1 instanceof AbstractClassFile c1 && o2 instanceof AbstractClassFile c2) {
 			String pathIdentifier1 = c1.getPathIdentifier();
 			String pathIdentifier2 = c2.getPathIdentifier();
 			return Objects.equals(pathIdentifier1, pathIdentifier2);

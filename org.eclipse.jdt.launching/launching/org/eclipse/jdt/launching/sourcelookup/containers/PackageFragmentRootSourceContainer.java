@@ -118,8 +118,8 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof PackageFragmentRootSourceContainer &&
-		 ((PackageFragmentRootSourceContainer)obj).getPackageFragmentRoot().equals(getPackageFragmentRoot());
+		return obj instanceof PackageFragmentRootSourceContainer packageFragment
+				&& packageFragment.getPackageFragmentRoot().equals(getPackageFragmentRoot());
 	}
 
 	/**

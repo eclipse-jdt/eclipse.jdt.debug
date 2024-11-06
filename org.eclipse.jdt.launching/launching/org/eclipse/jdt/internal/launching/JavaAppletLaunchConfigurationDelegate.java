@@ -208,11 +208,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 				case DebugEvent.TERMINATE :
 					if (eventSource != null) {
 						ILaunch launch = null;
-						if (eventSource instanceof IProcess) {
-							IProcess process = (IProcess) eventSource;
+						if (eventSource instanceof IProcess process) {
 							launch = process.getLaunch();
-						} else if (eventSource instanceof IDebugTarget) {
-							IDebugTarget debugTarget = (IDebugTarget) eventSource;
+						} else if (eventSource instanceof IDebugTarget debugTarget) {
 							launch = debugTarget.getLaunch();
 						}
 						if (launch != null) {

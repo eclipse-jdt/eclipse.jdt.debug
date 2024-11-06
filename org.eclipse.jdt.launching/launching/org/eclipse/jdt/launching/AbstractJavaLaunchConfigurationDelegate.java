@@ -932,8 +932,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.CREATE
-					&& event.getSource() instanceof IJavaDebugTarget) {
-				IJavaDebugTarget target = (IJavaDebugTarget) event.getSource();
+					&& event.getSource() instanceof IJavaDebugTarget target) {
 				ILaunch launch = target.getLaunch();
 				if (launch != null) {
 					ILaunchConfiguration configuration = launch
@@ -1261,9 +1260,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	private static String toAbsolutePath(IResource resource, IWorkspaceRoot root) throws CoreException {
 		IJavaElement element = JavaCore.create(resource);
 		if (element != null && element.exists()) {
-			if (element instanceof IJavaProject) {
+			if (element instanceof IJavaProject project) {
 				Set<String> paths = new HashSet<>();
-				IJavaProject project = (IJavaProject) element;
 				paths.add(absPath(root, project.getOutputLocation()));
 				for (IClasspathEntry entry : project.getResolvedClasspath(true)) {
 					if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getOutputLocation() != null) {
@@ -1271,8 +1269,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 					}
 				}
 				return String.join(File.pathSeparator, paths);
-			} else if (element instanceof IPackageFragmentRoot) {
-				IPackageFragmentRoot packageRoot = (IPackageFragmentRoot) element;
+			} else if (element instanceof IPackageFragmentRoot packageRoot) {
 				IClasspathEntry entry = packageRoot.getJavaProject().getClasspathEntryFor(resource.getFullPath());
 				return absPath(root, entry.getOutputLocation());
 			}

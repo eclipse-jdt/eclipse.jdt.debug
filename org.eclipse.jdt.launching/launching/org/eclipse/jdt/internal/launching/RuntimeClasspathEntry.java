@@ -574,8 +574,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IRuntimeClasspathEntry) {
-			IRuntimeClasspathEntry r = (IRuntimeClasspathEntry)obj;
+		if (obj instanceof IRuntimeClasspathEntry r) {
 			if (getType() == r.getType() && getClasspathProperty() == r.getClasspathProperty()) {
 				if (getType() == IRuntimeClasspathEntry.CONTAINER) {
 					String id = getPath().segment(0);

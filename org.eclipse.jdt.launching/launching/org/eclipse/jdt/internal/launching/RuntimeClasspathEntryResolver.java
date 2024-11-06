@@ -117,8 +117,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	public boolean isVMInstallReference(IClasspathEntry entry) {
 		try {
 			IRuntimeClasspathEntryResolver resolver = getResolver();
-			if (resolver instanceof IRuntimeClasspathEntryResolver2) {
-				IRuntimeClasspathEntryResolver2 resolver2 = (IRuntimeClasspathEntryResolver2) resolver;
+			if (resolver instanceof IRuntimeClasspathEntryResolver2 resolver2) {
 				return resolver2.isVMInstallReference(entry);
 			}
 			return resolver.resolveVMInstall(entry) != null;

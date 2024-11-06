@@ -98,13 +98,11 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AccessRuleParticipant) {
-			AccessRuleParticipant participant = (AccessRuleParticipant) obj;
+		if (obj instanceof AccessRuleParticipant participant) {
 			return participant.getDelegateClassName().equals(getDelegateClassName());
 		}
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
