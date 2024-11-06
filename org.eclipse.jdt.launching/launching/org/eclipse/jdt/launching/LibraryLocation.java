@@ -190,8 +190,7 @@ public final class LibraryLocation {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof LibraryLocation) {
-			LibraryLocation lib = (LibraryLocation)obj;
+		if (obj instanceof LibraryLocation lib) {
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath())
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getExternalAnnotationsPath(), lib.getExternalAnnotationsPath())

@@ -219,8 +219,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @since 3.10
 	 */
 	protected boolean isModular(VMRunnerConfiguration config, IVMInstall vmInstall) {
-		if (config.getModuleDescription() != null && config.getModuleDescription().length() > 0 && vmInstall instanceof AbstractVMInstall) {
-			AbstractVMInstall install = (AbstractVMInstall) vmInstall;
+		if (config.getModuleDescription() != null && config.getModuleDescription().length() > 0 && vmInstall instanceof AbstractVMInstall install) {
 			String vmver = install.getJavaVersion();
 			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.9, etc
 			if (vmver.length() > 3) {

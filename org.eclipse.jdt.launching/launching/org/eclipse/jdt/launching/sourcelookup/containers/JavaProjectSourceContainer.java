@@ -118,8 +118,8 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 					case IClasspathEntry.CPE_SOURCE:
 						IPath path = entry.getPath();
 						IResource resource = root.findMember(path);
-						if (resource instanceof IContainer) {
-							containers.add(new FolderSourceContainer((IContainer)resource, false));
+						if (resource instanceof IContainer iContainer) {
+							containers.add(new FolderSourceContainer(iContainer, false));
 						}
 						break;
 				}

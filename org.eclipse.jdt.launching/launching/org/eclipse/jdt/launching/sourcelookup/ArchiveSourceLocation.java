@@ -299,8 +299,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 */
 	@Override
 	public boolean equals(Object object) {
-		return object instanceof ArchiveSourceLocation &&
-			 getName().equals(((ArchiveSourceLocation)object).getName());
+		return object instanceof ArchiveSourceLocation archivceSource && getName().equals(archivceSource.getName());
 	}
 
 	/* (non-Javadoc)

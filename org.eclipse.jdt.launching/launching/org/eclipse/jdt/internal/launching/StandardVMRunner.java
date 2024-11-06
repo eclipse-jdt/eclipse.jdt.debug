@@ -594,8 +594,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 */
 	protected String[] prependJREPath(String[] env) {
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			if (fVMInstance instanceof IVMInstall2) {
-				IVMInstall2 vm = (IVMInstall2) fVMInstance;
+			if (fVMInstance instanceof IVMInstall2 vm) {
 				String javaVersion = vm.getJavaVersion();
 				if (javaVersion != null) {
 					if (env == null) {
