@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,11 +47,10 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	/**
 	 * Creates a new dialog which can terminate, disconnect or restart the given debug target.
 	 *
-	 * @param target the debug target
-	 * @see ErrorDialogWithToggle#ErrorDialogWithToggle(Shell, String, String, IStatus, String, String, IPreferenceStore)
+	 * @see ErrorDialogWithToggle#ErrorDialogWithToggle(Shell, String, String, IStatus, String, String,String, IPreferenceStore)
 	 */
-	public HotCodeReplaceErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, String preferenceKey, String toggleMessage, IPreferenceStore store, IDebugTarget target) {
-		super(parentShell, dialogTitle, message, status, preferenceKey, toggleMessage, store);
+	public HotCodeReplaceErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, String preferenceKey, String toggleMessage, String toggleMessage2, IPreferenceStore store, IDebugTarget target) {
+		super(parentShell, dialogTitle, message, status, preferenceKey, toggleMessage, toggleMessage2, store);
 		this.target = target;
 	}
 
@@ -143,7 +142,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 			}
 			okPressed();
 		} else {
-			super.buttonPressed(id);
+			super.buttonPressed(id, target);
 		}
 	}
 }
