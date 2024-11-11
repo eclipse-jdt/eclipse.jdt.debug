@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -337,6 +337,19 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Labels given by the user is stored in this map, where the key is the unique ID of the object.
 	 */
 	private final Map<Long, String> objectLabels = new HashMap<>();
+
+	/**
+	 * HCR failure alert pref for current debug session.
+	 */
+	private boolean hcrDebugErrors = false;
+
+	public boolean getHcrDebugErrorPref() {
+		return hcrDebugErrors;
+	}
+
+	public void setHcrDebugErrorPref(boolean preference) {
+		hcrDebugErrors = preference;
+	}
 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -3246,4 +3259,5 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			}
 		}
 	}
+
 }
