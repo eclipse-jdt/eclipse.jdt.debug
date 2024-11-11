@@ -142,6 +142,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1;
 	public static String JDIDebugUIPlugin_3;
     public static String JDIDebugUIPlugin_4;
+	public static String JDIDebugUIPlugin_5;
 
 	public static String JDIModelPresentation__No_explicit_return_value__30;
 	public static String JDIModelPresentation__conditional__2;
