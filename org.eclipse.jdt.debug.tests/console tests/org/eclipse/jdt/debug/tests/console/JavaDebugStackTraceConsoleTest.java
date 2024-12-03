@@ -18,6 +18,8 @@ package org.eclipse.jdt.debug.tests.console;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
@@ -222,18 +224,17 @@ public class JavaDebugStackTraceConsoleTest extends AbstractJavaStackTraceConsol
 
 	private IEditorPart waitForEditorOpen() throws Exception {
 		waitForJobs();
-		IEditorPart[] editor = new IEditorPart[1];
-		sync(() -> editor[0] = getActivePage().getActiveEditor());
-		long timeout = 30_000;
-		long start = System.currentTimeMillis();
-		while (editor[0] == null && System.currentTimeMillis() - start < timeout) {
+		AtomicReference<IEditorPart> editor = new AtomicReference<>();
+		sync(() -> editor.set(getActivePage().getActiveEditor()));
+		long timeoutNanos = System.nanoTime() + 30_000 * 1_000_000L;
+		while (editor.get() == null && System.nanoTime() < timeoutNanos) {
 			waitForJobs();
-			sync(() -> editor[0] = getActivePage().getActiveEditor());
+			sync(() -> editor.set(getActivePage().getActiveEditor()));
 		}
-		if (editor[0] == null) {
+		if (editor.get() == null) {
 			throw new AssertionError("Timeout occurred while waiting for editor to open");
 		}
-		return editor[0];
+		return editor.get();
 	}
 
 	private void waitForJobs() throws Exception {

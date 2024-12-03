@@ -155,9 +155,9 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 		if (fEvent == null) {
 			try {
 				if (enableUIEventLoopProcessing && Display.getCurrent() != null) {
-					long endTime = System.currentTimeMillis() + fTimeout;
-					while (fEvent == null && System.currentTimeMillis() < endTime) {
-						wait(10);
+					long timeoutNanos = System.nanoTime() + fTimeout * 1_000_000L;
+					while (fEvent == null && System.nanoTime() < timeoutNanos) {
+						wait(1);
 						TestUtil.runEventLoop();
 					}
 				} else {
