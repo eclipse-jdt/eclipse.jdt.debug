@@ -133,10 +133,14 @@ public class TestUtil {
 	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
+		return waitForJobs(owner, null, minTimeMs, maxTimeMs, excludedFamilies);
+	}
+
+	public static boolean waitForJobs(String owner, Object jobFamily, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
-		wakeUpSleepingJobs(null);
+		wakeUpSleepingJobs(jobFamily);
 		final long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < minTimeMs) {
 			runEventLoop();
@@ -153,7 +157,7 @@ public class TestUtil {
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
-			List<Job> jobs = getRunningOrWaitingJobs(null, excludedFamilies);
+			List<Job> jobs = getRunningOrWaitingJobs(jobFamily, excludedFamilies);
 			if (jobs.isEmpty()) {
 				// only uninteresting jobs running
 				break;
@@ -169,7 +173,7 @@ public class TestUtil {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
 			}
-			wakeUpSleepingJobs(null);
+			wakeUpSleepingJobs(jobFamily);
 		}
 		runningJobs.clear();
 		return false;

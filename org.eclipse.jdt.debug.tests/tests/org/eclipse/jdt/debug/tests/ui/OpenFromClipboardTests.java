@@ -97,8 +97,8 @@ public class OpenFromClipboardTests {
 	}
 
 	private static void waitForEncodingRelatedJobs() {
-		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, ValidateProjectEncoding.class);
-		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, CharsetDeltaJob.FAMILY_CHARSET_DELTA);
+		TestUtil.waitForJobs("OpenFromClipboardTests", ValidateProjectEncoding.class, 0, 5_000);
+		TestUtil.waitForJobs("OpenFromClipboardTests", CharsetDeltaJob.FAMILY_CHARSET_DELTA, 0, 5_000);
 	}
 
 	private static IJavaProject createProject(String name) throws CoreException {
