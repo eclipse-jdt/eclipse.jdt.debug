@@ -164,13 +164,13 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	/**
 	 * Process all queued UI events. If called from background thread, just waits
 	 *
-	 * @param millis
-	 *            max wait time to process events
+	 * @param timeoutMs
+	 *            max wait time in milliseconds to process events
 	 */
-	public static void processUiEvents(final long millis) throws RuntimeException {
+	public static void processUiEvents(final long timeoutMs) throws RuntimeException {
 		sync(() -> {
-			long start = System.currentTimeMillis();
-			while (System.currentTimeMillis() - start < millis) {
+			long timeoutNanos = System.nanoTime() + timeoutMs * 1_000_000L;
+			while (System.nanoTime() < timeoutNanos) {
 				Display display = Display.getCurrent();
 				if (display != null && !display.isDisposed()) {
 					while (display.readAndDispatch()) {
@@ -178,7 +178,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 					}
 				} else {
 					try {
-						Thread.sleep(10);
+						Thread.sleep(1);
 					} catch (InterruptedException e) {
 						break;
 					}

@@ -33,7 +33,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	static final String SNIPPET = "getchar()";
 
 	static class Listener implements IEvaluationListener {
-		IEvaluationResult fResult;
+		volatile IEvaluationResult fResult;
 
 		@Override
 		public void evaluationComplete(IEvaluationResult result) {
@@ -72,9 +72,9 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(get14Project(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(SNIPPET, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis()+5000;
-			while(listener.fResult == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
+			long timeoutNanos = System.nanoTime() + 5000 * 1_000_000L;
+			while (listener.fResult == null && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 			assertFalse("The evaluation should not have errors", listener.fResult.hasErrors());
 			return listener.fResult.getValue();

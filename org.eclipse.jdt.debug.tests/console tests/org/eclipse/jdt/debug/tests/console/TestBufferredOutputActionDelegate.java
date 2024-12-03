@@ -79,14 +79,14 @@ public class TestBufferredOutputActionDelegate implements IActionDelegate2, IWor
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-			    long start = System.currentTimeMillis();
+				long startNano = System.nanoTime();
 				for (int i = 0; i < 1000; i++) {
 					stream.print(Integer.toString(i));
 					stream.print(": Testing..."); //$NON-NLS-1$
 					stream.print("one..."); //$NON-NLS-1$
 					stream.println("two.... three...."); //$NON-NLS-1$
 				}
-				stream.println("Total time: " + (System.currentTimeMillis()-start)); //$NON-NLS-1$
+				stream.println("Total time ms: " + (System.nanoTime() - startNano) / 1_000_000L); //$NON-NLS-1$
 			}
 		};
 		new Thread(r).start();

@@ -163,11 +163,11 @@ public class TestAll {
 		// Run test
 		System.out.println("\n" + new java.util.Date());
 		System.out.println("Begin testing " + test.getName() + "...");
-		long startTime= System.currentTimeMillis();
+		long startNanos = System.nanoTime();
 		test.suite().run(result);
-		long endTime= System.currentTimeMillis();
-		long runTime= endTime-startTime;
-		System.out.println("\nTime: "+runTime/1000+"."+runTime%1000);
+		long endNanos = System.nanoTime();
+		long runNanos = endNanos - startNanos;
+		System.out.println("\nTime in ms: " + runNanos / 1_000_000L);
 		System.out.println("Done testing " + test.getName() + ".");
 
 		return test;

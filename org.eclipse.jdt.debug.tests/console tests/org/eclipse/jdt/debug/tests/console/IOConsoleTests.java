@@ -29,7 +29,7 @@ import org.eclipse.ui.console.TextConsole;
 public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchListener {
 
     private int fMatchCount;
-    private boolean fDisconnected = false;
+    private volatile boolean fDisconnected;
 
     /**
      * Constructor
@@ -53,10 +53,10 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
             stream.println();
             stream.print("two foo bar");
 
-            long endTime = System.currentTimeMillis() + 1500;
-            while (!fDisconnected && System.currentTimeMillis() < endTime) {
+			long timeoutNanos = System.nanoTime() + 1500 * 1_000_000L;
+			while (!fDisconnected && System.nanoTime() < timeoutNanos) {
                 synchronized(this) {
-                    wait(500);
+					wait(1);
                 }
             }
 

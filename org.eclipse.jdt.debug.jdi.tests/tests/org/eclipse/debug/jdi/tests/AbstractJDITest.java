@@ -937,7 +937,7 @@ public abstract class AbstractJDITest extends TestCase {
 				long n1 = System.nanoTime();
 				if (i > 10 && n1 - n0 > 5_000_000_000L) {
 					e.printStackTrace();
-					System.out.println("Could not contact the VM at localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000 + "ms");
+					System.out.println("Could not contact the VM at localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000L + "ms");
 					break;
 				}
 				try {
@@ -969,7 +969,7 @@ public abstract class AbstractJDITest extends TestCase {
 			throw new Error("Could not contact the VM");
 		}
 		long n1 = System.nanoTime(); // for example after ~ 110ms
-		System.out.println("Connected to localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000 + "ms");
+		System.out.println("Connected to localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000L + "ms");
 		startEventReader();
 	}
 	/**

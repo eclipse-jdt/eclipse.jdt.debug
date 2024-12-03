@@ -67,14 +67,14 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-			    long start = System.currentTimeMillis();
+				long start = System.nanoTime();
 				for (int i = 0; i < 1000; i++) {
 					stream.print(Integer.toString(i));
 					stream.print(": Testing..."); //$NON-NLS-1$
 					stream.print("one..."); //$NON-NLS-1$
 					stream.println("two.... three...."); //$NON-NLS-1$
 				}
-				stream.println("Total time: " + (System.currentTimeMillis()-start)); //$NON-NLS-1$
+				stream.println("Total time ms: " + (System.nanoTime() - start) / 1_000_000L); //$NON-NLS-1$
 			}
 		};
 		new Thread(r).start();

@@ -1473,12 +1473,12 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		final int timeoutms = 10000;
 		int selectedLineNumer = sync(() -> {
 			int lineNumber;
-			long endtime = System.currentTimeMillis() + timeoutms;
+			long timeoutNanos = System.nanoTime() + timeoutms * 1_000_000L;
 			debugView.getViewer().setSelection(newSelection, true);
 			do {
 				TestUtil.runEventLoop();
 				lineNumber = ((ITextSelection) editor.getSelectionProvider().getSelection()).getStartLine();
-			} while (lineNumber != targetLineNumber && System.currentTimeMillis() < endtime);
+			} while (lineNumber != targetLineNumber && System.nanoTime() < timeoutNanos);
 			return lineNumber;
 		});
 		assertEquals("After waiting " + timeoutms

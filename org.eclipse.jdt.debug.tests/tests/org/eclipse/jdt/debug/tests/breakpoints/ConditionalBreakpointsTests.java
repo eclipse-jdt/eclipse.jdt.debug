@@ -200,9 +200,9 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			assertNotNull("Missing top frame", top);
 			thread.resume();
 			// wait for evaluation to start
-			long start = System.currentTimeMillis();
-			while ((System.currentTimeMillis() - start) <= DEFAULT_TIMEOUT && !thread.isPerformingEvaluation()) {
-				Thread.sleep(10);
+			long timeoutNanos = System.nanoTime() + DEFAULT_TIMEOUT * 1_000_000L;
+			while (!thread.isPerformingEvaluation() && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 			assertTrue("Expected evaluation for second breakpoint", thread.isPerformingEvaluation());
 			/*

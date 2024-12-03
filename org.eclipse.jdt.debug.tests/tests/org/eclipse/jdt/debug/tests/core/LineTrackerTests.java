@@ -182,7 +182,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			ConsoleLineTracker.setDelegate(this);
 			fTarget = launchAndTerminate("ThrowsNPE");
 			long startTime = System.nanoTime();
-			long timeOut = 6000 * 1_000_000;
+			long timeOut = 6000 * 1_000_000L;
 			while (ConsoleLineTracker.getDocument() == null) {
 				if (System.nanoTime() - startTime > timeOut) {
 					break;

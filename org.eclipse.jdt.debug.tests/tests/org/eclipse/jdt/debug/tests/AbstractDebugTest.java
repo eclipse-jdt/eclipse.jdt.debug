@@ -2382,7 +2382,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IEvaluationResult evaluate(String snippet, IJavaThread thread) throws Exception {
 		class Listener implements IEvaluationListener {
-			IEvaluationResult fResult;
+			volatile IEvaluationResult fResult;
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {
 				fResult= result;
@@ -2394,9 +2394,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis()+DEFAULT_TIMEOUT;
-			while(listener.fResult == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
+			long timeoutNanos = System.nanoTime() + DEFAULT_TIMEOUT * 1_000_000L;
+			while (listener.fResult == null && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 			return listener.fResult;
 		}
@@ -2857,7 +2857,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IValue doEval(IJavaThread thread, StackFrameSupplier frameSupplier, String snippet) throws Exception {
 		class Listener implements IEvaluationListener {
-			IEvaluationResult fResult;
+			volatile IEvaluationResult fResult;
 
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {
@@ -2874,9 +2874,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis() + 5000;
-			while(listener.getResult() == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
+			long timeoutNanos = System.nanoTime() + 5000 * 1_000_000L;
+			while (listener.getResult() == null && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 			IEvaluationResult result = listener.getResult();
 			assertNotNull("The evaluation should have result: ", result);
