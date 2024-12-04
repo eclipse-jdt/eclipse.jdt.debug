@@ -25,12 +25,8 @@ import org.eclipse.jdt.debug.tests.TestUtil;
  */
 public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarget {
 
-
-
-
 	public TestToggleBreakpointsTarget8(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -124,4 +120,26 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 		}
 	}
 
+	/**
+	 * Tests that a line breakpoints in an lambda expression works.
+	 */
+	public void testLineBreakpointInsideLambda() throws Exception {
+		Listener listener = new Listener();
+		IBreakpointManager manager = getBreakpointManager();
+		manager.addBreakpointListener(listener);
+		try {
+			Path path = new Path("java8/ClassWithLambdas.java");
+			final int lineNr = 35; // 0 based offset in document line numbers
+			toggleBreakpoint(path, lineNr);
+			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT);
+			IBreakpoint added = listener.getAdded();
+			assertTrue("Should be a line breakpoint", added instanceof IJavaLineBreakpoint);
+			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) added;
+			assertEquals("Wrong line number", lineNr + 1, breakpoint.getLineNumber());
+			assertEquals("Wrong type name", "ClassWithLambdas", breakpoint.getTypeName());
+		} finally {
+			manager.removeBreakpointListener(listener);
+			removeAllBreakpoints();
+		}
+	}
 }
