@@ -32,8 +32,8 @@ import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager;
 public class DetailFormatterTests extends AbstractDebugTest {
 
 	static class TestListener implements IValueDetailListener {
-		IValue value;
-		String result;
+		volatile IValue value;
+		volatile String result;
 
 		@Override
 		public void detailComputed(IValue value, String result) {
@@ -98,10 +98,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -134,10 +131,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -168,10 +162,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -202,10 +193,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -236,10 +224,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -250,6 +235,13 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			jdfm.removeAssociatedDetailFormatter(formatter);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
+		}
+	}
+
+	private void waitForListenerValue() throws InterruptedException {
+		long timeoutNanos = System.nanoTime() + 5000 * 1_000_000L;
+		while (fListener.value == null && System.nanoTime() < timeoutNanos) {
+			Thread.sleep(1);
 		}
 	}
 
@@ -272,10 +264,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -307,10 +296,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("map");
 			assertNotNull("the variable 'map' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis()+5000;
-			while(fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("The map should be an instance of java.util.LinkedHashMap", "java.util.LinkedHashMap", Signature.getTypeErasure(fListener.value.getReferenceTypeName()));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
@@ -344,10 +330,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			IJavaVariable var = thread.findVariable("coll");
 			assertNotNull("the variable 'coll' must exist in the frame", var);
 			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
-			long timeout = System.currentTimeMillis() + 5000;
-			while (fListener.value == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
-			}
+			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}

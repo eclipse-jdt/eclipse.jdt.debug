@@ -34,7 +34,7 @@ import org.eclipse.test.performance.Dimension;
  */
 public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements IBreakpointListener {
 
-    int breakpointCount = 0;
+	volatile int breakpointCount = 0;
 
     /**
      * Constructor
@@ -247,8 +247,8 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
      * Waits for the specified breakpoint count to be hit
      */
     private synchronized void waitForBreakpointCount(int i) throws Exception {
-        long end = System.currentTimeMillis() + 60000;
-        while (breakpointCount != i && System.currentTimeMillis() < end) {
+		long timeoutNanos = System.nanoTime() + 60000 * 1_000_000L;
+		while (breakpointCount != i && System.nanoTime() < timeoutNanos) {
             wait(30000);
         }
         assertEquals("Expected " + i + " breakpoints, notified of " + breakpointCount, i, breakpointCount);

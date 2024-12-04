@@ -158,7 +158,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		return findThread(thread, name, 5_000);
 	}
 
-	private IThread findThread(IJavaThread thread, String name, long timeout) throws DebugException {
+	private IThread findThread(IJavaThread thread, String name, long timeoutMs) throws DebugException {
 		Predicate<IThread> predicate = x -> {
 			try {
 				return x.getName().equals(name);
@@ -170,8 +170,8 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IThread[] threads = {};
 
 		// Wait until timeout or JDIDebugTarget.ThreadStartHandler has added the thread.
-		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start <= timeout) {
+		long timeoutNanos = System.nanoTime() + timeoutMs * 1_000_000L;
+		while (System.nanoTime() <= timeoutNanos) {
 			threads = thread.getDebugTarget().getThreads();
 			Optional<IThread> match = Arrays.stream(threads).filter(predicate).findFirst();
 			if (match.isPresent()) {
@@ -179,7 +179,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			}
 		}
 
-		throw new AssertionError("Timeout of " + timeout + "ms reached, thread with name \"" + name + "\" not found in set of threads: "
+		throw new AssertionError("Timeout of " + timeoutMs + "ms reached, thread with name \"" + name + "\" not found in set of threads: "
 				+ Arrays.asList(threads));
 	}
 

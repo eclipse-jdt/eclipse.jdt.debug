@@ -88,12 +88,12 @@ public class TestUtil {
 				}
 			}
 		} else {
-			long start = System.currentTimeMillis();
+			long timeoutNanos = System.nanoTime() + AbstractDebugTest.DEFAULT_TIMEOUT * 1_000_000L;
 			AtomicBoolean stop = new AtomicBoolean();
 			Display.getDefault().asyncExec(() -> stop.set(true));
-			while (!stop.get() && System.currentTimeMillis() - start < AbstractDebugTest.DEFAULT_TIMEOUT) {
+			while (!stop.get() && System.nanoTime() < timeoutNanos) {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					break;
 				}
@@ -141,11 +141,11 @@ public class TestUtil {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
 		wakeUpSleepingJobs(jobFamily);
-		final long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < minTimeMs) {
+		final long startNanos = System.nanoTime();
+		while (System.nanoTime() - startNanos < minTimeMs * 1_000_000L) {
 			runEventLoop();
 			try {
-				Thread.sleep(Math.min(10, minTimeMs));
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
@@ -169,7 +169,7 @@ public class TestUtil {
 				return true;
 			}
 
-			if (System.currentTimeMillis() - start >= maxTimeMs) {
+			if (System.nanoTime() - startNanos >= maxTimeMs * 1_000_000L) {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
 			}
