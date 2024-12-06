@@ -153,6 +153,7 @@ import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests18;
+import org.eclipse.jdt.debug.tests.variables.CompareObjectsTest;
 import org.eclipse.jdt.debug.tests.variables.DetailFormatterTests;
 import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
@@ -182,6 +183,7 @@ public class AutomatedSuite extends DebugSuite {
 	 * Construct the test suite.
 	 */
 	public AutomatedSuite() {
+		addTest(new TestSuite(CompareObjectsTest.class));
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 
 	//Launching tests
