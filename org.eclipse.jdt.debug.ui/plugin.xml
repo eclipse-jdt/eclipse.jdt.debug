@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2022 IBM Corporation and others.
+     Copyright (c) 2005, 2024 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -49,6 +49,14 @@
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor"
             symbolicFontName="org.eclipse.jdt.ui.editors.textfont"
             id="org.eclipse.jdt.debug.ui.SnippetEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%CompareObjects.label"
+            class="org.eclipse.jdt.internal.debug.ui.CompareElementsDiffView"
+            id="org.eclipse.jdt.debug.compareElementsEditor">
       </editor>
    </extension>
    <extension
@@ -1458,6 +1466,7 @@
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
       </viewerContribution>
+      
       <objectContribution
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
@@ -1541,6 +1550,31 @@
                         value="isReferenceListVariable">
                   </objectState>
                </not>
+            </and>
+         </visibility>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions2"
+            objectClass="org.eclipse.jdt.internal.debug.core.model.JDILocalVariable">
+            <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.CompareObjectsAction"
+               enablesFor="2+"
+               helpContextId="compare_objects_id"
+               id="org.eclipse.jdt.debug.ui.CompareTwoObjects"
+               label="%CompareObjects.label"
+               menubarPath="emptyNavigationGroup"
+               tooltip="%CompareObjects.tooltip">
+         </action>
+         <visibility>
+            <and>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isPrimitive">
+               </objectState>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
             </and>
          </visibility>
       </objectContribution>
