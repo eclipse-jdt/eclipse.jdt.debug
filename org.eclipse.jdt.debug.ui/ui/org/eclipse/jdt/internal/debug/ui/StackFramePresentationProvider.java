@@ -249,9 +249,8 @@ public final class StackFramePresentationProvider implements IPropertyChangeList
 		if (source == null) {
 			return Category.UNKNOWN;
 		}
-		if (source instanceof IFile) {
+		if (source instanceof IFile file) {
 			if (isEnabled(Category.TEST)) {
-				var file = (IFile) source;
 				var jproj = JavaCore.create(file.getProject());
 				var cp = jproj.findContainingClasspathEntry(file);
 				if (cp != null && cp.isTest()) {

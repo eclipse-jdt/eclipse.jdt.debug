@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -49,8 +49,8 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-		if (element instanceof GroupedStackFrame) {
-			return ((GroupedStackFrame) element).getFrameCount();
+		if (element instanceof GroupedStackFrame groupedFrame) {
+			return groupedFrame.getFrameCount();
 		}
 		IJavaThread thread = (IJavaThread)element;
 		if (!thread.isSuspended()) {
@@ -83,8 +83,8 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-		if (parent instanceof GroupedStackFrame) {
-			return getChildren((GroupedStackFrame) parent, index, length);
+		if (parent instanceof GroupedStackFrame groupedFrame) {
+			return getChildren(groupedFrame, index, length);
 		}
 		IJavaThread thread = (IJavaThread)parent;
 		if (!thread.isSuspended()) {
@@ -146,8 +146,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 				result.add(frame);
 				first = false;
 			} else {
-				if (frame instanceof JDIStackFrame) {
-					var javaFrame = (JDIStackFrame) frame;
+				if (frame instanceof JDIStackFrame javaFrame) {
 					var category = stackFrameProvider.getCategory(javaFrame);
 					if (category == null || category == Category.TEST || category == Category.PRODUCTION || category == Category.CUSTOM_FILTERED) {
 						result.add(javaFrame);
@@ -180,8 +179,8 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 				}
 			}
 		}
-		if (element instanceof GroupedStackFrame) {
-			return ((GroupedStackFrame) element).getFrameCount() > 0;
+		if (element instanceof GroupedStackFrame groupedFrame) {
+			return groupedFrame.getFrameCount() > 0;
 		}
 		return ((IJavaThread)element).hasStackFrames() ||
 			(isDisplayMonitors() && ((IJavaThread)element).hasOwnedMonitors());

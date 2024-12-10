@@ -249,8 +249,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaOwningTreadText((JavaOwningThread)item);
 			} else if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingTreadText((JavaWaitingThread)item);
-			} else if (item instanceof GroupedStackFrame) {
-				var groupping = (GroupedStackFrame) item;
+			} else if (item instanceof GroupedStackFrame groupping) {
 				return getFormattedString(DebugUIMessages.JDIModelPresentation_collapsed_frames, String.valueOf(groupping.getFrameCount()));
 			} else if (item instanceof NoMonitorInformationElement) {
                 return DebugUIMessages.JDIModelPresentation_5;

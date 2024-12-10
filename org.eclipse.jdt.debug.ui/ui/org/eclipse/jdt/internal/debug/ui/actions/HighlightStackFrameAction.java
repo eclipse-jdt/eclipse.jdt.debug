@@ -42,16 +42,15 @@ public class HighlightStackFrameAction extends ObjectActionDelegate {
 		final var preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		final var filterManager = JavaStackFramePreferencePage.CUSTOM_STACK_FRAMES;
 		for (Object selected : selection) {
-			if (selected instanceof IJavaStackFrame) {
-				IJavaStackFrame frame = (IJavaStackFrame) selected;
+			if (selected instanceof IJavaStackFrame frame) {
 				try {
 					addFilter(filterManager, preferenceStore, frame.getDeclaringTypeName());
 					// Reset all the stack frames, to be evaluated on the next step again.
 					var thread = frame.getThread();
 					var frames = thread.getStackFrames();
 					for (var oneFrame : frames) {
-						if (oneFrame instanceof IJavaStackFrame) {
-							((IJavaStackFrame) oneFrame).setCategory(null);
+						if (oneFrame instanceof IJavaStackFrame currentFrame) {
+							currentFrame.setCategory(null);
 						}
 					}
 				} catch (DebugException e) {
