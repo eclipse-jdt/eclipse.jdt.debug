@@ -44,9 +44,9 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 			}
 		}
 		if (adapterType == ISourceDisplay.class) {
-			if (adaptableObject instanceof GroupedStackFrame) {
+			if (adaptableObject instanceof GroupedStackFrame groupedFrames) {
 				return (T) (ISourceDisplay) (element, page, forceSourceLookup) -> {
-					var frame = ((GroupedStackFrame) element).getTopMostFrame();
+					var frame = groupedFrames.getTopMostFrame();
 					SourceLookupFacility.getDefault().displaySource(frame, page, forceSourceLookup);
 				};
 			}
