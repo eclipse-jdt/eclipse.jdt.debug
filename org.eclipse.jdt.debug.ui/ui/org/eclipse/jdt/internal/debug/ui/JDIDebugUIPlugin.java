@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionInspector;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntryAdapterFactory;
@@ -382,6 +383,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         manager.registerAdapters(monitorFactory, JavaOwningThread.class);
         manager.registerAdapters(monitorFactory, JavaWaitingThread.class);
         manager.registerAdapters(monitorFactory, IJavaStackFrame.class);
+        manager.registerAdapters(monitorFactory, GroupedStackFrame.class);
 
         IAdapterFactory targetFactory = new TargetAdapterFactory();
         manager.registerAdapters(targetFactory, IJavaDebugTarget.class);
@@ -391,6 +393,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);
+        manager.registerAdapters(showInFactory, GroupedStackFrame.class);
 
         IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
         manager.registerAdapters(columnFactory, IJavaVariable.class);
