@@ -158,7 +158,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @return the (possibly) modified command line to launch with
 	 */
 	private String[] wrap(ILaunchConfiguration config, String[] cmdLine) throws CoreException {
-		if(config != null && Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (config != null && Platform.OS.isMac()) {
 			for (String element : cmdLine) {
 				if ("-ws".equals(element) || element.contains("swt.jar") || element.contains("org.eclipse.swt")) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 					return createSWTlauncher(cmdLine,
@@ -593,7 +593,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @since 3.3
 	 */
 	protected String[] prependJREPath(String[] env) {
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			if (fVMInstance instanceof IVMInstall2 vm) {
 				String javaVersion = vm.getJavaVersion();
 				if (javaVersion != null) {

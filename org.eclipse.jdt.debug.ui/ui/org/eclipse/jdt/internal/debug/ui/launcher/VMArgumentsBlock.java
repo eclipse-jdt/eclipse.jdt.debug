@@ -105,7 +105,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			}
 		});
 
-		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			fUseStartOnFirstThread = SWTFactory.createCheckButton(group, LauncherMessages.VMArgumentsBlock_0, null, false, 1);
 			fUseStartOnFirstThread.addSelectionListener(new SelectionAdapter() {
 				@Override

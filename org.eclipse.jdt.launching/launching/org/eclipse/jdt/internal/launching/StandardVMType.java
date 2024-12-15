@@ -272,7 +272,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	@Override
 	public File detectInstallLocation() {
 		// We want a Mac OSX VM install so don't process the install location for this type
-		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			return null;
 		}
 		return getJavaHomeLocation();
@@ -677,7 +677,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			Process p = null;
 			try {
 				String envp[] = null;
-				if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+				if (Platform.OS.isMac()) {
 					Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
 					if (map.remove(StandardVMDebugger.JAVA_JVM_VERSION) != null) {
 						envp = new String[map.size()];

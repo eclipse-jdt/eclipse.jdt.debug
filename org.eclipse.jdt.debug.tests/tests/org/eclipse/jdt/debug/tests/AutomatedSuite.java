@@ -204,7 +204,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
 
 	//mac specific tests
-		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			addTest(new TestSuite(PListParserTests.class));
 		}
 

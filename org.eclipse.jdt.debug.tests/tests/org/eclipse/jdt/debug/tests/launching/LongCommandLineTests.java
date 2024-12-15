@@ -75,7 +75,7 @@ public class LongCommandLineTests extends LongClassPathTests {
 		resumeAndExit(thread);
 
 		// Then
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!Platform.OS.isWindows()) {
 			// On windows, temp file deletion may fail
 			assertFalse(tempFile.exists());
 		}

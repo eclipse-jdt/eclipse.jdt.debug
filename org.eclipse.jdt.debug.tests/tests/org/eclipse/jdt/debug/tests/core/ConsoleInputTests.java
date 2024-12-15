@@ -273,7 +273,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			}
 		}
 		assertNotNull("Console is null", fConsole);
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			// on OSX java process writes unexpected message to stderr due to https://bugs.openjdk.java.net/browse/JDK-8022291
 			// need to wait for the message to fully appear so it can be filtered in #lineAppended above
 			Thread.sleep(1000L);

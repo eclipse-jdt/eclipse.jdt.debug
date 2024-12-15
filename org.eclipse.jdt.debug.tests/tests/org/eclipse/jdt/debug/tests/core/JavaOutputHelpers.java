@@ -26,7 +26,7 @@ public class JavaOutputHelpers {
 	 * </pre>
 	 */
 	public static boolean isKnownExtraneousOutput(String txt) {
-		if (!Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (!Platform.OS.isMac()) {
 			return false;
 		}
 
