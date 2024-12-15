@@ -2661,7 +2661,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return true if the local filesystem is case-sensitive, false otherwise
 	 */
 	protected boolean isFileSystemCaseSensitive() {
-		return Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+		return Platform.OS.isMac() ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
     /**

@@ -881,7 +881,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		dialog.setText(JREMessages.InstalledJREsBlock_10);
 
 		String path = null;
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			String MAC_JAVA_SEARCH_PATH = "/Library/Java/JavaVirtualMachines"; //$NON-NLS-1$
 			dialog.setFilterPath(MAC_JAVA_SEARCH_PATH);
 			path = dialog.open();

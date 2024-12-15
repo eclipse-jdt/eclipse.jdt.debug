@@ -148,7 +148,7 @@ public class VMInstallTests extends AbstractDebugTest {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		try {
 			String filename = "/testfiles/test-jre/bin/test-resolver.ee";
-			if(Platform.OS_WIN32.equals(Platform.getOS())) {
+			if (Platform.OS.isWindows()) {
 				filename = "/testfiles/test-jre/bin/test-resolver-win32.ee";
 			}
 			VMStandin vm = getEEStandin(filename);
@@ -195,7 +195,7 @@ public class VMInstallTests extends AbstractDebugTest {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		try {
 			String filename = "/testfiles/test-jre/bin/test-resolver2.ee";
-			if(Platform.OS_WIN32.equals(Platform.getOS())) {
+			if (Platform.OS.isWindows()) {
 				filename = "/testfiles/test-jre/bin/test-resolver-win32-2.ee";
 			}
 			VMStandin vm = getEEStandin(filename);

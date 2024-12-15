@@ -1,7 +1,6 @@
 package org.eclipse.jdt.internal.launching;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Utility for quoting of command line Arguments
@@ -14,7 +13,7 @@ public class CommandLineQuoting {
 
 	public static String[] quoteWindowsArgs(String[] cmdLine) {
 		// see https://bugs.eclipse.org/387504 , workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6511002
-		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.OS.isWindows()) {
 			String[] winCmdLine = new String[cmdLine.length];
 			if (cmdLine.length > 0) {
 				winCmdLine[0] = cmdLine[0];

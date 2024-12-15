@@ -71,7 +71,7 @@ public class DebugViewTests extends AbstractDebugViewTests {
 			TreeItem[] selected = getSelectedItemsFromDebugView(true);
 			Object[] selectedText = selectedText(selected);
 			if (selected.length != 1) {
-				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+				if (Platform.OS.isMac()) {
 					// skip this test on Mac - see bug 516024
 					return;
 				}

@@ -155,7 +155,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		for (int i = 0; i < defaultLibs.length; i++) {
 			dpath = defaultLibs[i].getSystemLibraryPath();
 			lpath = libs[i].getSystemLibraryPath();
-			if(Platform.getOS().equals(Platform.OS_WIN32)) {
+			if (Platform.OS.isWindows()) {
 				//the .equals method of IPath ignores trailing separators so we must as well
 				if (!dpath.removeTrailingSeparator().toOSString().equalsIgnoreCase(lpath.removeTrailingSeparator().toOSString())) {
 					return false;

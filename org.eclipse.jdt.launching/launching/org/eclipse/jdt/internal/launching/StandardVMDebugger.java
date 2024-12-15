@@ -485,7 +485,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @since 3.3
 	 */
 	protected String[] prependJREPath(String[] env, IPath jdkpath) {
-		if(Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (Platform.OS.isWindows()) {
 			IPath jrepath = jdkpath.removeLastSegments(1);
 			if(jrepath.lastSegment().equals(BIN)) {
 				int count = jrepath.segmentCount();

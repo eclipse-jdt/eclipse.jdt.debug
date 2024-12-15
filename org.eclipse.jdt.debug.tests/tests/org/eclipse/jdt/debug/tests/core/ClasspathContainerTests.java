@@ -148,7 +148,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 	public void testLibraryCaseSensitivity() {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(def);
-		boolean caseSensitive = !Platform.getOS().equals(Platform.WS_WIN32);
+		boolean caseSensitive = !Platform.OS.isWindows();
 		LibraryLocation[] set1 = new LibraryLocation[libs.length];
 		LibraryLocation[] set2 = new LibraryLocation[libs.length];
 		for (int i = 0; i < libs.length; i++) {

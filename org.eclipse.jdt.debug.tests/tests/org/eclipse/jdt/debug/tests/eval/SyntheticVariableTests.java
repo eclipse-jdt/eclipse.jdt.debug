@@ -99,7 +99,7 @@ public class SyntheticVariableTests extends AbstractDebugUiTests {
 	}
 
 	public void testCompleteMethodParameter_DeepInTwoNestedClasses() throws Exception {
-		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+		if (Platform.OS.isMac()) {
 			return;
 		}
 		addClasses();

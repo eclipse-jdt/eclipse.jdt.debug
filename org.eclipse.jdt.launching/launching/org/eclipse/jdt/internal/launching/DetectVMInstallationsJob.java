@@ -63,7 +63,7 @@ public class DetectVMInstallationsJob extends Job {
 		candidates.removeIf(knownVMs::contains);
 		Collection<VMStandin> systemVMs = Collections.EMPTY_LIST;
 		// for MacOS, system installed VMs need a special command to locate
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			try {
 				systemVMs = new ArrayList<>(Arrays.asList(MacInstalledJREs.getInstalledJREs(monitor)));
 				systemVMs.removeIf(t -> knownVMs.contains(t.getInstallLocation()));
@@ -130,7 +130,7 @@ public class DetectVMInstallationsJob extends Job {
 	private Collection<File> computeCandidateVMs(StandardVMType standardType) {
 		// parent directories containing a collection of VM installations
 		Collection<File> rootDirectories = new HashSet<>();
-		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (Platform.OS.isWindows()) {
 			computeWindowsCandidates(rootDirectories);
 		} else {
 			rootDirectories.add(new File("/usr/lib/jvm")); //$NON-NLS-1$
@@ -187,7 +187,7 @@ public class DetectVMInstallationsJob extends Job {
 
 	private static File xdgDataHome() {
 		String xdgDataHome = System.getenv("XDG_DATA_HOME"); //$NON-NLS-1$
-		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (Platform.OS.isWindows()) {
 			if (xdgDataHome == null) {
 				xdgDataHome = System.getenv("LOCALAPPDATA"); //$NON-NLS-1$
 			}
