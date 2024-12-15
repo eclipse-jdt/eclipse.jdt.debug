@@ -46,6 +46,20 @@ import org.eclipse.jdt.launching.VMStandin;
  */
 public class DetectVMInstallationsJob extends Job {
 
+	/**
+	 * CI is a common variable defined in CI/CDI servers like Jenkins, Gitlab, Github, ... to indicate it is a CI environment
+	 */
+	private static final String ENV_CI = "CI"; //$NON-NLS-1$
+	/**
+	 * Property that can be defined to control general behavior
+	 * <ul>
+	 * <li><code>DetectVMInstallationsJob.disabled = true</code> - automatic discovery is always disabled</li>
+	 * <li><code>DetectVMInstallationsJob.disabled = false</code> - check runs everywhere depending on preferences</li>
+	 * <li><code>DetectVMInstallationsJob.disabled</code> not specified - automatic discovery is disabled if environment variable <code>CI</code> has
+	 * value <code>true</code> otherwise runs depending on preferences</li>
+	 * </pre>
+	 */
+	private static final String PROPERTY_DETECT_VM_INSTALLATIONS_JOB_DISABLED = "DetectVMInstallationsJob.disabled"; //$NON-NLS-1$
 	private static final Object FAMILY = DetectVMInstallationsJob.class;
 
 	public DetectVMInstallationsJob() {
@@ -222,11 +236,19 @@ public class DetectVMInstallationsJob extends Job {
 	}
 
 	public static void initialize() {
-		boolean forcedDisableVMDetection = Boolean.getBoolean("DetectVMInstallationsJob.disabled"); //$NON-NLS-1$
+		if (Boolean.getBoolean(PROPERTY_DETECT_VM_INSTALLATIONS_JOB_DISABLED)) {
+			// early exit no need to read preferences or check env variable!
+			return;
+		}
+		if (System.getProperty(PROPERTY_DETECT_VM_INSTALLATIONS_JOB_DISABLED) == null && Boolean.parseBoolean(System.getenv(ENV_CI))) {
+			// exit because no explicit value for the property was given and we are running in a CI environment
+			return;
+		}
+		// finally look what is defined in the preferences
 		IEclipsePreferences instanceNode = InstanceScope.INSTANCE.getNode(LaunchingPlugin.getDefault().getBundle().getSymbolicName());
 		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(LaunchingPlugin.getDefault().getBundle().getSymbolicName());
 		boolean defaultValue = defaultNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, true);
-		if (!forcedDisableVMDetection && instanceNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, defaultValue)) {
+		if (instanceNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, defaultValue)) {
 			new DetectVMInstallationsJob().schedule();
 		}
 	}
