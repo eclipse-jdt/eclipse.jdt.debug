@@ -14,7 +14,6 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1052,11 +1051,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return;
 			}
 			File file = new File(directory, names[i]);
-			try {
-				monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()),
-						file.getCanonicalPath().replaceAll("&", "&&")}));   // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (IOException e) {
-			}
+			monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[] { Integer.toString(found.size()),
+					file.toPath().normalize().toAbsolutePath().toString().replaceAll("&", "&&") })); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
 			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();
 			if (file.isDirectory()) {
 				if (!ignore.contains(file)) {

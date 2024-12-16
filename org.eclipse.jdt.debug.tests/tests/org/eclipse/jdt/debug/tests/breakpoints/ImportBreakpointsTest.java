@@ -228,7 +228,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/brkpt_missing.bkpt"));
 			assertNotNull(file);
 			assertEquals(true, file.exists());
-			ImportBreakpointsOperation op = new ImportBreakpointsOperation(file.getCanonicalPath(), true, true);
+			ImportBreakpointsOperation op = new ImportBreakpointsOperation(file.toPath().normalize().toAbsolutePath().toString(), true, true);
 			op.run(new NullProgressMonitor());
 			assertEquals("should be no breakpoints imported", 0, getBreakpointManager().getBreakpoints().length);
 		}
