@@ -186,7 +186,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 *            the target in which a thread is required
 	 * @return thread or <code>null</code>
 	 */
-	public static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
+	private static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
 		IJavaStackFrame frame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
 		IJavaThread thread = null;
 		if (frame != null) {
@@ -1958,14 +1958,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Plug in the single argument to the resource String for the key to get a formatted resource String
 	 */
-	public static String getFormattedString(String key, String arg) {
+	private static String getFormattedString(String key, String arg) {
 		return getFormattedString(key, new String[] {arg});
 	}
 
 	/**
 	 * Plug in the arguments to the resource String for the key to get a formatted resource String
 	 */
-	public static String getFormattedString(String string, String[] args) {
+	private static String getFormattedString(String string, String[] args) {
 		return NLS.bind(string, args);
 	}
 
@@ -2005,7 +2005,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 
-	protected static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
+	private static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
 		if (fgDebugImageRegistry == null) {
 			fgDebugImageRegistry = JDIDebugUIPlugin.getImageDescriptorRegistry();
 		}

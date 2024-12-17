@@ -55,7 +55,8 @@ import org.eclipse.swt.graphics.FontData;
  */
 public class JavaVariableLabelProvider extends VariableLabelProvider implements IPreferenceChangeListener {
 
-	public static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
+	private final static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
+
 	/**
 	 * Map of view id to qualified name setting
 	 */
