@@ -204,7 +204,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
 			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243",
 			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982",
-			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2" };
+			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2", "CompareObjectsStringTest", "CompareListObjects",
+			"CompareMapObjects", "CompareSetObjects", "CompareNormalObjects", "CompareArrayObjects" };
 
 	/**
 	 * the default timeout
