@@ -24,8 +24,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -94,12 +92,9 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	 * @since 3.6
 	 */
 	protected void blockMnemonicWithoutModifier(Button button) {
-		button.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit == true && e.stateMask != SWT.MOD3) {
-					e.doit= false;
-				}
+		button.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit && e.stateMask != SWT.MOD3) {
+				e.doit= false;
 			}
 		});
 	}
@@ -113,28 +108,25 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 			final DebugException[] ex = new DebugException[1];
 			final String[] operation = new String[1];
 			ex[0] = null;
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					try {
-						if (id == TERMINATE_ID) {
-							operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_5;
-							target.terminate();
-						} else if (id == DISCONNECT_ID){
-							operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_6;
-							target.disconnect();
-						} else {
-							operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_8;
-							ILaunch launch = target.getLaunch();
-							launch.terminate();
-							ILaunchConfiguration config = launch.getLaunchConfiguration();
-							if (config != null  && config.exists()) {
-								DebugUITools.launch(config, launch.getLaunchMode());
-							}
+			Runnable r = () -> {
+				try {
+					if (id == TERMINATE_ID) {
+						operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_5;
+						target.terminate();
+					} else if (id == DISCONNECT_ID){
+						operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_6;
+						target.disconnect();
+					} else {
+						operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_8;
+						ILaunch launch = target.getLaunch();
+						launch.terminate();
+						ILaunchConfiguration config = launch.getLaunchConfiguration();
+						if (config != null  && config.exists()) {
+							DebugUITools.launch(config, launch.getLaunchMode());
 						}
-					} catch (DebugException e) {
-						ex[0] = e;
 					}
+				} catch (DebugException e) {
+					ex[0] = e;
 				}
 			};
 			BusyIndicator.showWhile(getShell().getDisplay(), r);

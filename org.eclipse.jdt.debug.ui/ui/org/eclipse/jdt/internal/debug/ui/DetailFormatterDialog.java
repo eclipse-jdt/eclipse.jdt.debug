@@ -53,15 +53,11 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -175,22 +171,14 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		fTypeNameText = SWTFactory.createSingleText(innerContainer, 1);
 		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
-		fTypeNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fTypeSearched= false;
-				checkValues();
-			}
+		fTypeNameText.addModifyListener(e -> {
+			fTypeSearched= false;
+			checkValues();
 		});
 
 		Button typeSearchButton = SWTFactory.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
 		typeSearchButton.setEnabled(fEditTypeName);
-		typeSearchButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				selectType();
-			}
-		});
+		typeSearchButton.addListener(SWT.Selection, e -> selectType());
 
 		String labelText = null;
 		IBindingService bindingService = workbench.getAdapter(IBindingService.class);
@@ -373,7 +361,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			return;
 		}
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
-		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
+		SearchParticipant[] participants = {SearchEngine.getDefaultSearchParticipant()};
 		try {
 			engine.search(searchPattern, participants, scope, collector, monitor);
 		} catch (CoreException e) {

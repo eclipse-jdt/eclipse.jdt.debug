@@ -88,29 +88,26 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		}
 		final String title = DebugUIMessages.JDIDebugUIPlugin_Hot_code_replace_failed_1;
 		final String message = NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, new Object[] {vmName, launchName});
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (display.isDisposed()) {
+		display.asyncExec(() -> {
+			if (display.isDisposed()) {
+				return;
+			}
+			if (fHotCodeReplaceFailedErrorDialog != null) {
+				Shell shell = fHotCodeReplaceFailedErrorDialog.getShell();
+				if (shell != null && !shell.isDisposed()) {
 					return;
 				}
-				if (fHotCodeReplaceFailedErrorDialog != null) {
-					Shell shell = fHotCodeReplaceFailedErrorDialog.getShell();
-					if (shell != null && !shell.isDisposed()) {
-						return;
-					}
-				}
-				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				fHotCodeReplaceFailedErrorDialog = new HotCodeReplaceErrorDialog(shell, title, message, status, preference, alertMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target) {
-					@Override
-					public boolean close() {
-						fHotCodeReplaceFailedErrorDialog = null;
-						return super.close();
-					}
-				};
-				fHotCodeReplaceFailedErrorDialog.setBlockOnOpen(false);
-				fHotCodeReplaceFailedErrorDialog.open();
 			}
+			Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
+			fHotCodeReplaceFailedErrorDialog = new HotCodeReplaceErrorDialog(shell, title, message, status, preference, alertMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target) {
+				@Override
+				public boolean close() {
+					fHotCodeReplaceFailedErrorDialog = null;
+					return super.close();
+				}
+			};
+			fHotCodeReplaceFailedErrorDialog.setBlockOnOpen(false);
+			fHotCodeReplaceFailedErrorDialog.open();
 		});
 	}
 
@@ -131,18 +128,15 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		final String message= NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__contains_obsolete_methods_1, new Object[] {vmName});
 		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_Stepping_may_be_hazardous_1, null);
 		final String toggleMessage= DebugUIMessages.JDIDebugUIPlugin_2;
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (display.isDisposed()) {
-					return;
-				}
-				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				HotCodeReplaceErrorDialog dialog= new HotCodeReplaceErrorDialog(shell, dialogTitle, message, status, IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS,
-					toggleMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target);
-				dialog.setBlockOnOpen(false);
-				dialog.open();
+		display.asyncExec(() -> {
+			if (display.isDisposed()) {
+				return;
 			}
+			Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
+			HotCodeReplaceErrorDialog dialog= new HotCodeReplaceErrorDialog(shell, dialogTitle, message, status, IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS,
+				toggleMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target);
+			dialog.setBlockOnOpen(false);
+			dialog.open();
 		});
 	}
 

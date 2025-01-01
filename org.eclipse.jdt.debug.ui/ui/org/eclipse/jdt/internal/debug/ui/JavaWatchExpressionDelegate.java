@@ -28,7 +28,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -88,10 +87,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 	}
 
 	private boolean preEvaluationCheck(IJavaThread javaThread) {
-		if (javaThread == null) {
-			return false;
-		}
-		if (javaThread.isSuspended() && ((JDIThread)javaThread).isInvokingMethod()) {
+		if ((javaThread == null) || (javaThread.isSuspended() && ((JDIThread)javaThread).isInvokingMethod())) {
 			return false;
 		}
 		return true;
@@ -117,33 +113,30 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			}
 			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) fStackFrame.getDebugTarget());
 			// the evaluation listener
-			IEvaluationListener listener= new IEvaluationListener() {
-				@Override
-				public void evaluationComplete(final IEvaluationResult result) {
-					IWatchExpressionResult watchResult= new IWatchExpressionResult() {
-						@Override
-						public IValue getValue() {
-							return result.getValue();
-						}
-						@Override
-						public boolean hasErrors() {
-							return result.hasErrors();
-						}
-						@Override
-						public String[] getErrorMessages() {
-							return JavaInspectExpression.getErrorMessages(result);
-						}
-						@Override
-						public String getExpressionText() {
-							return result.getSnippet();
-						}
-						@Override
-						public DebugException getException() {
-							return result.getException();
-						}
-					};
-					fListener.watchEvaluationFinished(watchResult);
-				}
+			IEvaluationListener listener= result -> {
+				IWatchExpressionResult watchResult= new IWatchExpressionResult() {
+					@Override
+					public IValue getValue() {
+						return result.getValue();
+					}
+					@Override
+					public boolean hasErrors() {
+						return result.hasErrors();
+					}
+					@Override
+					public String[] getErrorMessages() {
+						return JavaInspectExpression.getErrorMessages(result);
+					}
+					@Override
+					public String getExpressionText() {
+						return result.getSnippet();
+					}
+					@Override
+					public DebugException getException() {
+						return result.getException();
+					}
+				};
+				fListener.watchEvaluationFinished(watchResult);
 			};
 			try {
 				evaluationEngine.evaluate(fExpressionText, fStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);

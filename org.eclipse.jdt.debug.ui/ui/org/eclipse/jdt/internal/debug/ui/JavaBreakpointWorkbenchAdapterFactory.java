@@ -56,10 +56,9 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 			 */
 			@Override
 			public String getLabel(Object o) {
-				if (!(o instanceof IJavaBreakpoint)) {
+				if (!(o instanceof IJavaBreakpoint breakpoint)) {
 					return null;
 				}
-				IJavaBreakpoint breakpoint = (IJavaBreakpoint) o;
 				StringBuilder label = new StringBuilder();
 				try {
 					String type= breakpoint.getTypeName();
@@ -88,8 +87,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 						JDIDebugUIPlugin.log(e);
 					}
 				}
-				if (breakpoint instanceof IJavaLineBreakpoint) {
-					IJavaLineBreakpoint lineBreakpoint= ((IJavaLineBreakpoint) breakpoint);
+				if (breakpoint instanceof IJavaLineBreakpoint lineBreakpoint) {
 					try {
 						int lineNumber= lineBreakpoint.getLineNumber();
 						if (lineNumber != -1) {

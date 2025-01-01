@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -339,14 +338,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					ret[0] = element.createExecutableExtension(classAttribute);
-				} catch (CoreException e) {
-					exc[0] = e;
-				}
+		BusyIndicator.showWhile(null, () -> {
+			try {
+				ret[0] = element.createExecutableExtension(classAttribute);
+			} catch (CoreException e) {
+				exc[0] = e;
 			}
 		});
 		if (exc[0] != null) {
@@ -543,38 +539,34 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		final IJavaProject[] projects= originals;
 		final JavaModelException[] exception= new JavaModelException[1];
-		final boolean[] monitorCanceled = new boolean[] {false};
-		IRunnableWithProgress r= new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				try {
-					Set<String> packageNameSet= new HashSet<>();
-					monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length);
-					for (int i = 0; i < projects.length; i++) {
-						IPackageFragment[] pkgs= projects[i].getPackageFragments();
-						for (int j = 0; j < pkgs.length; j++) {
-							if (monitor.isCanceled()) {
-								monitorCanceled[0] = true;
-								return;
-							}
-							IPackageFragment pkg = pkgs[j];
-							if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
-								continue;
-							}
-							String pkgName= pkg.getElementName();
-							if (!includeDefaultPackage && pkgName.length() == 0) {
-								continue;
-							}
-							if (packageNameSet.add(pkgName)) {
-								packageList.add(pkg);
-							}
+		final boolean[] monitorCanceled = {false};
+		IRunnableWithProgress r= monitor -> {
+			try {
+				Set<String> packageNameSet= new HashSet<>();
+				monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length);
+				for (IJavaProject project : projects) {
+					IPackageFragment[] pkgs= project.getPackageFragments();
+					for (IPackageFragment pkg : pkgs) {
+						if (monitor.isCanceled()) {
+							monitorCanceled[0] = true;
+							return;
 						}
-						monitor.worked(1);
+						if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
+							continue;
+						}
+						String pkgName= pkg.getElementName();
+						if (!includeDefaultPackage && pkgName.length() == 0) {
+							continue;
+						}
+						if (packageNameSet.add(pkgName)) {
+							packageList.add(pkg);
+						}
 					}
-					monitor.done();
-				} catch (JavaModelException jme) {
-					exception[0]= jme;
+					monitor.worked(1);
 				}
+				monitor.done();
+			} catch (JavaModelException jme) {
+				exception[0]= jme;
 			}
 		};
 		try {
@@ -623,9 +615,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(getUniqueIdentifier(), IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_TYPE_PAGE);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		for (int i = 0; i < infos.length; i++) {
-			String id = infos[i].getAttribute("vmInstallTypeID"); //$NON-NLS-1$
-			fVmInstallTypePageMap.put(id, infos[i]);
+		for (IConfigurationElement element : infos) {
+			String id = element.getAttribute("vmInstallTypeID"); //$NON-NLS-1$
+			fVmInstallTypePageMap.put(id, element);
 		}
 	}
 
@@ -656,14 +648,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
-		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				result[0]= (dialog.open() == Window.OK);
-			}
+		final boolean [] result = { false };
+		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), () -> {
+			dialog.create();
+			dialog.setMessage(targetNode.getLabelText());
+			result[0]= (dialog.open() == Window.OK);
 		});
 	}
 

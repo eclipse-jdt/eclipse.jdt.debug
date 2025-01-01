@@ -166,8 +166,7 @@ public class JavaVarActionFilter implements IActionFilter {
 	 */
 	@Override
 	public boolean testAttribute(Object target, String name, String value) {
-		if (target instanceof IJavaVariable) {
-			IJavaVariable var = (IJavaVariable) target;
+		if (target instanceof IJavaVariable var) {
 			IValue varValue;
 			try {
 				varValue = var.getValue();
@@ -230,8 +229,7 @@ public class JavaVarActionFilter implements IActionFilter {
 				}
 			} catch (DebugException e) {}
 		}
-		else if (target instanceof JavaInspectExpression) {
-			JavaInspectExpression exp = (JavaInspectExpression) target;
+		else if (target instanceof JavaInspectExpression exp) {
 			if (name.equals("PrimitiveVariableActionFilter") && value.equals("isNotPrimitive")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return !isPrimitiveType(exp);
 			}

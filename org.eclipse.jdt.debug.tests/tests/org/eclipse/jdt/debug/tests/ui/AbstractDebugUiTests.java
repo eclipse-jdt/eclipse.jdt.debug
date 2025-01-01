@@ -362,9 +362,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 	 * @return the handle to the {@link IDebugView} with the given id
 	 */
 	protected static IViewPart openView(final String viewId) throws RuntimeException {
-		return sync(() -> {
-			return getActivePage().showView(viewId);
-		});
+		return sync(() -> getActivePage().showView(viewId));
 	}
 
 	private void assertBreakpointExists(IJavaLineBreakpoint bp, IBreakpoint[] bps) throws Exception {

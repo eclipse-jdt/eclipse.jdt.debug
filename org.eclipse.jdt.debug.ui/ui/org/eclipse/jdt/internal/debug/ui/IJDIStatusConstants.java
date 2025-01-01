@@ -22,6 +22,6 @@ public interface IJDIStatusConstants {
 	/**
 	 * Indicates a connection could not be made with a remote VM
 	 */
-	public static final int CODE_CONNECTION_FAILED= 1;
+	int CODE_CONNECTION_FAILED= 1;
 
 }

@@ -129,11 +129,8 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 				loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset()) + 1, true, true);
 			}
 			unit.accept(loc);
-			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
-				return false;
-			}
 			// Remove the watch point if it is not a valid watch point now
-			if (loc.getLocationType() != ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof IJavaWatchpoint) {
+			if ((loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) || (loc.getLocationType() != ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof IJavaWatchpoint)) {
 				return false;
 			}
 			int line = loc.getLineLocation();
@@ -203,10 +200,9 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		String markerType= JavaLineBreakpoint.getMarkerType();
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
 		for (IBreakpoint b : manager.getBreakpoints(modelId)) {
-			if (!(b instanceof IJavaLineBreakpoint)) {
+			if (!(b instanceof IJavaLineBreakpoint breakpoint)) {
 				continue;
 			}
-			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) b;
 			IMarker marker = breakpoint.getMarker();
 			if (marker != null && marker.exists() && marker.getType().equals(markerType) && currentmarker.getId() != marker.getId()) {
 				String breakpointTypeName = breakpoint.getTypeName();

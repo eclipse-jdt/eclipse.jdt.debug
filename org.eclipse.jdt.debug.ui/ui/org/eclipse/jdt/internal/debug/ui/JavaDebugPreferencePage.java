@@ -138,10 +138,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 
 		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy, 1);
 		fSuspendOnRecurringExceptionBreakpoints = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		fSuspendOnRecurringExceptionBreakpoints.setItems(new String[] {
-				DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy_Unconfigured,
-				DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy_Always,
-				DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy_OnlyOnce });
+		fSuspendOnRecurringExceptionBreakpoints.setItems(DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy_Unconfigured, DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy_Always, DebugUIMessages.JavaDebugPreferencePage_SuspendOnRecurrencePolicy_OnlyOnce);
 		fSuspendOnRecurringExceptionBreakpoints.setFont(group.getFont());
 
 		fSuspendOnCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1, null, false, 2);
@@ -150,12 +147,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 
 		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_21, 1);
 		fSuspendVMorThread = new Combo(group, SWT.BORDER|SWT.READ_ONLY);
-		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
+		fSuspendVMorThread.setItems(DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23);
 		fSuspendVMorThread.setFont(group.getFont());
 
 		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_24, 1);
 		fWatchpoint = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		fWatchpoint.setItems(new String[] {DebugUIMessages.JavaDebugPreferencePage_25, DebugUIMessages.JavaDebugPreferencePage_26, DebugUIMessages.JavaDebugPreferencePage_27});
+		fWatchpoint.setItems(DebugUIMessages.JavaDebugPreferencePage_25, DebugUIMessages.JavaDebugPreferencePage_26, DebugUIMessages.JavaDebugPreferencePage_27);
 		fWatchpoint.setFont(group.getFont());
 
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);

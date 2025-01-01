@@ -87,7 +87,7 @@ public class DebugViewTests extends AbstractDebugViewTests {
 			// Now we inspect the children of the stopped thread (parent element of selected method)
 			TreeItem threadItem = sync(() -> selectedTreeItem.getParentItem());
 			TreeItem[] children = sync(() -> threadItem.getItems());
-			Object[] childrenText = sync(() -> Arrays.stream(children).map(x -> x.getText()).toArray());
+			Object[] childrenText = sync(() -> Arrays.stream(children).map(TreeItem::getText).toArray());
 
 			// we expect to see one monitor + frames
 			final int expectedChildrenCount = expectedFramesNumber + 1;

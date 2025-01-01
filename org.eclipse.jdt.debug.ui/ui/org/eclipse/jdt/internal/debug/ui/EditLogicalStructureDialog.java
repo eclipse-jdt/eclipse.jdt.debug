@@ -428,7 +428,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	// code for add attribute button
 	private void addAttribute() {
-		String[] newAttribute= new String[] {DebugUIMessages.EditLogicalStructureDialog_14, DebugUIMessages.EditLogicalStructureDialog_15}; //
+		String[] newAttribute= {DebugUIMessages.EditLogicalStructureDialog_14, DebugUIMessages.EditLogicalStructureDialog_15}; //
 		fAttributesContentProvider.add(newAttribute);
 		fAttributeListViewer.refresh();
 		fAttributeListViewer.setSelection(new StructuredSelection((Object)newAttribute));
@@ -744,7 +744,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			return;
 		}
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
-		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
+		SearchParticipant[] participants = {SearchEngine.getDefaultSearchParticipant()};
 		try {
 			engine.search(searchPattern, participants, scope, collector, monitor);
 		} catch (CoreException e) {

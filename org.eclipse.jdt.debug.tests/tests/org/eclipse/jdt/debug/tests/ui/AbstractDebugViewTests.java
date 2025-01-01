@@ -208,7 +208,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 	}
 
 	protected Object[] selectedText(TreeItem[] selected) throws Exception {
-		Object[] selectedText = sync(() -> Arrays.stream(selected).map(x -> x.getText()).toArray());
+		Object[] selectedText = sync(() -> Arrays.stream(selected).map(TreeItem::getText).toArray());
 		return selectedText;
 	}
 
@@ -230,7 +230,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 	}
 
 	protected String dumpFrames(Object[] childrenData) {
-		return Arrays.toString(Arrays.stream(childrenData).map(x -> Objects.toString(x)).toArray());
+		return Arrays.toString(Arrays.stream(childrenData).map(Objects::toString).toArray());
 	}
 
 	protected TreeItem[] getSelectedItemsFromDebugView(boolean wait) throws Exception {
@@ -263,7 +263,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 		IDebugTarget debugTarget = thread.getDebugTarget();
 		ILaunch launch = debugTarget.getLaunch();
 
-		Object[] segments = new Object[] { launch, debugTarget, thread, frame };
+		Object[] segments = { launch, debugTarget, thread, frame };
 		TreePath newPath = new TreePath(segments);
 		TreeSelection newSelection = new TreeSelection(newPath);
 		debugView.getViewer().setSelection(newSelection);

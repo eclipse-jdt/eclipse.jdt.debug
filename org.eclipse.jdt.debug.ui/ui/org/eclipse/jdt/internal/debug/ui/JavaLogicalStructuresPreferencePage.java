@@ -28,8 +28,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -104,8 +102,8 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         LogicalStructuresListViewerContentProvider() {
 			fLogicalStructures = new ArrayList<>();
 			JavaLogicalStructure[] logicalStructures= JavaLogicalStructures.getJavaLogicalStructures();
-			for (int i= 0; i < logicalStructures.length; i++) {
-				add(logicalStructures[i]);
+			for (JavaLogicalStructure logicalStructure : logicalStructures) {
+				add(logicalStructure);
 			}
 		}
 
@@ -174,8 +172,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 
 		public void saveUserDefinedJavaLogicalStructures() {
 			List<JavaLogicalStructure> logicalStructures = new ArrayList<>();
-			for (Iterator<JavaLogicalStructure> iter = fLogicalStructures.iterator(); iter.hasNext();) {
-				JavaLogicalStructure logicalStructure= iter.next();
+			for (JavaLogicalStructure logicalStructure : fLogicalStructures) {
 				if (!logicalStructure.isContributed()) {
 					logicalStructures.add(logicalStructure);
 				}
@@ -218,11 +215,11 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	public void applyData(Object data) {
 		if (data instanceof String) {
 			Object[] logicalStructures = fLogicalStructuresContentProvider.getElements(null);
-			for (int i = 0, length = logicalStructures.length; i < length; i++) {
-				JavaLogicalStructure javaLogicalStructure = ((JavaLogicalStructure) logicalStructures[i]);
+			for (Object logicalStructure : logicalStructures) {
+				JavaLogicalStructure javaLogicalStructure = ((JavaLogicalStructure) logicalStructure);
 				if (((String) data).compareToIgnoreCase(javaLogicalStructure.getId() + javaLogicalStructure.getDescription()
 						+ javaLogicalStructure.hashCode()) == 0) {
-					fLogicalStructuresViewer.setSelection(new StructuredSelection(logicalStructures[i]));
+					fLogicalStructuresViewer.setSelection(new StructuredSelection(logicalStructure));
 					return;
 				}
 			}
@@ -323,15 +320,12 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         fLogicalStructuresViewer.setLabelProvider(new LogicalStructuresListViewerLabelProvider());
         fLogicalStructuresViewer.addSelectionChangedListener(this);
         fLogicalStructuresViewer.setInput(this);
-        fLogicalStructuresViewer.addDoubleClickListener(new IDoubleClickListener() {
-            @Override
-			public void doubleClick(DoubleClickEvent event) {
-                IStructuredSelection selection= ((IStructuredSelection) fLogicalStructuresViewer.getSelection());
-                if (selection.size() == 1 && !((JavaLogicalStructure) selection.getFirstElement()).isContributed()) {
-                    editLogicalStructure();
-                }
-            }
-        });
+        fLogicalStructuresViewer.addDoubleClickListener(event -> {
+		    IStructuredSelection selection= ((IStructuredSelection) fLogicalStructuresViewer.getSelection());
+		    if (selection.size() == 1 && !((JavaLogicalStructure) selection.getFirstElement()).isContributed()) {
+		        editLogicalStructure();
+		    }
+		});
         table.addKeyListener(new KeyAdapter() {
             @Override
 			public void keyPressed(KeyEvent event) {
@@ -411,10 +405,10 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	    		buffer.append(snippet);
 	    	} else {
 	    		String[][] variables = structure.getVariables();
-	    		for (int i = 0; i < variables.length; i++) {
-	    			buffer.append(variables[i][0]);
+	    		for (String[] variable : variables) {
+	    			buffer.append(variable[0]);
 	    			buffer.append(" = "); //$NON-NLS-1$
-	    			buffer.append(variables[i][1]);
+	    			buffer.append(variable[1]);
 	    			if (buffer.charAt(buffer.length() - 1) != '\n') {
 	    				buffer.append('\n');
 	    			}
@@ -473,9 +467,9 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 			List<JavaLogicalStructure> selectedElements= selection.toList();
 			Object[] elements= fLogicalStructuresContentProvider.getElements(null);
 			Object newSelectedElement= null;
-			for (int i= 0; i < elements.length; i++) {
-				if (!selectedElements.contains(elements[i])) {
-					newSelectedElement= elements[i];
+			for (Object element : elements) {
+				if (!selectedElements.contains(element)) {
+					newSelectedElement= element;
 				} else {
 					break;
 				}

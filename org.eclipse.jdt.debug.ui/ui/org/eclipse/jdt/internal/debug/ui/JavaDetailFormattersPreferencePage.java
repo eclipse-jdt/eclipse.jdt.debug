@@ -14,7 +14,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,16 +25,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -48,10 +41,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -171,24 +162,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 				return null;
 			}
 		});
-		fFormatterListViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				((DetailFormatter)event.getElement()).setEnabled(event.getChecked());
-			}
-		});
-		fFormatterListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updatePage((IStructuredSelection)event.getSelection());
-			}
-		});
-		fFormatterListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					editType();
-				}
+		fFormatterListViewer.addCheckStateListener(event -> ((DetailFormatter)event.getElement()).setEnabled(event.getChecked()));
+		fFormatterListViewer.addSelectionChangedListener(event -> updatePage((IStructuredSelection)event.getSelection()));
+		fFormatterListViewer.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty()) {
+				editType();
 			}
 		});
 		table.addKeyListener(new KeyAdapter() {
@@ -236,12 +214,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fAddFormatterButton.setLayoutData(gd);
 		fAddFormatterButton.setFont(font);
 		setButtonLayoutData(fAddFormatterButton);
-		fAddFormatterButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				addType();
-			}
-		});
+		fAddFormatterButton.addListener(SWT.Selection, e -> addType());
 
 		// Edit button
 		fEditFormatterButton = new Button(buttonContainer, SWT.PUSH);
@@ -249,12 +222,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fEditFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Edit_the_selected_detail_formatter_10);
 		fEditFormatterButton.setFont(font);
 		setButtonLayoutData(fEditFormatterButton);
-		fEditFormatterButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				editType();
-			}
-		});
+		fEditFormatterButton.addListener(SWT.Selection, e -> editType());
 		fEditFormatterButton.setEnabled(false);
 
 		// Remove button
@@ -263,12 +231,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fRemoveFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Remove_all_selected_detail_formatters_8);
 		fRemoveFormatterButton.setFont(font);
 		setButtonLayoutData(fRemoveFormatterButton);
-		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				removeTypes();
-			}
-		});
+		fRemoveFormatterButton.addListener(SWT.Selection, e -> removeTypes());
 		fRemoveFormatterButton.setEnabled(false);
 	}
 
@@ -391,8 +354,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		public void saveDetailFormatters() {
 			String[] values= new String[fDetailFormattersSet.size() * 3];
 			int i= 0;
-			for (Iterator<DetailFormatter> iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
-				DetailFormatter detailFormatter= iter.next();
+			for (DetailFormatter detailFormatter : fDetailFormattersSet) {
 				values[i++]= detailFormatter.getTypeName();
 				values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
 				values[i++]= detailFormatter.isEnabled() ? DETAIL_FORMATTER_IS_ENABLED : DETAIL_FORMATTER_IS_DISABLED;
@@ -431,9 +393,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		 * Remove detailFormatters
 		 */
 		public void removeDetailFormatters(Object[] detailFormatters) {
-			for (int i= 0, length= detailFormatters.length; i < length; i++) {
-				fDetailFormattersSet.remove(detailFormatters[i]);
-				fDefinedTypes.remove(((DetailFormatter)detailFormatters[i]).getTypeName());
+			for (Object detailFormatter : detailFormatters) {
+				fDetailFormattersSet.remove(detailFormatter);
+				fDefinedTypes.remove(((DetailFormatter)detailFormatter).getTypeName());
 			}
 			fViewer.refresh();
 			IStructuredSelection selection= new StructuredSelection();
@@ -447,8 +409,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		private void refreshViewer() {
 			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersSet.size()];
 			int i= 0;
-			for (Iterator<DetailFormatter> iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
-				DetailFormatter detailFormatter= iter.next();
+			for (DetailFormatter detailFormatter : fDetailFormattersSet) {
 				if (detailFormatter.isEnabled()) {
 					checkedElementsTmp[i++]= detailFormatter;
 				}

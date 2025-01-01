@@ -37,8 +37,7 @@ public class JavaThreadActionFilter implements IActionFilter {
 				&& value.equals("suspendedAtException")) { //$NON-NLS-1$
 				IJavaThread thread = (IJavaThread) target;
 				IBreakpoint[] breakpoints= thread.getBreakpoints();
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint= breakpoints[i];
+				for (IBreakpoint breakpoint : breakpoints) {
 					try {
 						if (breakpoint.isRegistered() && breakpoint instanceof IJavaExceptionBreakpoint) {
 							return true;

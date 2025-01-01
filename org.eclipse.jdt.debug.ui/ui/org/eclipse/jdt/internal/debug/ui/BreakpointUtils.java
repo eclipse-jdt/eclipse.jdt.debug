@@ -345,8 +345,7 @@ public class BreakpointUtils {
 			Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
 				Object object = iterator.next();
-				if (object instanceof SimpleMarkerAnnotation) {
-					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+				if (object instanceof SimpleMarkerAnnotation markerAnnotation) {
 					IMarker marker = markerAnnotation.getMarker();
 					try {
 						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
