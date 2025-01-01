@@ -13,12 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -35,57 +30,6 @@ public class StackFramePresentationProviderTest extends AbstractDebugTest {
 
 	private StackFramePresentationProvider provider;
 	private IPreferenceStore preferenceStore;
-
-	private static class LaunchMock implements InvocationHandler {
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			return null;
-		}
-	}
-	private static class JavaStackFrameMock implements InvocationHandler {
-
-		final IJavaReferenceType referenceType;
-		final boolean synthetic;
-
-		public JavaStackFrameMock(IJavaReferenceType referenceType, boolean synthetic) {
-			this.referenceType = referenceType;
-			this.synthetic = synthetic;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			var methodName = method.getName();
-			if ("getReferenceType".equals(methodName)) {
-				return referenceType;
-			}
-			if ("isSynthetic".equals(methodName)) {
-				return synthetic;
-			}
-			if ("getLaunch".equals(methodName)) {
-				return Proxy.newProxyInstance(StackFramePresentationProviderTest.class.getClassLoader(), new Class[] {
-						ILaunch.class }, new LaunchMock());
-
-			}
-			return null;
-		}
-	}
-
-	private static class JavaReferenceTypeMock implements InvocationHandler {
-
-		final String name;
-
-		public JavaReferenceTypeMock(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			if ("getName".equals(method.getName())) {
-				return name;
-			}
-			return null;
-		}
-	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -105,22 +49,12 @@ public class StackFramePresentationProviderTest extends AbstractDebugTest {
 		provider.close();
 	}
 
-	private IJavaReferenceType createReference(String name) {
-		return (IJavaReferenceType) Proxy.newProxyInstance(StackFramePresentationProviderTest.class.getClassLoader(), new Class[] {
-				IJavaReferenceType.class }, new JavaReferenceTypeMock(name));
-	}
-
-	private IJavaStackFrame createFrame(IJavaReferenceType refType, boolean syntetic) {
-		return (IJavaStackFrame) Proxy.newProxyInstance(StackFramePresentationProviderTest.class.getClassLoader(), new Class[] {
-				IJavaStackFrame.class }, new JavaStackFrameMock(refType, syntetic));
-	}
-
 	private IJavaStackFrame.Category categorize(String refTypeName, boolean syntetic) throws DebugException {
-		return categorize(createReference(refTypeName), syntetic);
+		return categorize(JavaReferenceTypeMock.createReference(refTypeName), syntetic);
 	}
 
 	private IJavaStackFrame.Category categorize(IJavaReferenceType refType, boolean syntetic) throws DebugException {
-		return provider.categorize(createFrame(refType, syntetic));
+		return provider.categorize(JavaStackFrameMock.createFrame(refType, syntetic));
 	}
 
 	public void testFiltering() throws DebugException {
@@ -130,8 +64,8 @@ public class StackFramePresentationProviderTest extends AbstractDebugTest {
 	}
 
 	public void testUpdateWorks() throws DebugException {
-		var something = createReference("org.eclipse.Something");
-		var other = createReference("org.eclipse.Other");
+		var something = JavaReferenceTypeMock.createReference("org.eclipse.Something");
+		var other = JavaReferenceTypeMock.createReference("org.eclipse.Other");
 		assertEquals(IJavaStackFrame.Category.UNKNOWN, categorize(something, false));
 		assertEquals(IJavaStackFrame.Category.UNKNOWN, categorize(other, false));
 		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ACTIVE_CUSTOM_FRAME_FILTER_LIST, "org.eclipse.Something");
