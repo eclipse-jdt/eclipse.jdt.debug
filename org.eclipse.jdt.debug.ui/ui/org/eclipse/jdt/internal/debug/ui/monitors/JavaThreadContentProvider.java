@@ -73,8 +73,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 
 	protected Object[] getChildren(IJavaThread thread) {
 		try {
-			if (thread instanceof JDIThread) {
-				JDIThread jThread = (JDIThread) thread;
+			if (thread instanceof JDIThread jThread) {
 				if (!jThread.getDebugTarget().isSuspended() ) {
 					if (jThread.isSuspendVoteInProgress()) {
 						return EMPTY;
@@ -120,8 +119,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 */
 	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-		if (element instanceof JDIThread) {
-			JDIThread jThread = (JDIThread) element;
+		if (element instanceof JDIThread jThread) {
 			if (!jThread.getDebugTarget().isSuspended()) {
 				if (jThread.isSuspendVoteInProgress()) {
 					return false;

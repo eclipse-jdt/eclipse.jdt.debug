@@ -123,8 +123,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		Object object = getHoverInfo2(textViewer, hoverRegion);
-		if (object instanceof IVariable) {
-			IVariable var = (IVariable) object;
+		if (object instanceof IVariable var) {
 			return getVariableText(var);
 		}
 		return null;
@@ -194,8 +193,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
     private static String replaceHTMLChars(String variableText) {
         StringBuilder buffer= new StringBuilder(variableText.length());
         char[] characters = variableText.toCharArray();
-        for (int i = 0; i < characters.length; i++) {
-            char character= characters[i];
+        for (char character : characters) {
             switch (character) {
             	case '<':
             	    buffer.append("&lt;"); //$NON-NLS-1$
@@ -225,9 +223,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		String[][] booleanPrefs= {
 				{IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, JDIModelPresentation.DISPLAY_QUALIFIED_NAMES}};
 	    String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
-	    for (int i = 0; i < booleanPrefs.length; i++) {
-	    	boolean preferenceValue = getBooleanPreferenceValue(viewId, booleanPrefs[i][0]);
-			presentation.setAttribute(booleanPrefs[i][1], (preferenceValue ? Boolean.TRUE : Boolean.FALSE));
+	    for (String[] booleanPref : booleanPrefs) {
+	    	boolean preferenceValue = getBooleanPreferenceValue(viewId, booleanPref[0]);
+			presentation.setAttribute(booleanPref[1], (preferenceValue ? Boolean.TRUE : Boolean.FALSE));
 		}
 		return presentation;
 	}
@@ -309,19 +307,15 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 							&& isArrayTypeVariable(resolve[0]);
 				}
 
-				for (int i = 0; i < resolve.length; i++) {
-					IJavaElement javaElement = resolve[i];
-					if (javaElement instanceof IField) {
-						IField field = (IField) javaElement;
+				for (IJavaElement javaElement : resolve) {
+					if (javaElement instanceof IField field) {
 						IJavaVariable variable = null;
 						IJavaDebugTarget debugTarget = (IJavaDebugTarget) frame.getDebugTarget();
 						if (Flags.isStatic(field.getFlags()) && !onArrayLength) {
 							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
             		    	if (javaTypes != null) {
-	            		    	for (int j = 0; j < javaTypes.length; j++) {
-									IJavaType type = javaTypes[j];
-									if (type instanceof IJavaReferenceType) {
-										IJavaReferenceType referenceType = (IJavaReferenceType) type;
+	            		    	for (IJavaType type : javaTypes) {
+									if (type instanceof IJavaReferenceType referenceType) {
 										variable = referenceType.getField(field.getElementName());
 									}
 									if (variable != null) {
@@ -365,10 +359,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 							if ((!frame.isStatic() || isLocalOrMemberVariable(javaElement)) && !frame.isNative()) {
 								// we resolve chain elements which are either on "this" or local variables. In case of
 								// local variables we also consider static frames.
-								if (!(codeAssist instanceof ITypeRoot)) {
+								if (!(codeAssist instanceof ITypeRoot typeRoot)) {
 									return null;
 								}
-								ITypeRoot typeRoot = (ITypeRoot) codeAssist;
 								ASTNode node = findNodeAtRegion(typeRoot, hoverRegion);
 								if (node == null) {
 									return null;
@@ -393,14 +386,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    }
             			break;
             		}
-            		if (javaElement instanceof ILocalVariable) {
-						ILocalVariable var = (ILocalVariable) javaElement;
+            		if (javaElement instanceof ILocalVariable var) {
 						// if we are on a array, regardless where we are send it to evaluation engine
 						if (onArrayLength) {
-							if (!(codeAssist instanceof ITypeRoot)) {
+							if (!(codeAssist instanceof ITypeRoot typeRoot)) {
 								return null;
 							}
-							ITypeRoot typeRoot = (ITypeRoot) codeAssist;
 							ASTNode node = findNodeAtRegion(typeRoot, hoverRegion);
 							if (node == null) {
 								return null;
@@ -416,8 +407,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 								&& "<clinit>".equals(frame.getMethodName())) { //$NON-NLS-1$
 							return findLocalVariable(frame, var.getElementName());
 						}
-            		    if (parent instanceof IMethod) {
-            				IMethod method = (IMethod) parent;
+            		    if (parent instanceof IMethod method) {
             				boolean equal = false;
             				if (method.isBinary()) {
             					// compare resolved signatures

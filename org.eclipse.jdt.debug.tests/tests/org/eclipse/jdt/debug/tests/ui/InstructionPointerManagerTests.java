@@ -14,7 +14,6 @@
 package org.eclipse.jdt.debug.tests.ui;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
@@ -101,20 +100,15 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			if (target2 != null){
 				terminateAndRemove(target2);
 			}
-			Iterator<IAnnotationModel> annModels = fAnnotationModelsWithListeners.iterator();
-			while (annModels.hasNext()) {
-				IAnnotationModel currentModel = annModels.next();
+			for (IAnnotationModel currentModel : fAnnotationModelsWithListeners) {
 				currentModel.removeAnnotationModelListener(getAnnotationListener());
 			}
 			removeAllBreakpoints();
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_REUSE_EDITOR, restore);
-			Runnable cleanup = new Runnable() {
-                @Override
-				public void run() {
-                    IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                    activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
-                }
-            };
+			Runnable cleanup = () -> {
+			    IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			    activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
+			};
             DebugUIPlugin.getStandardDisplay().asyncExec(cleanup);
 		}
 	}
@@ -133,20 +127,15 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			if (target2 != null){
 				terminateAndRemove(target2);
 			}
-			Iterator<IAnnotationModel> annModels = fAnnotationModelsWithListeners.iterator();
-			while (annModels.hasNext()) {
-				IAnnotationModel currentModel = annModels.next();
+			for (IAnnotationModel currentModel : fAnnotationModelsWithListeners) {
 				currentModel.removeAnnotationModelListener(getAnnotationListener());
 			}
 			removeAllBreakpoints();
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_REUSE_EDITOR, restore);
-			Runnable cleanup = new Runnable() {
-                @Override
-				public void run() {
-                    IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                    activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
-                }
-            };
+			Runnable cleanup = () -> {
+			    IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			    activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
+			};
             DebugUIPlugin.getStandardDisplay().asyncExec(cleanup);
 		}
 	}
@@ -185,14 +174,11 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		assertEquals("Incorrect number of expected counts", 8, expectedMappingCounts.length);
 
 		// Close all editors
-	    Runnable closeAll = new Runnable() {
-            @Override
-			public void run() {
-                IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                activeWorkbenchWindow.getActivePage().closeAllEditors(false);
-                activeWorkbenchWindow.addPerspectiveListener(getPerspectiveListener());
-            }
-        };
+	    Runnable closeAll = () -> {
+		    IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		    activeWorkbenchWindow.getActivePage().closeAllEditors(false);
+		    activeWorkbenchWindow.addPerspectiveListener(getPerspectiveListener());
+		};
         DebugUIPlugin.getStandardDisplay().syncExec(closeAll);
         assertEquals("Instruction pointer count was incorrect", 0, InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", 0, InstructionPointerManager.getDefault().getEditorMappingCount());
@@ -212,28 +198,25 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[0], InstructionPointerManager.getDefault().getEditorMappingCount());
 
         // Find and select the top stack frame of the other thread
-        Runnable openParent = new Runnable() {
-            @Override
-			public void run() {
-                IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
-                Object[] newSegments = new Object[4];
-            	newSegments[0] = target1.getLaunch();
-            	newSegments[1] = target1;
-            	try{
-                	IThread[] threads = ((IJavaDebugTarget)newSegments[1]).getThreads();
-                	for (int i = 0; i < threads.length; i++) {
-						if (threads[i].isSuspended() && !threads[i].equals(thread1)){
-							thread2 = (IJavaThread)threads[i];
-							newSegments[2] = threads[i];
-							newSegments[3] = threads[i].getTopStackFrame();
-						}
+        Runnable openParent = () -> {
+		    IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+		    Object[] newSegments = new Object[4];
+			newSegments[0] = target1.getLaunch();
+			newSegments[1] = target1;
+			try{
+		    	IThread[] threads = ((IJavaDebugTarget)newSegments[1]).getThreads();
+		    	for (IThread thread : threads) {
+					if (thread.isSuspended() && !thread.equals(thread1)){
+						thread2 = (IJavaThread)thread;
+						newSegments[2] = thread;
+						newSegments[3] = thread.getTopStackFrame();
 					}
-                	((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
-            	} catch (DebugException e){
-            		fail("Exception: " + e.getMessage());
-            	}
-            }
-        };
+				}
+		    	((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
+			} catch (DebugException e){
+				fail("Exception: " + e.getMessage());
+			}
+		};
         fAddedAnnotation = null;
         getPerspectiveListener().setTitle(typeClassOne);
         DebugUIPlugin.getStandardDisplay().syncExec(openParent);
@@ -243,22 +226,19 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[1], InstructionPointerManager.getDefault().getEditorMappingCount());
 
         // Select the same stack frame and make sure IPC count doesn't change
-        Runnable selectSameStackFrame = new Runnable() {
-            @Override
-			public void run() {
-                IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
-                Object[] newSegments = new Object[4];
-            	newSegments[0] = target1.getLaunch();
-            	newSegments[1] = target1;
-            	newSegments[2] = thread2;
-            	try {
-            		newSegments[3] = thread2.getTopStackFrame();
-            	} catch (DebugException e) {
-					fail("Exception: " + e.getMessage());
-				}
-                ((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
-            }
-        };
+        Runnable selectSameStackFrame = () -> {
+		    IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+		    Object[] newSegments = new Object[4];
+			newSegments[0] = target1.getLaunch();
+			newSegments[1] = target1;
+			newSegments[2] = thread2;
+			try {
+				newSegments[3] = thread2.getTopStackFrame();
+			} catch (DebugException e) {
+				fail("Exception: " + e.getMessage());
+			}
+		    ((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
+		};
         fAddedAnnotation = null;
         getPerspectiveListener().setTitle(typeClassOne);
         DebugUIPlugin.getStandardDisplay().syncExec(selectSameStackFrame);
@@ -267,22 +247,19 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[1], InstructionPointerManager.getDefault().getEditorMappingCount());
 
         // Select the next stack frame in the same thread
-        Runnable selectSecondStackFrame = new Runnable() {
-            @Override
-			public void run() {
-                IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
-                Object[] newSegments = new Object[4];
-            	newSegments[0] = target1.getLaunch();
-            	newSegments[1] = target1;
-            	newSegments[2] = thread2;
-            	try{
-            		newSegments[3] = thread2.getStackFrames()[1];  // Select the next stack frame
-            	} catch (DebugException e){
-            		fail("Exception: " + e.getMessage());
-            	}
-            	((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
-            }
-        };
+        Runnable selectSecondStackFrame = () -> {
+		    IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+		    Object[] newSegments = new Object[4];
+			newSegments[0] = target1.getLaunch();
+			newSegments[1] = target1;
+			newSegments[2] = thread2;
+			try{
+				newSegments[3] = thread2.getStackFrames()[1];  // Select the next stack frame
+			} catch (DebugException e){
+				fail("Exception: " + e.getMessage());
+			}
+			((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
+		};
         fAddedAnnotation = null;
         getPerspectiveListener().setTitle(typeThreadStack);
         DebugUIPlugin.getStandardDisplay().syncExec(selectSecondStackFrame);
@@ -301,37 +278,34 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[2], InstructionPointerManager.getDefault().getEditorMappingCount());
 
        // Select the stack frame from the new debug target displaying ThreadStack
-       Runnable openOtherDebugTarget = new Runnable() {
-            @Override
-			public void run() {
-                IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
-                ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
-                Object[] newSegments = new Object[4];
-                for (int i = 0; i < launches.length; i++) {
-					if (target2.equals(launches[i].getDebugTarget())){
-						newSegments[0] = launches[i];
-						newSegments[1] = target2;
-						try{
-							IThread[] threads = target2.getThreads();
-							for (int j = 0; j < threads.length; j++) {
-								if (threads[j].isSuspended()){
-									if (typeThreadStack.equals(((IJavaStackFrame)threads[j].getTopStackFrame()).getDeclaringTypeName())){
-										thread3 = (IJavaThread)threads[j];
-										newSegments[2] = threads[j];
-										newSegments[3] = threads[j].getTopStackFrame();
-										break;
-									}
-								}
+       Runnable openOtherDebugTarget = () -> {
+	    IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+	    ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+	    Object[] newSegments = new Object[4];
+	    for (ILaunch element : launches) {
+			if (target2.equals(element.getDebugTarget())){
+				newSegments[0] = element;
+				newSegments[1] = target2;
+				try{
+					IThread[] threads = target2.getThreads();
+					for (IThread thread : threads) {
+						if (thread.isSuspended()){
+							if (typeThreadStack.equals(((IJavaStackFrame)thread.getTopStackFrame()).getDeclaringTypeName())){
+								thread3 = (IJavaThread)thread;
+								newSegments[2] = thread;
+								newSegments[3] = thread.getTopStackFrame();
+								break;
 							}
-						} catch (DebugException e){
-							fail("Exception: " + e.getMessage());
 						}
-						break;
 					}
+				} catch (DebugException e){
+					fail("Exception: " + e.getMessage());
 				}
-				((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
-            }
-       };
+				break;
+			}
+		}
+		((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
+	};
        fAddedAnnotation = null;
        getPerspectiveListener().setTitle(typeThreadStack);
        DebugUIPlugin.getStandardDisplay().syncExec(openOtherDebugTarget);
@@ -341,28 +315,25 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        assertEquals("Editor mapping count was incorrect", expectedMappingCounts[3], InstructionPointerManager.getDefault().getEditorMappingCount());
 
        // Select the other thread from the new target displaying ClassTwo
-       Runnable openOtherThread = new Runnable() {
-            @Override
-			public void run() {
-            	IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
-                Object[] newSegments = new Object[4];
-            	newSegments[0] = target2.getLaunch();
-            	newSegments[1] = target2;
-            	try{
-                	IThread[] threads = target2.getThreads();
-                	for (int i = 0; i < threads.length; i++) {
-						if (threads[i].isSuspended() && !threads[i].equals(thread3)){
-							thread4 = (IJavaThread)threads[i];
-							newSegments[2] = threads[i];
-							newSegments[3] = threads[i].getTopStackFrame();
-						}
-					}
-                	((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
-            	} catch (DebugException e){
-            		fail("Exception: " + e.getMessage());
-            	}
-            }
-       };
+       Runnable openOtherThread = () -> {
+		IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+	    Object[] newSegments = new Object[4];
+		newSegments[0] = target2.getLaunch();
+		newSegments[1] = target2;
+		try{
+	    	IThread[] threads = target2.getThreads();
+	    	for (IThread thread : threads) {
+				if (thread.isSuspended() && !thread.equals(thread3)){
+					thread4 = (IJavaThread)thread;
+					newSegments[2] = thread;
+					newSegments[3] = thread.getTopStackFrame();
+				}
+			}
+	    	((InternalTreeModelViewer)debugView.getViewer()).setSelection(new TreeSelection(new TreePath(newSegments)), true, true);
+		} catch (DebugException e){
+			fail("Exception: " + e.getMessage());
+		}
+	};
        fAddedAnnotation = null;
        getPerspectiveListener().setTitle(typeClassTwo);
        DebugUIPlugin.getStandardDisplay().syncExec(openOtherThread);
@@ -390,20 +361,17 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        assertEquals("Editor mapping count was incorrect", expectedMappingCounts[6], InstructionPointerManager.getDefault().getEditorMappingCount());
 
        // Close the editor displaying ThreadStack.java if it is open
-	   Runnable closeEditor2 = new Runnable() {
-           @Override
-		public void run() {
-               IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-               IEditorReference[] editors = activeWorkbenchWindow.getActivePage().getEditorReferences();
-               for (int i = 0; i < editors.length; i++) {
-            	   if (editors[i].getTitle().equals("ThreadStack.java")){
-            		   activeWorkbenchWindow.getActivePage().closeEditors(new IEditorReference[]{editors[i]},false);
-            		   fRemovedAnnotation = null;  // Clear the removed annotation so the test waits for the annotation to be removed
-            		   break;
-            	   }
-               }
-			}
-	   };
+	   Runnable closeEditor2 = () -> {
+	       IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	       IEditorReference[] editors = activeWorkbenchWindow.getActivePage().getEditorReferences();
+	       for (IEditorReference editor : editors) {
+	    	   if (editor.getTitle().equals("ThreadStack.java")){
+	    		   activeWorkbenchWindow.getActivePage().closeEditors(new IEditorReference[]{editor},false);
+	    		   fRemovedAnnotation = null;  // Clear the removed annotation so the test waits for the annotation to be removed
+	    		   break;
+	    	   }
+	       }
+		};
 	   // fRemovedAnnotation is used here to check if the editor has been found and closed successfully.  It is set to a annotation object, and will only be reset to null (causing the wait to occur) if the editor is closed.
        fRemovedAnnotation = new Annotation(true);
        DebugUIPlugin.getStandardDisplay().syncExec(closeEditor2);
@@ -412,13 +380,10 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        assertEquals("Editor mapping count was incorrect", expectedMappingCounts[7], InstructionPointerManager.getDefault().getEditorMappingCount());
 
        // Close all editors
-	   Runnable closeAllEditors = new Runnable() {
-           @Override
-		public void run() {
-               IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-               activeWorkbenchWindow.getActivePage().closeAllEditors(false);
-			}
-	   };
+	   Runnable closeAllEditors = () -> {
+	       IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	       activeWorkbenchWindow.getActivePage().closeAllEditors(false);
+		};
        fRemovedAnnotation = null;
        DebugUIPlugin.getStandardDisplay().syncExec(closeAllEditors);
        waitForAnnotationToBeRemoved();
@@ -459,11 +424,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		assertNotNull("Annotation was not added properly");
 
 		// Synchronize with the UI thread so we know that the annotations have finished
-		Runnable runner = new Runnable(){
-			@Override
-			public void run() {
-				// Do nothing, just waiting for the UI thread to finish annotations
-			}
+		Runnable runner = () -> {
+			// Do nothing, just waiting for the UI thread to finish annotations
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(runner);
 	}
@@ -477,11 +439,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		assertNotNull("Annotation was not removed properly");
 
 		// Synchronize with the UI thread so we know that the annotations have finished
-		Runnable runner = new Runnable(){
-			@Override
-			public void run() {
-				// Do nothing, just waiting for the UI thread to finish annotations
-			}
+		Runnable runner = () -> {
+			// Do nothing, just waiting for the UI thread to finish annotations
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(runner);
 	}
@@ -579,10 +538,10 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		@Override
 		public void modelChanged(AnnotationModelEvent event) {
 			Annotation[] annotations = event.getAddedAnnotations();
-			for (int i = 0; i < annotations.length; i++) {
-				if (annotations[i] instanceof InstructionPointerAnnotation){
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof InstructionPointerAnnotation){
 					synchronized (fLock) {
-						fAddedAnnotation = annotations[i];
+						fAddedAnnotation = annotation;
 						fLock.notifyAll();
 						System.out.println("Annotation added to editor: " + fAddedAnnotation + " (" + this + ")" + event.getAnnotationModel());
 
@@ -590,10 +549,10 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 				}
 			}
 			annotations = event.getRemovedAnnotations();
-			for (int i = 0; i < annotations.length; i++) {
-				if (annotations[i] instanceof InstructionPointerAnnotation){
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof InstructionPointerAnnotation){
 					synchronized (fLock) {
-						fRemovedAnnotation = annotations[i];
+						fRemovedAnnotation = annotation;
 						fLock.notifyAll();
 					}
 				}

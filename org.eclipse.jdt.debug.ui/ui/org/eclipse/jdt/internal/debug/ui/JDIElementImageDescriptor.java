@@ -73,10 +73,9 @@ public class JDIElementImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof JDIElementImageDescriptor)) {
+		if (!(object instanceof JDIElementImageDescriptor other)) {
 			return false;
 		}
-		JDIElementImageDescriptor other = (JDIElementImageDescriptor) object;
 		return (fBaseImage.equals(other.fBaseImage) && fFlags == other.fFlags);
 	}
 

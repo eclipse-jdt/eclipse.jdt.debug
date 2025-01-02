@@ -20,8 +20,6 @@ import java.util.Map;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -83,36 +81,30 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_1, 1);
 		fAllInstancesMaxCount = SWTFactory.createSingleText(group, 1);
-		fAllInstancesMaxCount.addModifyListener(new ModifyListener(){
-			@Override
-			public void modifyText(ModifyEvent e) {
-				try{
-					int result = Integer.parseInt(fAllInstancesMaxCount.getText());
-					if (result < 0) {
-						throw new NumberFormatException();
-					}
-					clearErrorMessage(fAllInstancesMaxCount);
-				} catch (NumberFormatException exception){
-					setErrorMessage(fAllInstancesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
+		fAllInstancesMaxCount.addModifyListener(e -> {
+			try{
+				int result = Integer.parseInt(fAllInstancesMaxCount.getText());
+				if (result < 0) {
+					throw new NumberFormatException();
 				}
+				clearErrorMessage(fAllInstancesMaxCount);
+			} catch (NumberFormatException exception){
+				setErrorMessage(fAllInstancesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
 			}
 		});
 		fAllInstancesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllInstancesMaxCount()); //$NON-NLS-1$
 
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_2, 1);
 		fAllReferencesMaxCount = SWTFactory.createSingleText(group, 1);
-		fAllReferencesMaxCount.addModifyListener(new ModifyListener(){
-			@Override
-			public void modifyText(ModifyEvent e) {
-				try{
-					int result = Integer.parseInt(fAllReferencesMaxCount.getText());
-					if (result < 0) {
-						throw new NumberFormatException();
-					}
-					clearErrorMessage(fAllReferencesMaxCount);
-				} catch (NumberFormatException exception){
-					setErrorMessage(fAllReferencesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
+		fAllReferencesMaxCount.addModifyListener(e -> {
+			try{
+				int result = Integer.parseInt(fAllReferencesMaxCount.getText());
+				if (result < 0) {
+					throw new NumberFormatException();
 				}
+				clearErrorMessage(fAllReferencesMaxCount);
+			} catch (NumberFormatException exception){
+				setErrorMessage(fAllReferencesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
 			}
 		});
 		fAllReferencesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$

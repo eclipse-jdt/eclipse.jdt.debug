@@ -94,24 +94,21 @@ public class VirtualThreadsDebugViewTests extends AbstractDebugUiTests {
 			mainThread = launchToBreakpoint(typeName);
 			assertNotNull("Launch unsuccessful", mainThread);
 			openEditorInDebug(file);
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					IDebugView debugViewer = (IDebugView) getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW);
-					ISelection currentSelection = debugViewer.getViewer().getSelection();
-					assertNotNull("Debug View is not available", debugViewer);
-					if (currentSelection instanceof IStructuredSelection) {
-						Object sel = ((IStructuredSelection) currentSelection).getFirstElement();
-						if (sel instanceof IStackFrame stackFrame) {
-							IThread thread = stackFrame.getThread();
-							JDIThread vThread = (JDIThread) stackFrame.getThread();
-							assertTrue("Not a Virtual thread", vThread.isVirtualThread());
-							StructuredSelection select = new StructuredSelection(thread);
-							debugViewer.getViewer().setSelection(select, true);
-							IDebugModelPresentation md = DebugUITools.newDebugModelPresentation();
-							String groupName = md.getText(thread);
-							assertTrue("Not a Virtual thread grouping", groupName.contains("Virtual"));
-						}
+			Display.getDefault().asyncExec(() -> {
+				IDebugView debugViewer = (IDebugView) getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW);
+				ISelection currentSelection = debugViewer.getViewer().getSelection();
+				assertNotNull("Debug View is not available", debugViewer);
+				if (currentSelection instanceof IStructuredSelection) {
+					Object sel = ((IStructuredSelection) currentSelection).getFirstElement();
+					if (sel instanceof IStackFrame stackFrame) {
+						IThread thread = stackFrame.getThread();
+						JDIThread vThread = (JDIThread) stackFrame.getThread();
+						assertTrue("Not a Virtual thread", vThread.isVirtualThread());
+						StructuredSelection select = new StructuredSelection(thread);
+						debugViewer.getViewer().setSelection(select, true);
+						IDebugModelPresentation md = DebugUITools.newDebugModelPresentation();
+						String groupName = md.getText(thread);
+						assertTrue("Not a Virtual thread grouping", groupName.contains("Virtual"));
 					}
 				}
 			});

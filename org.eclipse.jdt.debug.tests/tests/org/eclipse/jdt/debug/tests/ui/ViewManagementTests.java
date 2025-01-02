@@ -77,14 +77,8 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	 * Returns whether the specified view is open
 	 */
 	protected boolean isViewOpen(final IWorkbenchWindow window, final String id) throws Exception {
-		final IViewReference[] refs = new IViewReference[1];
-		sync(new Runnable() {
-			@Override
-			public void run() {
-				refs[0] = window.getActivePage().findViewReference(id);
-			}
-		});
-		return refs[0] != null;
+		final IViewReference refs = sync(() -> window.getActivePage().findViewReference(id));
+		return refs != null;
 	}
 
 	@Override
@@ -275,8 +269,8 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	 * Adds ids of views to 'expecting open' queue.
 	 */
 	protected void expectingViewOpenEvents(IWorkbenchWindow window, String[] viewIds) {
-		for (int i = 0; i < viewIds.length; i++) {
-			fExpectingOpenEvents.add(viewIds[i]);
+		for (String viewId : viewIds) {
+			fExpectingOpenEvents.add(viewId);
 		}
 		window.addPerspectiveListener(this);
 	}
@@ -285,8 +279,8 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	 * Adds ids of views to 'expecting open' queue.
 	 */
 	protected void expectingViewCloseEvents(IWorkbenchWindow window, String[] viewIds) {
-		for (int i = 0; i < viewIds.length; i++) {
-			fExpectingCloseEvents.add(viewIds[i]);
+		for (String viewId : viewIds) {
+			fExpectingCloseEvents.add(viewId);
 		}
 		window.addPerspectiveListener(this);
 	}
@@ -351,10 +345,7 @@ public class ViewManagementTests extends AbstractDebugUiTests implements IPerspe
 	 * Check if all expected events have occurred.
 	 */
 	protected boolean checkComplete() {
-		if (!fExpectingOpenEvents.isEmpty()) {
-			return false;
-		}
-		if (!fExpectingCloseEvents.isEmpty()) {
+		if (!fExpectingOpenEvents.isEmpty() || !fExpectingCloseEvents.isEmpty()) {
 			return false;
 		}
 		// all expected events have occurred, notify

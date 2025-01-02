@@ -73,18 +73,15 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	}
 
 	public static void startup() {
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				if (fgManager == null) {
-					fgManager = new EvaluationContextManager();
-					IWorkbench workbench = PlatformUI.getWorkbench();
-					for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
-						fgManager.windowOpened(window);
-					}
-					workbench.addWindowListener(fgManager);
-					fgManager.fActiveWindow = workbench.getActiveWorkbenchWindow();
+		Runnable r = () -> {
+			if (fgManager == null) {
+				fgManager = new EvaluationContextManager();
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
+					fgManager.windowOpened(window);
 				}
+				workbench.addWindowListener(fgManager);
+				fgManager.fActiveWindow = workbench.getActiveWorkbenchWindow();
 			}
 		};
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
@@ -255,8 +252,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 			if (part != null) {
 				IWorkbenchPage page = part.getSite().getPage();
 				ISelection selection = event.getContext();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection)selection;
+				if (selection instanceof IStructuredSelection ss) {
 					if (ss.size() == 1) {
 						Object element = ss.getFirstElement();
 						if (element instanceof IAdaptable) {

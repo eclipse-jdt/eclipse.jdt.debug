@@ -87,21 +87,16 @@ public class LambdaUtils extends org.eclipse.jdt.internal.debug.core.model.Lambd
 
 			if (methodName.equals(enclosingMethodName) && typeNames.equals(methodTypeNames)) {
 				var = JavaDebugHover.findLocalVariable(currFrame, local.getElementName());
-				if (var != null) {
-					return var;
-				}
-				// we can stop searching now
-				return null;
+				return var;
 			}
 		}
 		return null;
 	}
 
 	private static List<String> getArgumentTypeNames(IJavaElement parent) throws CoreException {
-		if (!(parent instanceof IMethod)) {
+		if (!(parent instanceof IMethod method)) {
 			return null;
 		}
-		IMethod method = (IMethod) parent;
 		IType type = method.getDeclaringType();
 		if (type == null) {
 			return null;

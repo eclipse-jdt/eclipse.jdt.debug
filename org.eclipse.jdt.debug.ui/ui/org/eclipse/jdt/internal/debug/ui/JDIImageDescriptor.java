@@ -99,11 +99,10 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof JDIImageDescriptor)){
+		if (!(object instanceof JDIImageDescriptor other)){
 			return false;
 		}
 
-		JDIImageDescriptor other= (JDIImageDescriptor)object;
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
 

@@ -300,8 +300,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	        	// copy over properties
 	        	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
 	        	String[] properties = copy.getProperties();
-	        	for (int i = 0; i < properties.length; i++) {
-					String key = properties[i];
+	        	for (String key : properties) {
 					fContext.setProperty(key, copy.getProperty(key));
 				}
 	        }
@@ -314,16 +313,15 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	        	StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
 	            if (structuredViewer != null) {
 	                ViewerFilter[] filters = structuredViewer.getFilters();
-	                for (int i = 0; i < filters.length; i++) {
-	                    fViewer.addFilter(filters[i]);
+	                for (ViewerFilter filter : filters) {
+	                    fViewer.addFilter(filter);
 	                }
 	            }
 	        }
 
 	        fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
 	        Layout layout = fDetailPaneComposite.getLayout();
-	        if (layout instanceof GridLayout) {
-				GridLayout gl = (GridLayout) layout;
+	        if (layout instanceof GridLayout gl) {
 				gl.marginHeight = 0;
 				gl.marginWidth = 0;
 			}
@@ -402,7 +400,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		    	if (tree > 0) {
 		    		int details = getIntSetting(settings, SASH_WEIGHT_DETAILS);
 		    		if (details > 0) {
-		    			fSashForm.setWeights(new int[]{tree, details});
+		    			fSashForm.setWeights(tree, details);
 		    		}
 		    	}
 	    	}

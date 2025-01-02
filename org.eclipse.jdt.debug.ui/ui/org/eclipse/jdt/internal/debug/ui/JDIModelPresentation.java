@@ -199,9 +199,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (thread == null) {
 			try {
 				IThread[] threads = target.getThreads();
-				for (int i = 0; i < threads.length; i++) {
-					if (threads[i].isSuspended()) {
-						thread = (IJavaThread)threads[i];
+				for (IThread thread2 : threads) {
+					if (thread2.isSuspended()) {
+						thread = (IJavaThread)thread2;
 						break;
 					}
 				}
@@ -344,10 +344,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			key.append("suspended"); //$NON-NLS-1$
 			if (breakpoints.length > 0) {
 				IJavaBreakpoint breakpoint= (IJavaBreakpoint)breakpoints[0];
-				for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
-					if (BreakpointUtils.isProblemBreakpoint(breakpoints[i])) {
+				for (IBreakpoint breakpoint2 : breakpoints) {
+					if (BreakpointUtils.isProblemBreakpoint(breakpoint2)) {
 						// If a compilation error breakpoint exists, display it instead of the first breakpoint
-						breakpoint= (IJavaBreakpoint)breakpoints[i];
+						breakpoint= (IJavaBreakpoint)breakpoint2;
 						break;
 					}
 				}
@@ -380,8 +380,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					if (exName != null) {
 						args = new String[] { thread.getName(), exName };
 					}
-				} else if (breakpoint instanceof IJavaWatchpoint) {
-					IJavaWatchpoint wp = (IJavaWatchpoint)breakpoint;
+				} else if (breakpoint instanceof IJavaWatchpoint wp) {
 					String fieldName = wp.getFieldName();
 					args = new String[] {thread.getName(), fieldName, typeName};
 					if (wp.isAccessSuspend(thread.getDebugTarget())) {
@@ -389,8 +388,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					} else {
 						key.append("_fieldmodification"); //$NON-NLS-1$
 					}
-				} else if (breakpoint instanceof IJavaMethodBreakpoint) {
-					IJavaMethodBreakpoint me= (IJavaMethodBreakpoint)breakpoint;
+				} else if (breakpoint instanceof IJavaMethodBreakpoint me) {
 					String methodName= me.getMethodName();
 					args = new String[] {thread.getName(), methodName, typeName};
 					if (me.isEntrySuspend(thread.getDebugTarget())) {
@@ -398,8 +396,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					} else {
 						key.append("_methodexit"); //$NON-NLS-1$
 					}
-				} else if (breakpoint instanceof IJavaLineBreakpoint) {
-					IJavaLineBreakpoint jlbp = (IJavaLineBreakpoint)breakpoint;
+				} else if (breakpoint instanceof IJavaLineBreakpoint jlbp) {
 					int lineNumber= jlbp.getLineNumber();
 					if (lineNumber > -1) {
 						args = new String[] {thread.getName(), String.valueOf(lineNumber), typeName};
@@ -1329,16 +1326,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	private String getVariableDetail(IJavaValue value) {
 		final String[] detail= new String[1];
 		final Object lock= new Object();
-		computeDetail(value, new IValueDetailListener() {
-		    /* (non-Javadoc)
-		     * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
-		     */
-		    @Override
-			public void detailComputed(IValue computedValue, String result) {
-		        synchronized (lock) {
-		            detail[0]= result;
-		            lock.notifyAll();
-		        }
+		computeDetail(value, (computedValue, result) -> {
+		    synchronized (lock) {
+		        detail[0]= result;
+		        lock.notifyAll();
 		    }
 		});
 		synchronized (lock) {
@@ -1970,7 +1961,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	interface IValueDetailProvider {
-		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException;
+		void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException;
 	}
 
 	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
@@ -1996,8 +1987,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected void appendInstanceFilter(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
 		IJavaObject[] instances = breakpoint.getInstanceFilters();
-		for (int i = 0; i < instances.length; i++) {
-			String instanceText= instances[i].getValueString();
+		for (IJavaObject instance : instances) {
+			String instanceText= instance.getValueString();
 			if (instanceText != null) {
 				buffer.append(' ');
 				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_instance_1, new String[] {instanceText}));
@@ -2056,8 +2047,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		try {
 			String[] names = javaType.getAllFieldNames();
 			boolean found= false;
-			for (int i = 0; i < names.length; i++) {
-				if (variable.getName().equals(names[i])) {
+			for (String name : names) {
+				if (variable.getName().equals(name)) {
 					if (found) {
 						return true;
 					}
@@ -2099,10 +2090,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			var value = inspectExpression.getValue();
 			return getForeground(value);
 		}
-		if (element instanceof JavaContendedMonitor contendedMonitor && contendedMonitor.getMonitor().isInDeadlock()) {
-			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
-		}
-		if (element instanceof JavaOwnedMonitor ownedMonitor && ownedMonitor.getMonitor().isInDeadlock()) {
+		if ((element instanceof JavaContendedMonitor contendedMonitor && contendedMonitor.getMonitor().isInDeadlock()) || (element instanceof JavaOwnedMonitor ownedMonitor && ownedMonitor.getMonitor().isInDeadlock())) {
 			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
 		if (element instanceof JavaWaitingThread waitingThread && waitingThread.getThread().isInDeadlock()) {

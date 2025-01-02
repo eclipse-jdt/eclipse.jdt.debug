@@ -36,8 +36,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BidiSegmentEvent;
-import org.eclipse.swt.custom.BidiSegmentListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -79,14 +77,11 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		super(parent, ruler, overviewRuler, isOverviewRulerVisible, styles);
 		StyledText text= this.getTextWidget();
 		final int baseLevel= (styles & SWT.RIGHT_TO_LEFT) != 0 ? Bidi.DIRECTION_RIGHT_TO_LEFT : Bidi.DIRECTION_LEFT_TO_RIGHT;
-		text.addBidiSegmentListener(new  BidiSegmentListener() {
-			@Override
-			public void lineGetSegments(BidiSegmentEvent event) {
-				try {
-					event.segments= getBidiLineSegments(getDocument(), baseLevel, widgetOffset2ModelOffset(event.lineOffset), event.lineText);
-				} catch (BadLocationException x) {
-					// ignore
-				}
+		text.addBidiSegmentListener(event -> {
+			try {
+				event.segments= getBidiLineSegments(getDocument(), baseLevel, widgetOffset2ModelOffset(event.lineOffset), event.lineText);
+			} catch (BadLocationException x) {
+				// ignore
 			}
 		});
 	}

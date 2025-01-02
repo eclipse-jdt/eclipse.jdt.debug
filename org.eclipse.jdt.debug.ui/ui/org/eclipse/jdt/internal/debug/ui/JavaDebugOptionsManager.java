@@ -266,9 +266,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	protected void notifyTargets(IBreakpoint breakpoint, int kind) {
 		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			if (targets[i] instanceof IJavaDebugTarget) {
-				IJavaDebugTarget target = (IJavaDebugTarget)targets[i];
+		for (IDebugTarget target2 : targets) {
+			if (target2 instanceof IJavaDebugTarget target) {
 				notifyTarget(target, breakpoint, kind);
 			}
 		}
@@ -298,9 +297,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	protected void notifyTargetsOfFilters() {
 		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			if (targets[i] instanceof IJavaDebugTarget) {
-				IJavaDebugTarget target = (IJavaDebugTarget)targets[i];
+		for (IDebugTarget target2 : targets) {
+			if (target2 instanceof IJavaDebugTarget target) {
 				notifyTargetOfFilters(target);
 			}
 		}
@@ -521,13 +519,10 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getKind() == DebugEvent.CREATE) {
 				Object source = event.getSource();
-				if (source instanceof IJavaDebugTarget) {
-					IJavaDebugTarget javaTarget = (IJavaDebugTarget)source;
-
+				if (source instanceof IJavaDebugTarget javaTarget) {
 					// compilation breakpoints
 					if (isSuspendOnCompilationErrors()) {
 						notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
@@ -640,7 +635,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					MessageDialog.QUESTION, 0, //
 					DebugUIMessages.JavaDebugOptionsManager_skip_buttonLabel, //
 					DebugUIMessages.JavaDebugOptionsManager_suspend_buttonLabel);
-			parentShell.getDisplay().syncExec(() -> open());
+			parentShell.getDisplay().syncExec(this::open);
 		}
 
 		@Override
@@ -724,8 +719,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					IResource resource = (IResource) sourceElement;
 					IMarker[] markers = resource.findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
 					int line = frame.getLineNumber();
-					for (int i = 0; i < markers.length; i++) {
-						IMarker marker = markers[i];
+					for (IMarker marker : markers) {
 						if (marker.getAttribute(IMarker.LINE_NUMBER, -1) == line && marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
 							return marker;
 						}
@@ -744,8 +738,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	public void breakpointHasRuntimeException(final IJavaLineBreakpoint breakpoint, final DebugException exception) {
 		IStatus status;
 		Throwable wrappedException= exception.getStatus().getException();
-		if (wrappedException instanceof InvocationException) {
-			InvocationException ie= (InvocationException) wrappedException;
+		if (wrappedException instanceof InvocationException ie) {
 			ObjectReference ref= ie.exception();
 			status= new Status(IStatus.ERROR,JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ref.referenceType().name(), null);
 		} else {
@@ -761,8 +754,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	public void breakpointHasCompilationErrors(final IJavaLineBreakpoint breakpoint, final Message[] errors) {
 		StringBuilder message= new StringBuilder();
 		Message error;
-		for (int i=0, numErrors= errors.length; i < numErrors; i++) {
-			error= errors[i];
+		for (Message error2 : errors) {
+			error= error2;
 			message.append(error.getMessage());
 			message.append("\n "); //$NON-NLS-1$
 		}
@@ -776,20 +769,17 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			return;
 		}
 		final String message= NLS.bind(errorMessage, new String[] {fLabelProvider.getText(breakpoint)});
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (display.isDisposed()) {
-					return;
-				}
-				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, message, status);
-				int result = dialog.open();
-				if (result == Window.OK) {
-					JavaBreakpointPropertiesAction action= new JavaBreakpointPropertiesAction();
-					action.selectionChanged(null, new StructuredSelection(breakpoint));
-					action.run(null);
-				}
+		display.asyncExec(() -> {
+			if (display.isDisposed()) {
+				return;
+			}
+			Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
+			ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, message, status);
+			int result = dialog.open();
+			if (result == Window.OK) {
+				JavaBreakpointPropertiesAction action= new JavaBreakpointPropertiesAction();
+				action.selectionChanged(null, new StructuredSelection(breakpoint));
+				action.run(null);
 			}
 		});
 	}
@@ -848,8 +838,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
 		// if a breakpoint is added, but already has a message, do not update it
 		List<IBreakpoint> update = new ArrayList<>();
-		for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
+		for (IBreakpoint breakpoint : breakpoints) {
 			try {
 				if (breakpoint instanceof IJavaBreakpoint && breakpoint.getMarker().getAttribute(IMarker.MESSAGE) == null) {
 					update.add(breakpoint);
@@ -869,25 +858,21 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	private void updateBreakpointMessages(final IBreakpoint[] breakpoints) {
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint = breakpoints[i];
-					if (breakpoint instanceof IJavaBreakpoint) {
-						String info = fLabelProvider.getText(breakpoint);
-						String type = DebugUIMessages.JavaDebugOptionsManager_Breakpoint___1;
-						if (breakpoint instanceof IJavaMethodBreakpoint || breakpoint instanceof IJavaMethodEntryBreakpoint) {
-							type = DebugUIMessages.JavaDebugOptionsManager_Method_breakpoint___2;
-						} else if (breakpoint instanceof IJavaWatchpoint) {
-							type = DebugUIMessages.JavaDebugOptionsManager_Watchpoint___3;
-						} else if (breakpoint instanceof IJavaLineBreakpoint) {
-							type = DebugUIMessages.JavaDebugOptionsManager_Line_breakpoint___4;
-						}
-						IMarker marker = breakpoint.getMarker();
-						if (marker.exists()) {
-							marker.setAttribute(IMarker.MESSAGE, type + info);
-						}
+		IWorkspaceRunnable runnable = monitor -> {
+			for (IBreakpoint breakpoint : breakpoints) {
+				if (breakpoint instanceof IJavaBreakpoint) {
+					String info = fLabelProvider.getText(breakpoint);
+					String type = DebugUIMessages.JavaDebugOptionsManager_Breakpoint___1;
+					if (breakpoint instanceof IJavaMethodBreakpoint || breakpoint instanceof IJavaMethodEntryBreakpoint) {
+						type = DebugUIMessages.JavaDebugOptionsManager_Method_breakpoint___2;
+					} else if (breakpoint instanceof IJavaWatchpoint) {
+						type = DebugUIMessages.JavaDebugOptionsManager_Watchpoint___3;
+					} else if (breakpoint instanceof IJavaLineBreakpoint) {
+						type = DebugUIMessages.JavaDebugOptionsManager_Line_breakpoint___4;
+					}
+					IMarker marker = breakpoint.getMarker();
+					if (marker.exists()) {
+						marker.setAttribute(IMarker.MESSAGE, type + info);
 					}
 				}
 			}

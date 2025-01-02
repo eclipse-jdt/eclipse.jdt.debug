@@ -33,12 +33,9 @@ public class SuspendTimeoutStatusHandler implements IStatusHandler {
 		IJavaThread thread= (IJavaThread) source;
 		String threadName = thread.getName();
 		Display display= JDIDebugUIPlugin.getStandardDisplay();
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				final ErrorDialog dialog= new ErrorDialog(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), DebugUIMessages.SuspendTimeoutHandler_suspend, NLS.bind(DebugUIMessages.SuspendTimeoutHandler_timeout_occurred, new String[] {threadName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); //
-				dialog.open();
-			}
+		display.syncExec(() -> {
+			final ErrorDialog dialog= new ErrorDialog(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), DebugUIMessages.SuspendTimeoutHandler_suspend, NLS.bind(DebugUIMessages.SuspendTimeoutHandler_timeout_occurred, new String[] {threadName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); //
+			dialog.open();
 		});
 		return null;
 	}

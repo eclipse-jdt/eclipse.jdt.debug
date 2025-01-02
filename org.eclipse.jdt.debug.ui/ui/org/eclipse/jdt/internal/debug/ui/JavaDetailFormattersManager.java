@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -133,18 +132,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @param listener the listener
 	 */
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
-		thread.queueRunnable(new Runnable() {
-			@Override
-			public void run() {
-				resolveFormatter(objectValue, thread, listener);
-			}
-		});
+		thread.queueRunnable(() -> resolveFormatter(objectValue, thread, listener));
 	}
 
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
 		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
-		if (value instanceof IJavaObject) {
-			IJavaObject objectValue= (IJavaObject) value;
+		if (value instanceof IJavaObject objectValue) {
 			try {
 				if(value instanceof JDIAllInstancesValue) {
 					listener.detailComputed(value, ((JDIAllInstancesValue)value).getDetailString());
@@ -220,8 +213,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		try {
 			IJavaInterfaceType[] inter = type.getAllInterfaces();
 			Object formatter = null;
-			for (int i = 0; i < inter.length; i++) {
-				formatter = fDetailFormattersMap.get(inter[i].getName());
+			for (IJavaInterfaceType element : inter) {
+				formatter = fDetailFormattersMap.get(element.getName());
 				if(formatter != null) {
 					return (DetailFormatter) formatter;
 				}
@@ -308,8 +301,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		Collection<DetailFormatter> valuesList= fDetailFormattersMap.values();
 		String[] values= new String[valuesList.size() * 3];
 		int i= 0;
-		for (Iterator<DetailFormatter> iter= valuesList.iterator(); iter.hasNext();) {
-			DetailFormatter detailFormatter= iter.next();
+		for (DetailFormatter detailFormatter : valuesList) {
 			values[i++]= detailFormatter.getTypeName();
 			values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
 			values[i++]= detailFormatter.isEnabled() ? JavaDetailFormattersPreferencePage.DETAIL_FORMATTER_IS_ENABLED : JavaDetailFormattersPreferencePage.DETAIL_FORMATTER_IS_DISABLED;
@@ -331,8 +323,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			return snippet;
 		}
 		IJavaInterfaceType[] allInterfaces= type.getAllInterfaces();
-		for (int i= 0; i < allInterfaces.length; i++) {
-			DetailFormatter detailFormatter= fDetailFormattersMap.get(allInterfaces[i].getName());
+		for (IJavaInterfaceType element : allInterfaces) {
+			DetailFormatter detailFormatter= fDetailFormattersMap.get(element.getName());
 			if (detailFormatter != null && detailFormatter.isEnabled()) {
 				return detailFormatter.getSnippet();
 			}
@@ -469,8 +461,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getSource() instanceof IJavaDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
 				deleteCacheForTarget((IJavaDebugTarget) event.getSource());
 			}
@@ -496,12 +487,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
+		for (ILaunch launch : launches) {
 			IDebugTarget[] debugTargets= launch.getDebugTargets();
-			for (int j = 0; j < debugTargets.length; j++) {
-				if (debugTargets[j] instanceof IJavaDebugTarget) {
-					deleteCacheForTarget((IJavaDebugTarget)debugTargets[j]);
+			for (IDebugTarget debugTarget : debugTargets) {
+				if (debugTarget instanceof IJavaDebugTarget) {
+					deleteCacheForTarget((IJavaDebugTarget)debugTarget);
 				}
 			}
 		}
@@ -537,8 +527,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Key) {
-				Key key= (Key) obj;
+			if (obj instanceof Key key) {
 				return fTypeName != null && fDebugTarget != null && fTypeName.equals(key.fTypeName) && fDebugTarget.equals(key.fDebugTarget);
 			}
 			return false;
@@ -623,8 +612,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					}
 				} else {
 					String[] errors= result.getErrorMessages();
-					for (int i= 0, length= errors.length; i < length; i++) {
-						error.append("\n\t\t").append(errors[i]); //$NON-NLS-1$
+					for (String error2 : errors) {
+						error.append("\n\t\t").append(error2); //$NON-NLS-1$
 					}
 				}
 				fListener.detailComputed(fValue, error.toString());
@@ -665,19 +654,16 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				return;
 			}
 
-			IEvaluationRunnable eval = new IEvaluationRunnable() {
-				@Override
-				public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
-					StringBuilder buf= new StringBuilder();
-					if (objectValue instanceof IJavaArray) {
-						appendArrayDetail(buf, (IJavaArray) objectValue);
-					} else if (objectValue instanceof IJavaObject) {
-						appendObjectDetail(buf, (IJavaObject) objectValue);
-					} else {
-						appendJDIValueString(buf, objectValue);
-					}
-					fListener.detailComputed(fValue, buf.toString());
+			IEvaluationRunnable eval = (thread, monitor) -> {
+				StringBuilder buf= new StringBuilder();
+				if (objectValue instanceof IJavaArray) {
+					appendArrayDetail(buf, (IJavaArray) objectValue);
+				} else if (objectValue instanceof IJavaObject) {
+					appendObjectDetail(buf, (IJavaObject) objectValue);
+				} else {
+					appendJDIValueString(buf, objectValue);
 				}
+				fListener.detailComputed(fValue, buf.toString());
 			};
 			fThread.runEvaluation(eval, null, DebugEvent.EVALUATION_IMPLICIT, false);
 		}

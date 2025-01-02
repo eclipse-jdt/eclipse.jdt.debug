@@ -15,7 +15,6 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -109,9 +108,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	 */
 	@Override
 	protected void performDefaults() {
-		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
-		while (iterator.hasNext()) {
-			BooleanFieldEditor editor = iterator.next();
+		for (BooleanFieldEditor editor : fEdtiors) {
 			editor.loadDefault();
 		}
 		super.performDefaults();
@@ -122,9 +119,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	 * values in the preference store
 	 */
 	private void loadValues() {
-		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
-		while (iterator.hasNext()) {
-			BooleanFieldEditor editor = iterator.next();
+		for (BooleanFieldEditor editor : fEdtiors) {
 			editor.load();
 		}
 	}
@@ -134,9 +129,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	 * component widgets
 	 */
 	private void storeValues() {
-		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
-		while (iterator.hasNext()) {
-			BooleanFieldEditor editor = iterator.next();
+		for (BooleanFieldEditor editor : fEdtiors) {
 			editor.store();
 		}
 	}

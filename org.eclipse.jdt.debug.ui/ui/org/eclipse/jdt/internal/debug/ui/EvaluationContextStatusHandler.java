@@ -34,8 +34,7 @@ public class EvaluationContextStatusHandler implements IStatusHandler {
 	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) {
-		if (source instanceof IDebugElement) {
-			IDebugElement element = (IDebugElement) source;
+		if (source instanceof IDebugElement element) {
 			IJavaDebugTarget target = element.getDebugTarget().getAdapter(IJavaDebugTarget.class);
 			if (target != null) {
 				IJavaStackFrame frame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
