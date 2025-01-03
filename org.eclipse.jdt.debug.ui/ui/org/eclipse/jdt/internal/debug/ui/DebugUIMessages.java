@@ -434,4 +434,38 @@ public class DebugUIMessages extends NLS {
 	public static String JavaVariableLabelProvider_0;
 
 	public static String JavaVariableContentAssistDescription_Keystroke;
+
+	public static String CompareObjectsFailedException;
+
+	public static String ObjectsSameValue;
+	public static String ObjectsSameValueAndDifferentValue;
+	public static String DifferentValue;
+	public static String StringSame;
+	public static String StringSameAndDifferent;
+	public static String StringDifferent;
+	public static String ListSameElements;
+	public static String ListSameELementsInDiffOrder;
+	public static String MapKeysSame;
+	public static String MapValuesSame;
+
+	public static String DifferentDataStructures;
+	public static String DialogBoxObjectsSame;
+	public static String DialogBoxObjectsDifferent;
+	public static String DialogBoxListMissing;
+	public static String DialogBoxListItemCount;
+	public static String DialogBoxMapSame;
+	public static String DialogBoxMapKeySame;
+	public static String DialogBoxMapValSame;
+	public static String DialogBoxMapMissingVal;
+	public static String DialogBoxMapMissingKey;
+	public static String ComparisionMultiHeader;
+	public static String ObjectComparisonTitle_0;
+	public static String ObjectComparisonTitle_1;
+	public static String ObjectComparisonTitle_2;
+	public static String ObjectComparisonFailed;
+	public static String ObjectsSame;
+	public static String CompareObjectsReference;
+	public static String ObjectsReferenceDifferent;
+	public static String ObjectsReferenceSameAndDifferent;
+	public static String ObjectsExtractedSame;
 }
