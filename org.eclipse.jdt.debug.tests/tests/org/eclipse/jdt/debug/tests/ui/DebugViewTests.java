@@ -233,8 +233,11 @@ public class DebugViewTests extends AbstractDebugViewTests {
 			thread = runCodeUntilBreakpoint("StackFrameColoring", "breakpointMethod");
 			assertNotNull("thread", thread);
 			var selectedStackFrame = assertStackFrameIsSelected("breakpointMethod");
-			var parentItem = selectedStackFrame.getParentItem();
-			var allFrames = parentItem.getItems();
+			if (selectedStackFrame == null) {
+				// skip this test on Mac - see bug 516024
+				return;
+			}
+			var allFrames = getAllTreeItems(selectedStackFrame);
 			assertNotNull("all frames", allFrames);
 			assertEquals("frame[0]", "StackFrameColoring.breakpointMethod() line: 34", allFrames[0].getText());
 			assertEquals("frame[0] - production", IJavaStackFrame.Category.PRODUCTION, getStackFrameCategory(allFrames, 0));
@@ -249,6 +252,10 @@ public class DebugViewTests extends AbstractDebugViewTests {
 		} finally {
 			terminateAndCleanUp(thread);
 		}
+	}
+
+	private TreeItem[] getAllTreeItems(TreeItem selectedStackFrame) {
+		return sync(() -> selectedStackFrame.getParentItem().getItems());
 	}
 
 	private Category getStackFrameCategory(TreeItem[] allFrames, int idx) {
