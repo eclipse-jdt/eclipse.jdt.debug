@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,11 +18,13 @@ import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
@@ -226,6 +228,14 @@ public class JavaVarActionFilter implements IActionFilter {
 					}
 					if(value.equals("inSuperclass")) { //$NON-NLS-1$
 						return JavaDetailFormattersManager.getDefault().hasSuperclassDetailFormatter(((IJavaObject)varValue).getJavaType());
+					}
+				} else if (name.equals("DetailFormatterFilter") && (varValue instanceof IJavaPrimitiveValue javaPrime)) { //$NON-NLS-1$
+					if (value.equals("isDefined")) { //$NON-NLS-1$
+						return JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(javaPrime.getJavaType());
+					}
+				} else if (name.equals("DetailFormatterFilter") && (varValue instanceof IJavaArray javaArray)) { //$NON-NLS-1$
+					if (value.equals("isDefined")) { //$NON-NLS-1$
+						return JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(javaArray.getJavaType());
 					}
 				}
 			} catch (DebugException e) {}
