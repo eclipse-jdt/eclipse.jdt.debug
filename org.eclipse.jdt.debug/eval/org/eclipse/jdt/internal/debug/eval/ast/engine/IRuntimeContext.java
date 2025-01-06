@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -54,6 +55,16 @@ public interface IRuntimeContext {
 	 *             </ul>
 	 */
 	IJavaObject getThis() throws CoreException;
+
+	/**
+	 * Returns the receiving primitive type in which to perform the evaluation - equivalent to 'this'. Returns <code>null</code>
+	 *
+	 * @return 'this', or <code>null</code>
+	 * @since 3.21
+	 */
+	default IJavaPrimitiveValue getThisPrimitive() {
+		return null;
+	}
 
 	/**
 	 * Returns the receiving type context in which to perform the evaluation. The type of 'this', or in the case of a static context, the class or

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,6 +51,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -67,6 +70,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -168,11 +172,10 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		Font font = parent.getFont();
 		Composite container = (Composite)super.createDialogArea(parent);
 
-		SWTFactory.createLabel(container, DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2, 1);
+		SWTFactory.createLabel(container, DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2, 2);
 
 		Composite innerContainer = SWTFactory.createComposite(container, font, 2, 1, GridData.FILL_HORIZONTAL);
-
-		fTypeNameText = SWTFactory.createSingleText(innerContainer, 1);
+		fTypeNameText = SWTFactory.createSingleText(innerContainer, 2);
 		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
 		fTypeNameText.addModifyListener(new ModifyListener() {
@@ -182,15 +185,30 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 				checkValues();
 			}
 		});
+		Button primitiveSearchButton = SWTFactory.createPushButton(innerContainer, DebugUIMessages.DetailFormatterPrimitiveSelect, null);
+		primitiveSearchButton.setEnabled(fEditTypeName);
+
+		GridData gridLayout = new GridData(GridData.FILL_HORIZONTAL);
+		gridLayout.horizontalSpan = 1;
+		gridLayout.grabExcessHorizontalSpace = true;
+		primitiveSearchButton.setLayoutData(gridLayout);
+		primitiveSearchButton.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				selectPrimitiveType();
+			}
+		});
 
 		Button typeSearchButton = SWTFactory.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
 		typeSearchButton.setEnabled(fEditTypeName);
+		typeSearchButton.setLayoutData(gridLayout);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				selectType();
 			}
 		});
+
 
 		String labelText = null;
 		IBindingService bindingService = workbench.getAdapter(IBindingService.class);
@@ -281,7 +299,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			status.setError(DebugUIMessages.DetailFormatterDialog_A_detail_formatter_is_already_defined_for_this_type_2);
 		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
 			status.setError(DebugUIMessages.DetailFormatterDialog_Associated_code_must_not_be_empty_3);
-		} else if (fType == null && fTypeSearched) {
+		} else if (fType == null && fTypeSearched && !getPrimitiveTypes().contains(typeName)) {
 			status.setWarning(DebugUIMessages.No_type_with_the_given_name_found_in_the_workspace__1);
 		}
 		updateStatus(status);
@@ -306,15 +324,13 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		Shell shell= getShell();
 		SelectionDialog dialog= null;
 		try {
-			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
-				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_ALL_TYPES, false, fTypeNameText.getText());
+			dialog = JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_ALL_TYPES, false, fTypeNameText.getText());
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6;
 			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7;
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
-
 		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8);
 		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
@@ -327,6 +343,43 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			fTypeNameText.setText(fType.getFullyQualifiedName());
 			fTypeSearched = true;
 		}
+	}
+
+	/**
+	 * Open the 'select type' dialog, and set the primitive into the formatter.
+	 */
+	private void selectPrimitiveType() {
+		Shell shell = getShell();
+		ListDialog listDialog = new ListDialog(shell);
+		listDialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8);
+		listDialog.setMessage(DebugUIMessages.DetailFormatterPrimitiveSelectionLabel);
+		listDialog.setInput(getPrimitiveTypes().toArray());
+		listDialog.setContentProvider(ArrayContentProvider.getInstance());
+		listDialog.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return (String) element;
+			}
+		});
+		if (listDialog.open() == Window.CANCEL) {
+			return;
+		}
+		Object[] types = listDialog.getResult();
+		if (types != null && types.length > 0) {
+			String s = (String) types[0];
+			fTypeNameText.setText(s);
+			fTypeSearched = true;
+		}
+	}
+
+	/**
+	 * Returns a List of available primitives and arrays
+	 *
+	 * @return List primitives and arrays
+	 */
+	@SuppressWarnings("nls")
+	private List<String> getPrimitiveTypes() {
+		return List.of("int", "long", "short", "float", "double", "boolean", "char", "byte", "int[]", "long[]", "short[]", "float[]", "double[]", "boolean[]", "char[]", "byte[]");
 	}
 
 	/**

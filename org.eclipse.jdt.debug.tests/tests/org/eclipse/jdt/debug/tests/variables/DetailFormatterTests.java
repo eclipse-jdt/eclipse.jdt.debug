@@ -340,4 +340,131 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
+
+	public void testFormatterForPrimitivesInt() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.PrimitivesTest";
+			createLineBreakpoint(26, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this + 12";
+			formatter = new DetailFormatter("int", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var = thread.findVariable("x");
+			assertNotNull("the variable 'x' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertEquals("24", fListener.result.toString());
+
+		} finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testFormatterForPrimitivesfloat() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.PrimitivesTest";
+			createLineBreakpoint(26, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this + 10";
+			formatter = new DetailFormatter("float", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var = thread.findVariable("f");
+			assertNotNull("the variable 'f' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertEquals("20.0", fListener.result.toString());
+		} finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testFormatterForPrimitivesIntArrays() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.PrimitivesTest";
+			createLineBreakpoint(26, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this[1]";
+			formatter = new DetailFormatter("int[]", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var = thread.findVariable("arInt");
+			assertNotNull("the variable 'arInt' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertEquals("2", fListener.result.toString());
+		} finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testFormatterForPrimitivesIntArraysMulti() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.PrimitivesTest";
+			createLineBreakpoint(26, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this[0][0]";
+			formatter = new DetailFormatter("int[][]", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var = thread.findVariable("mul");
+			assertNotNull("the variable 'mul' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertEquals("1", fListener.result.toString());
+		} finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testFormatterForPrimitivesCharArray() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.PrimitivesTest";
+			createLineBreakpoint(26, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "new String(this)";
+			formatter = new DetailFormatter("char[]", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var = thread.findVariable("aCh");
+			assertNotNull("the variable 'aCh' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertEquals("ab", fListener.result.toString());
+		} finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 }

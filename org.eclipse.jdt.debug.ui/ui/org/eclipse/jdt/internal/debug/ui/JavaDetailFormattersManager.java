@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,7 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIType;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
@@ -143,7 +144,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
-		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
+		EvaluationListener evaluationListener = new EvaluationListener(value, thread, listener);
 		if (value instanceof IJavaObject) {
 			IJavaObject objectValue= (IJavaObject) value;
 			try {
@@ -168,6 +169,19 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				return;
 			}
 		}
+		if (value instanceof IJavaPrimitiveValue primeValue) {
+			try {
+				IJavaDebugTarget debugTarget= (IJavaDebugTarget) thread.getDebugTarget();
+				Expression expression= getCompiledExpression(primeValue, debugTarget, thread);
+				if (expression != null) {
+					expression.getEngine().evaluateExpression(expression.getExpression(), primeValue, thread, evaluationListener, DebugEvent.EVALUATION_IMPLICIT, false);
+					return;
+				}
+			} catch (CoreException e) {
+				listener.detailComputed(value, e.toString());
+				return;
+			}
+		}
 		try {
 			evaluationListener.valueToString(value);
 		} catch (DebugException e) {
@@ -181,7 +195,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 	}
 
-	private IJavaProject getJavaProject(IJavaObject javaValue, IJavaThread thread) throws CoreException {
+	private IJavaProject getJavaProject(IJavaValue javaValue, IJavaThread thread) throws CoreException {
 
 		IType type = null;
 		if (javaValue instanceof IJavaArray) {
@@ -285,10 +299,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	public DetailFormatter getAssociatedDetailFormatter(IJavaType type) {
 		String typeName = Util.ZERO_LENGTH_STRING;
 		try {
-			while (type instanceof IJavaArrayType) {
-				type = ((IJavaArrayType)type).getComponentType();
+			if (type instanceof IJavaArrayType javaArray) {
+				typeName = javaArray.getName();
 			}
 			if (type instanceof IJavaClassType) {
+				typeName = type.getName();
+			} else if (type instanceof JDIType) {
 				typeName = type.getName();
 			}
 			else {
@@ -298,6 +314,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		catch (DebugException e) {return null;}
 		return fDetailFormattersMap.get(typeName);
 	}
+
 
 	public void setAssociatedDetailFormatter(DetailFormatter detailFormatter) {
 		fDetailFormattersMap.put(detailFormatter.getTypeName(), detailFormatter);
@@ -342,6 +359,23 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 
 	/**
+	 * Return the detail formatter (code snippet) associate with the given type
+	 *
+	 * @param type
+	 *            the JDIType type
+	 * @return the code snippet for the given JDIType
+	 * @throws DebugException
+	 *             if there is problem computing the snippet
+	 */
+	private String getDetailFormatter(JDIType type) throws DebugException {
+		String snippet = getDetailFormatterForPrimitives(type);
+		if (snippet != null) {
+			return snippet;
+		}
+		return null;
+	}
+
+	/**
 	 * Return the detail formatter (code snippet) associate with
 	 * the given type or one of its super types.
 	 * @param type the class type
@@ -357,6 +391,34 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			return detailFormatter.getSnippet();
 		}
 		return getDetailFormatterSuperClass(type.getSuperclass());
+	}
+
+	/**
+	 * Return the detail formatter (code snippet) associate with the given type or one of its super types.
+	 *
+	 * @param type
+	 *            the Array type
+	 * @return the snippet for the given class / super class
+	 * @throws DebugException
+	 *             if there is a problem computing the snippet
+	 */
+	private String getDetailFormatterFromArray(IJavaArrayType type) throws DebugException {
+		if (type == null) {
+			return null;
+		}
+		DetailFormatter detailFormatter = fDetailFormattersMap.get(type.getName());
+		if (detailFormatter != null && detailFormatter.isEnabled()) {
+			return detailFormatter.getSnippet();
+		}
+		return null;
+	}
+
+	private String getDetailFormatterForPrimitives(JDIType type) throws DebugException {
+		DetailFormatter detailFormatter = fDetailFormattersMap.get(type.getName());
+		if (detailFormatter != null && detailFormatter.isEnabled()) {
+			return detailFormatter.getSnippet();
+		}
+		return null;
 	}
 
 	/**
@@ -385,12 +447,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (type instanceof IJavaClassType) {
 			snippet = getDetailFormatter((IJavaClassType) type);
 		}
-		if (type instanceof IJavaArrayType) {
+		if (type instanceof IJavaArrayType jArray) {
 			if (JavaCore.compareJavaVersions(debugTarget.getVersion(), JavaCore.VERSION_9) < 0) {
 				snippet = getArraySnippet((IJavaArray) javaObject);
+			} else {
+				snippet = getDetailFormatterFromArray(jArray);
 			}
 		}
-
 		if (snippet != null) {
 			IJavaProject project = getJavaProject(javaObject, thread);
 			if (project != null) {
@@ -406,6 +469,101 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Return the expression which corresponds to the code formatter associated with the type of the given primitive or <code>null</code> if none.
+	 *
+	 * The code snippet is compiled in the context of the given object.
+	 *
+	 * @param IJavaPrimitiveValue
+	 *            the primitive object
+	 * @param debugTarget
+	 *            the target
+	 * @param thread
+	 *            the thread context
+	 * @return the compiled expression to be evaluated
+	 * @throws CoreException
+	 *             is a problem occurs compiling the expression
+	 */
+	private Expression getCompiledExpression(IJavaPrimitiveValue javaPM, IJavaDebugTarget debugTarget, IJavaThread thread) throws CoreException {
+		IJavaType type = javaPM.getJavaType();
+		if (type == null) {
+			return null;
+		}
+		String snippet = null;
+
+		if (type instanceof JDIType jdiType) {
+			snippet = getDetailFormatter(jdiType);
+			if (snippet == null) {
+				return null;
+			}
+			snippet = primitiveSnippets(snippet, jdiType.getName(), javaPM);
+		}
+		if (type instanceof IJavaArrayType) {
+			if (JavaCore.compareJavaVersions(debugTarget.getVersion(), JavaCore.VERSION_9) < 0) {
+				snippet = getArraySnippet((IJavaArray) javaPM);
+			}
+		}
+		if (snippet != null) {
+			IJavaProject project = getJavaProject(javaPM, thread);
+			if (project != null) {
+				IAstEvaluationEngine evaluationEngine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
+				ICompiledExpression res = evaluationEngine.getCompiledExpression(snippet, (IJavaStackFrame) thread.getTopStackFrame());
+				if (res != null) {
+					Expression exp = new Expression(res, evaluationEngine);
+					return exp;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the modified expression which replaces this keyword used in formatter
+	 *
+	 * The code snippet is compiled in the context of the given object.
+	 *
+	 * @param snippet
+	 *            Original snippet
+	 * @param typeName
+	 *            type of the primitive
+	 * @param primitiveValue
+	 *            primitive object
+	 * @return modified expression to be evaluated
+	 */
+	@SuppressWarnings("nls")
+	private String primitiveSnippets(String snippet, String typeName, IJavaPrimitiveValue primitiveValue) {
+		String modified = null;
+		if (typeName.equals("float")) {
+			String thisValue = Float.valueOf(primitiveValue.getFloatValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("int")) {
+			String thisValue = Integer.valueOf(primitiveValue.getIntValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("byte")) {
+			String thisValue = Byte.valueOf(primitiveValue.getByteValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("long")) {
+			String thisValue = Long.valueOf(primitiveValue.getLongValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("short")) {
+			String thisValue = Short.valueOf(primitiveValue.getShortValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("double")) {
+			String thisValue = Double.valueOf(primitiveValue.getDoubleValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("boolean")) {
+			String thisValue = Boolean.valueOf(primitiveValue.getBooleanValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		} else if (typeName.equals("char")) {
+			String thisValue = Character.valueOf(primitiveValue.getCharValue()).toString();
+			modified = snippet.replace("this", thisValue);
+		}  else {
+			modified = snippet;
+		}
+		return modified;
+
 	}
 
 	protected String getArraySnippet(IJavaArray value) throws DebugException {
