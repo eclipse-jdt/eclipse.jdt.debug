@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -120,13 +119,13 @@ public class OpenFromClipboardTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestUtil.log(IStatus.INFO, name.getMethodName(), "setUp");
+		TestUtil.logInfo("SETUP " + getClass().getSimpleName() + "." + name.getMethodName());
 		fSourceFolder = JavaProjectHelper.addSourceContainer(fJProject, "src");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestUtil.log(IStatus.INFO, name.getMethodName(), "tearDown");
+		TestUtil.logInfo("TDOWN " + getClass().getSimpleName() + "." + name.getMethodName());
 		JavaProjectHelper.removeSourceContainer(fJProject, "src");
 	}
 

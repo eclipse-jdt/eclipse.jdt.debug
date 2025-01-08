@@ -15,9 +15,11 @@ package org.eclipse.jdt.debug.tests;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +65,10 @@ public class TestUtil {
 			launchManager.removeLaunch(launch);
 		}
 		Assert.assertEquals("expected no launches after test", Collections.EMPTY_LIST, launches);
+	}
+
+	public static void logInfo(String message) {
+		System.out.println(new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + " " + message);
 	}
 
 	public static void log(int severity, String owner, String message, Throwable... optionalError) {

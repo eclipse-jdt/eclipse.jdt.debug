@@ -257,7 +257,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	@Override
 	protected void setUp() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "setUp");
+		TestUtil.logInfo("SETUP " + getClass().getSimpleName() + "." + getName());
 		super.setUp();
 		setPreferences();
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_FOUR_PROJECT_NAME);
@@ -2790,7 +2790,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	@Override
 	protected void tearDown() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "tearDown");
+		TestUtil.logInfo("TDOWN " + getClass().getSimpleName() + "." + getName());
 		shutdownDebugTargets();
 		TestUtil.cleanUp(getName());
 		super.tearDown();
