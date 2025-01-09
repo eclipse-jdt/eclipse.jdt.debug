@@ -182,9 +182,10 @@ public class DetectVMInstallationsJob extends Job {
 			.collect(Collectors.toCollection(HashSet::new));
 	}
 
+	@SuppressWarnings("nls")
 	private void computeWindowsCandidates(Collection<File> rootDirectories) {
-		List<String> progFiles = List.of("ProgramFiles", "ProgramFiles(x86)"); //$NON-NLS-1$//$NON-NLS-2$
-		List<String> subDirs = List.of("Eclipse Adoptium", "RedHat");  //$NON-NLS-1$//$NON-NLS-2$
+		List<String> progFiles = List.of("ProgramFiles", "ProgramFiles(x86)");
+		List<String> subDirs = List.of("Eclipse Adoptium", "RedHat", "Java");
 		rootDirectories.addAll(
 		progFiles.stream()
 			.map(name -> System.getenv(name))
