@@ -1041,21 +1041,24 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return;
 		}
 
-		String[] names = directory.list();
-		if (names == null) {
-			return;
+		String[] fileNames = directory.list();
+		if (fileNames == null) {
+			return; // not a directory
 		}
+		List<String> names = new ArrayList<>();
+		names.add(null); // self
+		names.addAll(List.of(fileNames));
 		List<File> subDirs = new ArrayList<>();
-		for (int i = 0; i < names.length; i++) {
+		for (String name : names) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			File file = new File(directory, names[i]);
+			File file = name == null ? directory : new File(directory, name);
 			monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[] { Integer.toString(found.size()),
 					file.toPath().normalize().toAbsolutePath().toString().replaceAll("&", "&&") })); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
 			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();
 			if (file.isDirectory()) {
-				if (!ignore.contains(file)) {
+				if (ignore.add(file)) {
 					boolean validLocation = false;
 
 					// Take the first VM install type that claims the location as a
