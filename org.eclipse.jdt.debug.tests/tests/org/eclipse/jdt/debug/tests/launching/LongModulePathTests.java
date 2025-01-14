@@ -82,7 +82,7 @@ public class LongModulePathTests extends AbstractDebugTest {
 	 */
 
 	public void testVeryLongModulepathWithArgumentFile() throws Exception {
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!Platform.OS.isWindows()) {
 			return;
 		}
 		// Given
@@ -107,7 +107,7 @@ public class LongModulePathTests extends AbstractDebugTest {
 		resumeAndExit(thread);
 
 		// Then
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!Platform.OS.isWindows()) {
 			// On windows, temp file deletion may fail
 			assertFalse(tempFile.exists());
 		}

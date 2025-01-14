@@ -200,10 +200,9 @@ public class JavaThreadEventHandlerTests extends AbstractDebugTest {
 		try {
 			assertTrue(thread.isSuspended());
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis() + 5000;
-			while (thread.isSuspended() && System.currentTimeMillis() < timeout) {
-				System.out.println("Waiting for evaluation to start..");
-				Thread.sleep(10);
+			long timeoutNanos = System.nanoTime() + 5000 * 1_000_000L;
+			while (thread.isSuspended() && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 
 			// evaluation must be running now

@@ -20,6 +20,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 
@@ -42,7 +43,7 @@ public class AddExternalFolderAction extends OpenDialogAction {
 
 		String lastUsedPath= getDialogSetting(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
-			lastUsedPath= ""; //$NON-NLS-1$
+			lastUsedPath = Util.ZERO_LENGTH_STRING;
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.MULTI | SWT.SHEET);
 		dialog.setText(ActionMessages.AddExternalFolderAction_Folder_Selection_3);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -208,7 +208,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException",
 			"Bug534319earlyStart", "Bug534319lateStart", "Bug534319singleThread", "Bug534319startBetwen", "MethodCall", "Bug538303", "Bug540243",
 			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982",
-			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2" };
+			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2", "compare.CompareObjectsStringTest", "compare.CompareListObjects",
+			"compare.CompareMapObjects", "compare.CompareSetObjects", "compare.CompareNormalObjects", "compare.CompareArrayObjects" };
 
 	/**
 	 * the default timeout
@@ -261,7 +262,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	@Override
 	protected void setUp() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "setUp");
+		TestUtil.logInfo("SETUP " + getClass().getSimpleName() + "." + getName());
 		super.setUp();
 		setPreferences();
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_FOUR_PROJECT_NAME);
@@ -2386,7 +2387,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IEvaluationResult evaluate(String snippet, IJavaThread thread) throws Exception {
 		class Listener implements IEvaluationListener {
-			IEvaluationResult fResult;
+			volatile IEvaluationResult fResult;
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {
 				fResult= result;
@@ -2398,9 +2399,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis()+DEFAULT_TIMEOUT;
-			while(listener.fResult == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
+			long timeoutNanos = System.nanoTime() + DEFAULT_TIMEOUT * 1_000_000L;
+			while (listener.fResult == null && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 			return listener.fResult;
 		}
@@ -2665,7 +2666,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return true if the local filesystem is case-sensitive, false otherwise
 	 */
 	protected boolean isFileSystemCaseSensitive() {
-		return Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+		return Platform.OS.isMac() ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
     /**
@@ -2794,7 +2795,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	@Override
 	protected void tearDown() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "tearDown");
+		TestUtil.logInfo("TDOWN " + getClass().getSimpleName() + "." + getName());
 		shutdownDebugTargets();
 		TestUtil.cleanUp(getName());
 		super.tearDown();
@@ -2861,7 +2862,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IValue doEval(IJavaThread thread, StackFrameSupplier frameSupplier, String snippet) throws Exception {
 		class Listener implements IEvaluationListener {
-			IEvaluationResult fResult;
+			volatile IEvaluationResult fResult;
 
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {
@@ -2878,9 +2879,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis() + 5000;
-			while(listener.getResult() == null && System.currentTimeMillis() < timeout) {
-				Thread.sleep(100);
+			long timeoutNanos = System.nanoTime() + 5000 * 1_000_000L;
+			while (listener.getResult() == null && System.nanoTime() < timeoutNanos) {
+				Thread.sleep(1);
 			}
 			IEvaluationResult result = listener.getResult();
 			assertNotNull("The evaluation should have result: ", result);

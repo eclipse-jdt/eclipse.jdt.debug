@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -51,7 +52,7 @@ public class VariableClasspathEntryWorkbenchAdapter implements IWorkbenchAdapter
 		if (o instanceof VariableClasspathEntry) {
 			return ((VariableClasspathEntry)o).getName();
 		}
-		return ""; //$NON-NLS-1$
+		return Util.ZERO_LENGTH_STRING;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)

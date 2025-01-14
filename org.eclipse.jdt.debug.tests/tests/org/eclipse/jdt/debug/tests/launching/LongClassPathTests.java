@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.launching;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeThat;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
@@ -77,7 +75,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		suite.addTest(new LongClassPathTests("testVeryLongClasspathWithClasspathOnlyJar"));
 		if (JavaProjectHelper.isJava9Compatible()) {
 			suite.addTest(new LongClassPathTests("testVeryLongClasspathWithArgumentFile"));
-		} else if (Platform.getOS().equals(Platform.OS_WIN32)) {
+		} else if (Platform.OS.isWindows()) {
 			suite.addTest(new LongClassPathTests("testVeryLongClasspathWithEnvironmentVariable"));
 		}
 		return suite;
@@ -129,7 +127,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		resumeAndExit(thread);
 
 		// Then
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!Platform.OS.isWindows()) {
 			// On windows, temp file deletion may fail
 			assertFalse(tempFile.exists());
 		}
@@ -161,7 +159,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		resumeAndExit(thread);
 
 		// Then
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!Platform.OS.isWindows()) {
 			// On windows, temp file deletion may fail
 			assertFalse(tempFile.exists());
 		}
@@ -171,7 +169,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 	 * On Windows, for JVM < 9, the CLASSPATH env variable is used if classpath is too long
 	 */
 	public void testVeryLongClasspathWithEnvironmentVariable() throws Exception {
-		assumeThat(Platform.getOS(), equalTo(Platform.OS_WIN32));
+		assumeTrue("Not on Windows", Platform.OS.isWindows());
 
 		// Given
 		javaProject = createJavaProjectClone("testVeryLongClasspath", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_1_6_EE_NAME, true);

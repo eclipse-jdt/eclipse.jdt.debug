@@ -91,8 +91,8 @@ public class JavaSnippetEditorTest extends AbstractDebugUiTests {
 		});
 
 		// Evaluation runs in a separated thread (not a job), so let wait for it
-		long start = System.currentTimeMillis();
-		while (snippetEditor.isEvaluating() && System.currentTimeMillis() - start < 60_000) {
+		long timeoutNanos = System.nanoTime() + 60_000 * 1_000_000L;
+		while (snippetEditor.isEvaluating() && System.nanoTime() < timeoutNanos) {
 			processUiEvents(1000);
 		}
 

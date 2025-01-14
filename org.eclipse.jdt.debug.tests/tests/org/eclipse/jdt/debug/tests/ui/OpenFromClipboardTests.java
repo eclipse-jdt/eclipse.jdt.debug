@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -97,8 +96,8 @@ public class OpenFromClipboardTests {
 	}
 
 	private static void waitForEncodingRelatedJobs() {
-		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, ValidateProjectEncoding.class);
-		TestUtil.waitForJobs("OpenFromClipboardTests", 10, 5_000, CharsetDeltaJob.FAMILY_CHARSET_DELTA);
+		TestUtil.waitForJobs("OpenFromClipboardTests", ValidateProjectEncoding.class, 0, 5_000);
+		TestUtil.waitForJobs("OpenFromClipboardTests", CharsetDeltaJob.FAMILY_CHARSET_DELTA, 0, 5_000);
 	}
 
 	private static IJavaProject createProject(String name) throws CoreException {
@@ -120,13 +119,13 @@ public class OpenFromClipboardTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestUtil.log(IStatus.INFO, name.getMethodName(), "setUp");
+		TestUtil.logInfo("SETUP " + getClass().getSimpleName() + "." + name.getMethodName());
 		fSourceFolder = JavaProjectHelper.addSourceContainer(fJProject, "src");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestUtil.log(IStatus.INFO, name.getMethodName(), "tearDown");
+		TestUtil.logInfo("TDOWN " + getClass().getSimpleName() + "." + name.getMethodName());
 		JavaProjectHelper.removeSourceContainer(fJProject, "src");
 	}
 

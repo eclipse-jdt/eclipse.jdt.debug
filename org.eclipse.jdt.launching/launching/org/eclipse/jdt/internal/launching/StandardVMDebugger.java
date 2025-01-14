@@ -409,14 +409,14 @@ public class StandardVMDebugger extends StandardVMRunner {
 						}
 
 						Exception ex = runnable.getException();
-						if (ex instanceof IllegalConnectorArgumentsException) {
-							throw (IllegalConnectorArgumentsException)ex;
+						if (ex instanceof IllegalConnectorArgumentsException illegalException) {
+							throw illegalException;
 						}
-						if (ex instanceof InterruptedIOException) {
-							throw (InterruptedIOException)ex;
+						if (ex instanceof InterruptedIOException interruptedException) {
+							throw interruptedException;
 						}
-						if (ex instanceof IOException) {
-							throw (IOException)ex;
+						if (ex instanceof IOException ioException) {
+							throw ioException;
 						}
 
 						VirtualMachine vm= runnable.getVirtualMachine();
@@ -485,7 +485,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @since 3.3
 	 */
 	protected String[] prependJREPath(String[] env, IPath jdkpath) {
-		if(Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (Platform.OS.isWindows()) {
 			IPath jrepath = jdkpath.removeLastSegments(1);
 			if(jrepath.lastSegment().equals(BIN)) {
 				int count = jrepath.segmentCount();

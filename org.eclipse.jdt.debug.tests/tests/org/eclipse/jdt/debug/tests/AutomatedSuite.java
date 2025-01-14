@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,7 @@ import org.eclipse.jdt.debug.tests.connectors.MultipleConnectionsTest;
 import org.eclipse.jdt.debug.tests.console.ConsoleTerminateAllActionTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
 import org.eclipse.jdt.debug.tests.console.JavaDebugStackTraceConsoleTest;
+import org.eclipse.jdt.debug.tests.console.JavaStackTraceAmbiguityTest;
 import org.eclipse.jdt.debug.tests.console.JavaStackTraceConsoleTest;
 import org.eclipse.jdt.debug.tests.core.AlternateStratumTests;
 import org.eclipse.jdt.debug.tests.core.ArgumentTests;
@@ -152,6 +153,7 @@ import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests18;
+import org.eclipse.jdt.debug.tests.variables.CompareObjectsTest;
 import org.eclipse.jdt.debug.tests.variables.DetailFormatterTests;
 import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
@@ -203,7 +205,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
 
 	//mac specific tests
-		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
+		if (Platform.OS.isMac()) {
 			addTest(new TestSuite(PListParserTests.class));
 		}
 
@@ -275,6 +277,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(JavaDebugStackTraceConsoleTest.class));
 		addTest(new TestSuite(IOConsoleTests.class));
 		addTest(new TestSuite(ConsoleTerminateAllActionTests.class));
+		addTest(new TestSuite(JavaStackTraceAmbiguityTest.class));
 
 	//Core tests
 		addTest(new TestSuite(DebugEventTests.class));
@@ -395,6 +398,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TriggerPointBreakpointsTests.class));
 		addTest(new TestSuite(JavaThreadEventHandlerTests.class));
 		addTest(new TestSuite(ConditionalBreakpointsWithFileClass.class));
+		addTest(new TestSuite(CompareObjectsTest.class));
 
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));

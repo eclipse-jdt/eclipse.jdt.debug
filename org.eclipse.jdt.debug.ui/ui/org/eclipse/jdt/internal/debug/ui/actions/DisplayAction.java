@@ -25,6 +25,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
@@ -69,7 +70,7 @@ public class DisplayAction extends EvaluateAction {
 				if (sig != null) {
 					resultString= NLS.bind(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() });
 				} else {
-					resultString= ""; //$NON-NLS-1$
+					resultString = Util.ZERO_LENGTH_STRING;
 				}
 				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
 					@Override

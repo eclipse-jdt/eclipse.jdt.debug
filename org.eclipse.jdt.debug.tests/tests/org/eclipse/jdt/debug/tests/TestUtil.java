@@ -15,9 +15,11 @@ package org.eclipse.jdt.debug.tests;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +67,10 @@ public class TestUtil {
 		Assert.assertEquals("expected no launches after test", Collections.EMPTY_LIST, launches);
 	}
 
+	public static void logInfo(String message) {
+		System.out.println(new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + " " + message);
+	}
+
 	public static void log(int severity, String owner, String message, Throwable... optionalError) {
 		message = "[" + owner + "] " + message;
 		Throwable error = null;
@@ -88,12 +94,12 @@ public class TestUtil {
 				}
 			}
 		} else {
-			long start = System.currentTimeMillis();
+			long timeoutNanos = System.nanoTime() + AbstractDebugTest.DEFAULT_TIMEOUT * 1_000_000L;
 			AtomicBoolean stop = new AtomicBoolean();
 			Display.getDefault().asyncExec(() -> stop.set(true));
-			while (!stop.get() && System.currentTimeMillis() - start < AbstractDebugTest.DEFAULT_TIMEOUT) {
+			while (!stop.get() && System.nanoTime() < timeoutNanos) {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					break;
 				}
@@ -133,15 +139,19 @@ public class TestUtil {
 	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
+		return waitForJobs(owner, null, minTimeMs, maxTimeMs, excludedFamilies);
+	}
+
+	public static boolean waitForJobs(String owner, Object jobFamily, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
-		wakeUpSleepingJobs(null);
-		final long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < minTimeMs) {
+		wakeUpSleepingJobs(jobFamily);
+		final long startNanos = System.nanoTime();
+		while (System.nanoTime() - startNanos < minTimeMs * 1_000_000L) {
 			runEventLoop();
 			try {
-				Thread.sleep(Math.min(10, minTimeMs));
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
@@ -153,7 +163,7 @@ public class TestUtil {
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
-			List<Job> jobs = getRunningOrWaitingJobs(null, excludedFamilies);
+			List<Job> jobs = getRunningOrWaitingJobs(jobFamily, excludedFamilies);
 			if (jobs.isEmpty()) {
 				// only uninteresting jobs running
 				break;
@@ -165,11 +175,11 @@ public class TestUtil {
 				return true;
 			}
 
-			if (System.currentTimeMillis() - start >= maxTimeMs) {
+			if (System.nanoTime() - startNanos >= maxTimeMs * 1_000_000L) {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
 			}
-			wakeUpSleepingJobs(null);
+			wakeUpSleepingJobs(jobFamily);
 		}
 		runningJobs.clear();
 		return false;
@@ -202,7 +212,7 @@ public class TestUtil {
 			sb.append(job.getClass().getName());
 			Thread thread = job.getThread();
 			if (thread != null) {
-				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
+				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.threadId() }, true, true);
 				if (threadInfos[0] != null) {
 					sb.append("\nthread info: ").append(threadInfos[0]);
 				}
@@ -211,7 +221,7 @@ public class TestUtil {
 		}
 
 		Thread thread = Display.getDefault().getThread();
-		ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
+		ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.threadId() }, true, true);
 		if (threadInfos[0] != null) {
 			sb.append("\n").append("UI thread info: ").append(threadInfos[0]);
 		}

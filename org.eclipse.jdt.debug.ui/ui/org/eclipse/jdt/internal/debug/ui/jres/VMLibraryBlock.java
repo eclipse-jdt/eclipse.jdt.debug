@@ -42,6 +42,7 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -302,7 +303,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		IDialogSettings dialogSettings= JDIDebugUIPlugin.getDefault().getDialogSettings();
 		String lastUsedPath= dialogSettings.get(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
-			lastUsedPath= ""; //$NON-NLS-1$
+			lastUsedPath = Util.ZERO_LENGTH_STRING;
 		}
 		FileDialog dialog = new FileDialog(fLibraryViewer.getControl().getShell(), SWT.MULTI | SWT.SHEET);
 		dialog.setText(JREMessages.VMLibraryBlock_10);

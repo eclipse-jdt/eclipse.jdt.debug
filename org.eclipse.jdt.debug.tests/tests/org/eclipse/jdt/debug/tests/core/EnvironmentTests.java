@@ -24,7 +24,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class EnvironmentTests extends AbstractDebugTest {
 
@@ -36,8 +35,7 @@ public class EnvironmentTests extends AbstractDebugTest {
 	 * Tests that we resolve environment variables as case insenitive on Windows.
 	 */
 	public void testWinOSCaseInsensitiveVariable() throws Exception {
-		boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
-		if (win32) {
+		if (Platform.OS.isWindows()) {
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 			String path1 = manager.performStringSubstitution("${env_var:pAth}");
 			String path2 = manager.performStringSubstitution("${env_var:PaTh}");
@@ -49,8 +47,7 @@ public class EnvironmentTests extends AbstractDebugTest {
 	 * Test that we can override a variable in a case insensitive way on Windows
 	 */
 	public void testWinOSCaseInsensitiveOverride() throws Exception {
-		boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
-		if (win32) {
+		if (Platform.OS.isWindows()) {
 			ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "testWinOSCaseInsensitiveOverride");
 			Map<String, String> override = new HashMap<>();

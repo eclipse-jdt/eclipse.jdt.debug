@@ -45,8 +45,7 @@ public final class JDIHelpers implements IJDIHelpers {
 	@Override
 	public File getClassesLocation(Object element) throws DebugException {
 		IJavaReferenceType declaringType = null;
-		if (element instanceof IJavaStackFrame) {
-			IJavaStackFrame stackFrame = (IJavaStackFrame) element;
+		if (element instanceof IJavaStackFrame stackFrame) {
 			declaringType = stackFrame.getReferenceType();
 		} else if (element instanceof IJavaObject) {
 			IJavaType javaType = ((IJavaObject) element).getJavaType();
@@ -55,8 +54,7 @@ public final class JDIHelpers implements IJDIHelpers {
 			}
 		} else if (element instanceof IJavaReferenceType) {
 			declaringType = (IJavaReferenceType) element;
-		} else if (element instanceof IJavaVariable) {
-			IJavaVariable javaVariable = (IJavaVariable) element;
+		} else if (element instanceof IJavaVariable javaVariable) {
 			IJavaType javaType = ((IJavaValue) javaVariable.getValue()).getJavaType();
 			if (javaType instanceof IJavaReferenceType) {
 				declaringType = (IJavaReferenceType) javaType;
@@ -92,8 +90,7 @@ public final class JDIHelpers implements IJDIHelpers {
 	@Override
 	public String getSourcePath(Object element) throws DebugException {
 		IJavaReferenceType declaringType = null;
-		if (element instanceof IJavaStackFrame) {
-			IJavaStackFrame stackFrame = (IJavaStackFrame) element;
+		if (element instanceof IJavaStackFrame stackFrame) {
 			// under JSR 45 source path from the stack frame is more precise than anything derived from the type
 			String sourcePath = stackFrame.getSourcePath(STRATA_ID);
 			if (sourcePath != null) {

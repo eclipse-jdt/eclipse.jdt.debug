@@ -48,6 +48,7 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 
 /**
  * Launch shortcut for local Java applications.
@@ -209,6 +210,6 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 				return moduleDescription.getElementName();
 			}
 		}
-		return ""; //$NON-NLS-1$
+		return Util.ZERO_LENGTH_STRING;
 	}
 }

@@ -63,7 +63,7 @@ public class ProcessTests extends AbstractDebugTest {
 	 * wrapped in an IProcess.
 	 */
 	public void testAlreadyTerminatedProcess() throws Exception {
-		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+		if (Platform.OS.isLinux()) {
 			return;
 		}
 		Process process = DebugPlugin.exec(new String[]{"java"}, null);

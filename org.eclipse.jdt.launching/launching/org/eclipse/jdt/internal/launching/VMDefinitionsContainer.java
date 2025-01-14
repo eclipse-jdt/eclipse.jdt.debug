@@ -580,8 +580,7 @@ public class VMDefinitionsContainer {
 							NodeList entries = subElement.getElementsByTagName("entry"); //$NON-NLS-1$
 							for (int j = 0; j < entries.getLength(); j++) {
 								Node entryNode = entries.item(j);
-								if (entryNode instanceof Element) {
-									Element entryElement = (Element) entryNode;
+								if (entryNode instanceof Element entryElement) {
 									String key = entryElement.getAttribute("key"); //$NON-NLS-1$
 									String value = entryElement.getAttribute("value"); //$NON-NLS-1$
 									if (key != null && value != null) {

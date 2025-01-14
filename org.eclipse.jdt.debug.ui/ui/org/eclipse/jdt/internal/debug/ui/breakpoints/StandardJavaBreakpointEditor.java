@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -186,7 +187,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fBreakpoint = breakpoint;
 		boolean enabled = false;
 		boolean hasHitCount = false;
-		String text = ""; //$NON-NLS-1$
+		String text = Util.ZERO_LENGTH_STRING;
 		boolean suspendThread = true;
 		if (breakpoint != null) {
 			enabled = true;

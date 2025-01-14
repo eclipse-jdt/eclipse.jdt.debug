@@ -126,8 +126,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof VariableClasspathEntry) {
-			VariableClasspathEntry other= (VariableClasspathEntry)obj;
+		if (obj instanceof VariableClasspathEntry other) {
 			if (variableString != null) {
 				return variableString.equals(other.variableString);
 			}

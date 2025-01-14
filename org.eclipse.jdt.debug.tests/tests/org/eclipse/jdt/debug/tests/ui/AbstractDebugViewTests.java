@@ -152,7 +152,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 		TreeItem[] selected = getSelectedItemsFromDebugView(true);
 		Object[] selectedText = selectedText(selected);
 		if (selected.length != 1) {
-			if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			if (Platform.OS.isMac()) {
 				// skip this test on Mac - see bug 516024
 				return;
 			}
@@ -240,10 +240,10 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 			if (!wait) {
 				return selected;
 			}
-			long start = System.currentTimeMillis();
+			long timeoutNanos = System.nanoTime() + 10000 * 1_000_000L;
 
 			// At least on GTK3 it takes some time until we see the viewer selection propagated to the SWT tree
-			while (selected.length != 1 && System.currentTimeMillis() - start < 10000) {
+			while (selected.length != 1 && System.nanoTime() < timeoutNanos) {
 				TreeViewer treeViewer = (TreeViewer) debugView.getViewer();
 				treeViewer.refresh(true);
 				processUiEvents(500);
