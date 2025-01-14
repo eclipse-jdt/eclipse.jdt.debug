@@ -23,6 +23,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
@@ -46,7 +47,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 
 		String lastUsedPath = getDialogSetting(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
-			lastUsedPath = ""; //$NON-NLS-1$
+			lastUsedPath = Util.ZERO_LENGTH_STRING;
 		}
 		FileDialog dialog = new FileDialog(getShell(), SWT.MULTI | SWT.SHEET);
 		dialog.setText(ActionMessages.AddExternalJar_Jar_Selection_3);

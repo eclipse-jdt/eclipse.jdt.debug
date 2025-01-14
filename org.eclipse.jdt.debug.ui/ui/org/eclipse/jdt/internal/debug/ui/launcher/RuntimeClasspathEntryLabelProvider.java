@@ -37,6 +37,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.osgi.util.NLS;
@@ -223,7 +224,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				}
 				return name;
 		}
-		return ""; //$NON-NLS-1$
+		return Util.ZERO_LENGTH_STRING;
 	}
 
 	/* (non-Javadoc)

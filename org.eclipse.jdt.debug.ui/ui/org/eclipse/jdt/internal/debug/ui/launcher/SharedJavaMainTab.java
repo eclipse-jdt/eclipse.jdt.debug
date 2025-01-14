@@ -36,6 +36,7 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -140,7 +141,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_NAME, moduleName);
 		if (name.length() > 0) {
-			String category = ""; //$NON-NLS-1$
+			String category = Util.ZERO_LENGTH_STRING;
 			try {
 				category = config.getType().getIdentifier();
 			} catch (CoreException e) {

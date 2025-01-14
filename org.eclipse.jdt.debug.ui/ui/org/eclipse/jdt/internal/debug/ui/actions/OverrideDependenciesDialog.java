@@ -24,6 +24,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -88,7 +89,7 @@ public class OverrideDependenciesDialog extends MessageDialog {
 		gd.widthHint = convertWidthInCharsToPixels(60);
 		fModuleArgumentsNewText.setLayoutData(gd);
 
-		String moduleCLIOptions = ""; //$NON-NLS-1$
+		String moduleCLIOptions = Util.ZERO_LENGTH_STRING;
 		try {
 			AbstractJavaLaunchConfigurationDelegate delegate = getJavaLaunchConfigurationDelegate();
 			if (delegate != null) {

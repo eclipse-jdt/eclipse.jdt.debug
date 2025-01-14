@@ -26,6 +26,7 @@ import org.eclipse.jdt.internal.ui.filtertable.JavaFilterTable.DialogLabels;
 import org.eclipse.jdt.internal.ui.filtertable.JavaFilterTable.FilterStorage;
 import org.eclipse.jdt.internal.ui.filtertable.JavaFilterTable.FilterTableConfig;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
@@ -82,7 +83,7 @@ public class ExceptionFilterEditor {
 				for (Filter filter : filters) {
 					String name = filter.getName();
 					if (name.equals(DEFAULT_PACKAGE)) {
-						name = ""; //$NON-NLS-1$
+						name = Util.ZERO_LENGTH_STRING;
 					}
 					if (filter.isChecked()) {
 						inclusionFilters.add(name);

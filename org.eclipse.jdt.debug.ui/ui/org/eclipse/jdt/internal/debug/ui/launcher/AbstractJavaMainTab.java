@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.launching.JavaMigrationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.events.ModifyEvent;
@@ -79,7 +80,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	}
 }
 
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+protected static final String EMPTY_STRING = Util.ZERO_LENGTH_STRING;
 	//Project UI widgets
 	protected Text fProjText;
 

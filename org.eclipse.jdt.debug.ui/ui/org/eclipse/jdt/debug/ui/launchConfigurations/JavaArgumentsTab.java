@@ -200,7 +200,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
+			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, EMPTY_STRING));
 			fVMArgumentsBlock.initializeFrom(configuration);
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
