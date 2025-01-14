@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -507,7 +507,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				buffer.append(' ');
 			}
 		}
-
+		if (buffer.isEmpty() && value instanceof IJavaArray javaArray) {
+			String label = javaArray.getJavaType().getName();
+			label = adjustTypeNameForArrayIndex(label, javaArray.getLength());
+			if (label != null) {
+				buffer.append(label);
+				buffer.append(' ');
+			}
+		}
 		// Put double quotes around Strings
 		if (valueString != null && (isString || valueString.length() > 0)) {
 			if (isString) {
@@ -1917,10 +1924,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Return the simple name from a qualified name (non-generic)
 	 */
+	@SuppressWarnings("nls")
 	private String getSimpleName(String qualifiedName) {
 		int index = qualifiedName.lastIndexOf('.');
-		if (index >= 0) {
+		if (index >= 0 && !qualifiedName.contains("$Lambda.")) {
 			return qualifiedName.substring(index + 1);
+		}
+		if (index >= 0 && qualifiedName.contains("$Lambda.")) {
+			int indexLambdaStart = qualifiedName.indexOf("$Lambda.");
+			String temp = qualifiedName.substring(indexLambdaStart + 1);
+			if (temp.indexOf('.') != -1) {
+				temp = temp.substring(0, temp.indexOf('.'));
+				return temp;
+			}
 		}
 		return qualifiedName;
 	}
