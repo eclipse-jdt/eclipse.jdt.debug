@@ -25,6 +25,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -134,7 +135,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fJREsViewer.setInput(env);
 		String description = env.getDescription();
 		if (description == null) {
-			description = ""; //$NON-NLS-1$
+			description = Util.ZERO_LENGTH_STRING;
 		}
 		fDescription.setText(description);
 		IVMInstall jre = (IVMInstall) fDefaults.get(env);

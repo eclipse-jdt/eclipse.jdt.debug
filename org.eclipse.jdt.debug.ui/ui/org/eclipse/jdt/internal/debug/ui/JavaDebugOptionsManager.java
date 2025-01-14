@@ -81,6 +81,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -483,7 +484,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	public static String serializeList(String[] list) {
 		if (list == null) {
-			return ""; //$NON-NLS-1$
+			return Util.ZERO_LENGTH_STRING;
 		}
 		return String.join(String.valueOf(','), list);
 	}

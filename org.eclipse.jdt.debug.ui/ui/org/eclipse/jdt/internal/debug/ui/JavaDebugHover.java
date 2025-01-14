@@ -77,6 +77,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
@@ -496,7 +497,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		} else if (element instanceof ILocalVariable) {
 			signature = ((ILocalVariable) element).getTypeSignature();
 		} else {
-			signature = ""; //$NON-NLS-1$
+			signature = Util.ZERO_LENGTH_STRING;
 		}
 		return signature.startsWith("["); //$NON-NLS-1$
 	}

@@ -23,6 +23,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -90,7 +91,7 @@ public class VMDetailsDialog extends Dialog {
 			}
 		}
 		if (text == null) {
-			text = ""; //$NON-NLS-1$
+			text = Util.ZERO_LENGTH_STRING;
 		}
 		Text argText = SWTFactory.createText(parent, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL, 2, text);
 		GridData gd = (GridData) argText.getLayoutData();

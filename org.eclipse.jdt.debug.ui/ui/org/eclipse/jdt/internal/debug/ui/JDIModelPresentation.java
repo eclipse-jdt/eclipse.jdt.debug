@@ -94,6 +94,7 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
@@ -1521,7 +1522,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				label = getClassPrepareBreakpointText(prepareBreakpoint);
 			} else {
 				// Should never get here
-				return ""; //$NON-NLS-1$
+				return Util.ZERO_LENGTH_STRING;
 			}
 			String suffix = breakpoint.getMarker().getAttribute(BREAKPOINT_LABEL_SUFFIX, null);
 			if (suffix == null) {
@@ -1545,7 +1546,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		String sourceName = breakpoint.getSourceName();
 		if (sourceName == null) {
-		    sourceName = ""; //$NON-NLS-1$
+			sourceName = Util.ZERO_LENGTH_STRING;
 		    IMarker marker = breakpoint.getMarker();
 		    if (marker != null) {
 		        IResource resource = marker.getResource();

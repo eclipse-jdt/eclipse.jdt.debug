@@ -98,6 +98,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -1283,7 +1284,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			IProject p= file.getProject();
 			projectName= p.getName();
 		}
-		String message= ""; //$NON-NLS-1$
+		String message = Util.ZERO_LENGTH_STRING;
 		if (projectName != null) {
 			message = projectName + SnippetMessages.getString("JavaSnippetEditor._is_not_a_Java_Project._n_1"); //$NON-NLS-1$
 		}

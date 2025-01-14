@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 
 public class SnippetMessages {
@@ -47,8 +48,9 @@ public class SnippetMessages {
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
+		if (arg == null) {
+			arg= Util.ZERO_LENGTH_STRING;
+		}
 		return NLS.bind(format, new Object[] { arg });
 	}
 

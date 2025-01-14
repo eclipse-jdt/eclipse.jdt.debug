@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.ui.javaeditor.BasicCompilationUnitEditorActionCo
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
@@ -111,7 +112,7 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 	}
 
 	protected void updateStatus(JavaSnippetEditor editor) {
-		String message= ""; //$NON-NLS-1$
+		String message = Util.ZERO_LENGTH_STRING;
 		if (editor != null && editor.isEvaluating()) {
 			message= SnippetMessages.getString("SnippetActionContributor.evalMsg");  //$NON-NLS-1$
 		}

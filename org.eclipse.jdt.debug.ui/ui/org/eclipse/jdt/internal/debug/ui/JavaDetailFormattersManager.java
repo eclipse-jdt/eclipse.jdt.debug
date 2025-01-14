@@ -59,6 +59,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.InvocationException;
@@ -282,7 +283,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 
 	public DetailFormatter getAssociatedDetailFormatter(IJavaType type) {
-		String typeName = ""; //$NON-NLS-1$
+		String typeName = Util.ZERO_LENGTH_STRING;
 		try {
 			while (type instanceof IJavaArrayType) {
 				type = ((IJavaArrayType)type).getComponentType();
