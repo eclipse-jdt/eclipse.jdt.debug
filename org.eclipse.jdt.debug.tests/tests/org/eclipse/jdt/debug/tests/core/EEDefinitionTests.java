@@ -17,6 +17,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -164,7 +165,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		URL location = EEVMType.getJavadocLocation(ee);
-		URL expectedLocation = new URL("http://a.javadoc.location");
+		URL expectedLocation = URI.create("http://a.javadoc.location").toURL();
 		assertEquals("Incorrect javadoc location", expectedLocation, location);
 	}
 
@@ -178,7 +179,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		URL location = EEVMType.getIndexLocation(ee);
-		URL expectedLocation = new URL("http://a.index.location");
+		URL expectedLocation = URI.create("http://a.index.location").toURL();
 		assertEquals("Incorrect index location", expectedLocation, location);
 	}
 
