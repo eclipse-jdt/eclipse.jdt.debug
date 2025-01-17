@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,15 +90,14 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 	 * configuration data.
 	 */
 	private Button createCheckButton(Composite parent, String label) {
-		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
+		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
 		button.setText(label);
-
 		GridData data = new GridData(SWT.NONE);
+		data.horizontalIndent = 40;
 		data.horizontalSpan = 2;
-		data.horizontalAlignment= GridData.CENTER;
+		data.horizontalAlignment = GridData.BEGINNING;
 		button.setLayoutData(data);
 		button.setFont(parent.getFont());
-
 		return button;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -63,6 +64,10 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 		getButton(IDialogConstants.OK_ID).setText(DebugUIMessages.HotCodeReplaceErrorDialog_0);
 		boolean canTerminate= target.canTerminate();
 		boolean canDisconnect= target.canDisconnect();
+		GridData data = new GridData(SWT.CENTER);
+		data.horizontalAlignment = GridData.CENTER;
+		data.horizontalSpan = 2;
+		parent.setLayoutData(data);
 		if (canTerminate) {
 			createButton(parent, TERMINATE_ID, DebugUIMessages.HotCodeReplaceErrorDialog_1, false);
 		}
@@ -81,11 +86,10 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	 */
 	@Override
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
-		Button button= super.createButton(parent, id, label, defaultButton);
+		Button button = super.createButton(parent, id, label, defaultButton);
 		blockMnemonicWithoutModifier(button);
 		return button;
 	}
-
 	/**
 	 * Ensures that simple key presses don't activate the given button.
 	 *
