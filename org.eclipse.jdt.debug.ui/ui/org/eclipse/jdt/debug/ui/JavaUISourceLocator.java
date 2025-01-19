@@ -322,10 +322,10 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				index = memento.indexOf("</findAll>", start); //$NON-NLS-1$
 				if (index > 0) {
 					String findAll = memento.substring(start, index);
-					Boolean all = Boolean.valueOf(findAll);
+					boolean all = Boolean.parseBoolean(findAll);
 					String rest = memento.substring(index + 10);
 					fJavaProject = (IJavaProject) JavaCore.create(handle);
-					fIsFindAllSourceElements = all.booleanValue();
+					fIsFindAllSourceElements = all;
 					fSourceLocator.initializeFromMemento(rest);
 				}
 			}
