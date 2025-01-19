@@ -1596,11 +1596,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * Additional diagnosis info for bug 528321
 	 */
 	private static void logBadAnnotation(SimpleMarkerAnnotation annotation, CoreException e) {
-		String message = "Editor annotation with non existing marker found: "; //$NON-NLS-1$
-		message += "text: " + annotation.getText(); //$NON-NLS-1$
-		message += ", type: " + annotation.getType(); //$NON-NLS-1$
-		message += ", " + annotation.getMarker(); //$NON-NLS-1$
-		JDIDebugUIPlugin.log(message, e);
+		StringBuilder message = new StringBuilder("Editor annotation with non existing marker found: "); //$NON-NLS-1$
+		message.append("text: ").append(annotation.getText()); //$NON-NLS-1$
+		message.append(", type: ").append(annotation.getType()); //$NON-NLS-1$
+		message.append(", ").append(annotation.getMarker()); //$NON-NLS-1$
+		JDIDebugUIPlugin.log(message.toString(), e);
 	}
 
 	/**
