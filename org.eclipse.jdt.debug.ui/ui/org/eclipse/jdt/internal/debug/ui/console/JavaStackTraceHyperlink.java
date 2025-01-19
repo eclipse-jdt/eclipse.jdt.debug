@@ -281,7 +281,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		if (methodSignature == null) {
 			return openClipboard(matches, line, typeName);
 		}
-		methodSignature = methodSignature.replaceAll(" ", ""); //$NON-NLS-1$//$NON-NLS-2$ ;
+		methodSignature = methodSignature.replace(" ", ""); //$NON-NLS-1$//$NON-NLS-2$ ;
 		String methodNameExtracted = methodSignature.substring(0, methodSignature.indexOf('('));
 		for (Object obj : matches) {
 			if (filterClasses(obj, methodSignature, methodNameExtracted, link)) {
@@ -439,7 +439,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 					return false;
 				}
 				String methodName = matcher.group();
-				methodName = methodName.replaceAll(" ", ""); //$NON-NLS-1$//$NON-NLS-2$
+				methodName = methodName.replace(" ", ""); //$NON-NLS-1$//$NON-NLS-2$
 				pattern = Pattern.compile(METHOD_ARGUMENTS_REGEX);
 				matcher = pattern.matcher(methodSignature);
 				if (!matcher.find()) {

@@ -925,7 +925,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 
 		if (locations.isEmpty()) {
-			String messagePath = path.replaceAll("&", "&&"); // @see bug 29855  //$NON-NLS-1$//$NON-NLS-2$
+			String messagePath = path.replace("&", "&&"); // @see bug 29855  //$NON-NLS-1$//$NON-NLS-2$
 			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, NLS.bind(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); //
 		} else {
 			Iterator<IVMInstallType> iter2 = types.iterator();
@@ -1055,7 +1055,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 			File file = name == null ? directory : new File(directory, name);
 			monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[] { Integer.toString(found.size()),
-					file.toPath().normalize().toAbsolutePath().toString().replaceAll("&", "&&") })); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
+					file.toPath().normalize().toAbsolutePath().toString().replace("&", "&&") })); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
 			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();
 			if (file.isDirectory()) {
 				if (ignore.add(file)) {
