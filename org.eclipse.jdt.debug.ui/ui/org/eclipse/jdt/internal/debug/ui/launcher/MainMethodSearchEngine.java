@@ -42,7 +42,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 
 public class MainMethodSearchEngine{
 
-	private class MethodCollector extends SearchRequestor {
+	private static class MethodCollector extends SearchRequestor {
 		private final List<IType> fResult;
 
 		public MethodCollector() {
