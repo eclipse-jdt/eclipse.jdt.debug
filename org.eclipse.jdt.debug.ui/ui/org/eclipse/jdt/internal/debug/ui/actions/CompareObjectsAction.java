@@ -462,7 +462,7 @@ public class CompareObjectsAction extends ObjectActionDelegate implements IWorkb
 	 */
 	@SuppressWarnings("nls")
 	private String printListContents(String Selection, List<String> list, int displayLimit) {
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		content.append("[");
 		content.append(list.stream().limit(displayLimit).collect(Collectors.joining(",")));
 		content.append("......]");

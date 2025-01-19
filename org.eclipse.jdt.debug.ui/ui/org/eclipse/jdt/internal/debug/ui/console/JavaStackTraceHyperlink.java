@@ -226,7 +226,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 					try {
 						return processAmbiguousResults(matches, typeName, lineNumber, link);
 					} catch(Exception e) {
-						StringBuffer temp = new StringBuffer();
+						StringBuilder temp = new StringBuilder();
 						temp.append("Unable to parse \"" + link + "\" \n "); //$NON-NLS-1$ //$NON-NLS-2$
 						temp.append(e.getClass().getSimpleName());
 						exceptionHandler(temp.toString(), e);
