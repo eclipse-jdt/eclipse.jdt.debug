@@ -30,9 +30,9 @@ public class JavaDebugStackTraceConsoleTracker extends JavaConsoleTracker {
 	public void matchFound(PatternMatchEvent event) {
 		try {
 			// add a hyperlink at "line: 123"
-			addHyperlinkAtContent(event, line -> JavaDebugStackTraceHyperlink.extractLineText(line));
+			addHyperlinkAtContent(event, JavaDebugStackTraceHyperlink::extractLineText);
 			// add a hyperlink at the type
-			addHyperlinkAtContent(event, line -> JavaDebugStackTraceHyperlink.extractTypeName(line));
+			addHyperlinkAtContent(event, JavaDebugStackTraceHyperlink::extractTypeName);
 		} catch (BadLocationException e) {
 		}
 	}
