@@ -450,6 +450,9 @@ public class JavaProjectHelper {
 		else if(JAVA_SE_1_8_EE_NAME.equals(ee)) {
 			setCompliance(project, JavaCore.VERSION_1_8);
 		}
+		else if (JAVA_SE_9_EE_NAME.equals(ee)) {
+			setCompliance(project, JavaCore.VERSION_9);
+		}
 	}
 
 	/**
