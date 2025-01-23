@@ -636,6 +636,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
 				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_24);
 				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_24);
+				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_24);
 				cfgs.add(createLaunchConfiguration(jp, "Main1"));
 				cfgs.add(createLaunchConfiguration(jp, "Main2"));
 				cfgs.add(createLaunchConfiguration(jp, "Main21"));
