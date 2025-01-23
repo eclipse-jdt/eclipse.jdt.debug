@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,6 +42,8 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -295,6 +297,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			return openClipboard(matches, line, typeName);
 		}
 	}
+
 	/**
 	 * Handles exceptions details
 	 *
@@ -352,6 +355,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @return Returns a standard OK status with an "ok" message.
 	 */
 	private IStatus openClipboard(List<Object> results, int lineNumber, String type) {
+		results = filterBinaryTypes(results, generatedLink.get());
 		OpenFromClipboardAction.handleMatches(results, lineNumber, type, ConsoleMessages.JavaDebugStackTraceHyperlink_dialog_title);
 		return Status.OK_STATUS;
 	}
@@ -745,5 +749,47 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			typeName = typeName.substring(slashIndex + 1);
 		}
 		return typeName;
+	}
+
+	/**
+	 * Intermediate method to filter Binary Types based on given version
+	 *
+	 * @return List of Objects with filtered Binary types
+	 * @param extracted
+	 *            Filtered or Processed Binary/Source Types
+	 * @param link
+	 *            Stack trace from the console
+	 */
+	private List<Object> filterBinaryTypes(List<Object> extracted, String link) {
+		if (link != null) {
+			List<Object> filteredResults = new ArrayList<>();
+			int binaryInserted = 0;
+			try {
+				Pattern pattern = Pattern.compile("@(.*?)\\/"); //$NON-NLS-1$
+				Matcher match = pattern.matcher(link);
+				if (match.find()) {
+					String jdkVersion = match.group(1);
+					for (Object ob : extracted) {
+						if (ob instanceof IType type && type.isBinary()) {
+							IVMInstall installedJava = JavaRuntime.getVMInstall(type.getJavaProject());
+							String jdkAvailable = installedJava.getInstallLocation().getAbsolutePath();
+							if (jdkAvailable.contains(jdkVersion)) {
+								filteredResults.add(ob);
+								binaryInserted++;
+							}
+						} else {
+							filteredResults.add(ob);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				return extracted;
+			}
+			if (binaryInserted == 0) {
+				return extracted;
+			}
+			return filteredResults;
+		}
+		return extracted;
 	}
 }
