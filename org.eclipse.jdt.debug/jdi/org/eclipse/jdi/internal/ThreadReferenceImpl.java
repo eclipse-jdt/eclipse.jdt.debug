@@ -363,7 +363,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * @return true if the thread is a virtual thread
 	 * @since 3.20
 	 */
-	@Override
 	public boolean isVirtual() {
 		if (isVirtualCached) {
 			return isVirtual;
