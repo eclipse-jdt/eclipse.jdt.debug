@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 IBM Corporation.
+ * Copyright (c) 2024, 2025 IBM Corporation.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -417,6 +417,60 @@ public class JavaStackTraceAmbiguityTest extends AbstractJavaStackTraceConsoleTe
 		IHyperlink[] hyperlinks = fConsole.getHyperlinks();
 		assertEquals("Wrong hyperlinks, listing all links: " + allLinks(), 2, hyperlinks.length);
 		String expectedText = "System.out.println(\"Expected_VarArgs\");";
+		try {
+			for (IHyperlink hyperlink : hyperlinks) {
+				closeAllEditors();
+				hyperlink.linkActivated();
+				IEditorPart editor = waitForEditorOpen();
+				String[] selectedText = new String[1];
+				sync(() -> selectedText[0] = getSelectedText(editor));
+				selectedText[0] = selectedText[0].trim();
+				assertEquals("Wrong text selected after hyperlink navigation", expectedText, selectedText[0]);
+
+			}
+		} finally {
+			closeAllEditors();
+			boolean force = true;
+			project.getProject().delete(force, new NullProgressMonitor());
+		}
+	}
+
+	public void testLinkNavigationTrueForLinksWithSingleSpaceBeforeSignature() throws Exception {
+		String projectName = "StackTest";
+		IJavaProject project = createProject(projectName, "testfiles/AmbiguityTest/", JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
+		waitForBuild();
+		waitForJobs();
+		consoleDocumentWithText("at a.Sample.testBlank (Sample.java:40)");
+		IHyperlink[] hyperlinks = fConsole.getHyperlinks();
+		assertEquals("Wrong hyperlinks, listing all links: " + allLinks(), 1, hyperlinks.length);
+		String expectedText = "System.out.println(\"Expected_No_Signature\");";
+		try {
+			for (IHyperlink hyperlink : hyperlinks) {
+				closeAllEditors();
+				hyperlink.linkActivated();
+				IEditorPart editor = waitForEditorOpen();
+				String[] selectedText = new String[1];
+				sync(() -> selectedText[0] = getSelectedText(editor));
+				selectedText[0] = selectedText[0].trim();
+				assertEquals("Wrong text selected after hyperlink navigation", expectedText, selectedText[0]);
+
+			}
+		} finally {
+			closeAllEditors();
+			boolean force = true;
+			project.getProject().delete(force, new NullProgressMonitor());
+		}
+	}
+
+	public void testLinkNavigationTrueForLinksWithMultiSpaceBeforeSignature() throws Exception {
+		String projectName = "StackTest";
+		IJavaProject project = createProject(projectName, "testfiles/AmbiguityTest/", JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
+		waitForBuild();
+		waitForJobs();
+		consoleDocumentWithText("at a.Sample.testBlank\t\t(Sample.java:40)");
+		IHyperlink[] hyperlinks = fConsole.getHyperlinks();
+		assertEquals("Wrong hyperlinks, listing all links: " + allLinks(), 1, hyperlinks.length);
+		String expectedText = "System.out.println(\"Expected_No_Signature\");";
 		try {
 			for (IHyperlink hyperlink : hyperlinks) {
 				closeAllEditors();

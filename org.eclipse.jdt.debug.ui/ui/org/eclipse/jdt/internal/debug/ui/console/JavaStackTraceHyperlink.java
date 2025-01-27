@@ -725,7 +725,18 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			if (linkStart == -1) {
 				linkStart = line.lastIndexOf('\t', regionOffsetInLine);
 			}
-
+			String extractedTrace = line.substring(linkStart == -1 ? 0 : linkStart + 1, linkEnd + 1).trim();
+			if (extractedTrace.charAt(0) == '(') {
+				int lastOpen = line.lastIndexOf('(');
+				if (lastOpen > 0) {
+					if (Character.isWhitespace(line.charAt(lastOpen - 1))) {
+						extractedTrace = line.substring(0, lastOpen - 1).trim() + line.substring(lastOpen);
+						linkStart = extractedTrace.lastIndexOf(' ', regionOffsetInLine);
+						linkEnd = extractedTrace.indexOf(')', linkStart);
+						return extractedTrace.substring(linkStart == -1 ? 0 : linkStart + 1, linkEnd + 1).trim();
+					}
+				}
+			}
 			return line.substring(linkStart == -1 ? 0 : linkStart + 1, linkEnd + 1).trim();
 		} catch (BadLocationException e) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e);
