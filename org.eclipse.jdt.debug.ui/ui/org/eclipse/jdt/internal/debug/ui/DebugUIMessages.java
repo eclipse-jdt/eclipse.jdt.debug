@@ -142,6 +142,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1;
 	public static String JDIDebugUIPlugin_3;
     public static String JDIDebugUIPlugin_4;
+	public static String JDIDebugUIPlugin_5;
 
 	public static String JDIModelPresentation__No_explicit_return_value__30;
 	public static String JDIModelPresentation__conditional__2;
@@ -308,6 +309,8 @@ public class DebugUIMessages extends NLS {
 	public static String DetailFormatterDialog_Associated_code_must_not_be_empty_3;
 	public static String DetailFormatterDialog_Detail_formatter__code_snippet__1;
 	public static String DetailFormatterDialog_17;
+	public static String DetailFormatterPrimitiveSelect;
+	public static String DetailFormatterPrimitiveSelectionLabel;
 
 	public static String No_type_with_the_given_name_found_in_the_workspace__1;
 	public static String JavaDetailFormattersManager_Detail_formatter_error___1;

@@ -27,6 +27,8 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 
 import org.eclipse.jdi.TimeoutException;
+import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.connect.TransportTimeoutException;
 import com.sun.jdi.connect.spi.ClosedConnectionException;
@@ -66,11 +68,6 @@ public class SocketTransportService extends TransportService {
 			fAddress = address;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.sun.jdi.connect.spi.TransportService.ListenKey#address()
-		 */
 		@Override
 		public String address() {
 			return fAddress;
@@ -80,13 +77,6 @@ public class SocketTransportService extends TransportService {
 	// for listening or accepting connectors
 	private ServerSocket fServerSocket;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.sun.jdi.connect.spi.TransportService#accept(com.sun.jdi.connect.spi
-	 * .TransportService.ListenKey, long, long)
-	 */
 	@Override
 	public Connection accept(ListenKey listenKey, long attachTimeout,
 			long handshakeTimeout) throws IOException {
@@ -100,7 +90,9 @@ public class SocketTransportService extends TransportService {
 		try {
 			socket = fServerSocket.accept();
 		} catch (SocketTimeoutException e) {
-			throw new TransportTimeoutException();
+			TransportTimeoutException timeoutException = new TransportTimeoutException();
+			timeoutException.initCause(e);
+			throw timeoutException;
 		}
 		InputStream input = socket.getInputStream();
 		OutputStream output = socket.getOutputStream();
@@ -108,12 +100,6 @@ public class SocketTransportService extends TransportService {
 		return new SocketConnection(socket, input, output);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.sun.jdi.connect.spi.TransportService#attach(java.lang.String,
-	 * long, long)
-	 */
 	@Override
 	public Connection attach(String address, long attachTimeout,
 			long handshakeTimeout) throws IOException {
@@ -149,8 +135,25 @@ public class SocketTransportService extends TransportService {
 					OutputStream output = socket.getOutputStream();
 					performHandshake(input, output, handshakeTimeout);
 					result[0] = new SocketConnection(socket, input, output);
+					ex[0] = null;
 				} catch (IOException e) {
+					if (ex[0] != null) {
+						// second attempt failed, fail and keep original cause
+						return;
+					}
 					ex[0] = e;
+					// Let try yet another time. There is a hard coded timeout of 2 seconds
+					// between opening socket and performing handshake
+					// See related code in JDK 21:
+					// https://github.com/openjdk/jdk21/blob/890adb6410dab4606a4f26a942aed02fb2f55387/src/jdk.jdwp.agent/share/native/libdt_socket/socketTransport.c#L794
+					// https://github.com/openjdk/jdk21/blob/890adb6410dab4606a4f26a942aed02fb2f55387/src/jdk.jdwp.agent/share/native/libjdwp/transport.c#L629
+					// https://github.com/openjdk/jdk21/blob/890adb6410dab4606a4f26a942aed02fb2f55387/src/jdk.jdwp.agent/share/native/libdt_socket/socketTransport.c#L201
+					if (e.getCause() instanceof EOFException) {
+						if (JDIDebugOptions.DEBUG) {
+							JDIDebugOptions.trace(null, "Retrying handshake", e); //$NON-NLS-1$
+						}
+						run();
+					}
 				}
 			}
 		}, ConnectMessages.SocketTransportService_0);
@@ -163,10 +166,13 @@ public class SocketTransportService extends TransportService {
 				throw new TimeoutException();
 			}
 		} catch (InterruptedException e) {
+			String message = String.format("Interrupted while trying to attach to %s:%s (attach timeout %s, handshake timeout %s)", host, port, attachTimeout, handshakeTimeout); //$NON-NLS-1$
+			JDIDebugPlugin.logError(message, e);
 		}
 
 		if (ex[0] != null) {
-			throw ex[0];
+			String message = String.format("Failed to attach to %s:%s (attach timeout %s, handshake timeout %s)", host, port, attachTimeout, handshakeTimeout); //$NON-NLS-1$
+			throw new IOException(message, ex[0]);
 		}
 
 		return result[0];
@@ -191,9 +197,11 @@ public class SocketTransportService extends TransportService {
 		}, ConnectMessages.SocketTransportService_1);
 		t.setDaemon(true);
 		t.start();
+		InterruptedException interrupted = null;
 		try {
 			t.join(timeout);
 		} catch (InterruptedException e1) {
+			interrupted = e1;
 		}
 
 		if (handshakeCompleted[0]) {
@@ -209,8 +217,11 @@ public class SocketTransportService extends TransportService {
 		if (ex[0] != null) {
 			throw ex[0];
 		}
-
-		throw new TransportTimeoutException();
+		TransportTimeoutException timeoutException = new TransportTimeoutException("Timeout occured on handshake"); //$NON-NLS-1$
+		if (interrupted != null) {
+			timeoutException.initCause(interrupted);
+		}
+		throw timeoutException;
 	}
 
 	private void readHandshake(InputStream input) throws IOException {
@@ -222,7 +233,9 @@ public class SocketTransportService extends TransportService {
 				throw new IOException("Received invalid handshake"); //$NON-NLS-1$
 			}
 		} catch (EOFException e) {
-			throw new ClosedConnectionException();
+			ClosedConnectionException closedConnectionException = new ClosedConnectionException("Failed to read handshake"); //$NON-NLS-1$
+			closedConnectionException.initCause(e);
+			throw closedConnectionException;
 		}
 	}
 
@@ -230,53 +243,27 @@ public class SocketTransportService extends TransportService {
 		out.write(handshakeBytes);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.sun.jdi.connect.spi.TransportService#capabilities()
-	 */
 	@Override
 	public Capabilities capabilities() {
 		return fCapabilities;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.sun.jdi.connect.spi.TransportService#description()
-	 */
 	@Override
 	public String description() {
 		return "org.eclipse.jdt.debug: Socket Implementation of TransportService"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.sun.jdi.connect.spi.TransportService#name()
-	 */
 	@Override
 	public String name() {
 		return "org.eclipse.jdt.debug_SocketTransportService"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.sun.jdi.connect.spi.TransportService#startListening()
-	 */
 	@Override
 	public ListenKey startListening() throws IOException {
 		// not used by jdt debug.
 		return startListening(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.sun.jdi.connect.spi.TransportService#startListening(java.lang.String)
-	 */
 	@Override
 	public ListenKey startListening(String address) throws IOException {
 		String host = null;
@@ -306,13 +293,6 @@ public class SocketTransportService extends TransportService {
 		return listenKey;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.sun.jdi.connect.spi.TransportService#stopListening(com.sun.jdi.connect
-	 * .spi.TransportService.ListenKey)
-	 */
 	@Override
 	public void stopListening(ListenKey arg1) throws IOException {
 		if (fServerSocket != null) {

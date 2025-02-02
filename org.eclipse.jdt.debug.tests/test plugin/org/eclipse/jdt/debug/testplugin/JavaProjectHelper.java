@@ -102,6 +102,10 @@ public class JavaProjectHelper {
 	 */
 	public static final IPath TEST_21_SRC_DIR = new Path("java21");
 	/**
+	 * path to the 23 test source
+	 */
+	public static final IPath TEST_23_SRC_DIR = new Path("java23");
+	/**
 	 * path to the 24 test source
 	 */
 	public static final IPath TEST_24_SRC_DIR = new Path("java24");
@@ -454,6 +458,9 @@ public class JavaProjectHelper {
 		}
 		else if(JAVA_SE_1_8_EE_NAME.equals(ee)) {
 			setCompliance(project, JavaCore.VERSION_1_8);
+		}
+		else if (JAVA_SE_9_EE_NAME.equals(ee)) {
+			setCompliance(project, JavaCore.VERSION_9);
 		}
 	}
 

@@ -17,6 +17,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -29,95 +30,27 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class ModuleOptionsTests extends AbstractDebugTest {
 
 	private static final String ASSUMED_DEFAULT_MODULES_9 = "java.se," //
-			+ "javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web," // REMOVED in 10
+			// + "javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web," REMOVED in 10
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver,"//
-			+ "jdk.incubator.httpclient," //
+			+ "jdk.incubator.vector," // original 9: jdk.incubator.httpclient
 			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi,"//
 			+ "jdk.jfr," // all but 10
 			+ "jdk.jshell,jdk.jsobject,jdk.management,"//
-			+ "jdk.management.cmm,jdk.management.jfr,jdk.management.resource," // REMOVED later
+			// + "jdk.management.cmm,jdk.management.jfr,jdk.management.resource," original ...
+			+ "jdk.management.jfr," // ... as seen from 23 with --release 9
 			+ "jdk.net," //
-			+ "jdk.packager,jdk.packager.services,jdk.plugin.dom," // NOT in openjdk
-			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-			+ "jdk.xml.dom,"//
-			+ "oracle.desktop,oracle.net"; // NOT in openjdk
-	private static final String ASSUMED_DEFAULT_MODULES_10 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.httpclient," // REMOVED later
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.net," //
-			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_11 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," //
-			+ "jdk.naming.ldap," //
-			+ "jdk.net," //
-			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-			+ "jdk.unsupported.desktop," //
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_12 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," // all but 10
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," // all but 10
-			+ "jdk.net," //
-			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-			+ "jdk.unsupported.desktop," // NEW
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_14 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.foreign," // NEW in 14
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," //
-			+ "jdk.net," //
-			+ "jdk.nio.mapmode," // NEW in 14
-			+ "jdk.scripting.nashorn,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-			+ "jdk.unsupported.desktop," // since 12
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_15 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.foreign," //
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," //
-			+ "jdk.net," //
-			+ "jdk.nio.mapmode," //
-			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," // jdk.scripting.nashorn removed in 15
-			+ "jdk.unsupported.desktop," //
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_16 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.foreign,jdk.incubator.vector," // jdk.incubator.vector added in 16
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," //
-			+ "jdk.net," //
-			+ "jdk.nio.mapmode," //
-			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,"
-			+ "jdk.unsupported.desktop," //
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_19 = "java.se," //
-			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
-			+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
-			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
-			+ "jdk.jfr," //
-			+ "jdk.jshell,jdk.jsobject,jdk.management," //
-			+ "jdk.management.jfr," //
-			+ "jdk.net," //
-			+ "jdk.nio.mapmode," //
-			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," //
-			+ "jdk.xml.dom";
-	private static final String ASSUMED_DEFAULT_MODULES_21 = "java.se," //
+			// + "jdk.packager,jdk.packager.services,jdk.plugin.dom," NOT in openjdk
+			// + "jdk.scripting.nashorn," // not present in 23
+			+ "jdk.nio.mapmode," // new in ?? even at --release 9 ??
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," // new in ?? even at --release 9 ??
+			+ "jdk.xml.dom"; //
+			// + "oracle.desktop,oracle.net";  NOT in openjdk
+	private static final String ASSUMED_DEFAULT_MODULES_21 = "java.base," //
+			+ "java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging," //
+			+ "java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi," //
+			+ "java.scripting,java.security.jgss,java.security.sasl,java.smartcardio," //
+			+ "java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto," //
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
 			+ "jdk.incubator.vector," // jdk.incubator removed in 21
 			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
@@ -126,7 +59,8 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.management.jfr," //
 			+ "jdk.net," //
 			+ "jdk.nio.mapmode," //
-			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
 
 
@@ -158,7 +92,11 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 	private List<String> getDefaultModules(IJavaProject javaProject) throws JavaModelException {
 		IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
 		int i = indexOfJREContainer(rawClasspath);
-		List<String> list = JavaCore.defaultRootModules(Arrays.asList(javaProject.findUnfilteredPackageFragmentRoots(rawClasspath[i])));
+		String release = null;
+		if (JavaCore.ENABLED.equals(javaProject.getOption(JavaCore.COMPILER_RELEASE, true))) {
+			release = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+		}
+		List<String> list = JavaCore.defaultRootModules(Arrays.asList(javaProject.findUnfilteredPackageFragmentRoots(rawClasspath[i])), release);
 		list.sort(String::compareTo);
 		return list;
 	}
@@ -197,127 +135,68 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		}
 	}
 
+	public void testLimitModules_release9() throws CoreException {
+		IJavaProject javaProject = getProjectContext();
+		try {
+			javaProject.setOption(JavaCore.COMPILER_RELEASE, JavaCore.ENABLED);
+			List<String> defaultModules = getDefaultModules(javaProject);
+			String expectedModules;
+			String moduleList = String.join(",", defaultModules);
+			assertEquals(ASSUMED_DEFAULT_MODULES_9, moduleList);
+			switch (moduleList) {
+				case ASSUMED_DEFAULT_MODULES_9:
+					expectedModules = //
+							"java.instrument,java.net.http,java.scripting,java.sql.rowset,java.xml.crypto," //
+							+ "jdk.accessibility,jdk.dynalink,jdk.httpserver,jdk.incubator.vector," //
+							+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+							+ "jdk.jsobject,jdk.management.jfr," //
+							+ "jdk.net," //
+							+ "jdk.nio.mapmode," //
+							// + "jdk.packager,jdk.packager.services,jdk.plugin.dom,"
+							// + "jdk.scripting.nashorn," 
+							+ "jdk.sctp,"
+							+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+							+ "jdk.unsupported.desktop,jdk.xml.dom";
+					break;
+				default:
+					fail("Unknown set of default modules " + moduleList);
+					return;
+			}
+			assertTrue("expected module was not in defaultModules", defaultModules.remove("jdk.javadoc")); // requires java.compiler and jdk.compiler
+																											// but is required by no default module
+			IClasspathAttribute[] attributes = {
+					JavaCore.newClasspathAttribute(IClasspathAttribute.LIMIT_MODULES, String.join(",", defaultModules)) };
+			addClasspathAttributesToSystemLibrary(javaProject, attributes);
+
+			ILaunchConfiguration launchConfiguration = getLaunchConfiguration(javaProject, "LogicalStructures");
+			String cliOptions = JavaRuntime.getModuleCLIOptions(launchConfiguration);
+			String add = " --add-modules java.se";
+			assertEquals("Unexpectd cli options", "--limit-modules " + expectedModules + add, cliOptions);
+		} finally {
+			javaProject.setOption(JavaCore.COMPILER_RELEASE, JavaCore.DISABLED);
+			removeClasspathAttributesFromSystemLibrary(javaProject);
+		}
+	}
+
 	public void testLimitModules1() throws JavaModelException {
 		IJavaProject javaProject = getProjectContext();
 		List<String> defaultModules = getDefaultModules(javaProject);
 		String expectedModules;
 		String moduleList = String.join(",", defaultModules);
 		switch (moduleList) {
-			case ASSUMED_DEFAULT_MODULES_9:
-				expectedModules = "java.se," //
-						+ "javafx.fxml,javafx.swing,javafx.web," //
-						+ "jdk.accessibility,jdk.httpserver,jdk.incubator.httpclient,"
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.management.cmm,jdk.management.jfr,jdk.management.resource," //
-						+ "jdk.net," //
-						+ "jdk.packager,jdk.packager.services,jdk.plugin.dom," //
-						+ "jdk.scripting.nashorn,jdk.sctp,"
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "oracle.desktop,oracle.net";
-				break;
-			case ASSUMED_DEFAULT_MODULES_10:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility,jdk.httpserver,jdk.incubator.httpclient," //
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," // previously pulled in via javafx.*
-						+ "jdk.net," //
-						+ "jdk.scripting.nashorn,jdk.sctp," //
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.xml.dom";
-				break;
-			case ASSUMED_DEFAULT_MODULES_11:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility,jdk.httpserver," //
-						+ "jdk.jartool,jdk.jconsole," //
-						+ "jdk.jshell,jdk.jsobject,jdk.management.jfr,jdk.naming.ldap," //
-						+ "jdk.net,jdk.scripting.nashorn,jdk.sctp," //
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," //
-						+ "jdk.xml.dom";
-				break;
-			case ASSUMED_DEFAULT_MODULES_12:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility,jdk.httpserver," //
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," // all but 10
-						+ "jdk.net," //
-						+ "jdk.scripting.nashorn,jdk.sctp," //
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," // NEW
-						+ "jdk.xml.dom";
-				break;
-			case ASSUMED_DEFAULT_MODULES_14:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility,jdk.httpserver," //
-						+ "jdk.incubator.foreign," // NEW in 14
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," //
-						+ "jdk.net," //
-						+ "jdk.nio.mapmode," // NEW in 14
-						+ "jdk.scripting.nashorn,jdk.sctp," //
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," //
-						+ "jdk.xml.dom";
-				break;
-			case ASSUMED_DEFAULT_MODULES_15:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility," //
-						+ "jdk.dynalink," // New in 15
-						+ "jdk.httpserver," //
-						+ "jdk.incubator.foreign," //
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," //
-						+ "jdk.net," //
-						+ "jdk.nio.mapmode," //
-						+ "jdk.sctp," // Removed jdk.scripting.nashorn in 15
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," //
-						+ "jdk.xml.dom";
-				break;
-			case ASSUMED_DEFAULT_MODULES_16:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility," //
-						+ "jdk.dynalink,"
-						+ "jdk.httpserver," //
-						+ "jdk.incubator.foreign,jdk.incubator.vector," // jdk.incubator.vector added in 16
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," //
-						+ "jdk.net," //
-						+ "jdk.nio.mapmode," //
-						+ "jdk.sctp,"
-						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," //
-						+ "jdk.xml.dom";
-				break;
-			case ASSUMED_DEFAULT_MODULES_19:
-				expectedModules = "java.se," //
-						+ "jdk.accessibility," //
-						+ "jdk.dynalink," + "jdk.httpserver," //
-						+ "jdk.incubator.concurrent,jdk.incubator.vector," // jdk.incubator.foreign removed and jdk.incubator.concurrent added in 19
-						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
-						+ "jdk.jsobject," //
-						+ "jdk.management.jfr," //
-						+ "jdk.net," //
-						+ "jdk.nio.mapmode," //
-						+ "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
-						+ "jdk.unsupported.desktop," //
-						+ "jdk.xml.dom";
-				break;
 			case ASSUMED_DEFAULT_MODULES_21:
-				expectedModules = "java.se," //
+				expectedModules = "java.instrument,java.net.http,java.scripting,java.smartcardio,java.sql.rowset,java.xml.crypto," //
 						+ "jdk.accessibility," //
-						+ "jdk.dynalink," + "jdk.httpserver," //
+						+ "jdk.dynalink," //
+						+ "jdk.httpserver," //
 						+ "jdk.incubator.vector," //
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
 						+ "jdk.jsobject," //
 						+ "jdk.management.jfr,"
 						+ "jdk.net," //
 						+ "jdk.nio.mapmode," //
-						+ "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+						+ "jdk.sctp," //
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
 				break;

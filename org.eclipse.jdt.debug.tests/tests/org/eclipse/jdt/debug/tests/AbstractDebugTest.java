@@ -184,6 +184,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String NINE_PROJECT_NAME = "Nine";
 	public static final String ONESIX_PROJECT_NAME = "One_Six";
 	public static final String TWENTYONE_PROJECT_NAME = "Two_One";
+	public static final String TWENTYTHREE_PROJECT_NAME = "Two_Three";
 	public static final String TWENTYFOUR_PROJECT_NAME = "Two_Four";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
@@ -409,6 +410,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug329294WithGenerics"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug403028"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug484686"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.PrimitivesTest"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.GenericMethodEntryTest"));
 				cfgs.add(createLaunchConfiguration(jp, "org.eclipse.debug.tests.targets.HcrClass", true));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.Bug570988"));
@@ -796,7 +798,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 	}
 
-	void handleProjectCreationException(Exception e, String pname, IJavaProject jp) {
+	protected void handleProjectCreationException(Exception e, String pname, IJavaProject jp) {
 		StringWriter buf = new StringWriter();
 		String msg = e.getMessage();
     	if(msg == null) {
