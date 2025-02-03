@@ -409,6 +409,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.GenericMethodEntryTest"));
 				cfgs.add(createLaunchConfiguration(jp, "org.eclipse.debug.tests.targets.HcrClass", true));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.Bug570988"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.ExceptionDefaultTest"));
 				loaded15 = true;
 				waitForBuild();
 	        }

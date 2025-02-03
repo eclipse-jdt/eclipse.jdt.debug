@@ -382,6 +382,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @return the snippet for the given class / super class
 	 * @throws DebugException if there is a problem computing the snippet
 	 */
+	@SuppressWarnings("nls")
 	private String getDetailFormatterSuperClass(IJavaClassType type) throws DebugException {
 		if (type == null) {
 			return null;
@@ -389,6 +390,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		DetailFormatter detailFormatter= fDetailFormattersMap.get(type.getName());
 		if (detailFormatter != null && detailFormatter.isEnabled()) {
 			return detailFormatter.getSnippet();
+		}
+		if ((detailFormatter == null || !detailFormatter.isEnabled()) && type.getName().equals("java.lang.Throwable")) {
+			String snippet = """
+					java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+					java.io.PrintStream ps = new java.io.PrintStream(bout);
+					this.printStackTrace(ps);
+					return bout.toString();
+					""";
+			return snippet;
 		}
 		return getDetailFormatterSuperClass(type.getSuperclass());
 	}
