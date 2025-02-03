@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Mar 12, 2016 IBM Corporation and others.
+ * Copyright (c) 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -460,6 +460,53 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			waitForListenerValue();
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
 			assertEquals("ab", fListener.result.toString());
+		} finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testFormatterForExceptionObjectsWithoutFormatter() throws Exception {
+		IJavaThread thread = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.ExceptionDefaultTest";
+			createLineBreakpoint(19, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			IJavaVariable var = thread.findVariable("e");
+			assertNotNull("the variable 'e' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			String value = fListener.result.toString().trim();
+			value = value.split("\n")[1].trim();
+			assertEquals("at a.b.c.ExceptionDefaultTest.main(ExceptionDefaultTest.java:18)", value);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testFormatterForExceptionObjectsWithFormatter() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.ExceptionDefaultTest";
+			createLineBreakpoint(19, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this.toString()";
+			formatter = new DetailFormatter("java.lang.Exception", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var2 = thread.findVariable("e");
+			assertNotNull("the variable 'e' must exist in the frame", var2);
+			jdfm.computeValueDetail((IJavaValue) var2.getValue(), thread, fListener);
+			waitForListenerValue();
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertEquals("java.lang.Exception", fListener.result.toString());
 		} finally {
 			jdfm.removeAssociatedDetailFormatter(formatter);
 			terminateAndRemove(thread);
