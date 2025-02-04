@@ -245,6 +245,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded9 = false;
 	private static boolean loaded16_ = false;
 	private static boolean loaded21 = false;
+	private static boolean loaded23 = false;
 	private static boolean loaded24 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
@@ -626,6 +627,34 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 	}
 
+	synchronized void assert23Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded23) {
+				jp = createProject(TWENTYTHREE_PROJECT_NAME, JavaProjectHelper.TEST_23_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_23_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_23);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_23);
+				cfgs.add(createLaunchConfiguration(jp, "Main21"));
+				loaded23 = true;
+				waitForBuild();
+				assertNoErrorMarkersExist(jp.getProject());
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, TWENTYTHREE_PROJECT_NAME, jp);
+		}
+	}
+
 	/**
 	 * Creates the Java 24 compliant project
 	 */
@@ -955,6 +984,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get21Project() {
 		assert21Project();
 		return getJavaProject(TWENTYONE_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'Two_Three' project, used for Java 23 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get23Project() {
+		assert23Project();
+		return getJavaProject(TWENTYTHREE_PROJECT_NAME);
 	}
 
 	/**

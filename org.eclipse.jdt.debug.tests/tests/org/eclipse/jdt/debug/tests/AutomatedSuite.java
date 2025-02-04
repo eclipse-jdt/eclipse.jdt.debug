@@ -420,7 +420,7 @@ public class AutomatedSuite extends DebugSuite {
 		if (JavaProjectHelper.isJava16_Compatible()) {
 			addTest(new TestSuite(RecordBreakpointTests.class));
 		}
-		if (Runtime.version().feature() == 24 && JavaProjectHelper.isJava24_Compatible()) {
+		if (JavaProjectHelper.isJava23_Compatible()) {
 			addTest(new TestSuite(VirtualThreadsDebugViewTests.class));
 		}
 	}

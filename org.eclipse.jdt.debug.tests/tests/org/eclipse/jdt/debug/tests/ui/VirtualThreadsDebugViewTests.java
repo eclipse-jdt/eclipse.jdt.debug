@@ -17,12 +17,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
@@ -31,10 +27,8 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -86,33 +80,7 @@ public class VirtualThreadsDebugViewTests extends AbstractDebugUiTests {
 
 	@Override
 	protected IJavaProject getProjectContext() {
-		create23Project();
-		return getJavaProject(TWENTYTHREE_PROJECT_NAME);
-	}
-
-	synchronized void create23Project() {
-		IJavaProject jp = null;
-		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
-		try {
-			jp = createProject(TWENTYTHREE_PROJECT_NAME, JavaProjectHelper.TEST_23_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_23_EE_NAME, false);
-			jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_23);
-			jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_23);
-			cfgs.add(createLaunchConfiguration(jp, "Main21"));
-			waitForBuild();
-			assertNoErrorMarkersExist(jp.getProject());
-		} catch (Exception e) {
-			try {
-				if (jp != null) {
-					jp.getProject().delete(true, true, null);
-					for (int i = 0; i < cfgs.size(); i++) {
-						cfgs.get(i).delete();
-					}
-				}
-			} catch (CoreException ce) {
-				// ignore
-			}
-			super.handleProjectCreationException(e, TWENTYTHREE_PROJECT_NAME, jp);
-		}
+		return get23Project();
 	}
 
 	public void testVirtualThreadDebugView() throws Exception {

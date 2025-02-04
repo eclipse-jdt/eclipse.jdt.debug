@@ -190,6 +190,15 @@ public class JavaProjectHelper {
 	}
 
 	/**
+	 * Returns if the currently running VM is version compatible with Java 23
+	 *
+	 * @return <code>true</code> if a Java 23 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava23_Compatible() {
+		return isCompatible(23);
+	}
+
+	/**
 	 * Returns if the currently running VM is version compatible with Java 24
 	 *
 	 * @return <code>true</code> if a Java 24 (or greater) VM is running <code>false</code> otherwise
