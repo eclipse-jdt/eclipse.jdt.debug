@@ -110,12 +110,12 @@ public class LambdaUtils extends org.eclipse.jdt.internal.debug.core.model.Lambd
 		String[] ptypes = method.getParameterTypes();
 		for (String ps : ptypes) {
 			@SuppressWarnings("restriction")
-			String resolvedName = org.eclipse.jdt.internal.corext.util.JavaModelUtil.getResolvedTypeName(ps, type);
+			StringBuilder resolvedName = new StringBuilder().append(org.eclipse.jdt.internal.corext.util.JavaModelUtil.getResolvedTypeName(ps, type));
 			int arrayCount = Signature.getArrayCount(ps);
 			for (int i = 0; i < arrayCount; i++) {
-				resolvedName += "[]"; //$NON-NLS-1$
+				resolvedName.append("[]"); //$NON-NLS-1$
 			}
-			psig.add(resolvedName);
+			psig.add(resolvedName.toString());
 		}
 		return psig;
 	}

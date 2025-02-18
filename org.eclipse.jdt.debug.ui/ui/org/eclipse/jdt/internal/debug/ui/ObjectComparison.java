@@ -806,7 +806,7 @@ public class ObjectComparison {
 			if (interfaces.isEmpty()) {
 				interfaces = List.of(Class.forName(className).getSuperclass().getInterfaces());
 			}
-			names = new ArrayList<>(interfaces.stream().map(e -> e.getCanonicalName()).toList());
+			names = new ArrayList<>(interfaces.stream().map(Class::getCanonicalName).toList());
 			names.add(Class.forName(className).getSuperclass().getSimpleName());
 		} catch (Exception e) {
 			names = new ArrayList<>();

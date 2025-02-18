@@ -546,28 +546,28 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	private String primitiveSnippets(String snippet, String typeName, IJavaPrimitiveValue primitiveValue) {
 		String modified = null;
 		if (typeName.equals("float")) {
-			String thisValue = Float.valueOf(primitiveValue.getFloatValue()).toString();
+			String thisValue = Float.toString(primitiveValue.getFloatValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("int")) {
-			String thisValue = Integer.valueOf(primitiveValue.getIntValue()).toString();
+			String thisValue = Integer.toString(primitiveValue.getIntValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("byte")) {
-			String thisValue = Byte.valueOf(primitiveValue.getByteValue()).toString();
+			String thisValue = Byte.toString(primitiveValue.getByteValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("long")) {
-			String thisValue = Long.valueOf(primitiveValue.getLongValue()).toString();
+			String thisValue = Long.toString(primitiveValue.getLongValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("short")) {
-			String thisValue = Short.valueOf(primitiveValue.getShortValue()).toString();
+			String thisValue = Short.toString(primitiveValue.getShortValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("double")) {
-			String thisValue = Double.valueOf(primitiveValue.getDoubleValue()).toString();
+			String thisValue = Double.toString(primitiveValue.getDoubleValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("boolean")) {
-			String thisValue = Boolean.valueOf(primitiveValue.getBooleanValue()).toString();
+			String thisValue = Boolean.toString(primitiveValue.getBooleanValue());
 			modified = snippet.replace("this", thisValue);
 		} else if (typeName.equals("char")) {
-			String thisValue = Character.valueOf(primitiveValue.getCharValue()).toString();
+			String thisValue = Character.toString(primitiveValue.getCharValue());
 			modified = snippet.replace("this", thisValue);
 		}  else {
 			modified = snippet;
