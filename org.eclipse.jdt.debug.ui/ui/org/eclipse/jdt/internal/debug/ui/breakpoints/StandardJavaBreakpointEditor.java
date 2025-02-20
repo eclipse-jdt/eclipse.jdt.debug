@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,6 +44,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	private Button fHitCountButton;
 	private Text fHitCountText;
 	private Button fSuspendThread;
+	private Button fResumeProgram;
 	private Button fSuspendVM;
 	protected Button fTriggerPointButton;
 
@@ -89,16 +90,17 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	protected void createTriggerPointButton(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
 		fTriggerPointButton = createCheckButton(composite, PropertyPageMessages.JavaBreakpointPage_12);
-
+		fTriggerPointButton.setEnabled(true);
 		fTriggerPointButton.setSelection(isTriggerPoint());
 		fTriggerPointButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
+				if (isTriggerPoint()) {
+					fResumeProgram.setSelection(false);
+				}
 				setDirty(PROP_TRIGGER_POINT);
 			}
-
 		});
-
 	}
 
 	protected Control createStandardControls(Composite parent) {
@@ -125,12 +127,15 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 				setDirty(PROP_HIT_COUNT);
 			}
 		});
+
 		SWTFactory.createLabel(composite, "", 1); // spacer //$NON-NLS-1$
-		Composite radios = SWTFactory.createComposite(composite, composite.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		Composite radios = SWTFactory.createComposite(composite, composite.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fSuspendThread = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointPage_7), 1);
 		fSuspendThread.setLayoutData(new GridData());
 		fSuspendVM = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointPage_8), 1);
 		fSuspendVM.setLayoutData(new GridData());
+		fResumeProgram = SWTFactory.createRadioButton(radios, PropertyPageMessages.BreakpointResume, 1);
+		fResumeProgram.setLayoutData(new GridData());
 		fSuspendThread.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -143,6 +148,13 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 				setDirty(PROP_SUSPEND_POLICY);
 			}
 		});
+		fResumeProgram.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(PROP_SUSPEND_POLICY);
+			}
+		});
+
 		composite.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
@@ -189,6 +201,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		boolean hasHitCount = false;
 		String text = Util.ZERO_LENGTH_STRING;
 		boolean suspendThread = true;
+		boolean resume = false;
 		if (breakpoint != null) {
 			enabled = true;
 			int hitCount = breakpoint.getHitCount();
@@ -197,6 +210,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 				hasHitCount = true;
 			}
 			suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
+			resume = breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_SUSPEND && isTriggerPoint();
 		}
 		fHitCountButton.setEnabled(enabled);
 		fHitCountButton.setSelection(enabled && hasHitCount);
@@ -204,8 +218,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fHitCountText.setText(text);
 		fSuspendThread.setEnabled(enabled);
 		fSuspendVM.setEnabled(enabled);
-		fSuspendThread.setSelection(suspendThread);
-		fSuspendVM.setSelection(!suspendThread);
+		fResumeProgram.setEnabled(isTriggerPoint());
+		fResumeProgram.setSelection(resume);
+		fSuspendThread.setSelection(suspendThread && !resume);
+		fSuspendVM.setSelection(!suspendThread && !resume);
 		fTriggerPointButton.setEnabled(enabled);
 		fTriggerPointButton.setSelection(isTriggerPoint());
 		setDirty(false);
@@ -237,6 +253,9 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			int suspendPolicy = IJavaBreakpoint.SUSPEND_THREAD;
 			if(fSuspendVM.getSelection()) {
 				suspendPolicy = IJavaBreakpoint.SUSPEND_VM;
+			}
+			if (fResumeProgram.getSelection() && isTriggerPoint() && fTriggerPointButton.getSelection()) {
+				suspendPolicy = IJavaBreakpoint.RESUME_ON_SUSPEND;
 			}
 			fBreakpoint.setSuspendPolicy(suspendPolicy);
 			int hitCount = -1;
