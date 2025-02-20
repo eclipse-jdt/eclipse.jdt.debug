@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,6 +47,12 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 */
 	public static final int SUSPEND_THREAD = 2;
 
+	/**
+	 * Suspend policy constant indicating a breakpoint will not suspend the target VM when hit.
+	 *
+	 * @since 3.23
+	 */
+	public static final int RESUME_ON_HIT = 3;
 	/**
 	 * Returns whether this breakpoint is installed in at least one debug
 	 * target.

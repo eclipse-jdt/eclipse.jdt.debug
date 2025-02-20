@@ -1441,8 +1441,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 		catch (CoreException e) {
-			e.printStackTrace();
+			logError(e);
 		}
+
+		// Condition for a trigger breakpoint that is set to resume on hit
+		boolean resumeOnHit = true;
+
 		// Evaluate breakpoint condition (if any). The condition is evaluated
 		// regardless of the current suspend vote status, since breakpoint
 		// listeners
@@ -1457,10 +1461,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				ConditionalBreakpointHandler handler = new ConditionalBreakpointHandler();
 				int vote = handler.breakpointHit(this, breakpoint);
 				if (vote == IJavaBreakpointListener.DONT_SUSPEND) {
-					// condition is false, breakpoint is not hit
-					synchronized (this) {
-						fSuspendVoteInProgress = false;
-						return false;
+					if (policy == IJavaBreakpoint.RESUME_ON_HIT) {
+						resumeOnHit = false;
+					} else {
+						// condition is false, breakpoint is not hit
+						synchronized (this) {
+							fSuspendVoteInProgress = false;
+							return false;
+						}
 					}
 				}
 				if (handler.hasErrors()) {
@@ -1478,9 +1486,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 
+		try {
+			if (resumeOnHit && breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+				synchronized (this) {
+					fSuspendVoteInProgress = false;
+					return false; // Won't be suspended
+				}
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}
+
 		// poll listeners without holding lock on thread
 		boolean suspend = true;
 		try {
+
 			suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this,
 					breakpoint);
 		} finally {
