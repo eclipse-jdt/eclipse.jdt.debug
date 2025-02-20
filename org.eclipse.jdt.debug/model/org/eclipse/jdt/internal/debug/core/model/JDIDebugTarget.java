@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.resources.IFile;
@@ -247,7 +248,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Evaluation engine cache by Java project. Engines are disposed when this
 	 * target terminates.
 	 */
-	private final Map<IJavaProject, IAstEvaluationEngine> fEngines = new HashMap<>(2);
+	private final ConcurrentMap<IJavaProject, IAstEvaluationEngine> fEngines = new ConcurrentHashMap<>(2);
 
 	/**
 	 * List of step filters - each string is a pattern/fully qualified name of a
@@ -1836,12 +1837,10 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		removeAllBreakpoints();
 		DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, true);
 		fOutOfSynchTypes.clear();
-		Iterator<IAstEvaluationEngine> engines = fEngines.values().iterator();
-		while (engines.hasNext()) {
-			IAstEvaluationEngine engine = engines.next();
+		fEngines.values().removeIf((IAstEvaluationEngine engine) -> {
 			engine.dispose();
-		}
-		fEngines.clear();
+			return true;
+		});
 		fVirtualMachine = null;
 		setThreadStartHandler(null);
 		setEventDispatcher(null);
