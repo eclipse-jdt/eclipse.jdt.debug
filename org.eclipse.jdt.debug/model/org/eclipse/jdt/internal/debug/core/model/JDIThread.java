@@ -1481,6 +1481,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// poll listeners without holding lock on thread
 		boolean suspend = true;
 		try {
+			try {
+				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_THREAD) {
+					return false; // Won't be suspended
+				}
+			} catch (CoreException e) {
+				logError(e);
+			}
 			suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this,
 					breakpoint);
 		} finally {

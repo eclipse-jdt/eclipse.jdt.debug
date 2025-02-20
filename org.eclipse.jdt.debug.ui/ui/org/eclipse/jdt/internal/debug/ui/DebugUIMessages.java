@@ -178,6 +178,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation_target_suspended;
 	public static String JDIModelPresentation_thread_filtered;
 	public static String JDIModelPresentation_uncaught_62;
+	public static String JDIModelPresentation_Resume_VM;
 
 	// thread label keys are built programmatically
 

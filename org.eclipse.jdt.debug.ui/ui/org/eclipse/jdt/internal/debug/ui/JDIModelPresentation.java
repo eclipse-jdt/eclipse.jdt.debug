@@ -1995,6 +1995,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.JDIModelPresentation_Suspend_VM);
 		}
+		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_THREAD) {
+			buffer.append(' ');
+			buffer.append(DebugUIMessages.JDIModelPresentation_Resume_VM);
+		}
 	}
 
 	protected void appendThreadFilter(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {
