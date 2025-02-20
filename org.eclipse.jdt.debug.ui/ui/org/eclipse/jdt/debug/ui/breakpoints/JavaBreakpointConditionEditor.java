@@ -26,12 +26,14 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
@@ -142,8 +144,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private IAction fViewRedoAction;
 	private OperationHistoryActionHandler fViewerUndoAction;
 	private OperationHistoryActionHandler fViewerRedoAction;
-
-
+	private boolean isResumeOnHit;
 	/**
 	 * Property id for breakpoint condition expression.
 	 */
@@ -361,6 +362,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			public void widgetSelected(SelectionEvent e) {
 				boolean checked = fConditional.getSelection();
 				setEnabled(checked, true);
+				if (isResumeOnHit) {
+					updateConditionTextOnResume();
+				}
 				setDirty(PROP_CONDITION_ENABLED);
 			}
 		});
@@ -455,6 +459,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				dispose();
 			}
 		});
+		if (isResumeOnHit) {
+			updateConditionTextOnResume();
+		}
 		return parent;
 	}
 
@@ -592,6 +599,19 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param focus <code>true</code> if focus should be set, <code>false</code> otherwise
 	 */
 	private void setEnabled(boolean enabled, boolean focus) {
+		try {
+			if (fBreakpoint != null) {
+				if (fBreakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+					updateConditionTextOnResume();
+				} else {
+					fWhenTrue.setText(PropertyPageMessages.JavaBreakpointConditionEditor_1);
+					fWhenChange.setText(PropertyPageMessages.JavaBreakpointConditionEditor_2);
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+
 		fViewer.setEditable(enabled);
 		fViewer.getTextWidget().setEnabled(enabled);
 		fWhenChange.setEnabled(enabled);
@@ -841,6 +861,37 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				fViewRedoAction= fBreakpointsViewSite.getActionBars().getGlobalActionHandler(ITextEditorActionConstants.REDO);
 			}
 		}
+	}
+
+	/**
+	 * Update label values in Condition editor for trigger points that resume on hit
+	 *
+	 * @since 3.15
+	 */
+	public void updateConditionTextOnResume() {
+		fWhenTrue.setText(PropertyPageMessages.BreakpointResumeConditionalTrue);
+		fWhenChange.setText(PropertyPageMessages.BreakpointResumeConditionalValue);
+	}
+
+	/**
+	 * Update label values in Condition editor for suspending breakpoints
+	 *
+	 * @since 3.15
+	 */
+	public void updateConditionTextOnSuspend() {
+		fWhenTrue.setText(PropertyPageMessages.JavaBreakpointConditionEditor_1);
+		fWhenChange.setText(PropertyPageMessages.JavaBreakpointConditionEditor_2);
+	}
+
+	/**
+	 * Set &quot;Resume on hit&quot; flag
+	 *
+	 * @see IJavaBreakpoint#RESUME_ON_HIT
+	 *
+	 * @since 3.15
+	 */
+	public void setResumeOnHit(boolean resume) {
+		isResumeOnHit = resume;
 	}
 
 }
