@@ -16,6 +16,8 @@ package org.eclipse.jdt.launching;
 
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +33,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CommandLineQuoting;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.LibraryInfo;
 
 /**
  * Abstract implementation of a VM runner.
@@ -185,10 +188,14 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @since 3.0
 	 */
 	protected String[] combineVmArgs(VMRunnerConfiguration configuration, IVMInstall vmInstall) {
-		String[] launchVMArgs= configuration.getVMArguments();
+		ArrayList<String> launchVms = new ArrayList<>(Arrays.asList(configuration.getVMArguments()));
 		String[] vmVMArgs = vmInstall.getVMArguments();
+		if (getJavaVersion(vmInstall) > 23) {
+			launchVms.remove("-Djava.security.manager=allow"); //$NON-NLS-1$
+		}
+
 		if (vmVMArgs == null || vmVMArgs.length == 0) {
-			return launchVMArgs;
+			return launchVms.toArray(new String[0]);
 		}
 		// string substitution
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -202,9 +209,9 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=217994
 		// merge default VM + launcher VM arguments. Make sure to pass launcher arguments in last so that
 		// they can take precedence over the default VM args!
-		String[] allVMArgs = new String[launchVMArgs.length + vmVMArgs.length];
+		String[] allVMArgs = new String[launchVms.size() + vmVMArgs.length];
 		System.arraycopy(vmVMArgs, 0, allVMArgs, 0, vmVMArgs.length);
-		System.arraycopy(launchVMArgs, 0, allVMArgs, vmVMArgs.length, launchVMArgs.length);
+		System.arraycopy(launchVms, 0, allVMArgs, vmVMArgs.length, launchVms.size());
 		return allVMArgs;
 	}
 
@@ -230,5 +237,39 @@ public abstract class AbstractVMRunner implements IVMRunner {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the version of the current VM in use
+	 *
+	 * @return the VM version
+	 * @since 3.23
+	 */
+	private double getJavaVersion(IVMInstall fVMInstance) {
+		String version = null;
+		if (fVMInstance instanceof IVMInstall2) {
+			version = ((IVMInstall2) fVMInstance).getJavaVersion();
+		} else {
+			LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
+			if (libInfo == null) {
+				return 0D;
+			}
+			version = libInfo.getVersion();
+		}
+		if (version == null) {
+			// unknown version
+			return 0D;
+		}
+		int index = version.indexOf("."); //$NON-NLS-1$
+		int nextIndex = version.indexOf(".", index + 1); //$NON-NLS-1$
+		try {
+			if (index > 0 && nextIndex > index) {
+				return Double.parseDouble(version.substring(0, nextIndex));
+			}
+			return Double.parseDouble(version);
+		} catch (NumberFormatException e) {
+			return 0D;
+		}
+
 	}
 }
