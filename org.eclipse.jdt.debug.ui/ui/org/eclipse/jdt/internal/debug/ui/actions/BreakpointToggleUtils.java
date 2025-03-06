@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 IBM Corporation and others.
+ * Copyright (c) 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ public class BreakpointToggleUtils {
 
 	private static boolean isTracepoint = false;
 	private static boolean isLambdaEntryBreakpoint = false;
+	private static boolean isTriggerpoint = false;
 
 
 	public static void setUnsetTracepoints(boolean tracePoint) {
@@ -34,6 +35,14 @@ public class BreakpointToggleUtils {
 
 	public static boolean isToggleTracepoints() {
 		return isTracepoint;
+	}
+
+	public static void setTriggerpoints(boolean triggerPoint) {
+		isTriggerpoint = triggerPoint;
+	}
+
+	public static boolean isTriggerpoints() {
+		return isTriggerpoint;
 	}
 
 	public static void setUnsetLambdaEntryBreakpoint(boolean lambdaEntryBreakpoint) {
