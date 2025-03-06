@@ -292,9 +292,9 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			processSearchResult(exactMatchesFiltered.get(0), typeName, line);
 			return Status.OK_STATUS;
 		} else if (exactMatchesFiltered.size() > 0) {
-			return openClipboard(exactMatchesFiltered, line, typeName);
+			return openClipboard(exactMatchesFiltered, ++line, typeName);
 		} else {
-			return openClipboard(matches, line, typeName);
+			return openClipboard(matches, ++line, typeName);
 		}
 	}
 
