@@ -641,7 +641,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					MessageDialog.QUESTION, 0, //
 					DebugUIMessages.JavaDebugOptionsManager_skip_buttonLabel, //
 					DebugUIMessages.JavaDebugOptionsManager_suspend_buttonLabel);
-			parentShell.getDisplay().syncExec(() -> open());
+			parentShell.getDisplay().syncExec(this::open);
 		}
 
 		@Override

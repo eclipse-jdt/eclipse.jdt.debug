@@ -81,14 +81,13 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 		@Override
 		public String getText(Object element) {
-			if(element instanceof IType) {
-				IType type = (IType) element;
-				String label = type.getTypeQualifiedName();
+			if (element instanceof IType type) {
+				StringBuilder label = new StringBuilder().append(type.getTypeQualifiedName());
 				String container = getDeclaringContainerName(type);
 				if(container != null && !"".equals(container)) { //$NON-NLS-1$
-					label += " - "+container; //$NON-NLS-1$
+					label.append(" - ").append(container); //$NON-NLS-1$
 				}
-				return label;
+				return label.toString();
 			}
 			return null;
 		}
