@@ -732,9 +732,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		        JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR, JavaProjectHelper.BIN_DIR);
 
 		        // add VM specific JRE container
-				IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.JAVA_SE_1_8_EE_NAME);
-		        assertNotNull("Missing J2SE-1.4 environment", j2se14);
-		        IPath path = JavaRuntime.newJREContainerPath(j2se14);
+				IExecutionEnvironment javase1_8 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.JAVA_SE_1_8_EE_NAME);
+				assertNotNull("Missing JavaSE-1.8 environment", javase1_8);
+				IPath path = JavaRuntime.newJREContainerPath(javase1_8);
 		        JavaProjectHelper.addContainerEntry(jp, path);
 		        loadedEE = true;
 		        waitForBuild();
