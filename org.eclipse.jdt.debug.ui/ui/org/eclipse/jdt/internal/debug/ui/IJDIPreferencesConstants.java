@@ -79,9 +79,10 @@ public interface IJDIPreferencesConstants {
 	 */
 	public static final String PREF_STEP_THRU_FILTERS = IJavaDebugUIConstants.PLUGIN_ID + ".step_thru_filters"; //$NON-NLS-1$
 
+	public static final String PREF_COLLAPSE_STACK_FRAMES = IJavaDebugUIConstants.PLUGIN_ID + ".collapse_stack_frames"; //$NON-NLS-1$
+
 	/**
-	 * List of active step filters. A String containing a comma
-	 * separated list of fully qualified type names/patterns.
+	 * List of active step filters. A String containing a comma separated list of fully qualified type names/patterns.
 	 */
 	public static final String PREF_ACTIVE_FILTERS_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".active_filters"; //$NON-NLS-1$
 
@@ -90,6 +91,38 @@ public interface IJDIPreferencesConstants {
 	 * separated list of fully qualified type names/patterns.
 	 */
 	public static final String PREF_INACTIVE_FILTERS_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".inactive_filters"; //$NON-NLS-1$
+
+	/**
+	 * List of active filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
+	 * names/patterns.
+	 *
+	 * @since 3.22
+	 */
+	public static final String PREF_ACTIVE_CUSTOM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".active_custom_frames_filters"; //$NON-NLS-1$
+
+	/**
+	 * List of inactive filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
+	 * names/patterns.
+	 *
+	 * @since 3.22
+	 */
+	public static final String PREF_INACTIVE_CUSTOM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".inactive_custom_frames_filters"; //$NON-NLS-1$
+
+	/**
+	 * List of active filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
+	 * names/patterns.
+	 *
+	 * @since 3.22
+	 */
+	public static final String PREF_ACTIVE_PLATFORM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".active_platform_frames_filters"; //$NON-NLS-1$
+
+	/**
+	 * List of inactive filters for custom stack frame categorization. A String containing a comma separated list of fully qualified type
+	 * names/patterns.
+	 *
+	 * @since 3.22
+	 */
+	public static final String PREF_INACTIVE_PLATFORM_FRAME_FILTER_LIST = IJavaDebugUIConstants.PLUGIN_ID + ".inactive_platform_frames_filters"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference controlling whether to alert
