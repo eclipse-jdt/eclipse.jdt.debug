@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -23,8 +27,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.launching.EECompilationParticipant;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -258,5 +264,28 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			return; // expected
 		}
 		assertNotNull("Test should have thrown an exception", null);
+	}
+
+	/**
+	 * Test decoding of the latest JVM version
+	 */
+	public void testVMVersionDecoding() {
+		IVMInstall2 install = new IVMInstall2() {
+			@Override
+			public void setVMArgs(String vmArgs) {
+			}
+
+			@Override
+			public String getVMArgs() {
+				return null;
+			}
+
+			@Override
+			public String getJavaVersion() {
+				return JavaCore.latestSupportedJavaVersion() + ".xyz";
+			}
+		};
+		String compliance = EECompilationParticipant.getCompilerCompliance(install);
+		assertEquals(JavaCore.latestSupportedJavaVersion(), compliance);
 	}
 }
