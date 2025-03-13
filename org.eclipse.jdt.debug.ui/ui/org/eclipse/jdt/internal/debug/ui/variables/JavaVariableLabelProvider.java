@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -55,7 +56,7 @@ import org.eclipse.swt.graphics.FontData;
  */
 public class JavaVariableLabelProvider extends VariableLabelProvider implements IPreferenceChangeListener {
 
-	private final static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
+	private static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
 
 	/**
 	 * Map of view id to qualified name setting
@@ -113,10 +114,9 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			return result;
 		}
 		var element = elementPath.getLastSegment();
-		if (element instanceof IJavaVariable) {
-			var variable = (IJavaVariable) element;
+		if (element instanceof IJavaVariable variable) {
 			var value = variable.getValue();
-			if (value instanceof IJavaObject && ((IJavaObject) value).getLabel() != null) {
+			if (value instanceof IJavaObject object && object.getLabel() != null) {
 				return new FontData(result.getName(), result.getHeight(), result.getStyle() ^ SWT.BOLD);
 			}
 		}
@@ -142,7 +142,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	 * Returns if the the specified presentation context is showing qualified names or not
 	 * @return true if the presentation context is showing qualified names, false otherwise
 	 */
-	private Boolean isShowQualfiiedNames(IPresentationContext context) {
+	private Boolean isShowQualifiedNames(IPresentationContext context) {
 		Boolean qualified = fQualifiedNameSettings.get(context.getId());
 		if (qualified == null) {
 			qualified = Boolean.valueOf(Platform.getPreferencesService().getBoolean(
@@ -161,8 +161,8 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	@Override
 	protected String getColumnText(IVariable variable, IValue value, IPresentationContext context, String columnId) throws CoreException {
 		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_ID.equals(columnId)) {
-			if (value instanceof JDIObjectValue) {
-				long uniqueId = ((JDIObjectValue)value).getUniqueId();
+			if (value instanceof JDIObjectValue objectValue) {
+				long uniqueId = objectValue.getUniqueId();
 				if (uniqueId >= 0) {
 					StringBuilder buffer = new StringBuilder();
 					buffer.append(uniqueId);
@@ -172,28 +172,26 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			return ""; //$NON-NLS-1$
 		}
 		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_COUNT.equals(columnId)) {
-			if (value instanceof IJavaObject) {
-				IJavaType jType = ((IJavaObject)value).getJavaType();
-				if (jType == null && variable instanceof IJavaVariable) {
-					jType = ((IJavaVariable)variable).getJavaType();
+			if (value instanceof IJavaObject object) {
+				IJavaType jType = object.getJavaType();
+				if (jType == null && variable instanceof IJavaVariable var) {
+					jType = var.getJavaType();
 				}
-				if (jType instanceof IJavaReferenceType) {
-					if (!(jType instanceof IJavaInterfaceType)) {
-						long count = ((IJavaReferenceType)jType).getInstanceCount();
-						if (count == -1) {
-							return DebugUIMessages.JavaVariableLabelProvider_0;
-						}
-						StringBuilder buffer = new StringBuilder();
-						buffer.append(count);
-						return buffer.toString();
+				if (jType instanceof IJavaReferenceType refType && !(jType instanceof IJavaInterfaceType)) {
+					long count = refType.getInstanceCount();
+					if (count == -1) {
+						return DebugUIMessages.JavaVariableLabelProvider_0;
 					}
+					StringBuilder buffer = new StringBuilder();
+					buffer.append(count);
+					return buffer.toString();
 				}
 			}
 			return ""; //$NON-NLS-1$
 		}
 		if (JavaVariableColumnPresentation.COLUMN_LABEL.equals(columnId)) {
-			if (value instanceof IJavaObject) {
-				String label = ((IJavaObject) value).getLabel();
+			if (value instanceof IJavaObject object) {
+				String label = object.getLabel();
 				if (label != null) {
 					return label;
 				}
@@ -208,7 +206,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	 */
 	@Override
 	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
-		Boolean showQ = isShowQualfiiedNames(update.getPresentationContext());
+		Boolean showQ = isShowQualifiedNames(update.getPresentationContext());
 		fQualifiedNames = showQ.booleanValue();
 		fLabelProvider.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, showQ);
 		super.retrieveLabel(update);
@@ -259,11 +257,11 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			break;
 		case SERIALIZE_SOME:
 			Object element = update.getElement();
-			if (element instanceof IJavaVariable) {
+			if (element instanceof IJavaVariable javaVariable) {
 				try {
-					IValue value = ((IJavaVariable)element).getValue();
-					if (value instanceof IJavaValue) {
-						if (!fLabelProvider.isShowLabelDetails((IJavaValue)value)) {
+					IValue value = javaVariable.getValue();
+					if (value instanceof IJavaValue javaValue) {
+						if (!fLabelProvider.isShowLabelDetails(javaValue)) {
 							input = update.getViewerInput();
 							frame = (IJavaStackFrame) DebugPlugin.getAdapter(input, IJavaStackFrame.class);
 						}
@@ -289,5 +287,25 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		} else if (event.getKey().equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
 			determineSerializationMode((String) event.getNewValue());
 		}
+	}
+
+	/**
+	 * @return the model presentation used to display Java elements, never {@code null}
+	 * @since 3.14
+	 */
+	protected static JDIModelPresentation getModelPresentation() {
+		return fLabelProvider;
+	}
+
+	/**
+	 * Sets the model presentation used by this label provider to the specified object.
+	 *
+	 * @param presentation
+	 *            the new presentation, may not be {@code null}
+	 * @since 3.14
+	 */
+	protected static void setModelPresentation(final JDIModelPresentation presentation) {
+		Assert.isNotNull(presentation);
+		fLabelProvider = presentation;
 	}
 }
