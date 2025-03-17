@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -55,7 +56,7 @@ import org.eclipse.swt.graphics.FontData;
  */
 public class JavaVariableLabelProvider extends VariableLabelProvider implements IPreferenceChangeListener {
 
-	private final static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
+	private static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
 
 	/**
 	 * Map of view id to qualified name setting
@@ -289,5 +290,23 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		} else if (event.getKey().equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
 			determineSerializationMode((String) event.getNewValue());
 		}
+	}
+
+	/**
+	 * @return the model presentation used to display Java elements, never {@code null}
+	 */
+	protected static JDIModelPresentation getModelPresentation() {
+		return fLabelProvider;
+	}
+
+	/**
+	 * Sets the model presentation used by this label provider to the specified object.
+	 *
+	 * @param presentation
+	 *            the new presentation, may not be {@code null}
+	 */
+	protected static void setModelPresentation(final JDIModelPresentation presentation) {
+		Assert.isNotNull(presentation);
+		fLabelProvider = presentation;
 	}
 }
