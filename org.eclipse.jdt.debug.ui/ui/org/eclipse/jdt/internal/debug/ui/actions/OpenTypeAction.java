@@ -33,6 +33,7 @@ import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
 import org.eclipse.jdt.ui.JavaUI;
@@ -77,7 +78,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 */
 	protected boolean openElement(IAction action, Object element) throws DebugException, CoreException {
 		IType sourceElement = resolveSourceElement(element);
-		if (sourceElement != null) {
+		if (sourceElement != null || (sourceElement == null && element instanceof JDILocalVariable)) {
 			openInEditor(element, sourceElement);
 		} else {
 			IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "Source not found", null); //$NON-NLS-1$
