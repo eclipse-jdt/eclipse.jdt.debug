@@ -33,8 +33,8 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An error dialog reporting a problem with a debug
@@ -159,9 +159,14 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle implements 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {
-			if (event.getSource() instanceof JDIThread de) {
-				if (de.isTerminated()) {
-					Display.getDefault().asyncExec(() -> this.close());
+			if (event.getSource() instanceof JDIThread jdiThread) {
+				if(!jdiThread.isTerminated()) {
+					continue;
+				}
+				if (jdiThread.getDebugTarget().equals(target.getDebugTarget())) {
+					DebugPlugin.getDefault().removeDebugEventListener(this);
+					PlatformUI.getWorkbench().getDisplay().asyncExec(this::close);
+					return;
 				}
 			}
 		}
