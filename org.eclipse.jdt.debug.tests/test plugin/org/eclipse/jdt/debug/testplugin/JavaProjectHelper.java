@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2024 IBM Corporation and others.
+ *  Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -66,6 +66,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_16_EE_NAME = "JavaSE-16";
 	public static final String JAVA_SE_21_EE_NAME = "JavaSE-21";
 	public static final String JAVA_SE_23_EE_NAME = "JavaSE-23";
+	public static final String JAVA_SE_24_EE_NAME = "JavaSE-24";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -100,6 +101,10 @@ public class JavaProjectHelper {
 	 * path to the 23 test source
 	 */
 	public static final IPath TEST_23_SRC_DIR = new Path("java23");
+	/**
+	 * path to the 24 test source
+	 */
+	public static final IPath TEST_24_SRC_DIR = new Path("java24");
 
 	/**
 	 * path to the compiler error java file
@@ -187,6 +192,15 @@ public class JavaProjectHelper {
 	 */
 	public static boolean isJava23_Compatible() {
 		return isCompatible(23);
+	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 24
+	 *
+	 * @return <code>true</code> if a Java 24 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava24_Compatible() {
+		return isCompatible(24);
 	}
 
 	/**

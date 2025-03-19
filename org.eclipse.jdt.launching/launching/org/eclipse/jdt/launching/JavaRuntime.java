@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -88,6 +88,7 @@ import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.internal.launching.DetectVMInstallationsJob;
+import org.eclipse.jdt.internal.launching.EECompilationParticipant;
 import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
@@ -3338,88 +3339,36 @@ public final class JavaRuntime {
 			LaunchingPlugin.log("Compliance needs an update."); //$NON-NLS-1$
 		}
         if (vm instanceof IVMInstall2) {
-            String javaVersion = ((IVMInstall2)vm).getJavaVersion();
-            if (javaVersion != null) {
-            	String compliance = null;
-				if (javaVersion.startsWith(JavaCore.VERSION_1_8)) {
-					compliance = JavaCore.VERSION_1_8;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_9)
-						&& (javaVersion.length() == JavaCore.VERSION_9.length() || javaVersion.charAt(JavaCore.VERSION_9.length()) == '.')) {
-					compliance = JavaCore.VERSION_9;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_10)
-						&& (javaVersion.length() == JavaCore.VERSION_10.length() || javaVersion.charAt(JavaCore.VERSION_10.length()) == '.')) {
-					compliance = JavaCore.VERSION_10;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_11)
-						&& (javaVersion.length() == JavaCore.VERSION_11.length() || javaVersion.charAt(JavaCore.VERSION_11.length()) == '.')) {
-					compliance = JavaCore.VERSION_11;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_12)
-						&& (javaVersion.length() == JavaCore.VERSION_12.length() || javaVersion.charAt(JavaCore.VERSION_12.length()) == '.')) {
-					compliance = JavaCore.VERSION_12;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_13)
-						&& (javaVersion.length() == JavaCore.VERSION_13.length() || javaVersion.charAt(JavaCore.VERSION_13.length()) == '.')) {
-					compliance = JavaCore.VERSION_13;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_14)
-						&& (javaVersion.length() == JavaCore.VERSION_14.length() || javaVersion.charAt(JavaCore.VERSION_14.length()) == '.')) {
-					compliance = JavaCore.VERSION_14;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_15)
-						&& (javaVersion.length() == JavaCore.VERSION_15.length() || javaVersion.charAt(JavaCore.VERSION_15.length()) == '.')) {
-					compliance = JavaCore.VERSION_15;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_16)
-						&& (javaVersion.length() == JavaCore.VERSION_16.length() || javaVersion.charAt(JavaCore.VERSION_16.length()) == '.')) {
-					compliance = JavaCore.VERSION_16;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_17)
-						&& (javaVersion.length() == JavaCore.VERSION_17.length() || javaVersion.charAt(JavaCore.VERSION_17.length()) == '.')) {
-					compliance = JavaCore.VERSION_17;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_18)
-						&& (javaVersion.length() == JavaCore.VERSION_18.length() || javaVersion.charAt(JavaCore.VERSION_18.length()) == '.')) {
-					compliance = JavaCore.VERSION_18;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_19)
-						&& (javaVersion.length() == JavaCore.VERSION_19.length() || javaVersion.charAt(JavaCore.VERSION_19.length()) == '.')) {
-					compliance = JavaCore.VERSION_19;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_20)
-						&& (javaVersion.length() == JavaCore.VERSION_20.length() || javaVersion.charAt(JavaCore.VERSION_20.length()) == '.')) {
-					compliance = JavaCore.VERSION_20;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_21)
-						&& (javaVersion.length() == JavaCore.VERSION_21.length() || javaVersion.charAt(JavaCore.VERSION_21.length()) == '.')) {
-					compliance = JavaCore.VERSION_21;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_22)
-						&& (javaVersion.length() == JavaCore.VERSION_22.length() || javaVersion.charAt(JavaCore.VERSION_22.length()) == '.')) {
-					compliance = JavaCore.VERSION_22;
-				} else if (javaVersion.startsWith(JavaCore.VERSION_23)
-						&& (javaVersion.length() == JavaCore.VERSION_23.length() || javaVersion.charAt(JavaCore.VERSION_23.length()) == '.')) {
-					compliance = JavaCore.VERSION_23;
-				} else {
-					compliance = JavaCore.VERSION_23; // use latest by default
-				}
+			String compliance = EECompilationParticipant.getCompilerCompliance((IVMInstall2) vm);
+			if (compliance == null) {
+				compliance = JavaCore.latestSupportedJavaVersion();
+			}
 
-            	Hashtable<String, String> options= JavaCore.getOptions();
+			Hashtable<String, String> options = JavaCore.getOptions();
 
-            	org.osgi.service.prefs.Preferences bundleDefaults = BundleDefaultsScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
+			org.osgi.service.prefs.Preferences bundleDefaults = BundleDefaultsScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
 
-            	boolean isDefault =
-            			equals(JavaCore.COMPILER_COMPLIANCE, options, bundleDefaults) &&
-            			equals(JavaCore.COMPILER_SOURCE, options, bundleDefaults) &&
-            			equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options, bundleDefaults) &&
-            			equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options, bundleDefaults) &&
-            			equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options, bundleDefaults);
-				if (JavaCore.compareJavaVersions(compliance, JavaCore.VERSION_10) > 0) {
-					isDefault = isDefault && equals(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, options, bundleDefaults)
-							&& equals(JavaCore.COMPILER_PB_REPORT_PREVIEW_FEATURES, options, bundleDefaults);
-				}
-            	// only update the compliance settings if they are default settings, otherwise the
-            	// settings have already been modified by a tool or user
+			boolean isDefault = equals(JavaCore.COMPILER_COMPLIANCE, options, bundleDefaults)
+					&& equals(JavaCore.COMPILER_SOURCE, options, bundleDefaults)
+					&& equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options, bundleDefaults)
+					&& equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options, bundleDefaults)
+					&& equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options, bundleDefaults);
+			if (JavaCore.compareJavaVersions(compliance, JavaCore.VERSION_10) > 0) {
+				isDefault = isDefault && equals(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, options, bundleDefaults)
+						&& equals(JavaCore.COMPILER_PB_REPORT_PREVIEW_FEATURES, options, bundleDefaults);
+			}
+			// only update the compliance settings if they are default settings, otherwise the
+			// settings have already been modified by a tool or user
+			if (LaunchingPlugin.isVMLogging()) {
+				LaunchingPlugin.log("Compliance to be updated is: " + compliance); //$NON-NLS-1$
+			}
+			if (isDefault) {
+				JavaCore.setComplianceOptions(compliance, options);
+				JavaCore.setOptions(options);
 				if (LaunchingPlugin.isVMLogging()) {
-					LaunchingPlugin.log("Compliance to be updated is: " + compliance); //$NON-NLS-1$
+					LaunchingPlugin.log("Compliance Options are updated."); //$NON-NLS-1$
 				}
-            	if (isDefault) {
-					JavaCore.setComplianceOptions(compliance, options);
-					JavaCore.setOptions(options);
-					if (LaunchingPlugin.isVMLogging()) {
-						LaunchingPlugin.log("Compliance Options are updated."); //$NON-NLS-1$
-					}
-            	}
-
-            }
+			}
         }
 	}
 
