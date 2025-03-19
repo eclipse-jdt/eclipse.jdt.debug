@@ -181,6 +181,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONESIX_PROJECT_NAME = "One_Six";
 	public static final String TWENTYONE_PROJECT_NAME = "Two_One";
 	public static final String TWENTYTHREE_PROJECT_NAME = "Two_Three";
+	public static final String TWENTYFOUR_PROJECT_NAME = "Two_Four";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String CLONE_SUFFIX = "Clone";
 
@@ -241,6 +242,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded16_ = false;
 	private static boolean loaded21 = false;
 	private static boolean loaded23 = false;
+	private static boolean loaded24 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -622,20 +624,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 	}
 
-	/**
-	 * Creates the Java 23 compliant project
-	 */
 	synchronized void assert23Project() {
 		IJavaProject jp = null;
 		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
 		try {
 			if (!loaded23) {
 				jp = createProject(TWENTYTHREE_PROJECT_NAME, JavaProjectHelper.TEST_23_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_23_EE_NAME, false);
-				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
 				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_23);
 				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_23);
-				cfgs.add(createLaunchConfiguration(jp, "Main1"));
-				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				cfgs.add(createLaunchConfiguration(jp, "Main21"));
 				loaded23 = true;
 				waitForBuild();
 				assertNoErrorMarkersExist(jp.getProject());
@@ -652,6 +649,41 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				// ignore
 			}
 			handleProjectCreationException(e, TWENTYTHREE_PROJECT_NAME, jp);
+		}
+	}
+
+	/**
+	 * Creates the Java 24 compliant project
+	 */
+	synchronized void assert24Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded24) {
+				jp = createProject(TWENTYFOUR_PROJECT_NAME, JavaProjectHelper.TEST_24_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_24_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_24);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_24);
+				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_24);
+				cfgs.add(createLaunchConfiguration(jp, "Main1"));
+				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				cfgs.add(createLaunchConfiguration(jp, "Main21"));
+				loaded24 = true;
+				waitForBuild();
+				assertNoErrorMarkersExist(jp.getProject());
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, TWENTYFOUR_PROJECT_NAME, jp);
 		}
 	}
 
@@ -696,9 +728,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		        JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR, JavaProjectHelper.BIN_DIR);
 
 		        // add VM specific JRE container
-				IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.JAVA_SE_1_8_EE_NAME);
-		        assertNotNull("Missing J2SE-1.4 environment", j2se14);
-		        IPath path = JavaRuntime.newJREContainerPath(j2se14);
+				IExecutionEnvironment javase1_8 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.JAVA_SE_1_8_EE_NAME);
+				assertNotNull("Missing JavaSE-1.8 environment", javase1_8);
+				IPath path = JavaRuntime.newJREContainerPath(javase1_8);
 		        JavaProjectHelper.addContainerEntry(jp, path);
 		        loadedEE = true;
 		        waitForBuild();
@@ -959,6 +991,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get23Project() {
 		assert23Project();
 		return getJavaProject(TWENTYTHREE_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'Two_Four' project, used for Java 24 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get24Project() {
+		assert24Project();
+		return getJavaProject(TWENTYFOUR_PROJECT_NAME);
 	}
 
 	/**

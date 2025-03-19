@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2024 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -234,54 +234,64 @@ public class EECompilationParticipant extends CompilationParticipant {
 		String version = vMInstall.getJavaVersion();
 		if (version == null) {
 			return null;
-		} else if (version.startsWith(JavaCore.VERSION_23)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_24)) {
+			return JavaCore.VERSION_24;
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_23)) {
 			return JavaCore.VERSION_23;
-		} else if (version.startsWith(JavaCore.VERSION_22)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_22)) {
 			return JavaCore.VERSION_22;
-		} else if (version.startsWith(JavaCore.VERSION_21)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_21)) {
 			return JavaCore.VERSION_21;
-		} else if (version.startsWith(JavaCore.VERSION_20)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_20)) {
 			return JavaCore.VERSION_20;
-		} else if (version.startsWith(JavaCore.VERSION_19)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_19)) {
 			return JavaCore.VERSION_19;
-		} else if (version.startsWith(JavaCore.VERSION_18)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_18)) {
 			return JavaCore.VERSION_18;
-		} else if (version.startsWith(JavaCore.VERSION_17)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_17)) {
 			return JavaCore.VERSION_17;
-		} else if (version.startsWith(JavaCore.VERSION_16)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_16)) {
 			return JavaCore.VERSION_16;
-		} else if (version.startsWith(JavaCore.VERSION_15)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_15)) {
 			return JavaCore.VERSION_15;
-		} else if (version.startsWith(JavaCore.VERSION_14)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_14)) {
 			return JavaCore.VERSION_14;
-		} else if (version.startsWith(JavaCore.VERSION_13)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_13)) {
 			return JavaCore.VERSION_13;
-		} else if (version.startsWith(JavaCore.VERSION_12)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_12)) {
 			return JavaCore.VERSION_12;
-		} else if (version.startsWith(JavaCore.VERSION_11)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_11)) {
 			return JavaCore.VERSION_11;
-		} else if (version.startsWith(JavaCore.VERSION_10)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_10)) {
 			return JavaCore.VERSION_10;
-		} else if (version.startsWith(JavaCore.VERSION_9)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_9)) {
 			return JavaCore.VERSION_9;
-		} else if (version.startsWith(JavaCore.VERSION_1_8)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_8)) {
 			return JavaCore.VERSION_1_8;
-		} else if (version.startsWith(JavaCore.VERSION_1_7)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_7)) {
 			return JavaCore.VERSION_1_7;
-		} else if (version.startsWith(JavaCore.VERSION_1_6)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_6)) {
 			return JavaCore.VERSION_1_6;
-		} else if (version.startsWith(JavaCore.VERSION_1_5)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_5)) {
 			return JavaCore.VERSION_1_5;
-		} else if (version.startsWith(JavaCore.VERSION_1_4)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_4)) {
 			return JavaCore.VERSION_1_4;
-		} else if (version.startsWith(JavaCore.VERSION_1_3)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_3)) {
 			return JavaCore.VERSION_1_3;
-		} else if (version.startsWith(JavaCore.VERSION_1_2)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_2)) {
 			return JavaCore.VERSION_1_3;
-		} else if (version.startsWith(JavaCore.VERSION_1_1)) {
+		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_1)) {
 			return JavaCore.VERSION_1_3;
 		}
 		return null;
+	}
+
+	private static boolean matchesMajorVersion(String currentVersion, String knownVersion) {
+		if (currentVersion.startsWith(knownVersion)) {
+			int knownLength = knownVersion.length();
+			return currentVersion.length() == knownLength || currentVersion.charAt(knownLength) == '.';
+		}
+		return false;
 	}
 
 	/**
