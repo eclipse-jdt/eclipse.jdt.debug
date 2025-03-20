@@ -87,7 +87,6 @@ public class StandardVMType extends AbstractVMInstallType {
 
 	/**
 	 * The minimal -Xmx size for launching a JVM. <br>
-	 * <b>Note:</b> Must be omitted for Standard11xVM! <br>
 	 * <b>Note:</b> Must be at least -Xmx16m for JRockit, see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=433455">bug 433455</a>.
 	 *
 	 * @since 3.7.100

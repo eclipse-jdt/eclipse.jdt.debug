@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-import org.eclipse.jdt.internal.launching.Standard11xVM;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
@@ -378,9 +377,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				if (runner == null) {
 					abort(NLS.bind(LaunchingMessages.AbstractVMInstall_0, ""), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 				}
-				if (!(this instanceof Standard11xVM)) {
-					config.setVMArguments(new String[] { StandardVMType.MIN_VM_SIZE });
-				}
+				config.setVMArguments(new String[] { StandardVMType.MIN_VM_SIZE });
 				config.setProgramArguments(properties);
 				Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
 				if (monitor.isCanceled()) {
