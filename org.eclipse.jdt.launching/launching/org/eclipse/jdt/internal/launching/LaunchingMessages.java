@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -202,8 +202,6 @@ public class LaunchingMessages extends NLS {
 	public static String JavaSourceLocator_Unable_to_restore_source_location__12;
 	public static String JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__14;
 	public static String JavaSourceLocator_Exception_occurred_initializing_source_locator__15;
-
-	public static String Standard11xVMType_Standard_1_1_x_VM_1;
 
 	public static String PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___missing_handle_identifier_for_package_fragment_root__6;
 	public static String PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___package_fragment_root_does_not_exist__7;

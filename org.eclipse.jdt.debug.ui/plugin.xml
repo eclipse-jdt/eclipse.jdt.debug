@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2024 IBM Corporation and others.
+     Copyright (c) 2005, 2025 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -2995,11 +2995,6 @@ M4 = Platform-specific fourth key
          point="org.eclipse.jdt.debug.ui.vmInstallTypePage">
       <vmInstallTypePage
             vmInstallTypeID="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
-            class="org.eclipse.jdt.internal.debug.ui.jres.StandardVMCommandTab"
-            id="org.eclipse.jdt.debug.ui.StandardVMCommandTab">
-      </vmInstallTypePage>
-      <vmInstallTypePage
-            vmInstallTypeID="org.eclipse.jdt.launching.Standard11xVMType"
             class="org.eclipse.jdt.internal.debug.ui.jres.StandardVMCommandTab"
             id="org.eclipse.jdt.debug.ui.StandardVMCommandTab">
       </vmInstallTypePage>
