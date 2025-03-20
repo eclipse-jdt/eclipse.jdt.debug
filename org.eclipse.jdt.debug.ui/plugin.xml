@@ -2228,6 +2228,7 @@
   <action
         helpContextId="collapse_stack_frames_action_context"
         label="%collapseStackFrames.label"
+        icon="$nl$/icons/full/obj16/groupedframe.png"
         tooltip="%collapseStackFrames.tooltip"
         class="org.eclipse.jdt.internal.debug.ui.actions.CollapseStackFramesAction"
         style="toggle"
