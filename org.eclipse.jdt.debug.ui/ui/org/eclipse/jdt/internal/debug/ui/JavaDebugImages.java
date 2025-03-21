@@ -108,6 +108,7 @@ public class JavaDebugImages {
 	public static final String IMG_OVR_TRIGGER_SUPPRESSED = "IMG_OVR_TRIGGER_SUPPRESSED"; //$NON-NLS-1$
 
 	public static final String IMG_JAVA_STACKTRACE_CONSOLE = "IMG_JAVA_STACKTRACE_CONSOLE"; //$NON-NLS-1$
+	public static final String IMG_OBJS_GROUPED_STACK_FRAME = "IMG_OBJ_GROUPED_STACKFRAME"; //$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -227,6 +228,7 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OVR_TRIGGER_SUPPRESSED, T_OVR + "trigger_suppressed_ovr.png"); //$NON-NLS-1$
 
 		declareRegistryImage(IMG_JAVA_STACKTRACE_CONSOLE, T_OBJ + "javastacktrace_console.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_GROUPED_STACK_FRAME, T_OBJ + "groupedframe.png"); //$NON-NLS-1$
 
 	}
 

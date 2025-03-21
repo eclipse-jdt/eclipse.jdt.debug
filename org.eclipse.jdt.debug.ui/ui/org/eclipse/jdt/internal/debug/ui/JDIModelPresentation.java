@@ -755,6 +755,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaStackFrame) {
 				return getStackFrameImage((IJavaStackFrame) item);
 			}
+			if (item instanceof GroupedStackFrame) {
+				return getJavaDebugImage(JavaDebugImages.IMG_OBJS_GROUPED_STACK_FRAME, 0);
+			}
 			if (item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
 			}
