@@ -27,6 +27,9 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIFieldVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
@@ -206,6 +209,9 @@ public class JavaVarActionFilter implements IActionFilter {
 					}
 					if (value.equals("isFieldVariable")) { //$NON-NLS-1$
 						return var instanceof IJavaFieldVariable;
+					}
+					if (value.equals("isLocalVariableValue")) { //$NON-NLS-1$
+						return (!(var instanceof JDILocalVariable) && (var instanceof JDIReturnValueVariable) && !(var instanceof JDIFieldVariable));
 					}
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
