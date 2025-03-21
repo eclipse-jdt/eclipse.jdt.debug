@@ -2225,6 +2225,15 @@
         style="toggle"
         menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
         id="org.eclipse.jdt.debug.ui.launchViewActions.ShowMonitorThreadInfo"/>
+  <action
+        helpContextId="collapse_stack_frames_action_context"
+        label="%collapseStackFrames.label"
+        icon="$nl$/icons/full/obj16/groupedframe.png"
+        tooltip="%collapseStackFrames.tooltip"
+        class="org.eclipse.jdt.internal.debug.ui.actions.CollapseStackFramesAction"
+        style="toggle"
+        menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
+        id="org.eclipse.jdt.debug.ui.launchViewActions.CollapseStackFrames"/>
   <menu
         id="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu"
         label="%LaunchViewJavaSubmenu.label"

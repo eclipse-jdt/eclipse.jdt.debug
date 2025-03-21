@@ -139,6 +139,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	private boolean fIsTop;
 
+	private Category fCategory;
+
 	@SuppressWarnings("restriction")
 	private static final String SYNTHETIC_OUTER_LOCAL_PREFIX = new String(org.eclipse.jdt.internal.compiler.lookup.TypeConstants.SYNTHETIC_OUTER_LOCAL_PREFIX);
 
@@ -1729,5 +1731,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	public void setIsTop(boolean isTop) {
 		this.fIsTop = isTop;
+	}
+
+	@Override
+	public synchronized Category getCategory() {
+		if (fCategory == null) {
+			fCategory = JDIDebugPlugin.getDefault().getStackFrameCategorization(this);
+		}
+		return fCategory;
+	}
+
+	@Override
+	public synchronized void resetCategory() {
+		fCategory = null;
 	}
 }

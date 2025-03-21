@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.core.model.GroupedStackFrame;
 import org.eclipse.jdt.internal.debug.ui.variables.JavaStackFrameContentProvider;
 
 /**
@@ -39,11 +40,11 @@ public class MonitorsAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 
-    	if (IElementContentProvider.class.equals(adapterType)) {
-    		if (adaptableObject instanceof IJavaThread) {
-				return (T) getThreadPresentation();
-	        }
-    		if (adaptableObject instanceof IJavaStackFrame) {
+        if (IElementContentProvider.class.equals(adapterType)) {
+            if (adaptableObject instanceof IJavaThread || adaptableObject instanceof GroupedStackFrame) {
+                return (T) getThreadPresentation();
+            }
+            if (adaptableObject instanceof IJavaStackFrame) {
 				return (T) fgCPFrame;
     		}
     		if (adaptableObject instanceof JavaOwnedMonitor) {
