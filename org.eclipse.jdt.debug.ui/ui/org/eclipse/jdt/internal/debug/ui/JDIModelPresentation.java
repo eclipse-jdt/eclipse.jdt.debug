@@ -755,6 +755,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaStackFrame) {
 				return getStackFrameImage((IJavaStackFrame) item);
 			}
+			if (item instanceof GroupedStackFrame) {
+				return getJavaDebugImage(JavaDebugImages.IMG_OBJS_GROUPED_STACK_FRAME, 0);
+			}
 			if (item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
 			}
@@ -1236,6 +1239,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			show= show == null ? Boolean.FALSE : show;
 			return show.booleanValue();
 		}
+	}
+
+	protected boolean isColorizeStackFrames() {
+		return getStackFrameProvider().isColorizeStackFrames();
 	}
 
 	protected boolean isShowHexValues() {
@@ -2166,6 +2173,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (element instanceof IJavaThread javaThread && ThreadMonitorManager.getDefault().isInDeadlock(javaThread)) {
 			return getColorFromRegistry(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
 		}
+		if (element instanceof IJavaStackFrame frame && isColorizeStackFrames()) {
+			return getStackFrameProvider().getForeground(frame);
+		}
 		return null;
 	}
 
@@ -2181,6 +2191,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	@Override
 	public Color getBackground(Object element) {
+		if (element instanceof IJavaStackFrame frame && isColorizeStackFrames()) {
+			return getStackFrameProvider().getBackground(frame);
+		}
 		return null;
 	}
 
