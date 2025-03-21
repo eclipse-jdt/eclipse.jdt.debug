@@ -351,7 +351,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	private void selectPrimitiveType() {
 		Shell shell = getShell();
 		ListDialog listDialog = new ListDialog(shell);
-		listDialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8);
+		listDialog.setTitle(DebugUIMessages.DetailFormatterPrimitiveSelectionTitle);
 		listDialog.setMessage(DebugUIMessages.DetailFormatterPrimitiveSelectionLabel);
 		listDialog.setInput(getPrimitiveTypes().toArray());
 		listDialog.setContentProvider(ArrayContentProvider.getInstance());
