@@ -747,6 +747,23 @@
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclaredType">
          </action>
+         <action
+               label="%openDeclLocalVarNavigation.label"
+               helpContextId="open_variable_declared_type_hierarchy_action_context"
+               tooltip="%openDeclLocalVarNavigation.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.NavigateToVarDeclAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenDeclLocalVarNavigation">
+         </action>
+         <visibility>
+            <not>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isLocalVariableValue">
+               </objectState>
+            </not>
+         </visibility>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
