@@ -26,12 +26,14 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
@@ -592,6 +594,20 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param focus <code>true</code> if focus should be set, <code>false</code> otherwise
 	 */
 	private void setEnabled(boolean enabled, boolean focus) {
+		try {
+			if (fBreakpoint != null) {
+				if (fBreakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_SUSPEND) {
+					fWhenTrue.setText(PropertyPageMessages.BreakpointResumeConditionalTrue);
+					fWhenChange.setText(PropertyPageMessages.BreakpointResumeConditionalValue);
+				} else {
+					fWhenTrue.setText(PropertyPageMessages.JavaBreakpointConditionEditor_1);
+					fWhenChange.setText(PropertyPageMessages.JavaBreakpointConditionEditor_2);
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+
 		fViewer.setEditable(enabled);
 		fViewer.getTextWidget().setEnabled(enabled);
 		fWhenChange.setEnabled(enabled);
