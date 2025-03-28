@@ -156,12 +156,18 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 				if (frame instanceof JDIStackFrame javaFrame) {
 					var category = javaFrame.getCategory();
 					if (category == null || !category.hideWhenCollapse()) {
+						if (lastGroupping != null) {
+							if (lastGroupping.getFrameCount() > 1) {
+								result.add(lastGroupping);
+							} else {
+								result.add(lastGroupping.getTopMostFrame());
+							}
+						}
 						result.add(javaFrame);
 						lastGroupping = null;
 					} else {
 						if (lastGroupping == null) {
 							lastGroupping = new GroupedStackFrame(javaFrame.getJavaDebugTarget());
-							result.add(lastGroupping);
 						}
 						lastGroupping.add(javaFrame);
 					}
@@ -169,6 +175,9 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 					result.add(frame);
 				}
 			}
+		}
+		if (lastGroupping != null) {
+			result.add(lastGroupping);
 		}
 		return result;
 	}
