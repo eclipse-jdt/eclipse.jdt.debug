@@ -185,7 +185,11 @@ public class DetectVMInstallationsJob extends Job {
 	@SuppressWarnings("nls")
 	private void computeWindowsCandidates(Collection<File> rootDirectories) {
 		List<String> progFiles = List.of("ProgramFiles", "ProgramFiles(x86)");
-		List<String> subDirs = List.of("Eclipse Adoptium", "RedHat", "Java");
+		/// Could not find directory name for vendors:
+		/// - Alibaba - instructs to unzip in arbitrary directory
+		/// - IBM - each product carries its own installation of JDK
+		/// - SAP - each product carries its own installation of JDK
+		List<String> subDirs = List.of("Eclipse Adoptium", "RedHat", "Java", "Axiom", "Zulu", "BellSoft", "Microsoft", "Amazon Corretto");
 		rootDirectories.addAll(
 		progFiles.stream()
 			.map(name -> System.getenv(name))
