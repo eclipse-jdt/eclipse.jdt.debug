@@ -876,7 +876,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	/**
 	 * Update label values in Condition Editor for Normal suspending breakpoints
 	 *
-	 * @since 3.13
+	 * @since 3.14
 	 */
 	public void updateConditionTextOnSuspend() {
 		fWhenTrue.setText(PropertyPageMessages.JavaBreakpointConditionEditor_1);
