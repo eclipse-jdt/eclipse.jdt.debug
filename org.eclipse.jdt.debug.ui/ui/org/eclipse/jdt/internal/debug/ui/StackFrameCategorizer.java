@@ -165,17 +165,24 @@ public class StackFrameCategorizer implements IPreferenceChangeListener {
 			if (isEnabled(CATEGORY_CUSTOM_FILTERED) && custom.match(refTypeName)) {
 				return CATEGORY_CUSTOM_FILTERED;
 			}
+			Category category = categorizeSourceElement(frame);
+			// if the category is prod or test, that's the most relevant.
+			if (category == CATEGORY_PRODUCTION || category == CATEGORY_TEST) {
+				return category;
+			}
+
 			if (isEnabled(CATEGORY_SYNTHETIC) && frame.isSynthetic()) {
 				return CATEGORY_SYNTHETIC;
 			}
 			if (isEnabled(CATEGORY_PLATFORM) && platform.match(refTypeName)) {
 				return CATEGORY_PLATFORM;
 			}
+			// Maybe comes from a library or it's unknown.
+			return category;
 		} catch (DebugException de) {
 			JDIDebugUIPlugin.log(de);
+			return CATEGORY_UNKNOWN;
 		}
-
-		return categorizeSourceElement(frame);
 	}
 
 	/**
