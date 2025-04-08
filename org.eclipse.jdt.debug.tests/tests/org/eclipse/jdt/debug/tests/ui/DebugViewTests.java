@@ -246,7 +246,8 @@ public class DebugViewTests extends AbstractDebugViewTests {
 				assertNotNull("all frames", allFrames);
 				assertEquals("frame[0]", "StackFrameColoring.breakpointMethod() line: 34", allFrames[0].getText());
 				assertEquals("frame[0] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 0));
-				assertEquals("frame[1]", "1 collapsed frames", allFrames[1].getText());
+				assertEquals("frame[1]", "StackFrameColoring.lambda$0(String) line: 27", allFrames[1].getText());
+				assertEquals("frame[1] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 1));
 				assertTrue("frame[2]", allFrames[2].getText().contains("apply(Object) line: not available"));
 				assertEquals("frame[2] - production", StackFrameCategorizer.CATEGORY_PRODUCTION, getStackFrameCategory(allFrames, 2));
 				assertEquals("frame[3]", "7 collapsed frames", allFrames[3].getText());
