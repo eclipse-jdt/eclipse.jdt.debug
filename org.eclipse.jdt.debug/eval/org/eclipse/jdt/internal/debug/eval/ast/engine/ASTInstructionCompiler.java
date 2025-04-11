@@ -312,6 +312,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return false;
 	}
 
+	private boolean containsALocalType(IMethodBinding methodBinding, MethodInvocation node) {
+		if (methodBinding != null) {
+			ITypeBinding[] typeBindings = methodBinding.getParameterTypes();
+			for (ITypeBinding typeBinding : typeBindings) {
+				if (isALocalType(typeBinding)) {
+					return true;
+				}
+			}
+		} else {
+			handleNullMethodBinding(methodBinding, node);
+		}
+		return false;
+	}
+
 	private int getEnclosingLevel(ASTNode node,
 			ITypeBinding referenceTypeBinding) {
 		ASTNode parent = node;
@@ -3034,25 +3048,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
+
 		if (methodBinding == null) {
-			// could be the receiver is not visible - for example a private
-			// field access from super class
-			ASTNode root = node.getRoot();
-			if (root instanceof CompilationUnit) {
-				CompilationUnit cu = (CompilationUnit) root;
-				IProblem[] problems = cu.getProblems();
-				for (IProblem problem : problems) {
-					setHasError(true);
-					addErrorMessage(problem.getMessage());
-				}
-			}
+			// could be the receiver is not visible or concurrency issues - for example a private field access from super class
+			handleNullMethodBinding(methodBinding, node);
 		}
 
 		if (hasErrors()) {
 			return false;
 		}
 
-		if (containsALocalType(methodBinding)) {
+		if (containsALocalType(methodBinding, node)) {
 			setHasError(true);
 			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32);
 			return false;
@@ -3091,6 +3097,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		pushMethodArguments(methodBinding, arguments);
 
 		return false;
+	}
+
+	/**
+	 * Checking the method biding is null and set the error message
+	 *
+	 * @param methodbinding
+	 *            method or constructor being called
+	 * @param node
+	 *            Abstract superclass of all AST node types
+	 */
+	private void handleNullMethodBinding(IMethodBinding methodbinding, ASTNode node) {
+		ASTNode root = node.getRoot();
+		if (root instanceof CompilationUnit cu) {
+			IProblem[] problems = cu.getProblems();
+			for (IProblem problem : problems) {
+				setHasError(true);
+				addErrorMessage(problem.getMessage());
+			}
+		}
 	}
 
 	/**
