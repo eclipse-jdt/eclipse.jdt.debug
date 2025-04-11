@@ -2023,6 +2023,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.JDIModelPresentation_Suspend_VM);
 		}
+		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+			buffer.append(' ');
+			buffer.append(DebugUIMessages.JDIModelPresentation_resume_on_hit);
+		}
 	}
 
 	protected void appendThreadFilter(IJavaBreakpoint breakpoint, StringBuilder buffer) throws CoreException {

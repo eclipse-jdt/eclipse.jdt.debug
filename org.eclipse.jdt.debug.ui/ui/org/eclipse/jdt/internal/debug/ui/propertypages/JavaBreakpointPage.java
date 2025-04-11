@@ -335,8 +335,9 @@ public class JavaBreakpointPage extends PropertyPage {
 			fEditor = new StandardJavaBreakpointEditor();
 		} else if (JavaLineBreakpoint.JAVA_LINE_BREAKPOINT.equals(type)) {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_18);
+			JavaBreakpointConditionEditor javaBpConditionEditor = new JavaBreakpointConditionEditor(null);
 			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[]
-			    {new StandardJavaBreakpointEditor(), new JavaBreakpointConditionEditor(null)});
+			{ new StandardJavaBreakpointEditor(javaBpConditionEditor), javaBpConditionEditor });
 		} else if (JavaExceptionBreakpoint.JAVA_EXCEPTION_BREAKPOINT.equals(type)) {
 			setTitle(PropertyPageMessages.JavaExceptionBreakpointPage_5);
 			fEditor = new ExceptionBreakpointEditor();
