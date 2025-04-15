@@ -31,6 +31,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.ui.IActionFilter;
@@ -48,6 +49,7 @@ public class JavaVarActionFilter implements IActionFilter {
 	 * The set or primitive types
 	 */
 	private static final Set<String> fgPrimitiveTypes = initPrimitiveTypes();
+	private static final Set<String> fgArrays = initArrays();
 
 	/**
 	 * The predefined set of primitive types
@@ -68,8 +70,28 @@ public class JavaVarActionFilter implements IActionFilter {
 	}
 
 	/**
+	 * The predefined set of primitive arrays
+	 *
+	 * @return the set of predefined primitive arrays types
+	 */
+	private static Set<String> initArrays() {
+		HashSet<String> set = new HashSet<>(8);
+		set.add("short[]"); //$NON-NLS-1$
+		set.add("int[]"); //$NON-NLS-1$
+		set.add("long[]"); //$NON-NLS-1$
+		set.add("float[]"); //$NON-NLS-1$
+		set.add("double[]"); //$NON-NLS-1$
+		set.add("boolean[]"); //$NON-NLS-1$
+		set.add("byte[]"); //$NON-NLS-1$
+		set.add("char[]"); //$NON-NLS-1$
+		return set;
+	}
+
+	/**
 	 * Determines if the declared value is the same as the concrete value
-	 * @param var the variable to inspect
+	 *
+	 * @param var
+	 *            the variable to inspect
 	 * @return true if the types are the same, false otherwise
 	 */
 	protected boolean isDeclaredSameAsConcrete(IJavaVariable var) {
@@ -210,6 +232,10 @@ public class JavaVarActionFilter implements IActionFilter {
 					}
 					if (value.equals("isLocalVariableValue")) { //$NON-NLS-1$
 						return !(var instanceof JDILocalVariable);
+					}
+					if (value.equals("isNonPrimitiveNonArray")) { //$NON-NLS-1$
+						boolean primArray = fgArrays.contains(var.getJavaType().getName());
+						return (varValue instanceof JDIPrimitiveValue || primArray);
 					}
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
