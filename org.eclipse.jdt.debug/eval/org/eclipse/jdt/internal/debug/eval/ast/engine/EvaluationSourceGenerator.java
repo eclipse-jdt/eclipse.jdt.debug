@@ -14,7 +14,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import static org.eclipse.jdt.core.JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM;
+import static org.eclipse.jdt.core.JavaCore.COMPILER_COMPLIANCE;
+import static org.eclipse.jdt.core.JavaCore.COMPILER_RELEASE;
+import static org.eclipse.jdt.core.JavaCore.COMPILER_SOURCE;
+import static org.eclipse.jdt.core.JavaCore.DISABLED;
+
+import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -183,7 +191,9 @@ public class EvaluationSourceGenerator {
 		if ( codeSnippet.length() == 0) {
 			return false;
 		}
-		IScanner scanner = ToolFactory.createScanner(false, false, false, fJavaProject.getOption(JavaCore.COMPILER_SOURCE, true), fJavaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true), true);
+		String sourceLevel = toSupportedVersion(fJavaProject.getOption(COMPILER_SOURCE, true));
+		String complianceLevel = toSupportedVersion(fJavaProject.getOption(COMPILER_COMPLIANCE, true));
+		IScanner scanner = ToolFactory.createScanner(false, false, false, sourceLevel, complianceLevel, true);
 		scanner.setSource(codeSnippet.toCharArray());
 		int token;
 		try {
@@ -314,7 +324,7 @@ public class EvaluationSourceGenerator {
 		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		parser.setSource(source.toCharArray());
 		Map<String, String> options = getCompilerOptions(project);
-		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);
+		String sourceLevel = toSupportedVersion(project.getOption(COMPILER_SOURCE, true));
 		parser.setCompilerOptions(options);
 		CompilationUnit unit = (CompilationUnit) parser.createAST(null);
 		SourceBasedSourceGenerator visitor = new SourceBasedSourceGenerator(
@@ -342,15 +352,17 @@ public class EvaluationSourceGenerator {
 	/**
 	 * Returns the compiler options used for compiling the expression.
 	 * <p>
-	 * Turns all errors and warnings into ignore and disables task tags. The customizable set of compiler options only contains additional Eclipse
-	 * options. The standard JDK compiler options can't be changed anyway.
+	 * Turns all errors and warnings into ignore and disables task tags.
+	 * The customizable set of compiler options only contains additional Eclipse
+	 * options. The standard JDK compiler options will be changed only if they
+	 * are not supported anymore but required by compiler.
 	 *
 	 * @param project
 	 *            the IJavaProject
 	 * @return compiler options
 	 */
 	public static Map<String, String> getCompilerOptions(IJavaProject project) {
-		Map<String, String> options = project.getOptions(true);
+		Map<String, String> options = new HashMap<>(project.getOptions(true));
 		for (String key : options.keySet()) {
 			String value = options.get(key);
 			if (JavaCore.ERROR.equals(value) || JavaCore.WARNING.equals(value) || JavaCore.INFO.equals(value)) {
@@ -358,7 +370,56 @@ public class EvaluationSourceGenerator {
 			}
 		}
 		options.put(JavaCore.COMPILER_TASK_TAGS, ""); //$NON-NLS-1$
+
+		toSupportedVersion(options, COMPILER_COMPLIANCE);
+		toSupportedVersion(options, COMPILER_CODEGEN_TARGET_PLATFORM);
+		toSupportedVersion(options, COMPILER_SOURCE);
+		toSupportedVersion(options, COMPILER_RELEASE);
 		return options;
+	}
+
+	/**
+	 * Updates given options for a given key
+	 *
+	 * @param value
+	 *            one of the four "JLS versions" constants
+	 *            <ul>
+	 *            <li>{@link JavaCore#COMPILER_COMPLIANCE}
+	 *            <li>{@link JavaCore#COMPILER_CODEGEN_TARGET_PLATFORM}
+	 *            <li>{@link JavaCore#COMPILER_SOURCE}
+	 *            <li>{@link JavaCore#COMPILER_RELEASE}
+	 *            </ul>
+	 * @return given value if supported by compiler or first compiler supported value
+	 * @see JavaCore#getAllJavaSourceVersionsSupportedByCompiler()
+	 */
+	private static String toSupportedVersion(Map<String, String> options, String key) {
+		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
+		String value = options.get(key);
+		if (value != null && !supported.contains(value) && !DISABLED.equals(value)) {
+			value = supported.first();
+			options.put(key, value);
+		}
+		return value;
+	}
+
+	/**
+	 * @param value
+	 *            one of the four "JLS versions" constants
+	 *            <ul>
+	 *            <li>{@link JavaCore#COMPILER_COMPLIANCE}
+	 *            <li>{@link JavaCore#COMPILER_CODEGEN_TARGET_PLATFORM}
+	 *            <li>{@link JavaCore#COMPILER_SOURCE}
+	 *            <li>{@link JavaCore#COMPILER_RELEASE}
+	 *            </ul>
+	 * @return given value if supported by compiler or first compiler supported value
+	 * @see JavaCore#getAllJavaSourceVersionsSupportedByCompiler()
+	 */
+	private static String toSupportedVersion(String value) {
+		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
+		if (value != null && !supported.contains(value) && !DISABLED.equals(value)) {
+			value = supported.first();
+		}
+		return value;
 	}
 
 	private void createEvaluationSourceFromJDIObject(
@@ -379,7 +440,7 @@ public class EvaluationSourceGenerator {
 	private BinaryBasedSourceGenerator getInstanceSourceMapper(
 			JDIReferenceType referenceType, boolean isInStaticMethod,
 			IJavaProject project) {
-		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);
+		String sourceLevel = toSupportedVersion(project.getOption(COMPILER_SOURCE, true));
 		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(
 				fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod,
 				sourceLevel);
