@@ -33,7 +33,7 @@ public class RetargetToggleTracepointAction extends RetargetToggleBreakpointActi
 	 */
 	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
-		BreakpointToggleUtils.setUnsetTracepoints(true);
+		BreakpointToggleUtils.setUnsetTracepoint(true);
 		super.performAction(target, selection, part);
 	}
 
