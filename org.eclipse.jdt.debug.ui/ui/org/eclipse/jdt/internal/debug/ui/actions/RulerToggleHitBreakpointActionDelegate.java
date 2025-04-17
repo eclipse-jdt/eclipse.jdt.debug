@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -27,14 +29,21 @@ public class RulerToggleHitBreakpointActionDelegate extends AbstractRulerToggleB
 	@Override
 	protected boolean doWork(ITextEditor editor, ITextSelection selection) {
 		IJavaLineBreakpoint jlp = ToggleBreakpointAdapter.findExistingBreakpoint(currentEditor, selection);
-		if (jlp == null) {
+
+		try {
 			hitCountDialog();
 			if (BreakpointToggleUtils.getHitCount() < 1) {
 				return false;
 			}
+			if (jlp != null) {
+				ToggleBreakpointAdapter.deleteBreakpoint(jlp, editor, null);
+			}
+			BreakpointToggleUtils.setHitpoint(true);
+			return true;
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+			return false;
 		}
-		BreakpointToggleUtils.setHitpoint(true);
-		return true;
 	}
 
 	private void hitCountDialog() {
