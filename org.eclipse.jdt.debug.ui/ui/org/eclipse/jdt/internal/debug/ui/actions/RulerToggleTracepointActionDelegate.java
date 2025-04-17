@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -20,7 +23,16 @@ public class RulerToggleTracepointActionDelegate extends AbstractRulerToggleBrea
 
 	@Override
 	protected boolean doWork(ITextEditor editor, ITextSelection selection) {
-		BreakpointToggleUtils.setUnsetTracepoint(true);
-		return true;
+		IJavaLineBreakpoint jlp = ToggleBreakpointAdapter.findExistingBreakpoint(currentEditor, selection);
+		try {
+			if (jlp != null && !jlp.isConditionEnabled()) {
+				ToggleBreakpointAdapter.deleteBreakpoint(jlp, editor, null);
+			}
+			BreakpointToggleUtils.setUnsetTracepoint(true);
+			return true;
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+			return false;
+		}
 	}
 }
