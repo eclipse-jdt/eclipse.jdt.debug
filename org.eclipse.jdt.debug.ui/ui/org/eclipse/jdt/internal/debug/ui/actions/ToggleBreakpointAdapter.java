@@ -1683,7 +1683,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * @param progressMonitor the progress monitor
 	 * @throws CoreException if the deletion fails
 	 */
-	private static void deleteBreakpoint(IJavaBreakpoint breakpoint, IWorkbenchPart part, IProgressMonitor monitor) throws CoreException {
+	public static void deleteBreakpoint(IJavaBreakpoint breakpoint, IWorkbenchPart part, IProgressMonitor monitor) throws CoreException {
 		final Shell shell = part != null ? part.getSite().getShell() : null;
 		final boolean[] result = new boolean[] { true };
 
