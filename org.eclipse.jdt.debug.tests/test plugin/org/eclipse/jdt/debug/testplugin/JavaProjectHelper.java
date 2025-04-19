@@ -8,6 +8,10 @@
  *
  *  SPDX-License-Identifier: EPL-2.0
  *
+ *  This is an implementation of an early-draft specification developed under the Java
+ *  Community Process (JCP) and is made available for testing and evaluation purposes
+ *  only. The code is not compatible with any specification of the JCP.
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -67,6 +71,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_21_EE_NAME = "JavaSE-21";
 	public static final String JAVA_SE_23_EE_NAME = "JavaSE-23";
 	public static final String JAVA_SE_24_EE_NAME = "JavaSE-24";
+	public static final String JAVA_SE_25_EE_NAME = "JavaSE-25";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -105,6 +110,10 @@ public class JavaProjectHelper {
 	 * path to the 24 test source
 	 */
 	public static final IPath TEST_24_SRC_DIR = new Path("java24");
+	/**
+	 * path to the 25 test source
+	 */
+	public static final IPath TEST_25_SRC_DIR = new Path("java25");
 
 	/**
 	 * path to the compiler error java file
@@ -204,9 +213,19 @@ public class JavaProjectHelper {
 	}
 
 	/**
+	 * Returns if the currently running VM is version compatible with Java 25
+	 *
+	 * @return <code>true</code> if a Java 25 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava25_Compatible() {
+		return isCompatible(25);
+	}
+
+	/**
 	 * Returns if the current running system is compatible with the given Java minor version
 	 *
-	 * @param ver the version to test - either 4, 5, 6, 7 or 8
+	 * @param ver
+	 *            the version to test - within [ 8 ... JavaCore.latestSupportedJavaVersion() ]
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
 	static boolean isCompatible(int ver) {
