@@ -151,6 +151,13 @@ public class BreakpointListenerManager {
 		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
+				try {
+					if (breakpoint.isDisableOnHit()) {
+						breakpoint.setEnabled(false);
+					}
+				} catch (CoreException e) {
+					JDIDebugPlugin.log(e);
+				}
 				return delegate.breakpointHit(thread, breakpoint);
 			}
 			return IJavaBreakpointListener.DONT_CARE;
