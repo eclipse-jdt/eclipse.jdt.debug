@@ -566,8 +566,8 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 					return null;
 				}
 				try {
-					InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(this);
-					workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
+					InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(LaunchingPlugin.this);
+					workspace.addResourceChangeListener(LaunchingPlugin.this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 					workspace.addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
 						@Override
 						public void doneSaving(ISaveContext context1) {}
