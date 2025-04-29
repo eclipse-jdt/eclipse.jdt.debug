@@ -566,6 +566,8 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 					return null;
 				}
 				try {
+					InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(this);
+					workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 					workspace.addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
 						@Override
 						public void doneSaving(ISaveContext context1) {}
@@ -601,9 +603,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		};
 		fWorkspaceServiceTracker.open();
 
-		InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(this);
 		JavaRuntime.addVMInstallChangedListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		AdvancedSourceLookupSupport.start();
