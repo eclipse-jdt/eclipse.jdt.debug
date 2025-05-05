@@ -80,13 +80,11 @@ public class PacketSendManager extends PacketManager {
 				String exMessage = getDisconnectException().getMessage();
 				if (exMessage == null) {
 					message = NLS.bind(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1,
-									new String[] { getDisconnectException()
-											.getClass().getName() });
+							getDisconnectException().getClass().getName());
 				} else {
 					message = NLS.bind(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1,
-									new String[] {
 											getDisconnectException().getClass()
-													.getName(), exMessage });
+									.getName(), exMessage);
 				}
 			}
 			throw new VMDisconnectedException(message);

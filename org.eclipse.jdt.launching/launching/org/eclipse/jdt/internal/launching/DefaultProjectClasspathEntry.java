@@ -394,9 +394,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	@Override
 	public String getName() {
 		if (isExportedEntriesOnly()) {
-			return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_2, new String[] {getJavaProject().getElementName()});
+			return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_2, getJavaProject().getElementName());
 		}
-		return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()});
+		return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_4, getJavaProject().getElementName());
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

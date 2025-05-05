@@ -421,7 +421,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		} else if(req instanceof MonitorWaitedRequestImpl) {
 			deleteEventRequest(MONITOR_WAITED_TYPE, (MonitorWaitedRequestImpl)req);
 		} else {
-			throw new InternalError(NLS.bind(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, new String[]{req.toString()}));
+			throw new InternalError(NLS.bind(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, req.toString()));
 		}
 	}
 

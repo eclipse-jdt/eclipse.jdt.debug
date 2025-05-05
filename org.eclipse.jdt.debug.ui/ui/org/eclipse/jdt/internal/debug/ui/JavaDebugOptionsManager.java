@@ -776,7 +776,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		if (display.isDisposed()) {
 			return;
 		}
-		final String message= NLS.bind(errorMessage, new String[] {fLabelProvider.getText(breakpoint)});
+		final String message = NLS.bind(errorMessage, fLabelProvider.getText(breakpoint));
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {

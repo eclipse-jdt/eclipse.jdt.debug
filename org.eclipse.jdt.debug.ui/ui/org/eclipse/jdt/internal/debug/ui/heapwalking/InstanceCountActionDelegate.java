@@ -58,11 +58,11 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	protected void displayNumInstances(String typeName, long instanceCount) {
 		String message = null;
 		if (instanceCount == 0L) {
-			message = NLS.bind(Messages.InstanceCountActionDelegate_0, new String[]{typeName});
+			message = NLS.bind(Messages.InstanceCountActionDelegate_0, typeName);
 		} else if (instanceCount == 1L) {
-			message = NLS.bind(Messages.InstanceCountActionDelegate_1, new String[]{typeName});
+			message = NLS.bind(Messages.InstanceCountActionDelegate_1, typeName);
 		} else {
-			message = NLS.bind(Messages.InstanceCountActionDelegate_2, new String[]{Long.toString(instanceCount), typeName});
+			message = NLS.bind(Messages.InstanceCountActionDelegate_2, Long.toString(instanceCount), typeName);
 		}
 		MessageDialog.openInformation(getShell(), Messages.InstanceCountActionDelegate_3, message);
 	}

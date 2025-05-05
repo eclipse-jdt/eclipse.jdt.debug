@@ -78,6 +78,6 @@ public class SendMessage extends CompoundInstruction {
 	@Override
 	public String toString() {
 		return NLS.bind(InstructionsEvaluationMessages.SendMessage_send_message__0___1__2,
-						new String[] { fSelector, fSignature });
+				fSelector, fSignature);
 	}
 }

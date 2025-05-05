@@ -157,7 +157,7 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 			} else {
 				IStatus s = ResourcesPlugin.getWorkspace().validateName(newName, IResource.FILE);
 				if (!s.isOK()) {
-					fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), NLS.bind(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()}));
+					fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), NLS.bind(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, s.getMessage()));
 				}
 			}
 		}
