@@ -52,7 +52,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 							JDIDebugPlugin.getUniqueIdentifier(),
 							IStatus.OK,
 							NLS.bind(InstructionsEvaluationMessages.InstanceOfOperator_No_class_object,
-											new String[] { type.getName() }),
+									type.getName()),
 							null));
 		}
 		push(classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE,

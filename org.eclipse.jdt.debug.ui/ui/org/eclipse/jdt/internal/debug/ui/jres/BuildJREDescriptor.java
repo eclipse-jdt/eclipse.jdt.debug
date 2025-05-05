@@ -30,7 +30,7 @@ public class BuildJREDescriptor extends JREDescriptor {
 	@Override
 	public String getDescription() {
 		IVMInstall defaultVMInstall = JavaRuntime.getDefaultVMInstall();
-		return defaultVMInstall != null ? NLS.bind(JREMessages.BuildJREDescriptor_0, new String[] { defaultVMInstall.getName() })
+		return defaultVMInstall != null ? NLS.bind(JREMessages.BuildJREDescriptor_0, defaultVMInstall.getName())
 				: JREMessages.BuildJREDescriptor_1;
 	}
 

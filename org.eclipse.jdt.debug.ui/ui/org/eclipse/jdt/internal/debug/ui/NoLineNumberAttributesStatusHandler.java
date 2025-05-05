@@ -39,7 +39,7 @@ public class NoLineNumberAttributesStatusHandler implements IStatusHandler {
 				public void run() {
 					final ErrorDialogWithToggle dialog = new ErrorDialogWithToggle(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(),
 							DebugUIMessages.NoLineNumberAttributesStatusHandler_Java_Breakpoint_1,
-							NLS.bind(DebugUIMessages.NoLineNumberAttributesStatusHandler_2, new String[] {type.name()}),
+							NLS.bind(DebugUIMessages.NoLineNumberAttributesStatusHandler_2, type.name()),
 							status, IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT,
 							DebugUIMessages.NoLineNumberAttributesStatusHandler_3,
 							preferenceStore);

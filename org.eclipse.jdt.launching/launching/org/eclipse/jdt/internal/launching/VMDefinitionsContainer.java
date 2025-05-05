@@ -506,13 +506,13 @@ public class VMDefinitionsContainer {
 				IStatus status = null;
 				if (name != null) {
 					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
-							NLS.bind(LaunchingMessages.VMDefinitionsContainer_0, new String[]{name}));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_0, name));
 				} else if (installPath != null) {
 					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
-							NLS.bind(LaunchingMessages.VMDefinitionsContainer_0, new String[]{installPath}));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_0, installPath));
 				} else {
 					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
-							NLS.bind(LaunchingMessages.VMDefinitionsContainer_2, new String[]{id}));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_2, id));
 				}
 				container.addStatus(status);
 			}
@@ -537,15 +537,15 @@ public class VMDefinitionsContainer {
 			if (name == null) {
 				if (installPath == null) {
 					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-							NLS.bind(LaunchingMessages.VMDefinitionsContainer_3, new String[]{vmType.getName()})));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_3, vmType.getName())));
 					return;
 				}
-				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.VMDefinitionsContainer_4, new String[]{installPath})));
+				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.VMDefinitionsContainer_4, installPath)));
 				return;
 			}
 			if (installPath == null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-						NLS.bind(LaunchingMessages.VMDefinitionsContainer_5, new String[]{name})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_5, name)));
 				return;
 			}
 
@@ -598,7 +598,7 @@ public class VMDefinitionsContainer {
 							vmStandin.setJavadocLocation(new URL(externalForm));
 						} catch (MalformedURLException e) {
 							container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-									NLS.bind(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
+									NLS.bind(LaunchingMessages.VMDefinitionsContainer_6, name), e));
 						}
 					}
 				}
@@ -613,13 +613,13 @@ public class VMDefinitionsContainer {
 			String name = vmElement.getAttribute("name"); //$NON-NLS-1$
 			if (name != null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-						NLS.bind(LaunchingMessages.VMDefinitionsContainer_7, new String[]{name})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_7, name)));
 			} else if (installPath != null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-						NLS.bind(LaunchingMessages.VMDefinitionsContainer_7, new String[]{installPath})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_7, installPath)));
 			} else {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-					NLS.bind(LaunchingMessages.VMDefinitionsContainer_9, new String[]{vmType.getName()})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_9, vmType.getName())));
 			}
 		}
 	}

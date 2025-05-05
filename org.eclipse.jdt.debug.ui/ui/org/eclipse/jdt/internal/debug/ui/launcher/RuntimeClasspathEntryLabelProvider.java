@@ -140,10 +140,10 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 			case IRuntimeClasspathEntry.ARCHIVE:
 				IPath path = entry.getPath();
 				if (path == null) {
-                    return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{"null"}); //$NON-NLS-1$
+					return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, "null"); //$NON-NLS-1$
                 }
                 if (!path.isAbsolute() || !path.isValidPath(path.toString())) {
-					return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{path.toOSString()});
+					return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, path.toOSString());
 				}
 				String[] segments = path.segments();
 				StringBuilder displayPath = new StringBuilder();

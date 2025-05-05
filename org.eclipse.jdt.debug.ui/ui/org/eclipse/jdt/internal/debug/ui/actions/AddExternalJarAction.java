@@ -69,7 +69,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 				list.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));
 			}
 			else {
-				MessageDialog.openError(getShell(), ActionMessages.AddExternalJarAction_error_box_title, NLS.bind(ActionMessages.AddExternalJarAction_error_box_message, new String[] {path.makeAbsolute().toOSString()}));
+				MessageDialog.openError(getShell(), ActionMessages.AddExternalJarAction_error_box_title, NLS.bind(ActionMessages.AddExternalJarAction_error_box_message, path.makeAbsolute().toOSString()));
 			}
 		}
 		if(list.size() > 0) {

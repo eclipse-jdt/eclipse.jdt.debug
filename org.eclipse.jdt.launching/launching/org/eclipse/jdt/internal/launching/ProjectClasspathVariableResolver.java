@@ -75,7 +75,7 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 			}
 			return buffer.toString();
 		}
-		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.ProjectClasspathVariableResolver_1, new String[]{argument})));
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.ProjectClasspathVariableResolver_1, argument)));
 	}
 
 	/**

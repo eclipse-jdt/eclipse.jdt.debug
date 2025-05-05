@@ -47,7 +47,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
         	if (!(value instanceof JDIAllInstancesValue) && !(value instanceof JDIReferenceListValue)) {
 	        	Object[] moreVariables = new Object[variables.length+1];
 	        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
-	        	moreVariables[0] = new JDIReferenceListVariable(NLS.bind(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{value.getReferenceTypeName() + " " + value.getValueString()}),(IJavaObject)value); //$NON-NLS-1$
+	        	moreVariables[0] = new JDIReferenceListVariable(NLS.bind(JDIDebugModelMessages.JDIReferenceListValue_6, value.getReferenceTypeName() + " " + value.getValueString()),(IJavaObject)value); //$NON-NLS-1$
 	        	return getElements(moreVariables, index, length);
         	}
         }

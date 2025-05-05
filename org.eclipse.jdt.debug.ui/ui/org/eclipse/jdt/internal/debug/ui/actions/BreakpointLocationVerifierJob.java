@@ -165,7 +165,7 @@ public class BreakpointLocationVerifierJob extends Job {
 				if (breakpointExist) {
 					if (differentLineNumber) {
 						// There is already a breakpoint on the valid line.
-						report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)}));
+						report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, Integer.toString(lineNumber)));
 						return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
 					}
 					// There is already a breakpoint on the valid line, but it's also the requested line.
@@ -180,7 +180,7 @@ public class BreakpointLocationVerifierJob extends Job {
 				if (breakpointExist) {
 					// there is already a breakpoint on the valid line.
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
-					report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)}));
+					report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, Integer.toString(lineNumber)));
 					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
 				}
 				replaceBreakpoint(lineNumber, typeName);

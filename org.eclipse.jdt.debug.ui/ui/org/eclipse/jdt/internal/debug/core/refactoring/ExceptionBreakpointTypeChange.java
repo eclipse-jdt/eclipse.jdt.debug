@@ -44,7 +44,7 @@ public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.ExceptionBreakpointTypeChange_0,
-				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
+				getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName());
 	}
 
 	/* (non-Javadoc)

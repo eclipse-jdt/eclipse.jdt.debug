@@ -199,16 +199,16 @@ public class JavaMainTab extends SharedJavaMainTab {
 			if (status.isOK()) {
 				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				if (!project.exists()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {name}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, name));
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {name}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, name));
 					return false;
 				}
 			}
 			else {
-				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()}));
+				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, status.getMessage()));
 				return false;
 			}
 		} else {

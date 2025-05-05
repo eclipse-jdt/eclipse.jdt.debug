@@ -174,7 +174,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	 */
 	@Override
 	public String getLabel() {
-		return NLS.bind(LaunchingMessages.SocketListenConnectorProcess_1, new String[]{fPort});
+		return NLS.bind(LaunchingMessages.SocketListenConnectorProcess_1, fPort);
 	}
 
 	/* (non-Javadoc)

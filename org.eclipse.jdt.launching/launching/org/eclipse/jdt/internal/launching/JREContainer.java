@@ -404,7 +404,7 @@ public class JREContainer implements IClasspathContainer {
 		} else {
 			tag = environmentId;
 		}
-		return NLS.bind(LaunchingMessages.JREContainer_JRE_System_Library_1, new String[]{tag});
+		return NLS.bind(LaunchingMessages.JREContainer_JRE_System_Library_1, tag);
 	}
 
 	/**
