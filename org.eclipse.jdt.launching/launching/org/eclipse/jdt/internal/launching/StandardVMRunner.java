@@ -75,7 +75,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 */
 	protected String renderDebugTarget(String classToRun, int host) {
 		String format= LaunchingMessages.StandardVMRunner__0__at_localhost__1__1;
-		return NLS.bind(format, new String[] { classToRun, String.valueOf(host) });
+		return NLS.bind(format, classToRun, String.valueOf(host));
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String processId = getProcessId(p);
 		if (processId == null) {
 			String format = LaunchingMessages.StandardVMRunner__0____1___2;
-			return NLS.bind(format, new String[] { commandLine[0], timestamp });
+			return NLS.bind(format, commandLine[0], timestamp);
 		}
 		String format = LaunchingMessages.StandardVMRunner__0____1___2_3;
 		return NLS.bind(format, new String[] { commandLine[0], timestamp, processId });
@@ -232,7 +232,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		File dir = new File(path);
 		if (!dir.isDirectory()) {
-			abort(NLS.bind(LaunchingMessages.StandardVMRunner_Specified_working_directory_does_not_exist_or_is_not_a_directory___0__3, new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+			abort(NLS.bind(LaunchingMessages.StandardVMRunner_Specified_working_directory_does_not_exist_or_is_not_a_directory___0__3, path), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 		}
 		return dir;
 	}
@@ -272,7 +272,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 				exe = StandardVMType.findJavaExecutable(fVMInstance.getInstallLocation());
 			}
 			if (exe == null) {
-				abort(NLS.bind(LaunchingMessages.StandardVMRunner_Unable_to_locate_executable_for__0__1, new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				abort(NLS.bind(LaunchingMessages.StandardVMRunner_Unable_to_locate_executable_for__0__1, fVMInstance.getName()), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			} else {
 				return exe.getAbsolutePath();
 			}
@@ -299,7 +299,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 
 		// not found
-		abort(NLS.bind(LaunchingMessages.StandardVMRunner_Specified_executable__0__does_not_exist_for__1__4, new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		abort(NLS.bind(LaunchingMessages.StandardVMRunner_Specified_executable__0__does_not_exist_for__1__4, command, fVMInstance.getName()), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		// NOTE: an exception will be thrown - null cannot be returned
 		return null;
 	}

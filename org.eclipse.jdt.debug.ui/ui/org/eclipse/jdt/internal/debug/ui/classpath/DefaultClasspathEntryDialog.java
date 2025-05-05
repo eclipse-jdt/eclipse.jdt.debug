@@ -49,7 +49,7 @@ public class DefaultClasspathEntryDialog extends MessageDialog {
 
 	public DefaultClasspathEntryDialog(Shell parentShell, IRuntimeClasspathEntry entry) {
 		super(parentShell, ClasspathMessages.DefaultClasspathEntryDialog_0, null,
-				NLS.bind(ClasspathMessages.DefaultClasspathEntryDialog_1, new String[]{entry.getJavaProject().getElementName()}),
+				NLS.bind(ClasspathMessages.DefaultClasspathEntryDialog_1, entry.getJavaProject().getElementName()),
 				MessageDialog.NONE, new String[]{ClasspathMessages.DefaultClasspathEntryDialog_2, ClasspathMessages.DefaultClasspathEntryDialog_3}, 0);
 		fEntry = (DefaultProjectClasspathEntry) entry;
 	}

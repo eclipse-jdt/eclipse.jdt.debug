@@ -52,7 +52,7 @@ public class AllReferencesActionDelegate extends BaseInstanceActionDelegate {
 				InspectPopupDialog ipd = new InspectPopupDialog(getShell(),
  getAnchor(getPart().getAdapter(IDebugView.class)),
 						PopupInspectAction.ACTION_DEFININITION_ID,
-						new JavaInspectExpression(NLS.bind(Messages.AllReferencesActionDelegate_1,new String[]{var.getName()}),referenceList));
+						new JavaInspectExpression(NLS.bind(Messages.AllReferencesActionDelegate_1, var.getName()), referenceList));
 				ipd.open();
 				ipd.getTreeViewer().addDoubleClickListener(doubleClick -> handleDoubleClick(action, doubleClick));
 

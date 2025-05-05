@@ -280,8 +280,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				case ENVIRONMENT_ELEMENT:
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
-						LaunchingPlugin.log(NLS.bind("Execution environment must specify \"id\" attribute. Contributed by {0}.", new String[] { //$NON-NLS-1$
-								element.getContributor().getName() }));
+						LaunchingPlugin.log(NLS.bind("Execution environment must specify \"id\" attribute. Contributed by {0}.", element.getContributor().getName())); //$NON-NLS-1$
 					} else {
 						IExecutionEnvironment env = new ExecutionEnvironment(element);
 						fEnvironments.add(env);
@@ -291,8 +290,8 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				case ANALYZER_ELEMENT:
 					id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
-						LaunchingPlugin.log(NLS.bind("Execution environment analyzer must specify \"id\" attribute. Contributed by {0}", new String[] { //$NON-NLS-1$
-								element.getContributor().getName() }));
+
+						LaunchingPlugin.log(NLS.bind("Execution environment analyzer must specify \"id\" attribute. Contributed by {0}", element.getContributor().getName())); //$NON-NLS-1$
 					} else {
 						fAnalyzers.put(id, new Analyzer(element));
 					}
@@ -300,8 +299,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				case RULE_PARTICIPANT_ELEMENT:
 					id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
-						LaunchingPlugin.log(NLS.bind("Execution environment rule participant must specify \"id\" attribute. Contributed by {0}", new String[] { //$NON-NLS-1$
-								element.getContributor().getName() }));
+						LaunchingPlugin.log(NLS.bind("Execution environment rule participant must specify \"id\" attribute. Contributed by {0}", element.getContributor().getName())); //$NON-NLS-1$
 					} else {
 						// use a linked hash set to avoid duplicate rule participants
 						fRuleParticipants.add(new AccessRuleParticipant(element));

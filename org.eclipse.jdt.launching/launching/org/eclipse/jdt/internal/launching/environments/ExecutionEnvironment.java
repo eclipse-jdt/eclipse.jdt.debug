@@ -235,7 +235,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	public void setDefaultVM(IVMInstall vm) {
 		init();
 		if (vm != null && !fCompatibleVMs.contains(vm)) {
-			throw new IllegalArgumentException(NLS.bind(EnvironmentMessages.EnvironmentsManager_0, new String[]{getId()}));
+			throw new IllegalArgumentException(NLS.bind(EnvironmentMessages.EnvironmentsManager_0, getId()));
 		}
 		if (vm != null && vm.equals(fDefault)) {
 			return;

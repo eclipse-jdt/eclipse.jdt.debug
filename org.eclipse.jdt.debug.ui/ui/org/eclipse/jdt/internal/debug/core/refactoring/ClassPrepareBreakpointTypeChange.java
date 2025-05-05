@@ -46,7 +46,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.ClassPrepareBreakpointTypeChange_0,
-				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
+				getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName());
 	}
 
 	/* (non-Javadoc)
