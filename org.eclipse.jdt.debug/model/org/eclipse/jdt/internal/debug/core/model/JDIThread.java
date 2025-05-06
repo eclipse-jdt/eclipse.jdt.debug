@@ -1480,9 +1480,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						return true;
 					}
 				}
-				DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
-					// make a note that we auto-disabled the trigger point for this breakpoint.
-					// we re enable it at cleanup of JDITarget
+				try {
+					if (breakpoint.isTriggerPoint()) {
+						DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
+						// make a note that we auto-disabled the trigger point for this breakpoint.
+						// we re enable it at cleanup of JDITarget
+					}
+				} catch (CoreException e) {
+					logError(e);
+				}
 			}
 		}
 
