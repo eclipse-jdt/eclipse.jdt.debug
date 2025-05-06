@@ -392,7 +392,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		 * and also generic signature such as Ljava/util/function/Predicate<+Ljava/util/List<Ljava/lang/Integer;>;>; Ljava/util/Comparator<-TT;>;
 		 * which will fail to properly resolved to the type.
 		 */
-		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE)) || genericSignature.startsWith(String.valueOf(Signature.C_CAPTURE))
+		if (genericSignature.startsWith(String.valueOf(Signature.C_TYPE_VARIABLE))) {
+			fixedSignature.append(genericSignature.substring(String.valueOf(Signature.C_TYPE_VARIABLE).length(), genericSignature.length() - 1));
+			return;
+		}
+		if (genericSignature.startsWith(String.valueOf(Signature.C_CAPTURE))
 				|| genericSignature.startsWith(String.valueOf(Signature.C_SUPER))) {
 			fixedSignature.append(toDotQualified(erasureSignature));
 			return;
