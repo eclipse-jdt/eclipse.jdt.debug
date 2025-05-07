@@ -306,7 +306,7 @@ public class SourceDebugExtensionParser {
 		if (fDefinedStrata.contains(stratumId)) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_9,
-					new String[] { stratumId }));
+					stratumId));
 		}
 		fCurrentStratum = new ReferenceTypeImpl.Stratum(stratumId);
 		fFileSectionDefinedForCurrentStratum = false;
@@ -318,7 +318,7 @@ public class SourceDebugExtensionParser {
 				if (fFileSectionDefinedForCurrentStratum) {
 					throw new AbsentInformationException(NLS.bind(
 							JDIMessages.SourceDebugExtensionParser_10,
-							new String[] { stratumId }));
+							stratumId));
 				}
 				parseFileSection(lexer);
 				fFileSectionDefinedForCurrentStratum = true;
@@ -327,7 +327,7 @@ public class SourceDebugExtensionParser {
 				if (fLineSectionDefinedForCurrentStratum) {
 					throw new AbsentInformationException(NLS.bind(
 							JDIMessages.SourceDebugExtensionParser_11,
-							new String[] { stratumId }));
+							stratumId));
 				}
 				parseLineSection(lexer);
 				fLineSectionDefinedForCurrentStratum = true;
@@ -341,19 +341,19 @@ public class SourceDebugExtensionParser {
 			default:
 				throw new AbsentInformationException(NLS.bind(
 						JDIMessages.SourceDebugExtensionParser_12,
-						new String[] { new String(lexer.lexem()) }));
+						new String(lexer.lexem())));
 			}
 			lexemType = lexer.lexemType();
 		}
 		if (!fFileSectionDefinedForCurrentStratum) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_13,
-					new String[] { stratumId }));
+					stratumId));
 		}
 		if (!fLineSectionDefinedForCurrentStratum) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_14,
-					new String[] { stratumId }));
+					stratumId));
 		}
 		fDefinedStrata.add(stratumId);
 		fReferenceType.addStratum(fCurrentStratum);
@@ -364,7 +364,7 @@ public class SourceDebugExtensionParser {
 		if (lexer.nextLexem() != Lexer.CR) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
-					new String[] { new String(lexer.lexem()) }));
+					new String(lexer.lexem())));
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -401,7 +401,7 @@ public class SourceDebugExtensionParser {
 				fCurrentStratum.addFileInfo(fileId, fileName, getNonAsteriskString(lexer));
 				break;
 			default:
-				throw new AbsentInformationException(NLS.bind(JDIMessages.SourceDebugExtensionParser_12, new String[] { new String(lexer.lexem()) }));
+				throw new AbsentInformationException(NLS.bind(JDIMessages.SourceDebugExtensionParser_12, new String(lexer.lexem())));
 		}
 	}
 
@@ -411,7 +411,7 @@ public class SourceDebugExtensionParser {
 		if (lexer.nextLexem() != Lexer.CR) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
-					new String[] { new String(lexer.lexem()) }));
+					new String(lexer.lexem())));
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -480,7 +480,7 @@ public class SourceDebugExtensionParser {
 		if (lexer.nextLexem() != Lexer.CR) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
-					new String[] { new String(lexer.lexem()) }));
+					new String(lexer.lexem())));
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -494,7 +494,7 @@ public class SourceDebugExtensionParser {
 		if (lexer.nextLexem() != Lexer.CR) {
 			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
-					new String[] { new String(lexer.lexem()) }));
+					new String(lexer.lexem())));
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {

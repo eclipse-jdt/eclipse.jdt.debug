@@ -499,7 +499,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (value instanceof IJavaObject) {
 			String label = ((IJavaObject) value).getLabel();
 			if (label != null) {
-				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_7, new String[] { label }));
+				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_7, label));
 			}
 		}
 		if(isUnknown(signature)) {
@@ -533,7 +533,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				buffer.append('"');
 				if(value instanceof IJavaObject){
 					buffer.append(" "); //$NON-NLS-1$
-					buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_118, new String[]{String.valueOf(((IJavaObject)value).getUniqueId())}));
+					buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_118, String.valueOf(((IJavaObject) value).getUniqueId())));
 				}
 			}
 
@@ -1274,7 +1274,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (isDuplicateName(field)) {
 				try {
 					String decl = field.getDeclaringType().getName();
-					buff.append(NLS.bind(" ({0})", new String[]{getQualifiedName(decl)})); //$NON-NLS-1$
+					buff.append(NLS.bind(" ({0})", getQualifiedName(decl))); //$NON-NLS-1$
 				} catch (DebugException e) {
 				}
 			}
@@ -2049,7 +2049,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			String instanceText= instances[i].getValueString();
 			if (instanceText != null) {
 				buffer.append(' ');
-				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_instance_1, new String[] {instanceText}));
+				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_instance_1, instanceText));
 			}
 		}
 	}

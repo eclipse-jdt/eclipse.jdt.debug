@@ -40,7 +40,7 @@ public class DeleteBreakpointChange extends BreakpointChange {
 	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.DeleteBreakpointChange_0,
-				new String[] {getBreakpointLabel(getOriginalBreakpoint())});
+				getBreakpointLabel(getOriginalBreakpoint()));
 	}
 
 	/* (non-Javadoc)

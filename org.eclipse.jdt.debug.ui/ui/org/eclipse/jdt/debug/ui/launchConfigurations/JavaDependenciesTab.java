@@ -533,15 +533,15 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 			if (status.isOK()) {
 				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				if (!project.exists()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {projectName}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, projectName));
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {projectName}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, projectName));
 					return false;
 				}
 			} else {
-				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()}));
+				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, status.getMessage()));
 				return false;
 			}
 		}
@@ -552,14 +552,14 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 			type = entries[i].getType();
 			if (type == IRuntimeClasspathEntry.ARCHIVE) {
 				if(!entries[i].getPath().isAbsolute())	{
-					setErrorMessage(NLS.bind(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, new String[]{entries[i].getPath().toString()}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, entries[i].getPath().toString()));
 					return false;
 				}
 			}
 			if(type == IRuntimeClasspathEntry.PROJECT) {
 				IResource res = entries[i].getResource();
 				if(res != null && !res.isAccessible()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaClasspathTab_1, new String[]{res.getName()}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaClasspathTab_1, res.getName()));
 					return false;
 				}
 			}

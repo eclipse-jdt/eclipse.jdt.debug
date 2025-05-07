@@ -671,7 +671,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		if (config != null) {
 			return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
 		}
-		abort(NLS.bind(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null);
+		abort(NLS.bind(LaunchingMessages.LaunchingPlugin_32, id), null);
 		return null;
 	}
 

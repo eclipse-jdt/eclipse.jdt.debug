@@ -55,7 +55,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
         try {
             String name= variable.getName();
             String title= ActionMessages.JavaPrimitiveValueEditor_0;
-            String message= NLS.bind(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name});
+			String message = NLS.bind(ActionMessages.JavaPrimitiveValueEditor_1, name);
             String initialValue= variable.getValue().getValueString();
             PrimitiveValidator validator= new PrimitiveValidator();
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator){
@@ -185,7 +185,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                break;
             }
             if (type != null) {
-                return NLS.bind(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type });
+				return NLS.bind(ActionMessages.JavaPrimitiveValueEditor_4, type);
             }
             return null;
         }

@@ -85,7 +85,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
                 buffer.append(logicalStructure.getDescription());
                 String pluginId= logicalStructure.getContributingPluginId();
                 if (pluginId != null) {
-                    buffer.append(NLS.bind(DebugUIMessages.JavaLogicalStructuresPreferencePage_8, new String[] {pluginId}));
+					buffer.append(NLS.bind(DebugUIMessages.JavaLogicalStructuresPreferencePage_8, pluginId));
                 }
             }
             return buffer.toString();

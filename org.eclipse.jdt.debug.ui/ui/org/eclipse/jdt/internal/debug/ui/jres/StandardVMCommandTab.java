@@ -75,7 +75,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setText(NLS.bind(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()}));
+		fDefaultButton.setText(NLS.bind(JREMessages.AbstractJavaCommandTab_2, getDefaultCommand()));
 
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
 			@Override

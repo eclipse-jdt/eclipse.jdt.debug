@@ -518,7 +518,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
-				dataDisplay.displayExpressionValue(NLS.bind(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)}));
+				dataDisplay.displayExpressionValue(NLS.bind(ActionMessages.EvaluateAction__evaluation_failed__Reason, format(message)));
 			} else {
 				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1);
 			}

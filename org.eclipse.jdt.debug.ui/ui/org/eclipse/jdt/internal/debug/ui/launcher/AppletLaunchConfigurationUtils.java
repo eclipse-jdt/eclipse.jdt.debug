@@ -82,7 +82,7 @@ public class AppletLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort(NLS.bind(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+			abort(NLS.bind(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, mainTypeName, javaProject.getElementName()), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		}
 		return mainType;
 	}
