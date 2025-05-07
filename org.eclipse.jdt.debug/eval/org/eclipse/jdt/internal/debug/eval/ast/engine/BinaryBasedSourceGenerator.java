@@ -278,9 +278,9 @@ public class BinaryBasedSourceGenerator {
 								.getTypeVariable(typeParameters[0]));
 						String[] typeParameterBounds = Signature
 								.getTypeParameterBounds(typeParameters[0]);
-						source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+						source.append(" extends ").append(toSourceSignature(typeParameterBounds[0])); //$NON-NLS-1$
 						for (int i = 1; i < typeParameterBounds.length; i++) {
-							source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
+							source.append(" & ").append(toSourceSignature(typeParameterBounds[i])); //$NON-NLS-1$
 						}
 						for (int j = 1; j < typeParameters.length; j++) {
 							source.append(',')
@@ -288,9 +288,9 @@ public class BinaryBasedSourceGenerator {
 											.getTypeVariable(typeParameters[j]));
 							typeParameterBounds = Signature
 									.getTypeParameterBounds(typeParameters[j]);
-							source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+							source.append(" extends ").append(toSourceSignature(typeParameterBounds[0])); //$NON-NLS-1$
 							for (int i = 1; i < typeParameterBounds.length; i++) {
-								source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
+								source.append(" & ").append(toSourceSignature(typeParameterBounds[i])); //$NON-NLS-1$
 							}
 						}
 						source.append("> "); //$NON-NLS-1$
@@ -299,13 +299,12 @@ public class BinaryBasedSourceGenerator {
 							.getTypeSuperClassInterfaces(genericSignature);
 					int length = superClassInterfaces.length;
 					if (length > 0) {
-						source.append("extends ").append(Signature.toString(superClassInterfaces[0]).replace('/', '.')); //$NON-NLS-1$
+						source.append("extends ").append(toSourceSignature(superClassInterfaces[0])); //$NON-NLS-1$
 						if (length > 1) {
-							source.append(" implements ").append(Signature.toString(superClassInterfaces[1]).replace('/', '.')); //$NON-NLS-1$
+							source.append(" implements ").append(toSourceSignature(superClassInterfaces[1])); //$NON-NLS-1$
 							for (int i = 2; i < length; i++) {
 								source.append(',')
-										.append(Signature
-												.toString(superClassInterfaces[1]));
+										.append(toSourceSignature(superClassInterfaces[1]));
 							}
 						}
 					}
@@ -396,6 +395,10 @@ public class BinaryBasedSourceGenerator {
 		source.append("}\n"); //$NON-NLS-1$
 
 		return source;
+	}
+
+	private String toSourceSignature(String superIfc) {
+		return Signature.toString(superIfc).replace('/', '.');
 	}
 
 	private StringBuilder buildFieldDeclaration(Field field) {
