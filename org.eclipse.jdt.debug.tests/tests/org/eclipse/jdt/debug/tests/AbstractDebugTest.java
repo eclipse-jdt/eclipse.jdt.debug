@@ -248,6 +248,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded21 = false;
 	private static boolean loaded23 = false;
 	private static boolean loaded24 = false;
+	private static boolean loaded25 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -697,7 +698,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaProject jp = null;
 		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
 		try {
-			if (!loaded24) {
+			if (!loaded25) {
 				jp = createProject(TWENTYFIVE_PROJECT_NAME, JavaProjectHelper.TEST_25_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_25_EE_NAME, false);
 				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
 				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_25);
@@ -705,7 +706,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_25);
 				cfgs.add(createLaunchConfiguration(jp, "Main1"));
 				cfgs.add(createLaunchConfiguration(jp, "Main2"));
-				loaded24 = true;
+				loaded25 = true;
 				waitForBuild();
 				assertNoErrorMarkersExist(jp.getProject());
 			}
@@ -720,7 +721,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (CoreException ce) {
 				// ignore
 			}
-			handleProjectCreationException(e, TWENTYFOUR_PROJECT_NAME, jp);
+			handleProjectCreationException(e, TWENTYFIVE_PROJECT_NAME, jp);
 		}
 	}
 
