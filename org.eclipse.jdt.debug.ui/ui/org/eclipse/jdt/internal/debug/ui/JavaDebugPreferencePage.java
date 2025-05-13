@@ -101,6 +101,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fShowStepResult;
 	private Button fShowStepResultRemote;
 	private Button fAdvancedSourcelookup;
+	private Button fExceptionBreakpoint;
 
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
@@ -187,6 +188,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPromptDeleteConditionalBreakpoint= SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint, null, false, 1);
 		fFilterUnrelatedBreakpoints = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_filterUnrelatedBreakpoints, null, false, 1);
 
+		fExceptionBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.fExceptionBreakpointMsg, null, true, 1);
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fOnlyIncludeExportedEntries = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_only_include_exported_entries, null, false, 1);
 
@@ -251,6 +253,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			prefs.putInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 			prefs.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, fFilterUnrelatedBreakpoints.getSelection());
 			prefs.putBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, fAdvancedSourcelookup.getSelection());
+			prefs.putBoolean(JDIDebugModel.PREF_CREATE_EXCEPTION_BREAKPOINTS_ON_CLICK, fExceptionBreakpoint.getSelection());
 			try {
 				prefs.flush();
 			}
@@ -300,6 +303,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fShowStepTimeoutText.setStringValue(Integer.toString(prefs.getInt(JDIDebugModel.PREF_SHOW_STEP_RESULT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT)));
 			fTimeoutText.setStringValue(Integer.toString(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)));
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
+			fExceptionBreakpoint.setSelection(prefs.getBoolean(JDIDebugModel.PREF_CREATE_EXCEPTION_BREAKPOINTS_ON_CLICK, true));
 			fAdvancedSourcelookup.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true));
 		}
 		prefs = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
@@ -343,6 +347,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fShowStepTimeoutText.setStringValue(Integer.toString(prefs.getInt(bundleId, JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT, null)));
 		fTimeoutText.setStringValue(Integer.toString(prefs.getInt(bundleId, JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT, null)));
 		fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true, null));
+		fExceptionBreakpoint.setSelection(prefs.getBoolean(bundleId, JDIDebugModel.PREF_CREATE_EXCEPTION_BREAKPOINTS_ON_CLICK, true, null));
 		fAdvancedSourcelookup.setSelection(prefs.getBoolean(bundleId, JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true, null));
 
 		bundleId = LaunchingPlugin.ID_PLUGIN;
