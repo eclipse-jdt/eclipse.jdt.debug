@@ -104,6 +104,14 @@ public class JDIDebugModel {
 			+ ".do_not_install_breakpoints_from_unrelated_sources"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference for controlling whether an exception breakpoint should be created or managed
+	 * when clicked on an exception type in the console.
+	 *
+	 * @since 3.23
+	 */
+	public static final String PREF_CREATE_EXCEPTION_BREAKPOINTS_ON_CLICK = getPluginIdentifier() + ".create_exception_breakpoint_on_click"; //$NON-NLS-1$
+
+	/**
 	 * Preference key for specifying if the value returned or thrown should be displayed as variable after a "step return" or "step over" (if
 	 * supported by the vm)
 	 * @since 3.11
