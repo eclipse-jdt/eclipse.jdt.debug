@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 IBM Corporation and others.
+ * Copyright (c) 2025 IBM Corporation
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,14 +13,28 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class RulerToggleLambdaEntryBreakpointActionDelegate extends AbstractRulerToggleBreakpointActionDelegate {
+public class RulerToggleTriggerBreakpointActionDelegate extends AbstractRulerToggleBreakpointActionDelegate {
 
 	@Override
 	protected boolean doWork(ITextEditor editor, ITextSelection selection) {
-		BreakpointToggleUtils.setUnsetLambdaEntryBreakpoint(true);
-		return true;
+		IJavaLineBreakpoint jlp = ToggleBreakpointAdapter.findExistingBreakpoint(currentEditor, selection);
+		try {
+			if (jlp != null && !jlp.isTriggerPoint()) {
+				ToggleBreakpointAdapter.deleteBreakpoint(jlp, editor, null);
+				BreakpointToggleUtils.setTriggerpoint(true);
+				return true;
+			}
+			BreakpointToggleUtils.setTriggerpoint(true);
+			return true;
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+			return false;
+		}
 	}
 }
