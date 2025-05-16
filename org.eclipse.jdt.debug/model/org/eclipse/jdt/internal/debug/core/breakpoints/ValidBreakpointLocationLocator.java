@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2023 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -128,6 +128,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public static final int LOCATION_METHOD = 2;
 	public static final int LOCATION_FIELD = 3;
 	public static final int LOCATION_LAMBDA_METHOD = 4;
+	public static boolean LOCATION_METHOD_CLOSE = false;
 
 
 	private final CompilationUnit fCompilationUnit;
@@ -148,6 +149,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	private List<String> fLabels;
 	private final int fInputOffset;
 	private final int fInputLength;
+	private boolean fThroughToggle;
 
 	/**
 	 * @param compilationUnit
@@ -190,6 +192,33 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		fLocationFound = false;
 		fInputOffset = offset;
 		fInputLength = end;
+	}
+
+	/**
+	 * @param compilationUnit
+	 *            the JDOM CompilationUnit of the source code.
+	 * @param lineNumber
+	 *            the line number in the source code where to put the breakpoint.
+	 * @param bindingsResolved
+	 *            indicates whether bindings are resolved in the compilation unit.
+	 * @param bestMatch
+	 *            if <code>true</code> look for the best match, otherwise look only for a valid line.
+	 * @param offset
+	 *            selection offset on which breakpoints should be toggled.
+	 * @param end
+	 *            selection end on which breakpoints should be toggled.
+	 * @param throughToggle
+	 *            if <code>true</code>, indicates the breakpoint is being toggled directly from editor ruler by user.
+	 */
+	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int lineNumber, boolean bindingsResolved, boolean bestMatch, int offset, int end, boolean throughToggle) {
+		fCompilationUnit = compilationUnit;
+		fLineNumber = lineNumber;
+		fBindingsResolved = bindingsResolved;
+		fBestMatch = bestMatch;
+		fLocationFound = false;
+		fInputOffset = offset;
+		fInputLength = end;
+		fThroughToggle = throughToggle;
 	}
 
 	/**
@@ -1128,11 +1157,12 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		if (visit(node, false)) {
+			Block body = node.getBody();
 			if (fBestMatch) {
 				// check if we are on the line which contains the method name
 				int nameOffset = node.getName().getStartPosition();
 				if (lineNumber(nameOffset) == fLineNumber) {
-					if (node.getParent() instanceof AnonymousClassDeclaration){
+					if (node.getParent() instanceof AnonymousClassDeclaration) {
 						fLocationType = LOCATION_NOT_FOUND;
 						fLocationFound = true;
 						return false;
@@ -1142,9 +1172,23 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 					fLocationFound = true;
 					return false;
 				}
+
+				if (body != null && fThroughToggle) {
+					int bodyStart = body.getStartPosition();
+					int bodyLength = body.getLength();
+					int bodyEnd = bodyStart + bodyLength;
+					int closingBraceOffset = bodyEnd - 1;
+					if (lineNumber(closingBraceOffset) == fLineNumber) {
+						fMemberOffset = closingBraceOffset;
+						LOCATION_METHOD_CLOSE = true;
+						fLocationType = LOCATION_METHOD;
+						fLocationFound = true;
+						return false;
+					}
+					body.accept(this);
+				}
 			}
 			// visit only the body
-			Block body = node.getBody();
 			if (body != null) { // body is null for abstract methods
 				body.accept(this);
 			}
@@ -1609,5 +1653,4 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(WhileStatement node) {
 		return visit(node, false);
 	}
-
 }
