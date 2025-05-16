@@ -210,7 +210,7 @@ public abstract class Instruction {
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
 					NLS.bind(
 							InstructionsEvaluationMessages.Instruction_No_type,
-							new String[] { qualifiedName }), null));
+							qualifiedName), null));
 		}
 		return classReference.getInstanceType();
 	}
@@ -266,7 +266,7 @@ public abstract class Instruction {
 				JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
 				NLS.bind(
 						InstructionsEvaluationMessages.Instruction_No_type,
-						new String[] { name }), null));
+						name), null));
 	}
 
 	protected IJavaArrayType getArrayType(String typeSignature, int dimension)
@@ -286,7 +286,7 @@ public abstract class Instruction {
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
 					NLS.bind(
 							InstructionsEvaluationMessages.Instruction_No_type,
-							new String[] { qualifiedName }), null));
+							qualifiedName), null));
 		}
 		IJavaType[] types = getVM().getJavaTypes(qualifiedName);
 		checkTypes(types, qualifiedName);
@@ -310,7 +310,7 @@ public abstract class Instruction {
 				JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
 				NLS.bind(
 						InstructionsEvaluationMessages.Instruction_No_type,
-						new String[] { qualifiedName }), null));
+						qualifiedName), null));
 	}
 
 	protected void checkTypes(IJavaType[] types, String qualifiedName)
@@ -320,7 +320,7 @@ public abstract class Instruction {
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
 					NLS.bind(
 							InstructionsEvaluationMessages.Instruction_No_type,
-							new String[] { qualifiedName }), null));
+							qualifiedName), null));
 		}
 	}
 

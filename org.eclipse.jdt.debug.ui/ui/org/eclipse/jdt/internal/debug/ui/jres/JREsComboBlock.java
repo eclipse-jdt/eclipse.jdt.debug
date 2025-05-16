@@ -473,9 +473,9 @@ public class JREsComboBlock {
 			IPath path = JavaRuntime.newJREContainerPath(env);
 			IVMInstall install = JavaRuntime.getVMInstall(path);
 			if (install != null) {
-				names[i] = NLS.bind(JREMessages.JREsComboBlock_15, new String[]{env.getId(), install.getName()});
+				names[i] = NLS.bind(JREMessages.JREsComboBlock_15, env.getId(), install.getName());
 			} else {
-				names[i] = NLS.bind(JREMessages.JREsComboBlock_16, new String[]{env.getId()});
+				names[i] = NLS.bind(JREMessages.JREsComboBlock_16, env.getId());
 			}
 			i++;
 		}
@@ -603,12 +603,12 @@ public class JREsComboBlock {
 				if (environment == null) {
 					fErrorPath = containerPath;
 					selectEnvironment(environment);
-					setError(NLS.bind(JREMessages.JREsComboBlock_6, new String[]{envId}));
+					setError(NLS.bind(JREMessages.JREsComboBlock_6, envId));
 				} else {
 					selectEnvironment(environment);
 					IVMInstall[] installs = environment.getCompatibleVMs();
 					if (installs.length == 0) {
-						setError(NLS.bind(JREMessages.JREsComboBlock_7, new String[]{environment.getId()}));
+						setError(NLS.bind(JREMessages.JREsComboBlock_7, environment.getId()));
 					}
 				}
 			} else {
@@ -622,13 +622,13 @@ public class JREsComboBlock {
 					} else {
 						IVMInstallType installType = JavaRuntime.getVMInstallType(installTypeId);
 						if (installType == null) {
-							setError(NLS.bind(JREMessages.JREsComboBlock_9, new String[]{installTypeId}));
+							setError(NLS.bind(JREMessages.JREsComboBlock_9, installTypeId));
 						} else {
 							String installName = JavaRuntime.getVMInstallName(containerPath);
 							if (installName == null) {
-								setError(NLS.bind(JREMessages.JREsComboBlock_10, new String[]{installType.getName()}));
+								setError(NLS.bind(JREMessages.JREsComboBlock_10, installType.getName()));
 							} else {
-								setError(NLS.bind(JREMessages.JREsComboBlock_11, new String[]{installName, installType.getName()}));
+								setError(NLS.bind(JREMessages.JREsComboBlock_11, installName, installType.getName()));
 							}
 						}
 					}

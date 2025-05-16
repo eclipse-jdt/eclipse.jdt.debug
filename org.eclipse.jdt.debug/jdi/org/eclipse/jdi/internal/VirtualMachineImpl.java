@@ -315,7 +315,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	public void checkHCRSupported() throws UnsupportedOperationException {
 		if (!isHCRSupported()) {
 			throw new UnsupportedOperationException(
-					NLS.bind(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, new String[] { name() }));
+					NLS.bind(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, name()));
 		}
 	}
 

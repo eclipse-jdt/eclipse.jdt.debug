@@ -44,7 +44,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask(NLS.bind(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1, new String[]{configuration.getName()}), 3);
+		monitor.beginTask(NLS.bind(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1, configuration.getName()), 3);
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;

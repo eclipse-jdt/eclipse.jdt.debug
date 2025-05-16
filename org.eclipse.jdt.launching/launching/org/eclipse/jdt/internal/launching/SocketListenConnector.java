@@ -111,7 +111,7 @@ public class SocketListenConnector implements IVMConnector {
 		}
 
 		try {
-			monitor.subTask(NLS.bind(LaunchingMessages.SocketListenConnector_3, new String[]{portNumberString}));
+			monitor.subTask(NLS.bind(LaunchingMessages.SocketListenConnector_3, portNumberString));
 			connector.startListening(acceptArguments);
 			SocketListenConnectorProcess process = new SocketListenConnectorProcess(launch, portNumberString, connectionLimit);
 			process.waitForConnection(connector, acceptArguments);

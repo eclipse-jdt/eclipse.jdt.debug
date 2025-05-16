@@ -201,7 +201,7 @@ public class JavaBreakpointPage extends PropertyPage {
                     @Override
 					public void shellActivated(ShellEvent e) {
                         Shell shell = (Shell)e.getSource();
-                        shell.setText(NLS.bind(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())}));
+						shell.setText(NLS.bind(PropertyPageMessages.JavaBreakpointPage_10, getName(getBreakpoint())));
                         shell.removeShellListener(this);
                     }
                     @Override

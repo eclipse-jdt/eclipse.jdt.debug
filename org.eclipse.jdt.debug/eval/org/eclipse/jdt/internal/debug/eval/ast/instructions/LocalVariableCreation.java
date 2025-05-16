@@ -113,6 +113,6 @@ public class LocalVariableCreation extends CompoundInstruction {
 	@Override
 	public String toString() {
 		return NLS.bind(InstructionsEvaluationMessages.LocalVariableCreation_create_local_variable__0___1___1,
-						new String[] { fName, fTypeSignature });
+				fName, fTypeSignature);
 	}
 }

@@ -386,7 +386,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 */
 	public static ILaunchConfiguration createLaunchConfigurationTemplate(IFile page) throws CoreException {
 		ILaunchConfigurationType lcType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		String name = NLS.bind(SnippetMessages.getString("ScrapbookLauncher.17"), new String[]{page.getName()}); //$NON-NLS-1$
+		String name = NLS.bind(SnippetMessages.getString("ScrapbookLauncher.17"), page.getName()); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 		wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$

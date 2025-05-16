@@ -783,7 +783,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					Throwable throwable= exception.getStatus().getException();
 					error.append("\n\t\t"); //$NON-NLS-1$
 					if (throwable instanceof InvocationException) {
-						error.append(NLS.bind(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()}));
+						error.append(NLS.bind(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, ((InvocationException) throwable).exception().referenceType().name()));
 					} else if (throwable instanceof UnsupportedOperationException) {
 						error = new StringBuilder();
 						error.append(DebugUIMessages.JavaDetailFormattersManager_7);
