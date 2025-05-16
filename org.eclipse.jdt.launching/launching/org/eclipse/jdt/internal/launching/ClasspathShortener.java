@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2023 Cedric Chabanois and others.
+ * Copyright (c) 2018, 2025 Cedric Chabanois and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Cedric Chabanois (cchabanois@gmail.com) - Launching command line exceeds the process creation command limit on *nix - https://bugs.eclipse.org/bugs/show_bug.cgi?id=385738
  *     IBM Corporation - Launching command line exceeds the process creation command limit on Windows - https://bugs.eclipse.org/bugs/show_bug.cgi?id=327193
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -54,9 +55,11 @@ import org.eclipse.jdt.launching.IVMInstall2;
  */
 public class ClasspathShortener implements IProcessTempFileCreator {
 	private static final String CLASSPATH_ENV_VAR_PREFIX = "CLASSPATH="; //$NON-NLS-1$
+	public static final int ARG_MAX_FREEBSD = 2097152;
 	public static final int ARG_MAX_LINUX = 2097152;
 	public static final int ARG_MAX_WINDOWS = 32767;
 	public static final int ARG_MAX_MACOS = 262144;
+	public static final int MAX_ARG_STRLEN_FREEBSD = 131072;
 	public static final int MAX_ARG_STRLEN_LINUX = 131072;
 	private final String os;
 	private final String javaVersion;
@@ -261,6 +264,9 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 		// POSIX suggests to subtract 2048 additionally so that the process may safely modify its environment.
 		// see https://www.in-ulm.de/~mascheck/various/argmax/
 		switch (os) {
+			case Platform.OS_FREEBSD:
+				// ARG_MAX will be 1/4 of the stack size. 2097152 by default
+				return ARG_MAX_FREEBSD - getEnvironmentLength() - 2048;
 			case Platform.OS_LINUX:
 				// ARG_MAX will be 1/4 of the stack size. 2097152 by default
 				return ARG_MAX_LINUX - getEnvironmentLength() - 2048;
@@ -277,6 +283,11 @@ public class ClasspathShortener implements IProcessTempFileCreator {
 	}
 
 	protected int getMaxArgLength() {
+		if (os.equals(Platform.OS_FREEBSD)) {
+			// On FreeBSD, MAX_ARG_STRLEN is the maximum length of a command line argument (or environment variable).
+			// Its value cannot be changed without recompiling the kernel.
+			return MAX_ARG_STRLEN_FREEBSD - 2048;
+		}
 		if (os.equals(Platform.OS_LINUX)) {
 			// On Linux, MAX_ARG_STRLEN (kernel >= 2.6.23) is the maximum length of a command line argument (or environment variable). Its value
 			// cannot be changed without recompiling the kernel.
