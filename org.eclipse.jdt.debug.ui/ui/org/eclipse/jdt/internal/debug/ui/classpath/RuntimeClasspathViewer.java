@@ -64,7 +64,17 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
-			DebugUIPlugin.getStandardDisplay().asyncExec(() -> refresh(true));
+			if (DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+				refresh(true);
+			} else {
+				DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						refresh(true);
+					}
+				});
+			}
+
 		}
 	};
 
@@ -385,9 +395,6 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 
 	@Override
 	public void refresh(Object entry) {
-		if (fTree.isDisposed()) {
-			return;
-		}
 		getTreeViewer().refresh();
 	}
 

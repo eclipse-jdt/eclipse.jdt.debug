@@ -473,5 +473,4 @@ public class DebugUIMessages extends NLS {
 	public static String CompareObjectsFailedException;
 
 	public static String ListSameElementsFor2;
-	public static String fExceptionBreakpointMsg;
 }

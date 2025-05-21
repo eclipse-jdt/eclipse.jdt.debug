@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -402,9 +402,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				deleteTracepoint(breakpoint, part, monitor);
 				BreakpointToggleUtils.setUnsetTracepoints(false);
 			} else {
-				if (ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE) {
-					ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE = false;
-				}
 				deleteBreakpoint(breakpoint, part, monitor);
 			}
 			return;
@@ -447,11 +444,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				methodBreakpoint.setConditionSuspendOnTrue(true);
 			}
 			BreakpointToggleUtils.setUnsetTracepoints(false);
-		}
-		if (ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE) {
-			methodBreakpoint.setEntry(false);
-			methodBreakpoint.setExit(true);
-			ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE = false;
 		}
 	}
 
@@ -1556,7 +1548,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			lambdaEntryBP = true;
 			BreakpointToggleUtils.setUnsetLambdaEntryBreakpoint(false);
 		} else {
-			loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true, ts.getOffset(), ts.getLength(), true);
+			loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true, ts.getOffset(), ts.getLength());
 		}
 		unit.accept(loc);
 

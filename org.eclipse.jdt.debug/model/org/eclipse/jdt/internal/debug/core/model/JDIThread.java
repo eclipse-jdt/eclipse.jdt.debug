@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1480,15 +1480,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						return true;
 					}
 				}
-				try {
-					if (breakpoint.isTriggerPoint()) {
-						DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
-						// make a note that we auto-disabled the trigger point for this breakpoint.
-						// we re enable it at cleanup of JDITarget
-					}
-				} catch (CoreException e) {
-					logError(e);
-				}
+				DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
+					// make a note that we auto-disabled the trigger point for this breakpoint.
+					// we re enable it at cleanup of JDITarget
 			}
 		}
 
@@ -1518,9 +1512,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					suspend = true;
 				}
 			}
-		}
-		if (suspend) {
-			handleDisableOnHit(breakpoint);
 		}
 		return suspend;
 	}
@@ -3737,16 +3728,5 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	boolean isBreakpointHandlingOngoing() {
 		return fCompletingBreakpointHandling.get() || fHandlingSuspendForBreakpoint.get();
-	}
-
-	private void handleDisableOnHit(JavaBreakpoint breakpoint) {
-		try {
-			if (breakpoint.isDisableOnHit()) {
-				breakpoint.setEnabled(false);
-				breakpoint.setDisableOnHit(false);
-			}
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
-		}
 	}
 }

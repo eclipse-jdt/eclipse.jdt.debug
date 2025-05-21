@@ -726,7 +726,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				linkStart = line.lastIndexOf('\t', regionOffsetInLine);
 			}
 			String extractedTrace = line.substring(linkStart == -1 ? 0 : linkStart + 1, linkEnd + 1).trim();
-			if (extractedTrace.charAt(0) == '(' && line.startsWith("at")) { //$NON-NLS-1$
+			if (extractedTrace.charAt(0) == '(') {
 				int lastOpen = line.lastIndexOf('(');
 				if (lastOpen > 0) {
 					if (Character.isWhitespace(line.charAt(lastOpen - 1))) {

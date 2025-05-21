@@ -488,59 +488,6 @@ public class JavaStackTraceAmbiguityTest extends AbstractJavaStackTraceConsoleTe
 			project.getProject().delete(force, new NullProgressMonitor());
 		}
 	}
-
-	public void testLinkNavigationTrueForLinksWithTimeStamps1() throws Exception {
-		String projectName = "StackTest";
-		IJavaProject project = createProject(projectName, "testfiles/AmbiguityTest/", JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
-		waitForBuild();
-		waitForJobs();
-		consoleDocumentWithText("250420 12:59:13.999 (SampleGenerics.java:25) Hello");
-		IHyperlink[] hyperlinks = fConsole.getHyperlinks();
-		assertEquals("Wrong hyperlinks, listing all links: " + allLinks(), 1, hyperlinks.length);
-		String expectedText = "System.out.print(\"EXPECTED_GENERICS\");";
-		try {
-			for (IHyperlink hyperlink : hyperlinks) {
-				closeAllEditors();
-				hyperlink.linkActivated();
-				IEditorPart editor = waitForEditorOpen();
-				String[] selectedText = new String[1];
-				sync(() -> selectedText[0] = getSelectedText(editor));
-				selectedText[0] = selectedText[0].trim();
-				assertEquals("Wrong text selected after hyperlink navigation", expectedText, selectedText[0]);
-
-			}
-		} finally {
-			closeAllEditors();
-			boolean force = true;
-			project.getProject().delete(force, new NullProgressMonitor());
-		}
-	}
-	public void testLinkNavigationTrueForLinksWithTimeStamps2() throws Exception {
-		String projectName = "StackTest";
-		IJavaProject project = createProject(projectName, "testfiles/AmbiguityTest/", JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
-		waitForBuild();
-		waitForJobs();
-		consoleDocumentWithText("2025-04-20 12.01.23 (SampleGenerics.java:25) Hello");
-		IHyperlink[] hyperlinks = fConsole.getHyperlinks();
-		assertEquals("Wrong hyperlinks, listing all links: " + allLinks(), 1, hyperlinks.length);
-		String expectedText = "System.out.print(\"EXPECTED_GENERICS\");";
-		try {
-			for (IHyperlink hyperlink : hyperlinks) {
-				closeAllEditors();
-				hyperlink.linkActivated();
-				IEditorPart editor = waitForEditorOpen();
-				String[] selectedText = new String[1];
-				sync(() -> selectedText[0] = getSelectedText(editor));
-				selectedText[0] = selectedText[0].trim();
-				assertEquals("Wrong text selected after hyperlink navigation", expectedText, selectedText[0]);
-
-			}
-		} finally {
-			closeAllEditors();
-			boolean force = true;
-			project.getProject().delete(force, new NullProgressMonitor());
-		}
-	}
 	private void waitForJobs() throws Exception {
 		TestUtil.waitForJobs(getName(), 250, 10_000);
 	}

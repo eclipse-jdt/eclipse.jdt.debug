@@ -155,77 +155,77 @@ public class JavaDebugImages {
 	}
 
 	private static void declareImages() {
-		declareRegistryImage(IMG_OBJS_EXCEPTION, T_OBJ + "jexception_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_EXCEPTION_DISABLED, T_OBJ + "jexceptiond_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED, T_OVR + "installed_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED_DISABLED, T_OVR + "installed_ovr_disabled.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_REFERENCE, T_OBJ + "reference_obj.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_EXCEPTION, T_OBJ + "jexception_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_EXCEPTION_DISABLED, T_OBJ + "jexceptiond_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED, T_OVR + "installed_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED_DISABLED, T_OVR + "installed_ovr_disabled.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_REFERENCE, T_OBJ + "reference_obj.gif"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJS_LOCAL_VARIABLE, T_OBJ + "localvariable_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_METHOD_RESULT, T_OBJ + "methodresult_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_METHOD_RESULT_DISABLED, T_OBJ + "methodresult_obj_disabled.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_LOCAL_VARIABLE, T_OBJ + "localvariable_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_METHOD_RESULT, T_OBJ + "methodresult_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_METHOD_RESULT_DISABLED, T_OBJ + "methodresult_obj_disabled.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY, T_OVR + "entry_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED, T_OVR + "entry_ovr_disabled.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_EXIT, T_OVR + "exit_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED, T_OVR + "exit_ovr_disabled.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY, T_OVR + "entry_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED, T_OVR + "entry_ovr_disabled.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_EXIT, T_OVR + "exit_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED, T_OVR + "exit_ovr_disabled.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_CONDITIONAL_BREAKPOINT, T_OVR + "conditional_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED, T_OVR + "conditional_ovr_disabled.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_CONDITIONAL_BREAKPOINT, T_OVR + "conditional_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED, T_OVR + "conditional_ovr_disabled.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_SCOPED_BREAKPOINT, T_OVR + "scoped_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_SCOPED_BREAKPOINT_DISABLED, T_OVR + "scoped_ovr_disabled.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_SCOPED_BREAKPOINT, T_OVR + "scoped_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_SCOPED_BREAKPOINT_DISABLED, T_OVR + "scoped_ovr_disabled.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_UNCAUGHT_BREAKPOINT, T_OVR + "uncaught_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED, T_OVR + "uncaught_ovr_disabled.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_UNCAUGHT_BREAKPOINT, T_OVR + "uncaught_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED, T_OVR + "uncaught_ovr_disabled.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_CAUGHT_BREAKPOINT, T_OVR + "caught_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_CAUGHT_BREAKPOINT_DISABLED, T_OVR + "caught_ovr_disabled.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_CAUGHT_BREAKPOINT, T_OVR + "caught_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_CAUGHT_BREAKPOINT_DISABLED, T_OVR + "caught_ovr_disabled.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJS_ERROR, T_OBJ + "jrtexception_obj.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_ERROR, T_OBJ + "jrtexception_obj.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJS_SNIPPET_EVALUATING, T_OBJ + "jsbook_run_obj.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_SNIPPET_EVALUATING, T_OBJ + "jsbook_run_obj.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_VIEW_ARGUMENTS_TAB, T_EVIEW + "variable_tab.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_VIEW_ARGUMENTS_TAB, T_EVIEW + "variable_tab.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_OUT_OF_SYNCH, T_OVR + "error_co.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_MAY_BE_OUT_OF_SYNCH, T_OVR + "warning_co.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_SYNCHRONIZED, T_OVR + "sync_ovr.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_OUT_OF_SYNCH, T_OVR + "error_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_MAY_BE_OUT_OF_SYNCH, T_OVR + "warning_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_SYNCHRONIZED, T_OVR + "sync_ovr.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJS_MONITOR, T_OBJ + "monitor_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_OWNED, T_OVR + "owned_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_OWNS_MONITOR, T_OVR + "ownsmonitor_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_IN_CONTENTION, T_OVR + "contention_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_IN_CONTENTION_FOR_MONITOR, T_OVR + "contentionformonitor_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OVR_IN_DEADLOCK, T_OVR + "deadlock_ovr.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_CONTENDED_MONITOR, T_OBJ + "contended_monitor_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_OWNED_MONITOR, T_OBJ + "owned_monitor_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_THREAD_GROUP, T_OBJ + "threadgroup_obj.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_MONITOR, T_OBJ + "monitor_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_OWNED, T_OVR + "owned_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_OWNS_MONITOR, T_OVR + "ownsmonitor_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_CONTENTION, T_OVR + "contention_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_CONTENTION_FOR_MONITOR, T_OVR + "contentionformonitor_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_DEADLOCK, T_OVR + "deadlock_ovr.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CONTENDED_MONITOR, T_OBJ + "contended_monitor_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_OWNED_MONITOR, T_OBJ + "owned_monitor_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_THREAD_GROUP, T_OBJ + "threadgroup_obj.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_WIZBAN_NEWSCRAPPAGE, T_WIZBAN + "newsbook_wiz.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_WIZBAN_LIBRARY, T_WIZBAN + "library_wiz.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_WIZBAN_NEWSCRAPPAGE, T_WIZBAN + "newsbook_wiz.png");		//$NON-NLS-1$
+		declareRegistryImage(IMG_WIZBAN_LIBRARY, T_WIZBAN + "library_wiz.png"); 	//$NON-NLS-1$
 
-		declareRegistryImage(IMG_TOOL_TERMSNIPPET, T_ELCL + "term_sbook.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_TOOL_TERMSNIPPET_HOVER, T_ELCL + "term_sbook.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_TOOL_TERMSNIPPET_DISABLED, T_DLCL + "term_sbook.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_TOOL_TERMSNIPPET, T_ELCL + "term_sbook.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_TOOL_TERMSNIPPET_HOVER, T_ELCL + "term_sbook.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_TOOL_TERMSNIPPET_DISABLED, T_DLCL + "term_sbook.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJ_JAVA_INSPECT_EXPRESSION, T_OBJ + "insp_sbook.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_CLASSPATH, T_OBJ + "classpath_obj.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_JAVA_INSPECT_EXPRESSION, T_OBJ + "insp_sbook.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CLASSPATH, T_OBJ + "classpath_obj.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJS_EXCEPTION_BRKPT_TYPE, T_OBJ + "jexception_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_LINE_BRKPT_TYPE, T_OBJ + "jline_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_CLASSLOAD_BRKPT_TYPE, T_OBJ + "jload_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_METHOD_BRKPT_TYPE, T_OBJ + "jmeth_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_JSP_BRKPT_TYPE, T_OBJ + "jspbrkpt_obj.svg"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_WATCHPOINT_TYPE, T_OBJ + "jwatch_obj.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_EXCEPTION_BRKPT_TYPE, T_OBJ + "jexception_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_LINE_BRKPT_TYPE, T_OBJ + "jline_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CLASSLOAD_BRKPT_TYPE, T_OBJ + "jload_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_METHOD_BRKPT_TYPE, T_OBJ + "jmeth_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_JSP_BRKPT_TYPE, T_OBJ + "jspbrkpt_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_WATCHPOINT_TYPE, T_OBJ + "jwatch_obj.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_ELCL_AUTO_FORMAT, E_LCL + "autoform_menu.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_AUTO_FORMAT, E_LCL + "autoform_menu.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_ELCL_ALL_REFERENCES, E_LCL + "all_references.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_ALL_REFERENCES, E_LCL + "all_references.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_IN_TRIGGER_POINT, T_OVR + "trigger_ovr.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_TRIGGER_POINT, T_OVR + "trigger_ovr.png"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OVR_TRIGGER_SUPPRESSED, T_OVR + "trigger_suppressed_ovr.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_TRIGGER_SUPPRESSED, T_OVR + "trigger_suppressed_ovr.png"); //$NON-NLS-1$
 
 		declareRegistryImage(IMG_JAVA_STACKTRACE_CONSOLE, T_OBJ + "javastacktrace_console.png"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_GROUPED_STACK_FRAME, T_OBJ + "groupedframe.png"); //$NON-NLS-1$
