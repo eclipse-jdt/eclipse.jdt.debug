@@ -121,5 +121,6 @@ public class PropertyPageMessages extends NLS {
 	public static String BreakpointResumeOnHit;
 	public static String BreakpointResumeConditionalTrue;
 	public static String BreakpointResumeConditionalValue;
+	public static String BreakpointDisableOnHit;
 
 }

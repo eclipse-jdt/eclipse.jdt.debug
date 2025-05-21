@@ -275,4 +275,19 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	public boolean removeBreakpointListener(String identifier)
 			throws CoreException;
 
+	/**
+	 * Returns whether the breakpoint should disable on hit or not.
+	 *
+	 * @return whether the breakpoint should disable on hit or not.
+	 * @since 3.23
+	 */
+	public boolean isDisableOnHit();
+
+	/**
+	 * Sets whether the breakpoint should disable on hit or not
+	 *
+	 * @since 3.23
+	 */
+	public void setDisableOnHit(boolean disable);
+
 }
