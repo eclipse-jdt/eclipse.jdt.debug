@@ -50,5 +50,6 @@ public class JDIDebugPluginPreferenceInitializer extends
 		node.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT_REMOTE, false);
 		node.putInt(JDIDebugModel.PREF_SHOW_STEP_TIMEOUT, JDIDebugModel.DEF_SHOW_STEP_TIMEOUT);
 		node.putBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true);
+		node.putBoolean(JDIDebugModel.PREF_CREATE_EXCEPTION_BREAKPOINTS_ON_CLICK, true);
 	}
 }

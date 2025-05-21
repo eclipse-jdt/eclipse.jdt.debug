@@ -177,6 +177,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected static final String[] fgExpiredEnabledAttributes = new String[] {
 			EXPIRED, ENABLED };
 
+	private boolean disableOnHit;
+
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap<>(1);
 		fFilteredThreadsByTarget = new HashMap<>(1);
@@ -1492,5 +1494,25 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return new String[0];
 		}
 		return value.split(","); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#isDisableOnHit()
+	 */
+	@Override
+	public boolean isDisableOnHit() {
+		return disableOnHit;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#setDisableOnHit()
+	 */
+	@Override
+	public void setDisableOnHit(boolean disable) {
+		disableOnHit = disable;
 	}
 }
