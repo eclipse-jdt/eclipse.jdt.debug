@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.ui.breakpoints.JavaBreakpointConditionEditor;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
 import org.eclipse.jface.util.Util;
@@ -48,6 +49,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	private Button fResumeOnHit;
 	private Button fSuspendVM;
 	protected Button fTriggerPointButton;
+	protected Button fDisableOnHit;
 
 	private final JavaBreakpointConditionEditor javaBpConditionEditor;
 
@@ -158,6 +160,8 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	}
 
 	protected Control createStandardControls(Composite parent) {
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
+		fDisableOnHit = SWTFactory.createCheckButton(comp, PropertyPageMessages.BreakpointDisableOnHit, null, false, 2);
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 4, 1, 0, 0, 0);
 		fHitCountButton = SWTFactory.createCheckButton(composite, processMnemonics(PropertyPageMessages.JavaBreakpointPage_4), null, false, 1);
 		fHitCountButton.setLayoutData(new GridData());
@@ -200,6 +204,15 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			public void widgetSelected(SelectionEvent e) {
 				setConditionTextToSuspend();
 				setDirty(PROP_SUSPEND_POLICY);
+			}
+		});
+		fDisableOnHit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				boolean enabled = fDisableOnHit.getSelection();
+				if (fBreakpoint instanceof JavaBreakpoint javaBp) {
+					javaBp.setDisableOnHit(enabled);
+				}
 			}
 		});
 		composite.addDisposeListener(new DisposeListener() {
@@ -249,6 +262,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		String text = Util.ZERO_LENGTH_STRING;
 		boolean suspendThread = true;
 		boolean resumeOnHit = false;
+		boolean isDisableOnHit = false;
 		if (breakpoint != null) {
 			enabled = true;
 			int hitCount = breakpoint.getHitCount();
@@ -258,6 +272,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			}
 			suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 			resumeOnHit = breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT && isTriggerPoint();
+			isDisableOnHit = breakpoint.isDisableOnHit();
 		}
 		fHitCountButton.setEnabled(enabled);
 		fHitCountButton.setSelection(enabled && hasHitCount);
@@ -271,6 +286,8 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fSuspendVM.setSelection(!suspendThread && !resumeOnHit);
 		fTriggerPointButton.setEnabled(enabled);
 		fTriggerPointButton.setSelection(isTriggerPoint());
+		fDisableOnHit.setEnabled(!isTriggerPoint() && enabled);
+		fDisableOnHit.setSelection(isDisableOnHit);
 		setDirty(false);
 	}
 

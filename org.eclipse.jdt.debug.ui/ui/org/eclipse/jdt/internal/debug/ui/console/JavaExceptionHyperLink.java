@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -26,6 +27,7 @@ import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -98,6 +100,11 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 	 */
 	@Override
 	protected void processSearchResult(Object source, String typeName, int lineNumber) {
+		boolean isCreateExceptionBreakpointDisabled = !Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_CREATE_EXCEPTION_BREAKPOINTS_ON_CLICK, true, null);
+		if (isCreateExceptionBreakpointDisabled) {
+			super.processSearchResult(source, typeName, lineNumber);
+			return;
+		}
 		try {
 			source = JavaDebugUtils.getJavaElement(source);
 			IResource res = ResourcesPlugin.getWorkspace().getRoot();
