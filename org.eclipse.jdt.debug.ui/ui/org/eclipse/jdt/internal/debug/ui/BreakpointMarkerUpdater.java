@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.LambdaLocationLocator;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -113,15 +114,25 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		}
 		try {
 			ValidBreakpointLocationLocator loc;
-			if (breakpoint instanceof IJavaMethodBreakpoint && ((IJavaMethodBreakpoint) breakpoint).isEntry()) {
+			if (breakpoint instanceof IJavaMethodBreakpoint methodBreakpoint && methodBreakpoint.isEntry()) {
 				IMarker m = breakpoint.getMarker();
 				if (m != null) {
 					int charStart = m.getAttribute(IMarker.CHAR_START, -1);
 					int charEnd = m.getAttribute(IMarker.CHAR_END, -1);
 					int length = charEnd - charStart + 1;
+					if (methodBreakpoint.isLambdaBreakpoint()) {
+						LambdaLocationLocator currentLambda = new LambdaLocationLocator(charStart, charEnd, -10);
+						unit.accept(currentLambda);
+						if (methodBreakpoint.getLambdaName() != null) {
+							if (currentLambda.getSelectedLambda() != null
+									&& !methodBreakpoint.getLambdaName().equals(currentLambda.getSelectedLambda())) {
+								methodBreakpoint.setLambdaName(currentLambda.getSelectedLambda());
+							}
+						}
+
+					}
 					loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())
 							+ 1, true, true, position.getOffset(), length);
-
 				} else {
 					loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset()) + 1, true, true);
 				}
