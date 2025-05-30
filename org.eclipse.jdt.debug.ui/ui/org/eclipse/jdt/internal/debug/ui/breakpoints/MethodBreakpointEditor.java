@@ -56,12 +56,16 @@ public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
 	@Override
 	protected void setBreakpoint(IJavaBreakpoint breakpoint) throws CoreException {
 		super.setBreakpoint(breakpoint);
-		if (breakpoint instanceof IJavaMethodBreakpoint) {
-			IJavaMethodBreakpoint watchpoint = (IJavaMethodBreakpoint) breakpoint;
+		if (breakpoint instanceof IJavaMethodBreakpoint methodBreakpoint) {
+			if (methodBreakpoint.isLambdaBreakpoint()) {
+				fEntry.setEnabled(false);
+				fExit.setEnabled(false);
+				return;
+			}
 			fEntry.setEnabled(true);
 			fExit.setEnabled(true);
-			fEntry.setSelection(watchpoint.isEntry());
-			fExit.setSelection(watchpoint.isExit());
+			fEntry.setSelection(methodBreakpoint.isEntry());
+			fExit.setSelection(methodBreakpoint.isExit());
 		} else {
 			fEntry.setEnabled(false);
 			fExit.setEnabled(false);
