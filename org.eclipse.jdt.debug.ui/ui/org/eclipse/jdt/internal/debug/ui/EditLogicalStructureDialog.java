@@ -600,7 +600,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 					}
 					if (variable[1].trim().length() == 0) {
 						if (!oneElementSelected || fCurrentAttributeSelection.getFirstElement() != variable) {
-							status.setError(NLS.bind(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]}));
+							status.setError(NLS.bind(DebugUIMessages.EditLogicalStructureDialog_23, variable[0]));
 							break;
 						}
 					}

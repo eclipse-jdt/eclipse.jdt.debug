@@ -143,7 +143,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 						return;
 					}
 
-					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, NLS.bind(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){
+					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, NLS.bind(ActionMessages.InstanceFiltersAction_1, var.getName())){
 						@Override
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.
@@ -162,7 +162,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 									}
 									if (sameTarget) {
 										MessageDialog messageDialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.InstanceFiltersAction_2,
-											null, NLS.bind(ActionMessages.InstanceFiltersAction_3, new String[] { modelPresentation.getText(breakpoint), var.getName()}),
+												null, NLS.bind(ActionMessages.InstanceFiltersAction_3, modelPresentation.getText(breakpoint), var.getName()),
 											MessageDialog.QUESTION, new String[] { ActionMessages.InstanceFiltersAction_Yes_2, ActionMessages.InstanceFiltersAction_Cancel_3}, //
 											0);
 										if (messageDialog.open() == Window.OK) {

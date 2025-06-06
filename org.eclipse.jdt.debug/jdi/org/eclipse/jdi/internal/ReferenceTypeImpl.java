@@ -255,8 +255,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			FileInfo fileInfo = new FileInfo(fileId, fileName, absoluteFileName);
 			if (fFileInfos.contains(fileInfo)) {
 				throw new AbsentInformationException(NLS.bind(
-						JDIMessages.ReferenceTypeImpl_28, new String[] {
-								Integer.toString(fileId), fId }));
+						JDIMessages.ReferenceTypeImpl_28, Integer.toString(fileId), fId));
 			}
 			fFileInfos.add(fileInfo);
 		}
@@ -288,7 +287,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			if (fileInfo == null) {
 				throw new AbsentInformationException(NLS.bind(
 						JDIMessages.ReferenceTypeImpl_29,
-						new String[] { Integer.toString(lineFileId) }));
+						Integer.toString(lineFileId)));
 			}
 			// add the data to the different hash maps.
 			for (int i = 0; i < repeatCount; i++, inputStartLine++) {

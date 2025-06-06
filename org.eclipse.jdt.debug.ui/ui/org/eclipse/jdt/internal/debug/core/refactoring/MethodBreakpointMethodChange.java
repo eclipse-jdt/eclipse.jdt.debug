@@ -44,7 +44,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.MethodBreakpointMethodChange_0,
-				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestMethod.getElementName()});
+				getBreakpointLabel(getOriginalBreakpoint()), fDestMethod.getElementName());
 	}
 
 	/* (non-Javadoc)

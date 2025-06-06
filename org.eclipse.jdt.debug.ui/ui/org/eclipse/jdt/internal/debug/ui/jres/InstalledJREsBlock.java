@@ -253,7 +253,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				switch(columnIndex) {
 					case 0:
 						if (JavaRuntime.isContributedVMInstall(vm.getId())) {
-							return NLS.bind(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
+							return NLS.bind(JREMessages.InstalledJREsBlock_19, vm.getName());
 						}
 						if(fVMList.getChecked(element)) {
 							return NLS.bind(JREMessages.InstalledJREsBlock_7, vm.getName());
@@ -926,7 +926,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 
 		if (locations.isEmpty()) {
 			String messagePath = path.replace("&", "&&"); // @see bug 29855  //$NON-NLS-1$//$NON-NLS-2$
-			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, NLS.bind(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); //
+			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, NLS.bind(JREMessages.InstalledJREsBlock_13, messagePath)); //
 		} else {
 			Iterator<IVMInstallType> iter2 = types.iterator();
 			for(File location: locations) {
@@ -1054,8 +1054,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return;
 			}
 			File file = name == null ? directory : new File(directory, name);
-			monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[] { Integer.toString(found.size()),
-					file.toPath().normalize().toAbsolutePath().toString().replace("&", "&&") })); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
+			monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, Integer.toString(found.size()),
+					file.toPath().normalize().toAbsolutePath().toString().replace("&", "&&") )); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
 			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();
 			if (file.isDirectory()) {
 				if (ignore.add(file)) {

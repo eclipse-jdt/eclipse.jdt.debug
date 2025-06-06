@@ -193,7 +193,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	private void validateComplianceAndJRE(IVMInstall vmInstall) {
 		String compliance = getCurrentCompilerCompliance();
 		if (!supportsCurrentCompliance(vmInstall, compliance)) {
-			setMessage(NLS.bind(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
+			setMessage(NLS.bind(JREMessages.JREsPreferencePage_0, compliance), IMessageProvider.WARNING);
 			fCompliance.setVisible(true);
 		}
 		else {
@@ -210,7 +210,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				}
 			}
 			if (vmver != null && vmver.length() != 0 && JavaCore.compareJavaVersions(vmver, latest) > 0) {
-				setMessage(NLS.bind(JREMessages.JREsPreferencePage_9, new String[] { compliance }), IMessageProvider.WARNING);
+				setMessage(NLS.bind(JREMessages.JREsPreferencePage_9, compliance), IMessageProvider.WARNING);
 				fCompliance.setVisible(true);
 			} else {
 				setMessage(null);

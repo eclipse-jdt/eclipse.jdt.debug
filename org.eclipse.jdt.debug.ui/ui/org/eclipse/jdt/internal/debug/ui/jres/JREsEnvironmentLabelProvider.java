@@ -69,7 +69,7 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 	public String getText(Object element) {
 		String label = super.getText(element);
 		if (isStrictlyCompatible(element)) {
-			label = NLS.bind(JREMessages.JREsEnvironmentLabelProvider_0, new String[]{label, JREMessages.JREsEnvironmentLabelProvider_1});
+			label = NLS.bind(JREMessages.JREsEnvironmentLabelProvider_0, label, JREMessages.JREsEnvironmentLabelProvider_1);
 		}
 		return label;
 	}

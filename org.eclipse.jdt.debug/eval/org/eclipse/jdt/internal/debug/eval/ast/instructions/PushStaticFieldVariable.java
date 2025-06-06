@@ -52,7 +52,7 @@ public class PushStaticFieldVariable extends CompoundInstruction {
 		}
 		if (field == null) {
 			String message = NLS.bind(InstructionsEvaluationMessages.PushStaticFieldVariable_Cannot_find_the_field__0__in__1__1,
-							new String[] { fFieldName, fQualifiedTypeName });
+					fFieldName, fQualifiedTypeName);
 			throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, message,
 					null)); // couldn't find the field
@@ -63,7 +63,7 @@ public class PushStaticFieldVariable extends CompoundInstruction {
 	@Override
 	public String toString() {
 		return NLS.bind(InstructionsEvaluationMessages.PushStaticFieldVariable_push_static_field__0__2,
-						new String[] { fFieldName });
+				fFieldName);
 	}
 
 }

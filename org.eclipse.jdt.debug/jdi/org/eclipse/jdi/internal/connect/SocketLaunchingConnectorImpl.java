@@ -226,7 +226,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		} catch (InterruptedIOException e) {
 			proc.destroy();
 			String message = NLS.bind(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
-							new String[] { args.get("timeout").value() }); //$NON-NLS-1$
+					args.get("timeout").value()); //$NON-NLS-1$
 			throw new VMStartException(message, proc);
 		}
 

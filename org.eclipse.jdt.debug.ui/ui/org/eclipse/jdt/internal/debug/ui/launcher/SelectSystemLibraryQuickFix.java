@@ -109,7 +109,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 	 */
 	@Override
 	public String getLabel() {
-		return NLS.bind(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()});
+		return NLS.bind(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, fProject.getElementName());
 	}
 
 }

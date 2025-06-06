@@ -1179,7 +1179,7 @@ public final class JavaRuntime {
 		} else {
 			provider = getClasspathProviders().get(providerId);
 			if (provider == null) {
-				abort(NLS.bind(LaunchingMessages.JavaRuntime_26, new String[]{providerId}), null);
+				abort(NLS.bind(LaunchingMessages.JavaRuntime_26, providerId), null);
 			}
 		}
 		return provider;
@@ -1201,7 +1201,7 @@ public final class JavaRuntime {
 		} else {
 			provider = getClasspathProviders().get(providerId);
 			if (provider == null) {
-				abort(NLS.bind(LaunchingMessages.JavaRuntime_27, new String[]{providerId}), null);
+				abort(NLS.bind(LaunchingMessages.JavaRuntime_27, providerId), null);
 			}
 		}
 		return provider;
@@ -1252,7 +1252,7 @@ public final class JavaRuntime {
 					if (isOptional(entry.getClasspathEntry())) {
 						return new IRuntimeClasspathEntry[] {};
 					}
-					abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, new String[]{entry.getPath().lastSegment()}), null);
+					abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, entry.getPath().lastSegment()), null);
 				}
 				break;
 			case IRuntimeClasspathEntry.VARIABLE:
@@ -1283,7 +1283,7 @@ public final class JavaRuntime {
 				if (isOptional(entry.getClasspathEntry())) {
 					return new IRuntimeClasspathEntry[] {};
 				}
-				abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[] { entry.getPath().toString() }), null);
+				abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, entry.getPath().toString()), null);
 			case IRuntimeClasspathEntry.OTHER:
 				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
 				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
@@ -1566,7 +1566,7 @@ public final class JavaRuntime {
 		}
 		IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
 		if (container == null) {
-			abort(NLS.bind(LaunchingMessages.JavaRuntime_Could_not_resolve_classpath_container___0__1, new String[]{entry.getPath().toString()}), null);
+			abort(NLS.bind(LaunchingMessages.JavaRuntime_Could_not_resolve_classpath_container___0__1, entry.getPath().toString()), null);
 			// execution will not reach here - exception will be thrown
 			return null;
 		}
@@ -1742,10 +1742,10 @@ public final class JavaRuntime {
 		}
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
 		if (javaProject != null && javaProject.getProject().exists() && !javaProject.getProject().isOpen()) {
-			abort(NLS.bind(LaunchingMessages.JavaRuntime_28, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null);
+			abort(NLS.bind(LaunchingMessages.JavaRuntime_28, configuration.getName(), projectName), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null);
 		}
 		if ((javaProject == null) || !javaProject.exists()) {
-			abort(NLS.bind(LaunchingMessages.JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null);
+			abort(NLS.bind(LaunchingMessages.JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1, configuration.getName(), projectName), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null);
 		}
 		return javaProject;
 	}
@@ -1823,7 +1823,7 @@ public final class JavaRuntime {
 		IVMInstallType vt = getVMInstallType(type);
 		if (vt == null) {
 			// error type does not exist
-			abort(NLS.bind(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, new String[] {type}), null);
+			abort(NLS.bind(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, type), null);
 		}
 		IVMInstall vm = null;
 		// look for a name
@@ -1836,7 +1836,7 @@ public final class JavaRuntime {
 		vm = vt.findVMInstallByName(name);
 		if (vm == null) {
 			// error - install not found
-			abort(NLS.bind(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, new String[] {vt.getName(), name}), null);
+			abort(NLS.bind(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, vt.getName(), name), null);
 		} else {
 			return vm;
 		}
@@ -1995,12 +1995,12 @@ public final class JavaRuntime {
 					String vmType = element.getAttribute("vmInstallType"); //$NON-NLS-1$
 					if (vmType == null) {
 						abort(NLS.bind("Missing required vmInstallType attribute for vmInstall contributed by {0}", //$NON-NLS-1$
-								new String[]{element.getContributor().getName()}), null);
+								element.getContributor().getName()), null);
 					}
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
 						abort(NLS.bind("Missing required id attribute for vmInstall contributed by {0}", //$NON-NLS-1$
-								new String[]{element.getContributor().getName()}), null);
+								element.getContributor().getName()), null);
 					}
 					IVMInstallType installType = getVMInstallType(vmType);
 					if (installType == null) {
@@ -2013,12 +2013,12 @@ public final class JavaRuntime {
 						String name = element.getAttribute("name"); //$NON-NLS-1$
 						if (name == null) {
 							abort(NLS.bind("vmInstall {0} contributed by {1} missing required attribute name", //$NON-NLS-1$
-									new String[]{id, element.getContributor().getName()}), null);
+									id, element.getContributor().getName()), null);
 						}
 						String home = element.getAttribute("home"); //$NON-NLS-1$
 						if (home == null) {
 							abort(NLS.bind("vmInstall {0} contributed by {1} missing required attribute home", //$NON-NLS-1$
-									new String[]{id, element.getContributor().getName()}), null);
+									id, element.getContributor().getName()), null);
 						}
 						String javadoc = element.getAttribute("javadocURL"); //$NON-NLS-1$
 						String vmArgs = element.getAttribute("vmArgs"); //$NON-NLS-1$
@@ -2049,7 +2049,7 @@ public final class JavaRuntime {
 									standin.setJavadocLocation(new URL(javadoc));
 								} catch (MalformedURLException e) {
 									abort(NLS.bind("Illegal javadocURL attribute for vmInstall {0} contributed by {1}", //$NON-NLS-1$
-											new String[]{id, element.getContributor().getName()}), e);
+											id, element.getContributor().getName()), e);
 								}
 							}
 							// allow default arguments to be specified by VM install type if no explicit arguments
@@ -2071,7 +2071,7 @@ public final class JavaRuntime {
 	                                String libPathStr = library.getAttribute("path"); //$NON-NLS-1$
 	                                if (libPathStr == null) {
 	                                    abort(NLS.bind("library for vmInstall {0} contributed by {1} missing required attribute libPath", //$NON-NLS-1$
-	                                            new String[]{id, element.getContributor().getName()}), null);
+												id, element.getContributor().getName()), null);
 	                                }
 	                                String sourcePathStr = library.getAttribute("sourcePath"); //$NON-NLS-1$
 	                                String packageRootStr = library.getAttribute("packageRootPath"); //$NON-NLS-1$
@@ -2107,7 +2107,7 @@ public final class JavaRuntime {
                     fgContributedVMs.add(id);
 				} else {
 					abort(NLS.bind("Illegal element {0} in vmInstalls extension contributed by {1}", //$NON-NLS-1$
-							new String[]{element.getName(), element.getContributor().getName()}), null);
+							element.getName(), element.getContributor().getName()), null);
 				}
 			} catch (CoreException e) {
 				LaunchingPlugin.log(e);

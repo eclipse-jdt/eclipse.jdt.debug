@@ -203,8 +203,7 @@ public class AllInstancesActionDelegate extends BaseInstanceActionDelegate imple
 
 	private void displayPopup(IAction action, JDIDebugTarget target, JDIReferenceType rtype, String name) {
 		JDIAllInstancesValue aiv = new JDIAllInstancesValue(target, rtype);
-		InspectPopupDialog ipd = new InspectPopupDialog(getShell(), getAnchor(), PopupInspectAction.ACTION_DEFININITION_ID, new JavaInspectExpression(NLS.bind(Messages.AllInstancesActionDelegate_2, new String[] {
-				name }), aiv));
+		InspectPopupDialog ipd = new InspectPopupDialog(getShell(), getAnchor(), PopupInspectAction.ACTION_DEFININITION_ID, new JavaInspectExpression(NLS.bind(Messages.AllInstancesActionDelegate_2, name), aiv));
 		ipd.open();
 		ipd.getTreeViewer().addDoubleClickListener(event -> handleDoubleClick(action, event));
 	}

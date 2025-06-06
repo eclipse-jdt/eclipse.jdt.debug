@@ -202,7 +202,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				// prompt
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(JDIDebugUIPlugin.getActiveWorkbenchShell(), new SourceElementLabelProvider(),new SourceElementQualifierProvider());
 				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1);
-				dialog.setMessage(NLS.bind(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()}));
+				dialog.setMessage(NLS.bind(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, type.getName()));
 				dialog.setElements(sourceElements);
 				dialog.setMultipleSelection(false);
 				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3);
@@ -250,7 +250,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 			@Override
 			public void run() {
 				try {
-					String message = NLS.bind(LauncherMessages.JavaUISourceLocator_selectprojects_message, new String[] {frame.getDeclaringTypeName()});
+					String message = NLS.bind(LauncherMessages.JavaUISourceLocator_selectprojects_message, frame.getDeclaringTypeName());
 
 					ILaunchConfiguration configuration =
 						frame.getLaunch().getLaunchConfiguration();
