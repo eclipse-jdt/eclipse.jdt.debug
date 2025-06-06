@@ -83,14 +83,17 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -200,6 +203,11 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Service tracker for the workspace service
 	 */
 	private ServiceTracker<IWorkspace, IWorkspace> fWorkspaceServiceTracker;
+
+	/**
+	 * Service tracker for the instance location service
+	 */
+	private ServiceTracker<Location, Location> fInstanceLocationServiceTracker;
 
 	/**
 	 * Stores VM changes resulting from a JRE preference change.
@@ -535,13 +543,12 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 			DebugPlugin.getDefault().removeDebugEventListener(this);
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 			ArchiveSourceLocation.closeArchives();
-			InstanceScope.INSTANCE.getNode(ID_PLUGIN).removePreferenceChangeListener(this);
 			JavaRuntime.removeVMInstallChangedListener(this);
 			JavaRuntime.saveVMConfiguration();
 			fgXMLParser = null;
 			fWorkspaceServiceTracker.close();
+			fInstanceLocationServiceTracker.close();
 		} finally {
 			super.stop(context);
 		}
@@ -584,6 +591,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 							writeInstallInfo();
 						}
 					});
+					workspace.addResourceChangeListener(LaunchingPlugin.this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 				} catch (CoreException e) {
 					log(e.getStatus());
 					context.ungetService(reference);
@@ -595,15 +603,36 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 			@Override
 			public void removedService(ServiceReference<IWorkspace> reference, IWorkspace service) {
 				service.removeSaveParticipant(ID_PLUGIN);
+				service.removeResourceChangeListener(LaunchingPlugin.this);
 				context.ungetService(reference);
 			}
 
 		};
 		fWorkspaceServiceTracker.open();
 
-		InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(this);
+		// wait until the workspace has been selected and initialized
+		Filter instanceLocationFilter = context.createFilter("(&" + Location.INSTANCE_FILTER + "(url=*))"); //$NON-NLS-1$ //$NON-NLS-2$
+		fInstanceLocationServiceTracker = new ServiceTracker<>(context, instanceLocationFilter, new ServiceTrackerCustomizer<Location, Location>() {
+			@Override
+			public void removedService(ServiceReference<Location> reference, Location service) {
+				InstanceScope.INSTANCE.getNode(ID_PLUGIN).removePreferenceChangeListener(LaunchingPlugin.this);
+			}
+
+			@Override
+			public Location addingService(ServiceReference<Location> reference) {
+				InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(LaunchingPlugin.this);
+				// no need to track the service
+				return null;
+			}
+
+			@Override
+			public void modifiedService(ServiceReference<Location> reference, Location service) {
+			}
+
+		});
+		fInstanceLocationServiceTracker.open();
+
 		JavaRuntime.addVMInstallChangedListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		AdvancedSourceLookupSupport.start();
