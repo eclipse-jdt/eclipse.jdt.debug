@@ -161,7 +161,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvocationException;
-
 import junit.framework.TestCase;
 
 /**
@@ -446,6 +445,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug567801"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug572782"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug576829"));
+				cfgs.add(createLaunchConfiguration(jp, "Issue693"));
 	    		loaded17 = true;
 	    		waitForBuild();
 	        }
