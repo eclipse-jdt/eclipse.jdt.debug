@@ -2251,7 +2251,7 @@
   <action
         helpContextId="collapse_stack_frames_action_context"
         label="%collapseStackFrames.label"
-        icon="$nl$/icons/full/obj16/groupedframe.png"
+        icon="$nl$/icons/full/obj16/groupedframe.svg"
         tooltip="%collapseStackFrames.tooltip"
         class="org.eclipse.jdt.internal.debug.ui.actions.CollapseStackFramesAction"
         style="toggle"
@@ -3531,7 +3531,7 @@ M4 = Platform-specific fourth key
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
-      	    icon="$nl$/icons/full/obj16/javastacktrace_console.png"
+      	    icon="$nl$/icons/full/obj16/javastacktrace_console.svg"
             label="%javaStackTraceConsole.label"
             class="org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>

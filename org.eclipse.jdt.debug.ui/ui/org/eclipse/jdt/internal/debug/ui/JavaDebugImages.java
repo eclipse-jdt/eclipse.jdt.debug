@@ -227,8 +227,8 @@ public class JavaDebugImages {
 
 		declareRegistryImage(IMG_OVR_TRIGGER_SUPPRESSED, T_OVR + "trigger_suppressed_ovr.svg"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_JAVA_STACKTRACE_CONSOLE, T_OBJ + "javastacktrace_console.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_GROUPED_STACK_FRAME, T_OBJ + "groupedframe.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_JAVA_STACKTRACE_CONSOLE, T_OBJ + "javastacktrace_console.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_GROUPED_STACK_FRAME, T_OBJ + "groupedframe.svg"); //$NON-NLS-1$
 
 	}
 
