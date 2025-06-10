@@ -82,11 +82,11 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 
 	private static class EventRequestType<RT extends EventRequest> {
 
-		private final ArrayList<RT> requests;
+		private final List<RT> requests;
 		private final Hashtable<RequestID, RT> enabledrequests;
 
 		private EventRequestType() {
-			requests= new ArrayList<>();
+			requests = Collections.synchronizedList(new ArrayList<>());
 			enabledrequests= new Hashtable<>();
 		}
 

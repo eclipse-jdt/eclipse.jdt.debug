@@ -31,7 +31,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	BundleDescription fBundleDescription= new BundleDescription();
 
 	public MacBundleWizard() {
-		setDefaultPageImageDescriptor(createWizardImageDescriptor("exportapp_wiz.png")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(createWizardImageDescriptor("exportapp_wiz.svg")); //$NON-NLS-1$
  		setWindowTitle(Util.getString("MacBundleWizard.title")); //$NON-NLS-1$
 	}
 
