@@ -35,7 +35,7 @@ public class JavaThreadGroupLabelProvider extends ElementLabelProvider {
 	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		IJavaThreadGroup group = (IJavaThreadGroup) elementPath.getLastSegment();
-		return NLS.bind(ThreadGroupMessages.AsyncThreadGroupLabelAdapter_0, new String[]{group.getName()});
+		return NLS.bind(ThreadGroupMessages.AsyncThreadGroupLabelAdapter_0, group.getName());
 	}
 
 	/* (non-Javadoc)

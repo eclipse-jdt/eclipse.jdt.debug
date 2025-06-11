@@ -153,7 +153,7 @@ public class ExpressionInputDialog extends TrayDialog {
             JDIDebugUIPlugin.log(e);
         }
 
-        SWTFactory.createWrapLabel(fSourceViewerComposite, NLS.bind(ActionMessages.ExpressionInputDialog_0, new String[] {name}), 1, convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH));
+		SWTFactory.createWrapLabel(fSourceViewerComposite, NLS.bind(ActionMessages.ExpressionInputDialog_0, name), 1, convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH));
 
         fSourceViewer= new JDISourceViewer(fSourceViewerComposite, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fSourceViewer.setInput(fSourceViewerComposite);

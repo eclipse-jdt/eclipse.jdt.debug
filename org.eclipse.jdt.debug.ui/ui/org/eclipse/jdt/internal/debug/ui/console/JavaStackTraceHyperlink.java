@@ -208,8 +208,8 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				if (source == null) {
 					if (status == null) {
 						// did not find source
-						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, NLS.bind(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {
-								typeName }));
+						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, NLS.bind(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2,
+								typeName));
 					} else {
 						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
 					}
@@ -585,6 +585,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 							IRegion line = document.getLineInformation(lineNumber);
 							textEditor.selectAndReveal(line.getOffset(), line.getLength());
 						} catch (BadLocationException e) {
+
 							MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_0, NLS.bind("{0}{1}{2}", new String[] { //$NON-NLS-1$
 									(lineNumber + 1) + "", ConsoleMessages.JavaStackTraceHyperlink_1, typeName })); //$NON-NLS-1$
 						}

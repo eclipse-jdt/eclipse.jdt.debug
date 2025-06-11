@@ -45,7 +45,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.WatchpointFieldChange_0,
-				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestField.getElementName()});
+				getBreakpointLabel(getOriginalBreakpoint()), fDestField.getElementName());
 	}
 
 	/* (non-Javadoc)

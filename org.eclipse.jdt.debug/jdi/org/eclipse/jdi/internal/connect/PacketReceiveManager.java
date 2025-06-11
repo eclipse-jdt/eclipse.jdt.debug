@@ -128,13 +128,10 @@ public class PacketReceiveManager extends PacketManager {
 				String exMessage = getDisconnectException().getMessage();
 				if (exMessage == null) {
 					message = NLS.bind(ConnectMessages.PacketReceiveManager_Got__0__from_Virtual_Machine_1,
-									new String[] { getDisconnectException()
-											.getClass().getName() });
+							getDisconnectException().getClass().getName());
 				} else {
 					message = NLS.bind(ConnectMessages.PacketReceiveManager_Got__0__from_Virtual_Machine___1__1,
-									new String[] {
-											getDisconnectException().getClass()
-													.getName(), exMessage });
+							getDisconnectException().getClass().getName(), exMessage);
 				}
 			}
 			throw new VMDisconnectedException(message);
@@ -184,17 +181,19 @@ public class PacketReceiveManager extends PacketManager {
 			}
 		}
 		// Check for an IO Exception.
-		if (VMIsDisconnected())
+		if (VMIsDisconnected()) {
+
 			throw new VMDisconnectedException(
 					ConnectMessages.PacketReceiveManager_Got_IOException_from_Virtual_Machine_2);
+
+		}
 		// Check for a timeout.
 		if (packet == null) {
 			synchronized (fTimedOutPackets) {
 				fTimedOutPackets.add(Integer.valueOf(id));
 			}
 			throw new TimeoutException(NLS.bind(
-					ConnectMessages.PacketReceiveManager_0, new String[] { id
-							+ "" })); //$NON-NLS-1$
+					ConnectMessages.PacketReceiveManager_0, id + "")); //$NON-NLS-1$
 		}
 		return packet;
 	}
@@ -211,12 +210,19 @@ public class PacketReceiveManager extends PacketManager {
 	 */
 	private void waitForPacketAvailable(long timeToWait, Object lock)
 			throws InterruptedException {
-		if (timeToWait == 0)
+		if (timeToWait == 0) {
+
 			return;
-		else if (timeToWait < 0)
+
+		} else if (timeToWait < 0) {
+
 			lock.wait();
-		else
+
+		} else {
+
 			lock.wait(timeToWait);
+
+		}
 	}
 
 	/**
@@ -302,9 +308,14 @@ public class PacketReceiveManager extends PacketManager {
 		byte[] bytes = getConnection().readPacket();
 		JdwpPacket packet = JdwpPacket.build(bytes);
 		// Add packet to command or reply queue.
-		if (packet instanceof JdwpCommandPacket)
+		if (packet instanceof JdwpCommandPacket) {
+
 			addCommandPacket((JdwpCommandPacket) packet);
-		else
+
+		} else {
+
 			addReplyPacket((JdwpReplyPacket) packet);
+
+		}
 	}
 }
