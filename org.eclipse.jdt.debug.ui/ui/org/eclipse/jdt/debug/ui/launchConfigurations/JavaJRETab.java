@@ -574,7 +574,7 @@ public class JavaJRETab extends JavaLaunchTab {
 					if (vm != null) {
 						name = vm.getName();
 					}
-					return NLS.bind(LauncherMessages.JavaJRETab_8, new String[]{name});
+					return NLS.bind(LauncherMessages.JavaJRETab_8, name);
 				}
 				try {
 					String eeName = null;
@@ -599,11 +599,11 @@ public class JavaJRETab extends JavaLaunchTab {
 						name = vm.getName();
 					}
 					if (eeName != null) {
-						return NLS.bind(LauncherMessages.JavaJRETab_5, new String[]{eeName, name});
+						return NLS.bind(LauncherMessages.JavaJRETab_5, eeName, name);
 					}
 				} catch (CoreException e) {
 				}
-				return NLS.bind(LauncherMessages.JavaJRETab_9, new String[]{name});
+				return NLS.bind(LauncherMessages.JavaJRETab_9, name);
 			}
 		};
 	}

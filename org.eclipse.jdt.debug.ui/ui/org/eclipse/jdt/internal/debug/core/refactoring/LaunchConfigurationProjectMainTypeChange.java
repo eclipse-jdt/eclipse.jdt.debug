@@ -83,15 +83,15 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	@Override
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
-			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName});
+			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, fLaunchConfiguration.getName(), fNewLaunchConfigurationName);
 		}
 		if (fNewProjectName == null) {
-			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, new String[] {fLaunchConfiguration.getName()});
+			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, fLaunchConfiguration.getName());
 		}
 		if (fNewMainTypeName == null) {
-			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, new String[] {fLaunchConfiguration.getName()});
+			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, fLaunchConfiguration.getName());
 		}
-		return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, new String[] {fLaunchConfiguration.getName()});
+		return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, fLaunchConfiguration.getName());
 	}
 
 	/* (non-Javadoc)
@@ -113,17 +113,17 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 					if (fOldProjectName.equals(projectName)) {
 						return new RefactoringStatus();
 					}
-					return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
+					return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, fLaunchConfiguration.getName(), fOldProjectName));
 				}
-				return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, new String[] {fLaunchConfiguration.getName(), fOldMainTypeName}));
+				return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, fLaunchConfiguration.getName(), fOldMainTypeName));
 			}
 			//need to catch the case for remote java LC's, they have no maintype
 			if (fOldProjectName.equals(projectName)) {
 				return new RefactoringStatus();
 			}
-			return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
+			return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, fLaunchConfiguration.getName(), fOldProjectName));
 		}
-		return RefactoringStatus.createFatalErrorStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()}));
+		return RefactoringStatus.createFatalErrorStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, fLaunchConfiguration.getName()));
 	}
 
 	/* (non-Javadoc)

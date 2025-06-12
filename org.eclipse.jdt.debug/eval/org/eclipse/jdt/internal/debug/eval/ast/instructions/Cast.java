@@ -111,7 +111,7 @@ public class Cast extends CompoundInstruction {
 								JDIDebugPlugin.getUniqueIdentifier(),
 								IStatus.OK,
 								NLS.bind(InstructionsEvaluationMessages.Cast_No_class_object,
-												new String[] { typeName() }),
+										typeName()),
 								null));
 			}
 			IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue) classObject
@@ -125,9 +125,8 @@ public class Cast extends CompoundInstruction {
 								JDIDebugPlugin.getUniqueIdentifier(),
 								IStatus.OK,
 								NLS.bind(InstructionsEvaluationMessages.Cast_ClassCastException__Cannot_cast__0__as__1___1,
-												new String[] {
 														value.toString(),
-														typeName() }), null));
+										typeName()), null));
 			}
 
 			push(value);

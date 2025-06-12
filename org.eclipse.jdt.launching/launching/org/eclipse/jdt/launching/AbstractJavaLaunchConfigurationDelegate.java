@@ -210,15 +210,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		File location = vm.getInstallLocation();
 		if (location == null) {
 			abort(
-					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, new String[]{vm.getName()}),
+					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, vm.getName()),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
 		if (!location.exists()) {
 			abort(
 					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6,
-									new String[]{vm.getName(),
-											location.getAbsolutePath()}),
+							vm.getName(), location.getAbsolutePath()),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
@@ -802,7 +801,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 					abort(
 							NLS.bind(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
-									new String[]{dir.toString()}),
+									dir.toString()),
 									null,
 									IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
@@ -824,7 +823,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				abort(
 					NLS.bind(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
-									new String[]{path.toString()}),
+								path.toString()),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
@@ -836,7 +835,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				abort(
 					NLS.bind(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
-									new String[]{path.toString()}),
+								path.toString()),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
@@ -1052,7 +1051,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IVMInstall vm = verifyVMInstall(configuration);
 		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort(NLS.bind(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);
+			abort(NLS.bind(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, vm.getName(), mode), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);
 		}
 		return runner;
 	}

@@ -84,7 +84,7 @@ public class PushLocalVariable extends SimpleInstruction {
 						JDIDebugPlugin.getUniqueIdentifier(),
 						IStatus.OK,
 						NLS.bind(InstructionsEvaluationMessages.PushLocalVariable_Cannot_find_the_variable____1,
-										new String[] { fName }), null));
+								fName), null));
 	}
 
 	/**
@@ -100,6 +100,6 @@ public class PushLocalVariable extends SimpleInstruction {
 	public String toString() {
 		return NLS.bind(
 				InstructionsEvaluationMessages.PushLocalVariable_push____0___2,
-				new String[] { getName() });
+				getName());
 	}
 }

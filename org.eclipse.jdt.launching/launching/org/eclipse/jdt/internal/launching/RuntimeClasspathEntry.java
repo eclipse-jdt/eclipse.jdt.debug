@@ -101,7 +101,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(VARIABLE);
 				break;
 			default:
-				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()}));
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, entry.toString()));
 		}
 		setClasspathEntry(entry);
 		initializeClasspathProperty();
@@ -128,8 +128,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(VARIABLE);
 				break;
 			default:
-				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {
-						entry.toString() }));
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, entry.toString()));
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);

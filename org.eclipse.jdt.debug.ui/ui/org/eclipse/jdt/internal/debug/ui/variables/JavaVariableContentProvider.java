@@ -50,7 +50,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	        	Object[] moreVariables = new Object[variables.length+1];
 	        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
 	        	IValue value = ((IVariable)parent).getValue();
-	       		moreVariables[0] = new JDIReferenceListVariable(NLS.bind(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
+				moreVariables[0] = new JDIReferenceListVariable(NLS.bind(JDIDebugModelMessages.JDIReferenceListValue_6, ((IVariable) parent).getName()), (IJavaObject) value);
 	        	return getElements(moreVariables, index, length);
 	        }
 	        return getElements(variables, index, length);
