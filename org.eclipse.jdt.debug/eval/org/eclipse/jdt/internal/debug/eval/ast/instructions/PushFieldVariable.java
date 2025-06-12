@@ -90,8 +90,7 @@ public class PushFieldVariable extends CompoundInstruction {
 							JDIDebugPlugin.getUniqueIdentifier(),
 							IStatus.OK,
 							NLS.bind(InstructionsEvaluationMessages.PushFieldVariable_Cannot_find_the_field__0__for_the_object__1__1,
-											new String[] { fName,
-													receiver.toString() }),
+									fName, receiver.toString()),
 							null)); //
 		}
 		push(field);
@@ -100,6 +99,6 @@ public class PushFieldVariable extends CompoundInstruction {
 	@Override
 	public String toString() {
 		return NLS.bind(InstructionsEvaluationMessages.PushFieldVariable_push_field__0__2,
-						new String[] { fName });
+				fName);
 	}
 }

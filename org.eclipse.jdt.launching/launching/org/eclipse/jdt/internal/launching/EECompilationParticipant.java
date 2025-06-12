@@ -168,7 +168,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 				}
 				if (finalEnvironment != null) {
 					if (!finalEnvironment.isStrictlyCompatible(vm)) {
-						String message = NLS.bind(LaunchingMessages.LaunchingPlugin_39, new String[] { id, eeId });
+						String message = NLS.bind(LaunchingMessages.LaunchingPlugin_39, id, eeId);
 						int sev = getSeverityLevel(JavaRuntime.PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE, project.getProject());
 						if (sev != -1) {
 							createProblemMarker(project, message, sev, JavaRuntime.JRE_COMPILER_COMPLIANCE_MARKER, LaunchingMessages.LaunchingPlugin_40);
@@ -193,7 +193,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 			if (vm == null) {
 				String message = NLS.bind(
 						LaunchingMessages.LaunchingPlugin_38,
-						new String[]{environment.getId()});
+						environment.getId());
 				createJREContainerProblem(project, message, IMarker.SEVERITY_ERROR);
 			} else if (!environment.isStrictlyCompatible(vm)) {
 				// warn that VM does not match EE
@@ -216,11 +216,11 @@ public class EECompilationParticipant extends CompilationParticipant {
 					}
 					message = NLS.bind(
 						LaunchingMessages.LaunchingPlugin_35,
-						new String[]{environment.getId()});
+							environment.getId());
 				} else {
 					message = NLS.bind(
 							LaunchingMessages.LaunchingPlugin_36,
-							new String[]{environment.getId()});
+							environment.getId());
 				}
 				int sev = getSeverityLevel(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, project.getProject());
 				if (sev != -1) {

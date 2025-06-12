@@ -33,8 +33,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
@@ -43,7 +41,6 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -457,12 +454,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (type instanceof IJavaClassType) {
 			snippet = getDetailFormatter((IJavaClassType) type);
 		}
-		if (type instanceof IJavaArrayType jArray) {
-			if (JavaCore.compareJavaVersions(debugTarget.getVersion(), JavaCore.VERSION_9) < 0) {
-				snippet = getArraySnippet((IJavaArray) javaObject);
-			} else {
-				snippet = getDetailFormatterFromArray(jArray);
-			}
+		if (type instanceof IJavaArrayType javaArray) {
+			snippet = getDetailFormatterFromArray(javaArray);
 		}
 		if (snippet != null) {
 			IJavaProject project = getJavaProject(javaObject, thread);
@@ -510,10 +503,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 			snippet = primitiveSnippets(snippet, jdiType.getName(), javaPM);
 		}
-		if (type instanceof IJavaArrayType) {
-			if (JavaCore.compareJavaVersions(debugTarget.getVersion(), JavaCore.VERSION_9) < 0) {
-				snippet = getArraySnippet((IJavaArray) javaPM);
-			}
+		if (type instanceof IJavaArrayType javaArray) {
+			snippet = getDetailFormatterFromArray(javaArray);
 		}
 		if (snippet != null) {
 			IJavaProject project = getJavaProject(javaPM, thread);
@@ -574,39 +565,6 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return modified;
 
-	}
-
-	protected String getArraySnippet(IJavaArray value) throws DebugException {
-		String signature = value.getSignature();
-		int nesting = Signature.getArrayCount(signature);
-		if (nesting > 1) {
-			// for nested primitive arrays, print everything
-			String sig = Signature.getElementType(signature);
-			if (sig.length() == 1 || "Ljava/lang/String;".equals(sig)) { //$NON-NLS-1$
-				// return null so we get to "valueToString(IJavaValue)" for primitive and string types
-				return null;
-			}
-		}
-		if (((IJavaArrayType)value.getJavaType()).getComponentType() instanceof IJavaReferenceType) {
-			int length = value.getLength();
-			// guestimate at max entries to print based on char/space/comma per entry
-			int maxLength = getMaxDetailLength();
-			if (maxLength > 0){
-				int maxEntries = (maxLength / 3) + 1;
-				if (length > maxEntries) {
-					StringBuilder snippet = new StringBuilder();
-					snippet.append("Object[] shorter = new Object["); //$NON-NLS-1$
-					snippet.append(maxEntries);
-					snippet.append("]; System.arraycopy(this, 0, shorter, 0, "); //$NON-NLS-1$
-					snippet.append(maxEntries);
-					snippet.append("); "); //$NON-NLS-1$
-					snippet.append("return java.util.Arrays.asList(shorter).toString();"); //$NON-NLS-1$
-					return snippet.toString();
-				}
-			}
-			return "java.util.Arrays.asList(this).toString()"; //$NON-NLS-1$
-		}
-		return null;
 	}
 
 	/**
@@ -783,7 +741,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					Throwable throwable= exception.getStatus().getException();
 					error.append("\n\t\t"); //$NON-NLS-1$
 					if (throwable instanceof InvocationException) {
-						error.append(NLS.bind(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()}));
+						error.append(NLS.bind(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, ((InvocationException) throwable).exception().referenceType().name()));
 					} else if (throwable instanceof UnsupportedOperationException) {
 						error = new StringBuilder();
 						error.append(DebugUIMessages.JavaDetailFormattersManager_7);

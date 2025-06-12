@@ -45,10 +45,10 @@ public class WatchpointTypeChange extends WatchpointChange {
 	 */
 	@Override
 	public String getName() {
-		String msg = NLS.bind(RefactoringMessages.WatchpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
+		String msg = NLS.bind(RefactoringMessages.WatchpointTypeChange_1, getBreakpointLabel(getOriginalBreakpoint()));
 		if(!"".equals(fDestType.getElementName())) { //$NON-NLS-1$
 			msg = NLS.bind(RefactoringMessages.WatchpointTypeChange_0,
-				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
+					getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName());
 		}
 		return msg;
 	}

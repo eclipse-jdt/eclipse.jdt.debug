@@ -18,7 +18,7 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             class="org.eclipse.jdt.internal.ui.macbundler.MacBundleWizard"
-            icon="icons/full/ctool16/exportappbundle_wiz.gif"
+            icon="icons/full/ctool16/exportappbundle_wiz.svg"
             id="org.eclipse.jdt.internal.ui.macbundler.MacBundleWizard"
             name="%MacOSXAppBundleExporter.label">
          <description>

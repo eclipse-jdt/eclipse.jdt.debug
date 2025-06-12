@@ -82,11 +82,11 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 
 	private static class EventRequestType<RT extends EventRequest> {
 
-		private final ArrayList<RT> requests;
+		private final List<RT> requests;
 		private final Hashtable<RequestID, RT> enabledrequests;
 
 		private EventRequestType() {
-			requests= new ArrayList<>();
+			requests = Collections.synchronizedList(new ArrayList<>());
 			enabledrequests= new Hashtable<>();
 		}
 
@@ -421,7 +421,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		} else if(req instanceof MonitorWaitedRequestImpl) {
 			deleteEventRequest(MONITOR_WAITED_TYPE, (MonitorWaitedRequestImpl)req);
 		} else {
-			throw new InternalError(NLS.bind(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, new String[]{req.toString()}));
+			throw new InternalError(NLS.bind(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, req.toString()));
 		}
 	}
 

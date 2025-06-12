@@ -79,6 +79,6 @@ public class SendStaticMessage extends CompoundInstruction {
 	@Override
 	public String toString() {
 		return NLS.bind(InstructionsEvaluationMessages.SendStaticMessage_send_static_message__0___1__2,
-						new String[] { fSelector, fSignature });
+				fSelector, fSignature);
 	}
 }
