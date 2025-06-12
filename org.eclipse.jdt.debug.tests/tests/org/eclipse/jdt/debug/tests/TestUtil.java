@@ -31,7 +31,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jface.text.reconciler.AbstractReconciler;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 
@@ -110,6 +112,8 @@ public class TestUtil {
 	/**
 	 * Utility for waiting until the execution of jobs of any family has finished or timeout is reached. If no jobs are running, the method waits
 	 * given minimum wait time. While this method is waiting for jobs, UI events are processed.
+	 * <p>
+	 * <b>Note:</b> This method does not wait for jobs that belong to the families specified in {@link #getUsualJobFamiliesToIgnore()}.
 	 *
 	 * @param owner
 	 *            name of the caller which will be logged as prefix if the wait times out
@@ -120,7 +124,7 @@ public class TestUtil {
 	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs) {
-		return waitForJobs(owner, minTimeMs, maxTimeMs, (Object[]) null);
+		return waitForJobs(owner, minTimeMs, maxTimeMs, getUsualJobFamiliesToIgnore());
 	}
 
 	/**
@@ -145,6 +149,15 @@ public class TestUtil {
 	public static boolean waitForJobs(String owner, Object jobFamily, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
+		}
+		// Not so nice workaround for https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/721
+		// After https://github.com/eclipse-platform/eclipse.platform.ui/pull/3025 every opened editor
+		// means there will be a reconciler job running, which is not what we do NOT want to wait for.
+		// AbstractReconciler.class is the family object we can check for.
+		if (excludedFamilies == null) {
+			excludedFamilies = new Object[] { AbstractReconciler.class };
+		} else if (excludedFamilies.length == 1 && excludedFamilies[0] == ProcessConsole.class) {
+			excludedFamilies = getUsualJobFamiliesToIgnore();
 		}
 		wakeUpSleepingJobs(jobFamily);
 		final long startNanos = System.nanoTime();
@@ -183,6 +196,18 @@ public class TestUtil {
 		}
 		runningJobs.clear();
 		return false;
+	}
+
+	/**
+	 * Returns a list of job families that are usually ignored in tests.
+	 * <p>
+	 * This is used to avoid waiting for jobs that are not relevant to the test.
+	 * </p>
+	 *
+	 * @return an array of job family classes to ignore
+	 */
+	public static Object[] getUsualJobFamiliesToIgnore() {
+		return new Object[] { ProcessConsole.class, AbstractReconciler.class };
 	}
 
 	private static void wakeUpSleepingJobs(Object family) {
