@@ -25,10 +25,12 @@ import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 
@@ -68,7 +70,7 @@ public class ObjectComparison {
 			}
 		}
 		if (interfaceCheck.contains("Number")) {
-			IJavaThread thread = (IJavaThread) value.getDebugTarget().getThreads()[0];
+			IJavaThread thread = getSuspendedThread(value);
 			IJavaValue stringVal = ((IJavaObject) value).sendMessage("doubleValue", "()D", null, thread, false);
 			return stringVal.getValueString();
 		}
@@ -85,7 +87,7 @@ public class ObjectComparison {
 	 */
 	@SuppressWarnings("nls")
 	private String stringValueExtraction(IJavaObject value) throws DebugException {
-		IJavaThread thread = (IJavaThread) value.getDebugTarget().getThreads()[0];
+		IJavaThread thread = getSuspendedThread(value);
 		IJavaValue stringVal = value.sendMessage("toString", "()Ljava/lang/String;", null, thread, false);
 		return stringVal.getValueString();
 	}
@@ -122,7 +124,7 @@ public class ObjectComparison {
 	@SuppressWarnings("nls")
 	public List<String> setElementsExtraction(IJavaObject javaObject1) throws DebugException {
 		List<String> contents = new ArrayList<>();
-		IJavaThread thread = (IJavaThread) javaObject1.getDebugTarget().getThreads()[0];
+		IJavaThread thread = getSuspendedThread(javaObject1);
 		IJavaValue toArray = javaObject1.sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false);
 		for (IVariable ob : toArray.getVariables()) {
 			contents.add(objectValueExtraction((IJavaValue) ob.getValue()));
@@ -661,7 +663,7 @@ public class ObjectComparison {
 	@SuppressWarnings("nls")
 	public List<String> iterableElementsExtraction(IJavaObject javaObject1) throws DebugException {
 		List<String> contents = new ArrayList<>();
-		IJavaThread thread = (IJavaThread) javaObject1.getDebugTarget().getThreads()[0];
+		IJavaThread thread = getSuspendedThread(javaObject1);
 		IJavaObject iterator = (IJavaObject) javaObject1.sendMessage("iterator", "()Ljava/util/Iterator;", null, thread, false);
 		while (true) {
 			IJavaValue hasNext = iterator.sendMessage("hasNext", "()Z", null, thread, false);
@@ -707,7 +709,7 @@ public class ObjectComparison {
 	@SuppressWarnings("nls")
 	public List<String> listElementsExtraction(IJavaObject javaObject1) throws DebugException {
 		List<String> contents = new ArrayList<>();
-		IJavaThread thread = (IJavaThread) javaObject1.getDebugTarget().getThreads()[0];
+		IJavaThread thread = getSuspendedThread(javaObject1);
 		IJavaValue toArray = javaObject1.sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false);
 		for (IVariable ob : toArray.getVariables()) {
 			contents.add(objectValueExtraction((IJavaValue) ob.getValue()));
@@ -766,9 +768,9 @@ public class ObjectComparison {
 	@SuppressWarnings("nls")
 	public Map<String, Object> mapElementsExtraction(IJavaVariable selectedObject1) throws DebugException {
 		if (selectedObject1.getValue() instanceof IJavaObject javaObject1) {
+			IJavaThread thread = getSuspendedThread(javaObject1);
 			Map<String, Object> result = new HashMap<>();
 			List<String> keySet = new ArrayList<>();
-			IJavaThread thread = (IJavaThread) javaObject1.getDebugTarget().getThreads()[0];
 			IJavaObject keySetObject = (IJavaObject) javaObject1.sendMessage("keySet", "()Ljava/util/Set;", null, thread, false);
 			IJavaValue keyToArray = keySetObject.sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false);
 			for (IVariable ob : keyToArray.getVariables()) {
@@ -852,6 +854,22 @@ public class ObjectComparison {
 		} catch (Exception e) {
 			return className;
 		}
+	}
+
+	/**
+	 * Returns a suspended thread for vm message operation
+	 *
+	 * @param value
+	 *            IJavaValue object
+	 * @return returns a suspended IJavaThread object
+	 */
+	private IJavaThread getSuspendedThread(IJavaValue value) throws DebugException {
+		IJavaThread thread = (IJavaThread) value.getDebugTarget().getThreads()[0];
+		if (!thread.isSuspended()) {
+			JDIStackFrame frame = (JDIStackFrame) DebugUITools.getDebugContext();
+			thread = (IJavaThread) frame.getThread();
+		}
+		return thread;
 	}
 
 }
