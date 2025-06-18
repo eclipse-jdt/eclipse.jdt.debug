@@ -3905,6 +3905,21 @@ M4 = Platform-specific fourth key
             type="org.eclipse.swt.widgets.Composite"
             description="%descriptionSWTComposite"/>
  </extension>
+ 	<extension
+	point="org.eclipse.ui.popupMenus">
+	<viewerContribution
+		targetID="org.eclipse.debug.ui.BreakpointView"
+		id="org.eclipse.jdt.debug.ui.disableConditionalBreakpoints"> 
+		 <action
+               label="%DisableConditionalBreakpoints.label"
+               helpContextId="Disable_all_conditional_breakpoints_action_context"
+               icon="$nl$/icons/full/elcl16/disable_conditional_breakpoints.png"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisableCondtionalBreakpoints"
+               menubarPath="breakpointAdditionalGroup"
+               id="org.eclipse.jdt.internal.debug.ui.DisableConditionalBreakpointsAction">
+         </action>
+         </viewerContribution>
+    </extension>
  <extension
        point="org.eclipse.ui.handlers">
     <handler

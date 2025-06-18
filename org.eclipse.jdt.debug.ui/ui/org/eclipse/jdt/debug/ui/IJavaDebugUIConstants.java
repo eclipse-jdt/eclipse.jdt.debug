@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -115,6 +115,6 @@ public interface IJavaDebugUIConstants {
 	 *
 	 * @since 3.3
 	 */
-	public static final String PREF_ALLREFERENCES_MAX_COUNT = PLUGIN_ID + ".all_references_max_count"; //$NON-NLS-1$
+	public static final String PREF_ALLREFERENCES_MAX_COUNT = PLUGIN_ID + ".all_references_max_count"; //$NON-NLS-1$ `
 
 }
