@@ -51,8 +51,7 @@ public class ConditionalBreakpointsWithFileClass extends AbstractDebugTest {
 		}
 	}
 
-	// FIXME disabled to unblock BETA_JAVA25
-	public void _testFileConditionalBreakpointforTrue() throws Exception {
+	public void testFileConditionalBreakpointforTrue() throws Exception {
 		String typeName = "FileConditionSnippet2";
 		IJavaLineBreakpoint bp3 = createLineBreakpoint(20, typeName);
 		IJavaThread mainThread = null;
