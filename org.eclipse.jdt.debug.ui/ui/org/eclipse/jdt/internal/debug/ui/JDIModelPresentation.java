@@ -1775,33 +1775,53 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendSuspendPolicy(methodBreakpoint,label);
 		appendThreadFilter(methodBreakpoint, label);
 
-
-		boolean entry = methodBreakpoint.isEntry();
-		boolean exit = methodBreakpoint.isExit();
-		if (entry && exit) {
-			label.append(DebugUIMessages.JDIModelPresentation_entry_and_exit);
-		} else if (entry) {
-			label.append(DebugUIMessages.JDIModelPresentation_entry);
-		} else if (exit) {
-			label.append(DebugUIMessages.JDIModelPresentation_exit);
-		}
-		appendConditional(methodBreakpoint, label);
-
-		if (member != null) {
-			label.append(" - "); //$NON-NLS-1$
-			label.append(getJavaLabelProvider().getText(member));
+		if (methodBreakpoint.isLambdaBreakpoint()) {
+			appendConditional(methodBreakpoint, label);
+			if (methodBreakpoint.getLambdaName() != null) {
+				label.append(" - [ " + methodBreakpoint.getLambdaName() + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				if (member != null) {
+					label.append(" - "); //$NON-NLS-1$
+					label.append(getJavaLabelProvider().getText(member));
+				} else {
+					String methodSig = methodBreakpoint.getMethodSignature();
+					String methodName = methodBreakpoint.getMethodName();
+					if (methodSig != null) {
+						label.append(" - "); //$NON-NLS-1$
+						label.append(Signature.toString(methodSig, methodName, null, false, false));
+					} else if (methodName != null) {
+						label.append(" - "); //$NON-NLS-1$
+						label.append(methodName);
+					}
+				}
+			}
 		} else {
-			String methodSig= methodBreakpoint.getMethodSignature();
-			String methodName= methodBreakpoint.getMethodName();
-			if (methodSig != null) {
+			boolean entry = methodBreakpoint.isEntry();
+			boolean exit = methodBreakpoint.isExit();
+			if (entry && exit) {
+				label.append(DebugUIMessages.JDIModelPresentation_entry_and_exit);
+			} else if (entry) {
+				label.append(DebugUIMessages.JDIModelPresentation_entry);
+			} else if (exit) {
+				label.append(DebugUIMessages.JDIModelPresentation_exit);
+			}
+			appendConditional(methodBreakpoint, label);
+
+			if (member != null) {
 				label.append(" - "); //$NON-NLS-1$
-				label.append(Signature.toString(methodSig, methodName, null, false, false));
-			} else if (methodName != null) {
-				label.append(" - "); //$NON-NLS-1$
-				label.append(methodName);
+				label.append(getJavaLabelProvider().getText(member));
+			} else {
+				String methodSig = methodBreakpoint.getMethodSignature();
+				String methodName = methodBreakpoint.getMethodName();
+				if (methodSig != null) {
+					label.append(" - "); //$NON-NLS-1$
+					label.append(Signature.toString(methodSig, methodName, null, false, false));
+				} else if (methodName != null) {
+					label.append(" - "); //$NON-NLS-1$
+					label.append(methodName);
+				}
 			}
 		}
-
 		return label.toString();
 	}
 
