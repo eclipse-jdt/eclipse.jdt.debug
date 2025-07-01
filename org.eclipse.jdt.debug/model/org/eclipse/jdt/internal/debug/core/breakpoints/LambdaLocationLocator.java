@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 
-public class FirstLambdaLocationLocator extends ASTVisitor {
+public class LambdaLocationLocator extends ASTVisitor {
 	private int fNodeLength = -1;
 	private int fNodeOffset = -1;
 	private int fLineOffset = -1;
@@ -25,10 +25,15 @@ public class FirstLambdaLocationLocator extends ASTVisitor {
 	private String fLambdaMethodName;
 	private String fLambdaMethodSignature;
 	private boolean fLocationFound = false;
+	private int fCount = -1;
+	private int fLambdaPosition;
 
-	public FirstLambdaLocationLocator(int lineOffset, int lineEndPosition) {
+	private String selectedlambda;
+
+	public LambdaLocationLocator(int lineOffset, int lineEndPosition, int lambdaPosition) {
 		fLineOffset = lineOffset;
 		fLineEndPosition = lineEndPosition;
+		this.fLambdaPosition = lambdaPosition;
 	}
 
 	/**
@@ -57,6 +62,7 @@ public class FirstLambdaLocationLocator extends ASTVisitor {
 
 	@Override
 	public boolean visit(LambdaExpression node) {
+
 		if (fLocationFound) {
 			return false;
 		}
@@ -67,10 +73,20 @@ public class FirstLambdaLocationLocator extends ASTVisitor {
 		fNodeOffset = node.getStartPosition();
 		IMethodBinding methodBinding = node.resolveMethodBinding();
 		if (methodBinding != null) {
-			fLambdaMethodName = LambdaLocationLocatorHelper.toMethodName(methodBinding);
-			fLambdaMethodSignature = LambdaLocationLocatorHelper.toMethodSignature(methodBinding);
-			fLocationFound = true;
+			fCount++;
+			if (fCount == fLambdaPosition || fLambdaPosition == -10) {
+				fLambdaMethodName = LambdaLocationLocatorHelper.toMethodName(methodBinding);
+				fLambdaMethodSignature = LambdaLocationLocatorHelper.toMethodSignature(methodBinding);
+				fLocationFound = true;
+				selectedlambda = node.toString();
+			}
 		}
 		return false;
 	}
+
+	public String getSelectedLambda() {
+		return selectedlambda;
+	}
+
 }
+
