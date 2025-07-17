@@ -128,7 +128,6 @@ public class FileHashing {
 
 		private final Map<CacheKey, HashCode> cache;
 
-		@SuppressWarnings("serial")
 		public HasherImpl(int cacheSize) {
 			this.cache = new LinkedHashMap<>() {
 				@Override
