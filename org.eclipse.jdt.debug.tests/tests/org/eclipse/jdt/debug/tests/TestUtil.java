@@ -25,13 +25,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jface.text.reconciler.AbstractReconciler;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 
@@ -110,6 +113,8 @@ public class TestUtil {
 	/**
 	 * Utility for waiting until the execution of jobs of any family has finished or timeout is reached. If no jobs are running, the method waits
 	 * given minimum wait time. While this method is waiting for jobs, UI events are processed.
+	 * <p>
+	 * <b>Note:</b> This method does not wait for jobs that belong to the families specified in {@link #getUsualJobFamiliesToIgnore()}.
 	 *
 	 * @param owner
 	 *            name of the caller which will be logged as prefix if the wait times out
@@ -120,7 +125,7 @@ public class TestUtil {
 	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs) {
-		return waitForJobs(owner, minTimeMs, maxTimeMs, (Object[]) null);
+		return waitForJobs(owner, minTimeMs, maxTimeMs, getUsualJobFamiliesToIgnore());
 	}
 
 	/**
@@ -146,6 +151,15 @@ public class TestUtil {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
+		// Not so nice workaround for https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/721
+		// After https://github.com/eclipse-platform/eclipse.platform.ui/pull/3025 every opened editor
+		// means there will be a reconciler job running, which is not what we do NOT want to wait for.
+		// AbstractReconciler.class is the family object we can check for.
+		if (excludedFamilies == null) {
+			excludedFamilies = new Object[] { AbstractReconciler.class };
+		} else if (excludedFamilies.length == 1 && excludedFamilies[0] == ProcessConsole.class) {
+			excludedFamilies = getUsualJobFamiliesToIgnore();
+		}
 		wakeUpSleepingJobs(jobFamily);
 		final long startNanos = System.nanoTime();
 		while (System.nanoTime() - startNanos < minTimeMs * 1_000_000L) {
@@ -168,6 +182,7 @@ public class TestUtil {
 				// only uninteresting jobs running
 				break;
 			}
+			jobs.forEach(Job::wakeUp);
 
 			if (!Collections.disjoint(runningJobs, jobs)) {
 				// There is a job which runs already quite some time, don't wait for it to avoid test timeouts
@@ -185,11 +200,20 @@ public class TestUtil {
 		return false;
 	}
 
-	private static void wakeUpSleepingJobs(Object family) {
-		List<Job> sleepingJobs = getSleepingJobs(family);
-		for (Job job : sleepingJobs) {
-			job.wakeUp();
-		}
+	/**
+	 * Returns a list of job families that are usually ignored in tests.
+	 * <p>
+	 * This is used to avoid waiting for jobs that are not relevant to the test.
+	 * </p>
+	 *
+	 * @return an array of job family classes to ignore
+	 */
+	public static Object[] getUsualJobFamiliesToIgnore() {
+		return new Object[] { ProcessConsole.class, AbstractReconciler.class };
+	}
+
+	private static void wakeUpSleepingJobs(Object jobFamily) {
+		Job.getJobManager().wakeUp(jobFamily);
 	}
 
 	static Set<Job> runningJobs = new LinkedHashSet<>();
@@ -210,6 +234,7 @@ public class TestUtil {
 			runningJobs.add(job);
 			sb.append("\n'").append(job.toString()).append("'/");
 			sb.append(job.getClass().getName());
+			sb.append(":").append(JobManager.printState(job));
 			Thread thread = job.getThread();
 			if (thread != null) {
 				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.threadId() }, true, true);
@@ -237,17 +262,6 @@ public class TestUtil {
 			}
 		}
 		return running;
-	}
-
-	private static List<Job> getSleepingJobs(Object family) {
-		List<Job> sleeping = new ArrayList<>();
-		Job[] jobs = Job.getJobManager().find(family);
-		for (Job job : jobs) {
-			if (job.getState() == Job.SLEEPING) {
-				sleeping.add(job);
-			}
-		}
-		return sleeping;
 	}
 
 	private static boolean isRunningOrWaitingJob(Job job) {
