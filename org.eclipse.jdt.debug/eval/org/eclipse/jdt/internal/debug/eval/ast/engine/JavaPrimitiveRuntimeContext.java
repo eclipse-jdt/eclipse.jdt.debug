@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -21,6 +23,11 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+
+import com.sun.jdi.ClassType;
+import com.sun.jdi.ReferenceType;
 
 public class JavaPrimitiveRuntimeContext extends AbstractRuntimeContext {
 	/**
@@ -70,7 +77,11 @@ public class JavaPrimitiveRuntimeContext extends AbstractRuntimeContext {
 	 */
 	@Override
 	public IJavaReferenceType getReceivingType() throws CoreException {
-		return (IJavaReferenceType) getThisPrimitive().getJavaType();
+		JDIDebugTarget target = (JDIDebugTarget) getThisPrimitive().getJavaType().getDebugTarget();
+		List<ReferenceType> ref = target.getVM().classesByName("java.lang.Object"); //$NON-NLS-1$
+		ClassType classType = (ClassType) ref.get(0);
+		JDIClassType jdiClassType = new JDIClassType(target, classType);
+		return jdiClassType;
 	}
 
 	/**

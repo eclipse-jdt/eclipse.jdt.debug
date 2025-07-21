@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 IBM Corporation and others.
+ * Copyright (c) 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,16 +24,26 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
  */
 public class BreakpointToggleUtils {
 
-	private static boolean isTracepoint = false;
-	private static boolean isLambdaEntryBreakpoint = false;
+	private static boolean isTracepoint;
+	private static boolean isLambdaEntryBreakpoint;
+	private static boolean isTriggerpoint;
+	private static boolean isHitPoint;
+	private static int hitCount;
 
-
-	public static void setUnsetTracepoints(boolean tracePoint) {
+	public static void setUnsetTracepoint(boolean tracePoint) {
 		isTracepoint = tracePoint;
 	}
 
-	public static boolean isToggleTracepoints() {
+	public static boolean isToggleTracepoint() {
 		return isTracepoint;
+	}
+
+	public static void setTriggerpoint(boolean triggerPoint) {
+		isTriggerpoint = triggerPoint;
+	}
+
+	public static boolean isTriggerpoint() {
+		return isTriggerpoint;
 	}
 
 	public static void setUnsetLambdaEntryBreakpoint(boolean lambdaEntryBreakpoint) {
@@ -42,6 +52,25 @@ public class BreakpointToggleUtils {
 
 	public static boolean isToggleLambdaEntryBreakpoint() {
 		return isLambdaEntryBreakpoint;
+	}
+
+	public static void setHitpoint(boolean hitcount) {
+		isHitPoint = hitcount;
+		if (!hitcount) {
+			setHitCount(0);
+		}
+	}
+
+	public static boolean isHitpoint() {
+		return isHitPoint;
+	}
+
+	public static void setHitCount(int hit) {
+		hitCount = hit;
+	}
+
+	public static int getHitCount() {
+		return hitCount;
 	}
 
 	/**
