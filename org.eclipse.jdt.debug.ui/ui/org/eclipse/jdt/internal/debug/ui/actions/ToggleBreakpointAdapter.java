@@ -1612,11 +1612,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			} else {
 				deleteBreakpoint(breakpoint, part, null);
 			}
-			if (!BreakpointToggleUtils.isToggleLambdaEntryBreakpoint()) {
-				return;
-			} else if (breakpoint instanceof IJavaMethodBreakpoint) {
-				return;
-			}
+			return;
 		}
 		// no breakpoint found: we create new one
 		CompilationUnit unit = parseCompilationUnit(editor);
@@ -1692,10 +1688,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 *
 	 * @param breakpoint the breakpoint to delete
 	 * @param part a workbench part, or <code>null</code> if unknown
-	 * @param monitor  the progress monitor
+	 * @param progressMonitor the progress monitor
 	 * @throws CoreException if the deletion fails
 	 */
-	public static void deleteBreakpoint(IJavaBreakpoint breakpoint, IWorkbenchPart part, IProgressMonitor monitor) throws CoreException {
+	private static void deleteBreakpoint(IJavaBreakpoint breakpoint, IWorkbenchPart part, IProgressMonitor monitor) throws CoreException {
 		final Shell shell = part != null ? part.getSite().getShell() : null;
 		final boolean[] result = new boolean[] { true };
 
