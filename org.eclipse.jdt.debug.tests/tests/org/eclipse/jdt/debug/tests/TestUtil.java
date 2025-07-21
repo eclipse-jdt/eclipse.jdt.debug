@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -182,7 +181,6 @@ public class TestUtil {
 				// only uninteresting jobs running
 				break;
 			}
-			jobs.forEach(Job::wakeUp);
 
 			if (!Collections.disjoint(runningJobs, jobs)) {
 				// There is a job which runs already quite some time, don't wait for it to avoid test timeouts
@@ -212,8 +210,11 @@ public class TestUtil {
 		return new Object[] { ProcessConsole.class, AbstractReconciler.class };
 	}
 
-	private static void wakeUpSleepingJobs(Object jobFamily) {
-		Job.getJobManager().wakeUp(jobFamily);
+	private static void wakeUpSleepingJobs(Object family) {
+		List<Job> sleepingJobs = getSleepingJobs(family);
+		for (Job job : sleepingJobs) {
+			job.wakeUp();
+		}
 	}
 
 	static Set<Job> runningJobs = new LinkedHashSet<>();
@@ -234,7 +235,6 @@ public class TestUtil {
 			runningJobs.add(job);
 			sb.append("\n'").append(job.toString()).append("'/");
 			sb.append(job.getClass().getName());
-			sb.append(":").append(JobManager.printState(job));
 			Thread thread = job.getThread();
 			if (thread != null) {
 				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.threadId() }, true, true);
@@ -262,6 +262,17 @@ public class TestUtil {
 			}
 		}
 		return running;
+	}
+
+	private static List<Job> getSleepingJobs(Object family) {
+		List<Job> sleeping = new ArrayList<>();
+		Job[] jobs = Job.getJobManager().find(family);
+		for (Job job : jobs) {
+			if (job.getState() == Job.SLEEPING) {
+				sleeping.add(job);
+			}
+		}
+		return sleeping;
 	}
 
 	private static boolean isRunningOrWaitingJob(Job job) {
