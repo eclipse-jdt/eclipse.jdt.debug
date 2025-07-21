@@ -24,26 +24,30 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
  */
 public class BreakpointToggleUtils {
 
-	private static boolean isTracepoint;
-	private static boolean isLambdaEntryBreakpoint;
-	private static boolean isTriggerpoint;
-	private static boolean isHitPoint;
-	private static int hitCount;
+	private static boolean isTracepoint = false;
+	private static boolean isLambdaEntryBreakpoint = false;
+	private static boolean isTriggerpoint = false;
+	private static boolean isHitPoint = false;
 
-	public static void setUnsetTracepoint(boolean tracePoint) {
+	private static int hitCount = 0;
+
+
+	public static void setUnsetTracepoints(boolean tracePoint) {
 		isTracepoint = tracePoint;
 	}
 
-	public static boolean isToggleTracepoint() {
+	public static boolean isToggleTracepoints() {
 		return isTracepoint;
 	}
 
-	public static void setTriggerpoint(boolean triggerPoint) {
+	public static void setTriggerpoints(boolean triggerPoint) {
 		isTriggerpoint = triggerPoint;
+
 	}
 
-	public static boolean isTriggerpoint() {
+	public static boolean isTriggerpoints() {
 		return isTriggerpoint;
+
 	}
 
 	public static void setUnsetLambdaEntryBreakpoint(boolean lambdaEntryBreakpoint) {
@@ -54,23 +58,30 @@ public class BreakpointToggleUtils {
 		return isLambdaEntryBreakpoint;
 	}
 
-	public static void setHitpoint(boolean hitcount) {
+	public static void setHitpoints(boolean hitcount) {
 		isHitPoint = hitcount;
+
 		if (!hitcount) {
+
 			setHitCount(0);
+
 		}
+
 	}
 
 	public static boolean isHitpoint() {
 		return isHitPoint;
+
 	}
 
 	public static void setHitCount(int hit) {
 		hitCount = hit;
+
 	}
 
 	public static int getHitCount() {
 		return hitCount;
+
 	}
 
 	/**
@@ -98,3 +109,4 @@ public class BreakpointToggleUtils {
 	}
 
 }
+

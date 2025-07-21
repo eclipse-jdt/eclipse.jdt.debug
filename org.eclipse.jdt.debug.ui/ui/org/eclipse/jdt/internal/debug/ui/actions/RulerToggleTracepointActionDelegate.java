@@ -20,7 +20,7 @@ public class RulerToggleTracepointActionDelegate extends AbstractRulerToggleBrea
 
 	@Override
 	protected boolean doWork(ITextEditor editor, ITextSelection selection) {
-		BreakpointToggleUtils.setUnsetTracepoint(true);
+		BreakpointToggleUtils.setUnsetTracepoints(true);
 		return true;
 	}
 }
