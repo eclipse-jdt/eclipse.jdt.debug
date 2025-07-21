@@ -453,20 +453,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			methodBreakpoint.setExit(true);
 			ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE = false;
 		}
-
-		if (BreakpointToggleUtils.isTriggerpoints() && finalSelection instanceof ITextSelection && part instanceof JavaEditor) {
-
-			methodBreakpoint.setTriggerPoint(true);
-			BreakpointToggleUtils.setTriggerpoints(false);
-
-		}
-
-		if (BreakpointToggleUtils.isHitpoint() && finalSelection instanceof ITextSelection && part instanceof JavaEditor) {
-
-			methodBreakpoint.setHitCount(BreakpointToggleUtils.getHitCount());
-			BreakpointToggleUtils.setHitpoints(false);
-
-		}
 	}
 
 	/**
@@ -535,16 +521,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				if (BreakpointToggleUtils.isToggleTracepoints()) {
 					deleteTracepoint(existingBreakpoint, editor, monitor);
 					BreakpointToggleUtils.setUnsetTracepoints(false);
-
-				} else if (BreakpointToggleUtils.isTriggerpoints()) {
-
-					deleteBreakpoint(existingBreakpoint, editor, monitor);
-					BreakpointToggleUtils.setTriggerpoints(false);
-
-				} else if (BreakpointToggleUtils.isHitpoint()) {
-
-					deleteBreakpoint(existingBreakpoint, editor, monitor);
-					BreakpointToggleUtils.setHitpoints(false);
 				} else {
 					deleteBreakpoint(existingBreakpoint, editor, monitor);
 				}
@@ -575,39 +551,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					breakpoint.setConditionEnabled(true);
 					breakpoint.setConditionSuspendOnTrue(true);
 				}
+
 				BreakpointToggleUtils.setUnsetTracepoints(false);
-			}
-
-			if (BreakpointToggleUtils.isTriggerpoints() && selection instanceof ITextSelection && part instanceof JavaEditor) {
-
-				breakpoint.setTriggerPoint(true);
-				BreakpointToggleUtils.setTriggerpoints(false);
-
-			}
-
-			if (BreakpointToggleUtils.isHitpoint() && selection instanceof ITextSelection && part instanceof JavaEditor) {
-
-				breakpoint.setHitCount(BreakpointToggleUtils.getHitCount());
-				BreakpointToggleUtils.setHitpoints(false);
-
 			}
 			if (locator == null) {
 				new BreakpointLocationVerifierJob(document, parseCompilationUnit(type.getTypeRoot()), breakpoint, lnumber, tname, type, editor, bestMatch).schedule();
 			}
 			if (BreakpointToggleUtils.isToggleTracepoints()) {
 				BreakpointToggleUtils.setUnsetTracepoints(false);
-			}
-
-			if (BreakpointToggleUtils.isTriggerpoints()) {
-
-				BreakpointToggleUtils.setTriggerpoints(false);
-
-			}
-
-			if (BreakpointToggleUtils.isHitpoint()) {
-
-				BreakpointToggleUtils.setHitpoints(false);
-
 			}
 		} catch (CoreException ce) {
 			return ce.getStatus();
@@ -674,21 +625,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 		IResource resource = BreakpointUtils.getBreakpointResource(member);
 		String qualifiedName = getQualifiedName(type);
-		IJavaClassPrepareBreakpoint classBreakpoint = JDIDebugModel.createClassPrepareBreakpoint(resource, qualifiedName, IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
-
-		if (BreakpointToggleUtils.isTriggerpoints()) {
-
-			classBreakpoint.setTriggerPoint(true);
-			BreakpointToggleUtils.setTriggerpoints(false);
-
-		}
-
-		if (BreakpointToggleUtils.isHitpoint()) {
-
-			classBreakpoint.setHitCount(BreakpointToggleUtils.getHitCount());
-			BreakpointToggleUtils.setHitpoints(false);
-
-		}
+		JDIDebugModel.createClassPrepareBreakpoint(resource, qualifiedName, IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
 		return Status.OK_STATUS;
 	}
 
@@ -1187,22 +1124,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, javaField);
 				resource = BreakpointUtils.getBreakpointResource(type);
 			}
-
-			IJavaWatchpoint watchPoint = JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, start, end, 0, true, attributes);
-
-			if (BreakpointToggleUtils.isTriggerpoints()) {
-
-				watchPoint.setTriggerPoint(true);
-				BreakpointToggleUtils.setTriggerpoints(false);
-
-			}
-
-			if (BreakpointToggleUtils.isHitpoint()) {
-
-				watchPoint.setHitCount(BreakpointToggleUtils.getHitCount());
-				BreakpointToggleUtils.setHitpoints(false);
-
-			}
+			JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, start, end, 0, true, attributes);
 		}
 		return Status.OK_STATUS;
 	}
@@ -1558,7 +1480,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 	}
 
-	public static IJavaLineBreakpoint findExistingBreakpoint(ITextEditor editor, ITextSelection ts) {
+	private static IJavaLineBreakpoint findExistingBreakpoint(ITextEditor editor, ITextSelection ts) {
 		IDocumentProvider documentProvider = editor.getDocumentProvider();
 		if (documentProvider == null) {
 			return null;
@@ -1615,16 +1537,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			if (BreakpointToggleUtils.isToggleTracepoints()) {
 				deleteTracepoint(breakpoint, part, null);
 				BreakpointToggleUtils.setUnsetTracepoints(false);
-
-			} else if (BreakpointToggleUtils.isTriggerpoints()) {
-
-				deleteBreakpoint(breakpoint, part, null);
-				BreakpointToggleUtils.setTriggerpoints(false);
-
-			} else if (BreakpointToggleUtils.isHitpoint()) {
-
-				deleteBreakpoint(breakpoint, part, null);
-				BreakpointToggleUtils.setHitpoints(false);
 			} else {
 				deleteBreakpoint(breakpoint, part, null);
 			}
