@@ -33,6 +33,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
@@ -466,6 +467,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 						.getCompiledExpression(snippet, javaObject);
 				if (res != null) {
 					Expression exp = new Expression(res, evaluationEngine);
+					if (exp.getExpression().hasErrors()) {
+						boolean hasModuleError = false;
+						for (int prblemID : exp.getExpression().getProblemIDs()) {
+							if (prblemID == IProblem.ConflictingPackageFromModules || prblemID == IProblem.ConflictingPackageFromOtherModules) {
+								hasModuleError = true;
+							}
+						}
+						if (hasModuleError) {
+							return null;
+						}
+					}
 					fCacheMap.put(key, exp);
 					return exp;
 				}

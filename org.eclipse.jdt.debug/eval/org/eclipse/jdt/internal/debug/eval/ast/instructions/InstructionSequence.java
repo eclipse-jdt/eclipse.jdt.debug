@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,11 +30,13 @@ public class InstructionSequence implements ICompiledExpression {
 	private final List<String> fErrors;
 	private final String fSnippet;
 	private CoreException fException;
+	private final List<Integer> fProblemIDs;
 
 	public InstructionSequence(String snippet) {
 		fInstructions = new ArrayList<>(10);
 		fErrors = new ArrayList<>();
 		fSnippet = snippet;
+		fProblemIDs = new ArrayList<>();
 	}
 
 	/**
@@ -147,4 +149,20 @@ public class InstructionSequence implements ICompiledExpression {
 	public int getEnd() {
 		return fInstructions.size() - 1;
 	}
+
+	/**
+	 * Adds the <code>IProblem<code> id of the error.
+	 */
+	public void addProblemID(int probID) {
+		fProblemIDs.add(probID);
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.eval.ICompiledExpression#getProblemIDs()
+	 */
+	@Override
+	public List<Integer> getProblemIDs() {
+		return fProblemIDs;
+	}
+
 }
