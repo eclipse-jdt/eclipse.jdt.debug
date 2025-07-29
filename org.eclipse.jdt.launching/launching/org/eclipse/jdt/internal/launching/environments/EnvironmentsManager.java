@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -63,6 +65,8 @@ import org.xml.sax.SAXException;
  * @since 3.2
  */
 public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMInstallChangedListener, IPreferenceChangeListener {
+
+	private static final Pattern EE_PATTERN = Pattern.compile("(\\d+)"); //$NON-NLS-1$
 
 	/**
 	 * Extension configuration element name.
@@ -203,41 +207,15 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
 		String desc = executionEnvironment.getId();
-		if (desc.indexOf(JavaCore.VERSION_25) != -1) {
-			return JavaCore.VERSION_25;
-		} else if (desc.indexOf(JavaCore.VERSION_24) != -1) {
-			return JavaCore.VERSION_24;
-		} else if (desc.indexOf(JavaCore.VERSION_23) != -1) {
-			return JavaCore.VERSION_23;
-		} else if (desc.indexOf(JavaCore.VERSION_22) != -1) {
-			return JavaCore.VERSION_22;
-		} else if (desc.indexOf(JavaCore.VERSION_21) != -1) {
-			return JavaCore.VERSION_21;
-		} else if (desc.indexOf(JavaCore.VERSION_20) != -1) {
-			return JavaCore.VERSION_20;
-		} else if (desc.indexOf(JavaCore.VERSION_19) != -1) {
-			return JavaCore.VERSION_19;
-		} else if (desc.indexOf(JavaCore.VERSION_18) != -1) {
-			return JavaCore.VERSION_18;
-		} else if (desc.indexOf(JavaCore.VERSION_17) != -1) {
-			return JavaCore.VERSION_17;
-		} else if (desc.indexOf(JavaCore.VERSION_16) != -1) {
-			return JavaCore.VERSION_16;
-		} else if (desc.indexOf(JavaCore.VERSION_15) != -1) {
-			return JavaCore.VERSION_15;
-		} else if (desc.indexOf(JavaCore.VERSION_14) != -1) {
-			return JavaCore.VERSION_14;
-		} else if (desc.indexOf(JavaCore.VERSION_13) != -1) {
-			return JavaCore.VERSION_13;
-		} else if (desc.indexOf(JavaCore.VERSION_12) != -1) {
-			return JavaCore.VERSION_12;
-		} else if (desc.indexOf(JavaCore.VERSION_11) != -1) {
-			return JavaCore.VERSION_11;
-		} else if (desc.indexOf(JavaCore.VERSION_10) != -1) {
-			return JavaCore.VERSION_10;
-		} else if (desc.indexOf(JavaCore.VERSION_9) != -1) {
-			return JavaCore.VERSION_9;
-		} else if (desc.indexOf(JavaCore.VERSION_1_8) != -1) {
+		// For java version > 1.8 we can simply extract the version from the string by searching the numbers
+		Matcher matcher = EE_PATTERN.matcher(desc);
+		if (matcher.find()) {
+			String group = matcher.group(1);
+			if (Integer.parseInt(group) >= 9) {
+				return group;
+			}
+		}
+		if (desc.indexOf(JavaCore.VERSION_1_8) != -1) {
 			return JavaCore.VERSION_1_8;
 		} else if (desc.indexOf(JavaCore.VERSION_1_7) != -1) {
 			return JavaCore.VERSION_1_7;
@@ -253,10 +231,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			return JavaCore.VERSION_1_2;
 		} else if (desc.indexOf(JavaCore.VERSION_1_1) != -1) {
 			return JavaCore.VERSION_1_1;
-		} else if (desc.indexOf("1.0") != -1) { //$NON-NLS-1$
+		} else {
 			return "1.0"; //$NON-NLS-1$
 		}
-		return JavaCore.VERSION_1_3;
 	}
 
 	private synchronized void initializeExtensions() {
