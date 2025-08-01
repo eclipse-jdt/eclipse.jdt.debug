@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 
 /**
  * Default implementation for classpath provider.
@@ -90,9 +93,27 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		// use an ordered set to avoid duplicates
+		int javaRuntimeVersion = JavaProject.NO_RELEASE;
 		Set<IRuntimeClasspathEntry> all = new LinkedHashSet<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
+			IRuntimeClasspathEntry entry = entries[i];
+			if (entry.getType() == IRuntimeClasspathEntry.CONTAINER) {
+				IPath path = entry.getPath();
+				if (JavaRuntime.JRE_CONTAINER.equals(path.segment(0))) {
+					IVMInstall vm = JREContainerInitializer.resolveVM(path);
+					if (vm instanceof IVMInstall2 vmi2) {
+						try {
+							String javaVersion = vmi2.getJavaVersion().split("\\.")[0]; //$NON-NLS-1$
+							javaRuntimeVersion = Integer.parseInt(javaVersion);
+						} catch (RuntimeException rte) {
+							// can't be used then!
+						}
+					}
+				}
+			}
+		}
+		for (int i = 0; i < entries.length; i++) {
+			IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration, javaRuntimeVersion);
 			for (int j = 0; j < resolved.length; j++) {
 				all.add(resolved[j]);
 			}

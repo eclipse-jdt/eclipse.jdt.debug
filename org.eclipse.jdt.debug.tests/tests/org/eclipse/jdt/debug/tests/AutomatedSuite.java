@@ -87,6 +87,7 @@ import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.ModuleOptionsTests;
+import org.eclipse.jdt.debug.tests.core.MultiReleaseLaunchTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.ResolveRuntimeClasspathTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
@@ -291,6 +292,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(WorkingDirectoryTests.class));
 		addTest(new TestSuite(EventDispatcherTest.class));
 		addTest(new TestSuite(SyntheticVariableTests.class));
+		addTest(new TestSuite(MultiReleaseLaunchTests.class));
 
 	// Refactoring tests
 		//TODO: project rename

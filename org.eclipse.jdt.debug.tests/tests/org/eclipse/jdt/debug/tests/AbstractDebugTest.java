@@ -184,6 +184,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String TWENTYFOUR_PROJECT_NAME = "Two_Four";
 	public static final String TWENTYFIVE_PROJECT_NAME = "Two_Five";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
+	public static final String MR_PROJECT_NAME = "MR";
 	public static final String CLONE_SUFFIX = "Clone";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = { "LargeSourceFile", "LotsOfFields",
@@ -248,6 +249,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
+	private static boolean loadedMR;
 	private static boolean welcomeClosed = false;
 
 	/**
@@ -285,6 +287,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		loadedEE = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(MULTI_OUTPUT_PROJECT_NAME);
 		loadedMulti = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(MR_PROJECT_NAME);
+		loadedMR = pro.exists();
 		assertWelcomeScreenClosed();
 	}
 
@@ -623,6 +627,40 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				// ignore
 			}
 			handleProjectCreationException(e, TWENTYONE_PROJECT_NAME, jp);
+		}
+	}
+
+	synchronized void assertMRProject() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loadedMR) {
+				jp = createProject(MR_PROJECT_NAME, JavaProjectHelper.TEST_MR_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_21_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_RELEASE, JavaCore.ENABLED);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, "11");
+				jp.setOption(JavaCore.COMPILER_SOURCE, "11");
+				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "11");
+				IPackageFragmentRoot src17 = JavaProjectHelper.addSourceContainer(jp, "src17", JavaCore.newClasspathAttribute(IClasspathAttribute.RELEASE, "17"));
+				IPackageFragmentRoot src21 = JavaProjectHelper.addSourceContainer(jp, "src21", JavaCore.newClasspathAttribute(IClasspathAttribute.RELEASE, "21"));
+				File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_MR_SRC_DIR);
+				JavaProjectHelper.importFilesFromDirectory(new File(root, src17.getPath().lastSegment()), src17.getPath(), null);
+				JavaProjectHelper.importFilesFromDirectory(new File(root, src21.getPath().lastSegment()), src21.getPath(), null);
+				cfgs.add(createLaunchConfiguration(jp, "p.Main"));
+				loadedMR = true;
+				waitForBuild();
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, MR_PROJECT_NAME, jp);
 		}
 	}
 
@@ -1018,6 +1056,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
+	 * Returns the 'multirelease' project, used for Multirelease tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject getMultireleaseProject() {
+		assertMRProject();
+		return getJavaProject(MR_PROJECT_NAME);
+	}
+
+	/**
 	 * Returns the 'Two_Three' project, used for Java 23 tests.
 	 *
 	 * @return the test project
@@ -1117,7 +1165,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         IJavaProject jp = JavaProjectHelper.createJavaProject(name, JavaProjectHelper.BIN_DIR);
         IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR);
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
-        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+        File srcInRoot = new File(root, src.getPath().lastSegment());
+        if (srcInRoot.isDirectory()) {
+            JavaProjectHelper.importFilesFromDirectory(srcInRoot, src.getPath(), null);
+        } else {
+            JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+        }
 
         // add the EE library
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
