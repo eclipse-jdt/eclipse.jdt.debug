@@ -1050,13 +1050,6 @@
                menubarPath="debug">
          </action>
          <action
-               label="%EnableBreakpoint.label"
-               helpContextId="enable_disable_breakpoint_action_context"
-               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
-         </action>
-         <action
                class="org.eclipse.jdt.internal.debug.ui.actions.RulerToggleHitBreakpointActionDelegate"
                icon="icons/full/obj16/brkp_obj.png"
                id="org.eclipse.jdt.debug.ui.actions.HitBreakpointRulerActionDelegate"
@@ -1069,6 +1062,13 @@
                id="org.eclipse.jdt.debug.ui.actions.TriggerBreakpointRulerActionDelegate"
                label="%ToggleTriggerpointAction.label"
                menubarPath="debug">
+         </action>
+         <action
+               label="%EnableBreakpoint.label"
+               helpContextId="enable_disable_breakpoint_action_context"
+               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
          <action
                class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
