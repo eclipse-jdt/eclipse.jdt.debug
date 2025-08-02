@@ -176,6 +176,10 @@ public class ActionMessages extends NLS {
 	public static String Override_Dependencies_label1;
 	public static String Override_Dependencies_label2;
 
+	public static String lambdaSelection;
+	public static String lambdaSelect;
+	public static String lambdaClose;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);
