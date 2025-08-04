@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -105,6 +106,11 @@ public class JavaProjectHelper {
 	 * path to the 24 test source
 	 */
 	public static final IPath TEST_24_SRC_DIR = new Path("java24");
+
+	/**
+	 * path to the 21 test source
+	 */
+	public static final IPath TEST_MR_SRC_DIR = new Path("multirelease");
 
 	/**
 	 * path to the compiler error java file
@@ -308,9 +314,11 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a new source container specified by the container name to the source path of the specified project
+	 *
+	 * @param extra optional extra classpaht attributes
 	 * @return the package fragment root of the container name
 	 */
-	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName) throws CoreException {
+	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName, IClasspathAttribute... extra) throws CoreException {
 		IProject project= jproject.getProject();
 		IContainer container= null;
 		if (containerName == null || containerName.length() == 0) {
@@ -324,7 +332,7 @@ public class JavaProjectHelper {
 		}
 		IPackageFragmentRoot root= jproject.getPackageFragmentRoot(container);
 
-		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath());
+		IClasspathEntry cpe = JavaCore.newSourceEntry(root.getPath(), ClasspathEntry.INCLUDE_ALL, ClasspathEntry.EXCLUDE_NONE, null, extra);
 		addToClasspath(jproject, cpe);
 		return root;
 	}
