@@ -93,7 +93,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		// use an ordered set to avoid duplicates
-		int javaRuntime = JavaProject.NO_RELEASE;
+		int javaRuntimeVersion = JavaProject.NO_RELEASE;
 		Set<IRuntimeClasspathEntry> all = new LinkedHashSet<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
@@ -104,7 +104,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 					if (vm instanceof IVMInstall2 vmi2) {
 						try {
 							String javaVersion = vmi2.getJavaVersion().split("\\.")[0]; //$NON-NLS-1$
-							javaRuntime = Integer.parseInt(javaVersion);
+							javaRuntimeVersion = Integer.parseInt(javaVersion);
 						} catch (RuntimeException rte) {
 							// can't be used then!
 						}
@@ -113,7 +113,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 			}
 		}
 		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration, javaRuntime);
+			IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration, javaRuntimeVersion);
 			for (int j = 0; j < resolved.length; j++) {
 				all.add(resolved[j]);
 			}
