@@ -19,17 +19,15 @@ import java.util.Properties;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.ui.AbstractDebugUiTests;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.TextConsole;
 
-public class MultiReleaseLaunchTests extends AbstractDebugTest {
+public class MultiReleaseLaunchTests extends AbstractDebugUiTests {
 
 	public MultiReleaseLaunchTests(String name) {
 		super(name);
@@ -62,9 +60,7 @@ public class MultiReleaseLaunchTests extends AbstractDebugTest {
 				+ javaVersion + "/");
 		Properties properties = new Properties();
 		IJavaDebugTarget target = launchAndTerminate(workingCopy.doSave(), DEFAULT_TIMEOUT);
-		Display display = DebugUIPlugin.getStandardDisplay();
-		while (display.readAndDispatch()) {
-		}
+		processUiEvents();
 		final IConsole console = DebugUITools.getConsole(target.getProcess());
 		final TextConsole textConsole = (TextConsole) console;
 		final IDocument consoleDocument = textConsole.getDocument();
