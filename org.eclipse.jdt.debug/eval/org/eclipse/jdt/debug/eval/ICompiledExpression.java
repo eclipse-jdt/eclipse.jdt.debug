@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.eval;
+
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.Message;
 
@@ -61,5 +63,13 @@ public interface ICompiledExpression {
 	 * @since 2.1
 	 */
 	public String[] getErrorMessages();
+
+	/**
+	 * Returns the list of <code>IProblem</code> id's of the compiled expression
+	 *
+	 * @return the list of IProblem id's of the compiled expression
+	 * @since 3.24
+	 */
+	public List<Integer> getProblemIDs();
 
 }
