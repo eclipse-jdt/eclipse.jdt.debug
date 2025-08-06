@@ -108,7 +108,7 @@ public class JavaProjectHelper {
 	public static final IPath TEST_24_SRC_DIR = new Path("java24");
 
 	/**
-	 * path to the 21 test source
+	 * path to the multirelease test source
 	 */
 	public static final IPath TEST_MR_SRC_DIR = new Path("multirelease");
 
@@ -315,7 +315,8 @@ public class JavaProjectHelper {
 	/**
 	 * Adds a new source container specified by the container name to the source path of the specified project
 	 *
-	 * @param extra optional extra classpaht attributes
+	 * @param extra
+	 *            optional extra classpath attributes
 	 * @return the package fragment root of the container name
 	 */
 	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName, IClasspathAttribute... extra) throws CoreException {

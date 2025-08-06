@@ -643,7 +643,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_MR_SRC_DIR);
 				JavaProjectHelper.importFilesFromDirectory(new File(root, src17.getPath().lastSegment()), src17.getPath(), null);
 				JavaProjectHelper.importFilesFromDirectory(new File(root, src21.getPath().lastSegment()), src21.getPath(), null);
-				// TODO
 				cfgs.add(createLaunchConfiguration(jp, "p.Main"));
 				loadedMR = true;
 				waitForBuild();
