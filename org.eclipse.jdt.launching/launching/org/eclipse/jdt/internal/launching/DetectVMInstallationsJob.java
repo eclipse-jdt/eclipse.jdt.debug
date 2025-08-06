@@ -156,7 +156,7 @@ public class DetectVMInstallationsJob extends Job {
 			.map(dir -> dir.listFiles(File::isDirectory))
 			.flatMap(Arrays::stream)
 			.filter(Objects::nonNull)
-			.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(HashSet::new));
 
 		// particular VM installations
 		String javaHome = System.getenv("JAVA_HOME"); //$NON-NLS-1$
@@ -167,6 +167,11 @@ public class DetectVMInstallationsJob extends Job {
 		if (jdkHome != null) {
 			directories.add(new File(jdkHome));
 		}
+		System.getenv().entrySet().forEach(entry -> {
+			if (entry.getKey().startsWith("JAVA_HOME_")) { //$NON-NLS-1$
+				directories.add(new File(entry.getValue()));
+			}
+		});
 		// other common/standard lookup strategies can be added here
 		return directories.stream()
 			.filter(Objects::nonNull)
