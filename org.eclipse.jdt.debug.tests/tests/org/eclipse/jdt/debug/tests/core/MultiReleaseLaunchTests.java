@@ -76,6 +76,7 @@ public class MultiReleaseLaunchTests extends AbstractDebugUiTests {
 				String id = "MultiReleaseLaunchTests-" + UUID.randomUUID() + "-" + i;
 				VMStandin workingCopy = new VMStandin(type, id);
 				workingCopy.setInstallLocation(location);
+				workingCopy.setName(id);
 				IVMInstall install = workingCopy.convertToRealVM();
 				if (removeIfMatch(requiredJavaVersions, install)) {
 					disposeVms.add(() -> type.disposeVMInstall(id));
