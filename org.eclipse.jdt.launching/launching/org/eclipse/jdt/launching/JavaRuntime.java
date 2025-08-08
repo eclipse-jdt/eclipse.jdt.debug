@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -1230,6 +1231,10 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+		return resolveRuntimeClasspathEntry(entry, configuration, JavaProject.NO_RELEASE);
+	}
+
+	static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration, int runtimeJavaVersion) throws CoreException {
 		boolean excludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.PROJECT:
@@ -1244,7 +1249,7 @@ public final class JavaRuntime {
 					IClasspathAttribute[] attributes = entry.getClasspathEntry().getExtraAttributes();
 					boolean withoutTestCode = entry.getClasspathEntry().isWithoutTestCode();
 					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty(), attributes, excludeTestCode
-							|| withoutTestCode);
+							|| withoutTestCode, runtimeJavaVersion);
 					if (entries != null) {
 						return entries;
 					}
@@ -1373,20 +1378,35 @@ public final class JavaRuntime {
 	 *            extra attributes of the original classpath entry
 	 * @param excludeTestCode
 	 *            if true, output folders corresponding to test sources are excluded
+	 * @param runtimeJavaVersion
+	 *            the java runtime version used
 	 *
 	 * @return IRuntimeClasspathEntry[] or <code>null</code>
 	 * @throws CoreException
 	 *             if output resolution encounters a problem
 	 */
-	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty, IClasspathAttribute[] attributes, boolean excludeTestCode) throws CoreException {
+	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty, IClasspathAttribute[] attributes, boolean excludeTestCode, int runtimeJavaVersion) throws CoreException {
 		List<IPath> nonDefault = new ArrayList<>();
+		List<PathWithRelease> multiRelease = new ArrayList<>();
 		boolean defaultUsedByNonTest = false;
+		IPath def = project.getOutputLocation();
 		if (project.exists() && project.getProject().isOpen()) {
 			IClasspathEntry entries[] = project.getRawClasspath();
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry classpathEntry = entries[i];
 				if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					int release = getRelease(classpathEntry);
+					if (release > runtimeJavaVersion) {
+						// ignore entries that target a higher release
+						continue;
+					}
 					IPath path = classpathEntry.getOutputLocation();
+					if (release >= JavaProject.FIRST_MULTI_RELEASE) {
+						// needs special treatment!
+						IPath mrOutput = Objects.requireNonNullElse(path, def).append(new Path(String.format("META-INF/versions/%s", release))); //$NON-NLS-1$
+						multiRelease.add(new PathWithRelease(mrOutput, release));
+						continue;
+					}
 					if (path != null) {
 						if (!(excludeTestCode && classpathEntry.isTest())) {
 							nonDefault.add(path);
@@ -1400,17 +1420,24 @@ public final class JavaRuntime {
 			}
 		}
 		boolean isModular = project.getOwnModuleDescription() != null;
-		if (nonDefault.isEmpty() && !isModular && !excludeTestCode) {
+		if (nonDefault.isEmpty() && multiRelease.isEmpty() && !isModular && !excludeTestCode) {
 			// return here only if non-modular, because patch-module might be needed otherwise
 			return null;
 		}
 		// add the default location if not already included
-		IPath def = project.getOutputLocation();
 		if (!excludeTestCode || defaultUsedByNonTest) {
 			if (!nonDefault.contains(def)) {
 				nonDefault.add(def);
 			}
 		}
+		if (!multiRelease.isEmpty()) {
+			// now sort and add the multi-release output locations, must be with highest release first so that such types are found before lower ones
+			multiRelease.sort(Comparator.comparingInt(PathWithRelease::release));
+			for (PathWithRelease pathWithRelease : multiRelease) {
+				nonDefault.add(0, pathWithRelease.path());
+			}
+		}
+
 		IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
 		for (int i = 0; i < locations.length; i++) {
 			IClasspathEntry newEntry = JavaCore.newLibraryEntry(nonDefault.get(i), null, null, null, attributes, false);
@@ -1423,6 +1450,18 @@ public final class JavaRuntime {
 			}
 		}
 		return locations;
+	}
+
+	private static int getRelease(IClasspathEntry classpathEntry) {
+		String releaseAttribute = ClasspathEntry.getExtraAttribute(classpathEntry, IClasspathAttribute.RELEASE);
+		if (releaseAttribute != null) {
+			try {
+				return Integer.parseInt(releaseAttribute);
+			} catch (RuntimeException e) {
+				// can't use it then!
+			}
+		}
+		return JavaProject.NO_RELEASE;
 	}
 
 	private static boolean containsModuleInfo(IRuntimeClasspathEntry entry) {
@@ -1491,7 +1530,7 @@ public final class JavaRuntime {
 						IClasspathAttribute[] attributes = entry.getClasspathEntry().getExtraAttributes();
 						boolean withoutTestCode = entry.getClasspathEntry().isWithoutTestCode();
 						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty(), attributes, excludeTestCode
-								|| withoutTestCode);
+								|| withoutTestCode, JavaProject.NO_RELEASE);
 						if (entries != null) {
 							return entries;
 						}
@@ -1671,10 +1710,11 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+		IRuntimeClasspathProvider classpathProvider = getClasspathProvider(configuration);
 		if (!isModularConfiguration(configuration)) {
-			return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+			return classpathProvider.resolveClasspath(entries, configuration);
 		}
-		IRuntimeClasspathEntry[] entries1 = getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+		IRuntimeClasspathEntry[] entries1 = classpathProvider.resolveClasspath(entries, configuration);
 		List<IRuntimeClasspathEntry> entries2 = new ArrayList<>(entries1.length);
 		IJavaProject project;
 		try {
@@ -3758,5 +3798,9 @@ public final class JavaRuntime {
 		String[] limitArray = list.toArray(new String[list.size()]);
 		Arrays.sort(limitArray);
 		return String.join(COMMA, limitArray);
+	}
+
+	private static record PathWithRelease(IPath path, int release) {
+
 	}
 }
