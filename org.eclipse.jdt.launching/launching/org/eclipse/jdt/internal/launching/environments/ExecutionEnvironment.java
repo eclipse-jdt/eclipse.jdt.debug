@@ -42,6 +42,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -208,6 +209,75 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	public IVMInstall[] getCompatibleVMs() {
 		init();
 		return fCompatibleVMs.toArray(new IVMInstall[fCompatibleVMs.size()]);
+	}
+
+	@Override
+	public IVMInstall getCompatibleVM() {
+		init();
+		if (fCompatibleVMs.isEmpty()) {
+			return null;
+		}
+		if (fCompatibleVMs.size() == 1) {
+			return fCompatibleVMs.get(0);
+		}
+		if (!fStrictlyCompatible.isEmpty()) {
+			// first lean to the default if it is strictly compatible
+			IVMInstall workspaceDefaultVMInstall = JavaRuntime.getDefaultVMInstall();
+			if (fStrictlyCompatible.contains(workspaceDefaultVMInstall)) {
+				return workspaceDefaultVMInstall;
+			}
+			return fStrictlyCompatible.iterator().next();
+		}
+		IVMInstall best = null;
+		java.lang.Runtime.Version bestVersion = null;
+		for (IVMInstall vm : fCompatibleVMs) {
+			java.lang.Runtime.Version vmVersion = getRuntimeVersion(vm);
+			if (isBetter(vmVersion, bestVersion)) {
+				bestVersion = vmVersion;
+				best = vm;
+			}
+		}
+		return best;
+	}
+
+	private boolean isBetter(java.lang.Runtime.Version version, java.lang.Runtime.Version other) {
+		if (other == null) {
+			return true;
+		}
+		if (version == null) {
+			return false;
+		}
+		if (version.feature() < other.feature()) {
+			// lower major (== feature) is better!
+			return true;
+		}
+		if (version.feature() > other.feature()) {
+			// higher is not better!
+			return false;
+		}
+		if (version.feature() == 1) {
+			// special case for java 1.x versions, lower minor (== interim) is better!
+			if (version.interim() < other.interim()) {
+				return true;
+			}
+			if (version.interim() > other.interim()) {
+				return false;
+			}
+		}
+		// when we are here we have equally good versions, e.g. two Java 11, we choose now the one that is better in the given interim/patch levels
+		// and can use the default compare of version
+		return version.compareTo(other) > 0;
+	}
+
+	private java.lang.Runtime.Version getRuntimeVersion(IVMInstall vm) {
+		if (vm instanceof IVMInstall2 vm2) {
+			try {
+				return Runtime.Version.parse(vm2.getJavaVersion());
+			} catch (RuntimeException e) {
+				// in this case we can't know the version...
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

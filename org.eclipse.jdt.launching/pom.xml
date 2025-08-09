@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.launching</artifactId>
-  <version>3.23.500-SNAPSHOT</version>
+  <version>3.24.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   
   <build>
