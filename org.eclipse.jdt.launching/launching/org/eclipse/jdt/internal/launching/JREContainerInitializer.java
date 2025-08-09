@@ -19,7 +19,6 @@ package org.eclipse.jdt.internal.launching;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -178,31 +177,16 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 		IVMInstall vm = environment.getDefaultVM();
 		if (vm == null) {
-			IVMInstall[] installs = environment.getCompatibleVMs();
-			// take the first strictly compatible VM if there is no default
-			if (installs.length == 0 && LaunchingPlugin.DEBUG_JRE_CONTAINER) {
+			vm = environment.getCompatibleVM();
+			if (vm == null) {
 				LaunchingPlugin.trace("\t*** NO COMPATIBLE VMS ***"); //$NON-NLS-1$
+				return null;
 			}
-			for (int i = 0; i < installs.length; i++) {
-				IVMInstall install = installs[i];
-				if (environment.isStrictlyCompatible(install)) {
-					vm = install;
-					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						LaunchingPlugin.trace("\tPerfect Match: " + vm.getName()); //$NON-NLS-1$
-					}
-					break;
-				}
-			}
-			//try the default VM install: https://bugs.eclipse.org/bugs/show_bug.cgi?id=371300
-			// if default vm is a match https://bugs.eclipse.org/bugs/show_bug.cgi?id=484026
-			if (vm == null && installs.length > 0 && Arrays.asList(installs).contains(JavaRuntime.getDefaultVMInstall())) {
-				vm = JavaRuntime.getDefaultVMInstall();
-			}
-			// use the first VM failing that
-			if (vm == null && installs.length > 0) {
-				vm = installs[0];
-				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-					LaunchingPlugin.trace("\tFirst Match: " + vm.getName()); //$NON-NLS-1$
+			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
+				if (environment.isStrictlyCompatible(vm)) {
+					LaunchingPlugin.trace("\tPerfect Match: " + vm.getName()); //$NON-NLS-1$
+				} else {
+					LaunchingPlugin.trace("\tUse compatible VM: " + vm.getName()); //$NON-NLS-1$
 				}
 			}
 		} else {
