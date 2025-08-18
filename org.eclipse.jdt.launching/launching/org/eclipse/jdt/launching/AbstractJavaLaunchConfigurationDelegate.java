@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -429,22 +430,17 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
-
-		List<String> userEntries = new ArrayList<>(entries.length);
-		Set<String> set = new HashSet<>(entries.length);
+		Set<String> set = new LinkedHashSet<>(entries.length);
 		for (IRuntimeClasspathEntry entry : entries) {
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES
 					|| entry.getClasspathProperty() == IRuntimeClasspathEntry.CLASS_PATH) {
 				String location = entry.getLocation();
 				if (location != null) {
-					if (!set.contains(location)) {
-						userEntries.add(location);
-						set.add(location);
-					}
+					set.add(location);
 				}
 			}
 		}
-		return userEntries.toArray(new String[userEntries.size()]);
+		return set.toArray(new String[set.size()]);
 	}
 
 	/**
@@ -462,31 +458,18 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, config);
 		String[][] path = new String[2][entries.length];
-		List<String> classpathEntries = new ArrayList<>(entries.length);
-		List<String> modulepathEntries = new ArrayList<>(entries.length);
-		Set<String> classpathSet = new HashSet<>(entries.length);
-		Set<String> modulepathSet = new HashSet<>(entries.length);
+		Set<String> classpathSet = new LinkedHashSet<>(entries.length);
+		Set<String> modulepathSet = new LinkedHashSet<>(entries.length);
 		for (IRuntimeClasspathEntry entry : entries) {
 			String location = entry.getLocation();
 			if (location != null) {
 				switch (entry.getClasspathProperty()) {
 				case IRuntimeClasspathEntry.USER_CLASSES:
-					if (!classpathSet.contains(location)) {
-						classpathEntries.add(location);
-						classpathSet.add(location);
-					}
-					break;
 				case IRuntimeClasspathEntry.CLASS_PATH:
-					if (!classpathSet.contains(location)) {
-						classpathEntries.add(location);
-						classpathSet.add(location);
-					}
+					classpathSet.add(location);
 					break;
 				case IRuntimeClasspathEntry.MODULE_PATH:
-					if (!modulepathSet.contains(location)) {
-						modulepathEntries.add(location);
-						modulepathSet.add(location);
-					}
+					modulepathSet.add(location);
 					break;
 				default:
 					break;
@@ -494,8 +477,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 
 			}
 		}
-		path[0] = classpathEntries.toArray(new String[classpathEntries.size()]);
-		path[1] = modulepathEntries.toArray(new String[modulepathEntries.size()]);
+		path[0] = classpathSet.toArray(new String[classpathSet.size()]);
+		path[1] = modulepathSet.toArray(new String[modulepathSet.size()]);
 		return path;
 	}
 
