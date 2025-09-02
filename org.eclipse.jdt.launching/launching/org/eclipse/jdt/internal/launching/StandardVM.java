@@ -58,14 +58,21 @@ public class StandardVM extends AbstractVMInstall {
             File executable = getJavaExecutable();
             if (executable != null) {
                 String vmVersion = installType.getVMVersion(installLocation, executable);
-                // strip off extra info
                 StringBuilder version = new StringBuilder();
-                for (int i = 0; i < vmVersion.length(); i++) {
+				loop: for (int i = 0; i < vmVersion.length(); i++) {
                     char ch = vmVersion.charAt(i);
-                    if (Character.isDigit(ch) || ch == '.') {
-                        version.append(ch);
-                    } else {
-                        break;
+					switch (ch) {
+						case '.':
+						case '_':
+						case '-':
+							version.append(ch);
+							break;
+						default:
+							if (Character.isDigit(ch)) {
+								version.append(ch);
+								break;
+							}
+							break loop;
                     }
                 }
                 if (version.length() > 0) {
