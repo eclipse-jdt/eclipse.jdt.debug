@@ -65,6 +65,19 @@ public interface IExecutionEnvironment {
 	public IVMInstall[] getCompatibleVMs();
 
 	/**
+	 * Return the vm that is best matching this environment that is:
+	 *
+	 * <ol>
+	 * <li>if a strictly compatible is found this one is returned, if multiple are strictly compatible it picks one randomly</li>
+	 * <li>in all other case it choose the one with the lowest version, if multiple match the same version it picks one randomly</li>
+	 * </ol>
+	 *
+	 * @return the best compatible VM or <code>null</code> if none is found
+	 * @since 3.24
+	 */
+	public IVMInstall getCompatibleVM();
+
+	/**
 	 * Returns whether the specified VM install is strictly compatible with
 	 * this environment. Returns <code>true</code> to indicate the VM install
 	 * is strictly compatible with this environment and <code>false</code> to indicate
