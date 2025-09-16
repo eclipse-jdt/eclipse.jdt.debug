@@ -45,7 +45,6 @@ public class JREMessages extends NLS {
 	public static String InstalledJREsBlock_11;
 	public static String InstalledJREsBlock_12;
 	public static String InstalledJREsBlock_13;
-	public static String InstalledJREsBlock_14;
 	public static String InstalledJREsBlock_15;
 	public static String InstalledJREsBlock_16;
 
