@@ -1589,6 +1589,32 @@
          </visibility>
       </objectContribution>
       <objectContribution
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+            <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.CompareObjectWithClipboard"
+               enablesFor="1"
+               helpContextId="compare_objects_clipboard_id"
+               id="org.eclipse.jdt.debug.ui.CompareValueWithClipboard"
+               label="%CompareVariableClipboard.label"
+               menubarPath="variableGroup"
+               icon="$nl$/icons/full/elcl16/compareVariableClipboard.svg"
+               tooltip="%CompareVariableClipboard.tooltip">
+         </action>
+         <visibility>
+            <and>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isPrimitive">
+               </objectState>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
+            </and>
+         </visibility>
+      </objectContribution>
+      <objectContribution
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions2"
             objectClass="org.eclipse.jdt.internal.debug.core.model.JDILocalVariable">
             <action
