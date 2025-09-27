@@ -398,9 +398,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
 		addTest(new TestSuite(TriggerPointBreakpointsTests.class));
 		addTest(new TestSuite(JavaThreadEventHandlerTests.class));
-		if (!JavaProjectHelper.isJava25_Compatible()) { // Disabling since consistent failure on Java 25
-			addTest(new TestSuite(ConditionalBreakpointsWithFileClass.class));
-		}
+		addTest(new TestSuite(ConditionalBreakpointsWithFileClass.class));
 		addTest(new TestSuite(CompareObjectsTest.class));
 		addTest(new TestSuite(DisableOnHitTest.class));
 
