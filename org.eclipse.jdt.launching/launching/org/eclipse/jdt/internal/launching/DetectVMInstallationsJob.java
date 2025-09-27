@@ -38,6 +38,7 @@ import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Lookup for VMs installed in standard or usual locations; and add the existing ones that
@@ -243,6 +244,75 @@ public class DetectVMInstallationsJob extends Job {
 	@Override
 	public boolean belongsTo(Object family) {
 		return family.equals(FAMILY);
+	}
+
+	/**
+	 * Searches the specified directory recursively for installed VMs, adding each
+	 * detected VM to the <code>found</code> list. Any directories specified in
+	 * the <code>ignore</code> are not traversed.
+	 */
+	public static void search(File directory, List<File> found, List<IVMInstallType> types, Set<File> ignore, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return;
+		}
+
+		String[] fileNames = directory.list();
+		if (fileNames == null) {
+			return; // not a directory
+		}
+		List<String> names = new ArrayList<>();
+		names.add(null); // self
+		names.addAll(List.of(fileNames));
+		List<File> subDirs = new ArrayList<>();
+		for (String name : names) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			File file = name == null ? directory : new File(directory, name);
+			monitor.subTask(NLS.bind(LaunchingMessages.SearchingJVMs, Integer.toString(found.size()),
+					file.toPath().normalize().toAbsolutePath().toString().replace("&", "&&") )); // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
+			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();
+			if (file.isDirectory()) {
+				if (ignore.add(file)) {
+					boolean validLocation = false;
+
+					// Take the first VM install type that claims the location as a
+					// valid VM install.  VM install types should be smart enough to not
+					// claim another type's VM, but just in case...
+					for (int j = 0; j < vmTypes.length; j++) {
+						if (monitor.isCanceled()) {
+							return;
+						}
+						IVMInstallType type = vmTypes[j];
+						IStatus status = type.validateInstallLocation(file);
+						if (status.isOK()) {
+							String filePath = file.getPath();
+							int index = filePath.lastIndexOf(File.separatorChar);
+							File newFile = file;
+							// remove bin folder from install location as java executables are found only under bin for Java 9 and above
+							if (index > 0 && filePath.substring(index + 1).equals("bin")) { //$NON-NLS-1$
+								newFile = new File(filePath.substring(0, index));
+							}
+							found.add(newFile);
+							types.add(type);
+							validLocation = true;
+							break;
+						}
+					}
+					if (!validLocation) {
+						subDirs.add(file);
+					}
+				}
+			}
+		}
+		while (!subDirs.isEmpty()) {
+			File subDir = subDirs.remove(0);
+			search(subDir, found, types, ignore, monitor);
+			if (monitor.isCanceled()) {
+				return;
+			}
+		}
+
 	}
 
 	public static void initialize() {

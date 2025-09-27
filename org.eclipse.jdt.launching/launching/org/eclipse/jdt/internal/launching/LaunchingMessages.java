@@ -18,6 +18,8 @@ import org.eclipse.osgi.util.NLS;
 public class LaunchingMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.launching.LaunchingMessages";//$NON-NLS-1$
 
+	public static String SearchingJVMs;
+
 	public static String AbstractJavaLaunchConfigurationDelegate_Java_project_not_specified_9;
 	public static String AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6;
 	public static String AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5;
