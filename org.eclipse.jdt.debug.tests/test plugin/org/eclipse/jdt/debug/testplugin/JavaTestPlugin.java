@@ -90,7 +90,13 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 		try {
 			Bundle bundle = getDefault().getBundle();
 			URL installURL = bundle.getEntry("/" + path.toString());
+			if (installURL == null) {
+				return null;
+			}
 			URL localURL= FileLocator.toFileURL(installURL);//Platform.asLocalURL(installURL);
+			if (localURL == null) {
+				return null;
+			}
 			return new File(localURL.getFile());
 		} catch (IOException e) {
 			return null;
