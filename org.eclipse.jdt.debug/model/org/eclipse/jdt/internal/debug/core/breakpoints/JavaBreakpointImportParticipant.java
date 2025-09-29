@@ -394,10 +394,11 @@ public class JavaBreakpointImportParticipant implements
 			}
 			case ASTNode.ARRAY_TYPE: {
 				ArrayType a = (ArrayType) type;
-				return Signature
-						.createArraySignature(
-								getTypeSignature(a.getElementType()),
-								a.getDimensions());
+				String typeSignature = getTypeSignature(a.getElementType());
+				if (typeSignature == null) {
+					return null;
+				}
+				return Signature.createArraySignature(typeSignature, a.getDimensions());
 			}
 			case ASTNode.PARAMETERIZED_TYPE: {
 				// we don't need to care about the other scoping types only the
