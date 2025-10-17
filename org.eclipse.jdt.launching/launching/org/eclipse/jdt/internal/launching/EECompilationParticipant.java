@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
+import java.lang.Runtime.Version;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -287,7 +288,12 @@ public class EECompilationParticipant extends CompilationParticipant {
 		} else if (matchesMajorVersion(version, JavaCore.VERSION_1_1)) {
 			return JavaCore.VERSION_1_3;
 		}
-		return null;
+		try {
+			Version v = Version.parse(version);
+			return Integer.toString(v.feature());
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
 	}
 
 	private static boolean matchesMajorVersion(String currentVersion, String knownVersion) {
