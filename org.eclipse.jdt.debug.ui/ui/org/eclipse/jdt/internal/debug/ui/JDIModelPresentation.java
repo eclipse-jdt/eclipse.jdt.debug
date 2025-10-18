@@ -1776,25 +1776,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendThreadFilter(methodBreakpoint, label);
 
 		if (methodBreakpoint.isLambdaBreakpoint()) {
-			appendConditional(methodBreakpoint, label);
-			if (methodBreakpoint.getLambdaName() != null) {
-				label.append(" - [ " + methodBreakpoint.getLambdaName() + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				if (member != null) {
-					label.append(" - "); //$NON-NLS-1$
-					label.append(getJavaLabelProvider().getText(member));
-				} else {
-					String methodSig = methodBreakpoint.getMethodSignature();
-					String methodName = methodBreakpoint.getMethodName();
-					if (methodSig != null) {
-						label.append(" - "); //$NON-NLS-1$
-						label.append(Signature.toString(methodSig, methodName, null, false, false));
-					} else if (methodName != null) {
-						label.append(" - "); //$NON-NLS-1$
-						label.append(methodName);
-					}
-				}
-			}
+			processInLineLambdaLabel(methodBreakpoint, label, member);
 		} else {
 			boolean entry = methodBreakpoint.isEntry();
 			boolean exit = methodBreakpoint.isExit();
@@ -2218,5 +2200,30 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	@Override
 	public synchronized boolean requiresUIThread(Object element) {
 		return !isInitialized();
+	}
+
+	/**
+	 * Process custom label for inline lambda breakpoints
+	 */
+	private void processInLineLambdaLabel(IJavaMethodBreakpoint methodBreakpoint, StringBuilder label, IMember member) throws CoreException {
+		appendConditional(methodBreakpoint, label);
+		if (methodBreakpoint.getLambdaName() != null) {
+			label.append(" - [ " + methodBreakpoint.getLambdaName() + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			if (member != null) {
+				label.append(" - "); //$NON-NLS-1$
+				label.append(getJavaLabelProvider().getText(member));
+			} else {
+				String methodSig = methodBreakpoint.getMethodSignature();
+				String methodName = methodBreakpoint.getMethodName();
+				if (methodSig != null) {
+					label.append(" - "); //$NON-NLS-1$
+					label.append(Signature.toString(methodSig, methodName, null, false, false));
+				} else if (methodName != null) {
+					label.append(" - "); //$NON-NLS-1$
+					label.append(methodName);
+				}
+			}
+		}
 	}
 }

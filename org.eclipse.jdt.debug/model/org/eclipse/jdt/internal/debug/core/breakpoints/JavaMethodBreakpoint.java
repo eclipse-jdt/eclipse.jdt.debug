@@ -109,7 +109,9 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * Breakpoint attribute storing in-line position of lambda for single -line chained lambda expressions (value
 	 * <code>"org.eclipse.jdt.debug.core.lambdaPosition"</code>). This attribute is a <code>integer</code>.
 	 */
-	protected static final String LAMBDA_INLINE_POSITION_ = "org.eclipse.jdt.debug.core.lambdaPosition"; //$NON-NLS-1$
+	protected static final String LAMBDA_INLINE_POSITION = "org.eclipse.jdt.debug.core.lambdaPosition"; //$NON-NLS-1$
+
+	public static final int LAMBDA_ALREADY_CALCULATED = -10; // Constant used to
 
 	/**
 	 * Cache of method name attribute
@@ -161,7 +163,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * Cache of lambda position attribute
 	 */
-	private int inlineLambdaPositions;
+	private int inlineLambdaPosition;
 
 	/**
 	 * Cache of lambda name attribute
@@ -667,11 +669,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 						JDIDebugBreakpointMessages.JavaMethodBreakpoint_0, e));
 			}
 		}
-		boolean checkIfLambda = marker.getAttribute(LAMBDA_BREAKPOINT, false);
-		if (checkIfLambda) {
-			isLambdaBreakpoint = checkIfLambda;
+		isLambdaBreakpoint = marker.getAttribute(LAMBDA_BREAKPOINT, false);
+		if (isLambdaBreakpoint) {
 			fLambdaName = marker.getAttribute(LAMBDA_LOCAL_NAME, null);
-			inlineLambdaPositions = marker.getAttribute(LAMBDA_INLINE_POSITION_, 0);
+			inlineLambdaPosition = marker.getAttribute(LAMBDA_INLINE_POSITION, 0);
 		}
 
 	}
@@ -820,6 +821,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
+	 * Checks whether current breakpoint is a lambda breakpoint
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#isLambdaBreakpoint()
 	 */
 	@Override
@@ -828,6 +831,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
+	 * Sets current breakpoint as lambda breakpoint
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#setLambdaBreakpoint(boolean)
 	 */
 	@Override
@@ -837,24 +842,30 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#getInlineLambdasPositions()
+	 * Returns lambda breakpoint's lambda position
+	 *
+	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#getInlineLambdasPosition()
 	 */
 	@Override
-	public int getInlineLambdasPositions() {
-		return inlineLambdaPositions;
+	public int getInlineLambdasPosition() {
+		return inlineLambdaPosition;
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#setInlineLambdas(int)
+	 * Sets lambda breakpoint's lambda position
+	 *
+	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#setInlineLambdaPosition(int)
 	 */
 	@Override
-	public void setInlineLambdas(int pos) throws CoreException {
-		setAttribute(LAMBDA_INLINE_POSITION_, pos);
-		inlineLambdaPositions = pos;
+	public void setInlineLambdaPosition(int pos) throws CoreException {
+		setAttribute(LAMBDA_INLINE_POSITION, pos);
+		inlineLambdaPosition = pos;
 
 	}
 
 	/**
+	 * Sets lambda breakpoint's lambda name
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#setLambdaName(String)
 	 */
 	@Override
@@ -864,12 +875,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	}
 
 	/**
+	 * Returns lambda breakpoint's lambda name
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.IJavaMethodBreakpoint#getLambdaName()
 	 */
 	@Override
 	public String getLambdaName() {
 		return fLambdaName;
-
 	}
 
 }

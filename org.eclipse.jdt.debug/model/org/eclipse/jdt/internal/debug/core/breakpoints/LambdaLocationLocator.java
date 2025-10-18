@@ -20,13 +20,13 @@ import org.eclipse.jdt.core.dom.LambdaExpression;
 public class LambdaLocationLocator extends ASTVisitor {
 	private int fNodeLength = -1;
 	private int fNodeOffset = -1;
-	private int fLineOffset = -1;
-	private int fLineEndPosition = -1;
+	private final int fLineOffset;
+	private final int fLineEndPosition;
 	private String fLambdaMethodName;
 	private String fLambdaMethodSignature;
 	private boolean fLocationFound = false;
 	private int fCount = -1;
-	private int fLambdaPosition;
+	private final int fLambdaPosition;
 
 	private String selectedlambda;
 
@@ -74,7 +74,7 @@ public class LambdaLocationLocator extends ASTVisitor {
 		IMethodBinding methodBinding = node.resolveMethodBinding();
 		if (methodBinding != null) {
 			fCount++;
-			if (fCount == fLambdaPosition || fLambdaPosition == -10) {
+			if (fCount == fLambdaPosition || fLambdaPosition == JavaMethodBreakpoint.LAMBDA_ALREADY_CALCULATED) {
 				fLambdaMethodName = LambdaLocationLocatorHelper.toMethodName(methodBinding);
 				fLambdaMethodSignature = LambdaLocationLocatorHelper.toMethodSignature(methodBinding);
 				fLocationFound = true;

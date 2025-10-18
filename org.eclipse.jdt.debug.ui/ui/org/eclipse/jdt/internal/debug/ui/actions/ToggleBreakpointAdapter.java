@@ -117,13 +117,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
@@ -407,7 +407,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	private static void doToggleMethodBreakpoint(IMethod member, String lambdaMethodName, String lambdaMethodSignature, LambdaBreakpoint lambdaProperties, IWorkbenchPart part, ISelection finalSelection, IProgressMonitor monitor) throws CoreException {
 		int lambdaPosition = 0;
 		if (lambdaProperties != null) {
-			lambdaPosition = lambdaProperties.getLambdaPosition();
+			lambdaPosition = lambdaProperties.lambdaPosition();
 		}
 
 		IJavaBreakpoint breakpoint = getMethodBreakpoint(member, lambdaMethodName, lambdaMethodSignature, lambdaPosition);
@@ -464,9 +464,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 		if (lambdaMethodName != null || lambdaMethodSignature != null) {
 			methodBreakpoint.setLambdaBreakpoint(true);
-			methodBreakpoint.setInlineLambdas(lambdaPosition);
+			methodBreakpoint.setInlineLambdaPosition(lambdaPosition);
 			String lambdaName = lambdaProperties.getLambdaName();
-			if (lambdaProperties.isInline) {
+			if (lambdaProperties.isInline()) {
 				methodBreakpoint.setLambdaName(lambdaName);
 			} else {
 				methodBreakpoint.setLambdaName(null);
@@ -1403,11 +1403,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				if (container instanceof IMethod) {
 					if (method instanceof org.eclipse.jdt.internal.core.LambdaMethod) {
 						try {
-							if (methodBreakpoint.getInlineLambdasPositions() == lambdaPosition
+							if (methodBreakpoint.getInlineLambdasPosition() == lambdaPosition
 									&& methodBreakpoint.getCharStart() == element.getSourceRange().getOffset()) {
 								return methodBreakpoint;
 							}
 						} catch (CoreException e) {
+							JDIDebugUIPlugin.log(e);
 							return null;
 						}
 
@@ -1717,8 +1718,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						return;
 					}
 					ITextSelection textSelection = new TextSelection(document, selectedLambda.getNodeOffset(), selectedLambda.getNodeLength());
-					LambdaBreakpoint lambdaBp = new LambdaBreakpoint(selected == -1 ? selectedLambda.getLambdaMethodName()
-							: lambdaExpresions.get(selected).toString(), selected < 0 ? 0 : selected, lambdaExpresions.size() > 1 ? true : false);
+					LambdaBreakpoint lambdaBp = new LambdaBreakpoint(lambdaExpresions.get(selected).toString(), selected, lambdaExpresions.size() > 1
+							? true
+							: false);
 					toggleLambdaEntryMethodBreakpoints(part, textSelection, selectedLambda.getLambdaMethodName(), selectedLambda.getfLambdaMethodSignature(), lambdaBp);
 				} catch (BadLocationException e) {
 					BreakpointToggleUtils.report(ActionMessages.LambdaEntryBreakpointToggleAction_Unavailable, part);
@@ -1730,29 +1732,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 	}
 
-	class LambdaBreakpoint {
-		private String lambdaName;
-		private int lambdaPosition;
-		private boolean isInline;
-
-		public LambdaBreakpoint(String lambdaName, int lambdaPosition, boolean isInline) {
-			this.lambdaName = lambdaName;
-			this.lambdaPosition = lambdaPosition;
-			this.isInline = isInline;
-		}
-
+	private record LambdaBreakpoint(String lambdaName, int lambdaPosition, boolean isInline) {
 		public String getLambdaName() {
 			return shortenExpression(lambdaName);
 		}
-
-		public int getLambdaPosition() {
-			return lambdaPosition;
-		}
-
-		public boolean isInline() {
-			return isInline;
-		}
-
 	}
 
 	/**
@@ -1973,25 +1956,23 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		if (lambdaExps.isEmpty()) {
 			return -1;
 		}
+
 		int[] selection = { -1 };
 		Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		Shell popup = new Shell(parentShell, SWT.TOOL | SWT.RESIZE);
 		popup.setText(ActionMessages.lambdaSelection);
-		popup.setSize(290, 55 * lambdaExps.size());
-		popup.setLayout(null);
-		Table table = new Table(popup, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		table.setBounds(10, 10, popup.getBounds().width - 20, popup.getBounds().width - 60);
-		List<String> itemsName = lambdaExps.stream().map(LambdaExpression::toString).toList();
-		itemsName = itemsName.stream().map(item -> item.trim().replaceAll("\\n+$", "")).toList(); //$NON-NLS-1$ //$NON-NLS-2$
+		GridLayout popupLayout = new GridLayout(1, false);
+		popupLayout.marginWidth = 10;
+		popupLayout.marginHeight = 10;
+		popupLayout.verticalSpacing = 10;
+		popup.setLayout(popupLayout);
 
-		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-			itemsName = itemsName.stream().map(ToggleBreakpointAdapter::shortenExpression).toList();
-		}
+		Table table = new Table(popup, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		GridData tableData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		table.setLayoutData(tableData);
+		List<String> itemsName = toLambdaEntries(lambdaExps);
 
 		for (String item : itemsName) {
-			if (item.charAt(item.length() - 1) == '\n') {
-				item = item.substring(0, item.length() - 2).trim();
-			}
 			new TableItem(table, SWT.NONE).setText(item);
 		}
 
@@ -2001,37 +1982,35 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				int ind = table.getSelectionIndex();
 				if (ind >= 0) {
 					selection[0] = ind;
-					popup.dispose();
+					popup.close();
 				}
 			}
 		});
 
-		Button selectButton = new Button(popup, SWT.PUSH);
+		Composite buttonBar = new Composite(popup, SWT.NONE);
+		GridLayout buttonLayout = new GridLayout(2, true);
+		buttonLayout.marginWidth = 0;
+		buttonLayout.marginHeight = 0;
+		buttonLayout.horizontalSpacing = 10;
+		buttonBar.setLayout(buttonLayout);
+		buttonBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+		Button selectButton = new Button(buttonBar, SWT.PUSH);
 		selectButton.setText(ActionMessages.lambdaSelect);
-		selectButton.setBounds(90, 180, 80, 30);
+		selectButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		selectButton.addListener(SWT.Selection, e -> {
 			int index = table.getSelectionIndex();
 			if (index >= 0) {
 				selection[0] = index;
-				popup.dispose();
+				popup.close();
 			}
 		});
-
-		Button closeButton = new Button(popup, SWT.PUSH);
+		Button closeButton = new Button(buttonBar, SWT.PUSH);
 		closeButton.setText(ActionMessages.lambdaClose);
-		closeButton.setBounds(170, 180, 80, 30);
-
+		closeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		closeButton.addListener(SWT.Selection, e -> popup.close());
-		popup.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle clientArea = popup.getClientArea();
-				table.setBounds(10, 10, clientArea.width - 20, clientArea.height - 60);
-				selectButton.setBounds(clientArea.width - 180, clientArea.height - 40, 80, 30);
-				closeButton.setBounds(clientArea.width - 90, clientArea.height - 40, 80, 30);
-			}
-		});
+		int tableHeight = Math.min(lambdaExps.size(), 10) * table.getItemHeight() + 80;
+		popup.setSize(300, tableHeight);
 		Point location = Display.getDefault().getCursorLocation();
 		popup.setLocation(location);
 		popup.addListener(SWT.Deactivate, e -> popup.close());
@@ -2064,4 +2043,19 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		return shortened.toString().trim();
 	}
 
+	private List<String> toLambdaEntries(List<LambdaExpression> lambdaExps) {
+		List<String> itemsName = lambdaExps.stream().map(LambdaExpression::toString).toList();
+		itemsName = itemsName.stream().map(item -> item.trim().replaceAll("\\n+$", "")).toList(); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) { // If an expression is of multiline then we should shorten it to single line.
+			itemsName = itemsName.stream().map(ToggleBreakpointAdapter::shortenExpression).toList();
+		}
+		itemsName = itemsName.stream().map(item -> {
+			if (!item.isEmpty() && item.charAt(item.length() - 1) == '\n') {
+				int newLength = Math.max(0, item.length() - 2);
+				return item.substring(0, newLength).trim();
+			}
+			return item;
+		}).toList();
+		return itemsName;
+	}
 }

@@ -160,7 +160,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns whether this breakpoint a lambda entry breakpoint or not.
 	 *
-	 * @return <code>true</code> if this breakpoint of lambda entry breakpoint; <code>false</code> if this breakpoint not lambda entry breakpoint;
+	 * @return <code>true</code> if this breakpoint is a lambda entry breakpoint, <code>false</code> if not.
 	 * @since 3.25
 	 */
 	public boolean isLambdaBreakpoint();
@@ -181,17 +181,17 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * @return the position of lambda in a lambda expression.
 	 * @since 3.25
 	 */
-	public int getInlineLambdasPositions();
+	public int getInlineLambdasPosition();
 
 	/**
 	 * Sets the in-line lambda position
 	 *
 	 * @param pos
-	 *            lambda position
+	 *            lambda position, starts with 0 and cannot be negative
 	 * @throws CoreException
 	 * @since 3.25
 	 */
-	public void setInlineLambdas(int pos) throws CoreException;
+	public void setInlineLambdaPosition(int pos) throws CoreException;
 
 	/**
 	 * Sets the local name used by user in the editor for single-lined lambdas
