@@ -47,7 +47,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, true);
 
 		// Grouping stack frames
-		store.setDefault(IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_COLLAPSE_STACK_FRAMES, true);
 
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_PLATFORM_FRAME_FILTER_LIST, "java.*,javax.*,jdk.*,sun.*,sunw.*,org.junit.*,org.eclipse.jdt.internal.*"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_PLATFORM_FRAME_FILTER_LIST, ""); //$NON-NLS-1$
