@@ -67,6 +67,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 * Constructs a new empty source location to be initialized from
 	 * a memento.
 	 */
+	@Deprecated
 	public DirectorySourceLocation() {
 	}
 
@@ -76,6 +77,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 *
 	 * @param directory a directory
 	 */
+	@Deprecated
 	public DirectorySourceLocation(File directory) {
 		setDirectory(directory);
 	}
@@ -83,6 +85,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		if (getDirectory() == null) {
@@ -131,6 +134,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 *
 	 * @return directory
 	 */
+	@Deprecated
 	public File getDirectory() {
 		return fDirectory;
 	}
@@ -138,6 +142,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public boolean equals(Object object) {
 		return object instanceof DirectorySourceLocation &&
@@ -147,6 +152,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Deprecated
 	@Override
 	public int hashCode() {
 		return getDirectory().hashCode();
@@ -155,6 +161,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
+	@Deprecated
 	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
@@ -167,6 +174,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;

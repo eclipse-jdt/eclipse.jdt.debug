@@ -42,6 +42,7 @@ public interface IRuntimeContainerComparator {
 	 * @return whether this container is a duplicate of the container
 	 * identified by the given path
 	 */
+	@Deprecated
 	public boolean isDuplicate(IPath containerPath);
 
 }

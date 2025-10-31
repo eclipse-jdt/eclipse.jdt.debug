@@ -56,6 +56,7 @@ public interface IJavaSourceLocation extends IAdaptable {
 	 * @exception CoreException if an exception occurs while searching
 	 *  for the specified source element
 	 */
+	@Deprecated
 	public Object findSourceElement(String name) throws CoreException;
 
 	/**
@@ -65,6 +66,7 @@ public interface IJavaSourceLocation extends IAdaptable {
 	 * @return a memento for this source location
 	 * @exception CoreException if unable to create a memento
 	 */
+	@Deprecated
 	public String getMemento() throws CoreException;
 
 	/**
@@ -74,6 +76,7 @@ public interface IJavaSourceLocation extends IAdaptable {
 	 * @exception CoreException if unable to initialize this source
 	 * 	location
 	 */
+	@Deprecated
 	public void initializeFrom(String memento) throws CoreException;
 
 }

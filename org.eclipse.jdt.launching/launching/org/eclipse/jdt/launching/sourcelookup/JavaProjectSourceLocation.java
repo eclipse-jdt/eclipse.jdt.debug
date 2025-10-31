@@ -74,6 +74,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 * Constructs a new empty source location to be initialized
 	 * by a memento.
 	 */
+	@Deprecated
 	public JavaProjectSourceLocation() {
 	}
 
@@ -83,6 +84,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 *
 	 * @param project Java project
 	 */
+	@Deprecated
 	public JavaProjectSourceLocation(IJavaProject project) {
 		setJavaProject(project);
 	}
@@ -90,6 +92,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		if (fRootLocations != null) {
@@ -135,6 +138,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 *
 	 * @return Java project
 	 */
+	@Deprecated
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
@@ -142,6 +146,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public boolean equals(Object object) {
 		return object instanceof JavaProjectSourceLocation &&
@@ -151,6 +156,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Deprecated
 	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
@@ -159,6 +165,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
+	@Deprecated
 	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
@@ -171,6 +178,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;

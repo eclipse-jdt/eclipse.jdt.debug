@@ -38,6 +38,7 @@ public interface IJavaPatternBreakpoint extends IJavaLineBreakpoint {
 	 *                if unable to access the property from this breakpoint's
 	 *                underlying marker
 	 */
+	@Deprecated
 	public String getPattern() throws CoreException;
 
 	/**
@@ -51,6 +52,7 @@ public interface IJavaPatternBreakpoint extends IJavaLineBreakpoint {
 	 *                if unable to access the property from this breakpoint's
 	 *                underlying marker
 	 */
+	@Deprecated
 	public String getSourceName() throws CoreException;
 
 }
