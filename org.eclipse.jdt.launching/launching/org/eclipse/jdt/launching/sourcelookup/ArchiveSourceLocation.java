@@ -95,6 +95,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * This method is only to be called by the launching
 	 * plug-in.
 	 */
+	@Deprecated
 	public static void closeArchives() {
 		synchronized (fZipFileCache) {
 			Iterator<ZipFile> iter = fZipFileCache.values().iterator();
@@ -131,6 +132,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Constructs a new empty source location to be initialized with
 	 * a memento.
 	 */
+	@Deprecated
 	public ArchiveSourceLocation() {
 	}
 
@@ -143,6 +145,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 *  specified archive, or <code>null</code> if the root source folder
 	 *  is the root of the archive
 	 */
+	@Deprecated
 	public ArchiveSourceLocation(String archiveName, String sourceRoot) {
 		super();
 		setName(archiveName);
@@ -152,6 +155,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		try {
@@ -237,6 +241,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * @throws IOException if unable to create the zip
 	 * 	file associated with this location
 	 */
+	@Deprecated
 	protected ZipFile getArchive() throws IOException {
 		return getZipFile(getName());
 	}
@@ -268,6 +273,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the archive
 	 */
+	@Deprecated
 	public IPath getRootPath() {
 		return fRootPath;
 	}
@@ -279,6 +285,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * @return the name of the archive associated with this
 	 *  source location
 	 */
+	@Deprecated
 	public String getName() {
 		return fName;
 	}
@@ -297,6 +304,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public boolean equals(Object object) {
 		return object instanceof ArchiveSourceLocation archivceSource && getName().equals(archivceSource.getName());
@@ -305,6 +313,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Deprecated
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
@@ -313,6 +322,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
+	@Deprecated
 	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
@@ -329,6 +339,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;

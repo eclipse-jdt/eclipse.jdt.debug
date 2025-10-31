@@ -73,6 +73,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	 * @param configuration the launch configuration from which the source lookup
 	 *  path is retrieved and (possibly) updated
 	 */
+	@Deprecated
 	public JavaSourceLookupDialog(Shell shell, String message, ILaunchConfiguration configuration) {
 		super(shell);
 		fSourceLookupBlock= new SourceLookupBlock();
@@ -87,6 +88,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	 *
 	 * @return whether the "do not ask again" check box is selected in the dialog
 	 */
+	@Deprecated
 	public boolean isNotAskAgain() {
 		return fNotAskAgain;
 	}
@@ -94,6 +96,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Deprecated
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
@@ -132,6 +135,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Deprecated
 	@Override
 	protected void okPressed() {
 		try {

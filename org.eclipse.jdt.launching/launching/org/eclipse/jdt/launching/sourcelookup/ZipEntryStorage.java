@@ -40,6 +40,7 @@ public class ZipEntryStorage extends org.eclipse.debug.core.sourcelookup.contain
 	 * @param archive zip file
 	 * @param entry zip entry
 	 */
+	@Deprecated
 	public ZipEntryStorage(ZipFile archive, ZipEntry entry) {
 		super(archive, entry);
 	}

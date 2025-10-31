@@ -102,6 +102,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * Identifier for the 'Java Source Locator' extension
 	 * (value <code>"org.eclipse.jdt.launching.javaSourceLocator"</code>).
 	 */
+	@Deprecated
 	public static final String ID_JAVA_SOURCE_LOCATOR = LaunchingPlugin.getUniqueIdentifier() + ".javaSourceLocator"; //$NON-NLS-1$
 
 	/**
@@ -112,6 +113,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Constructs a new empty JavaSourceLocator.
 	 */
+	@Deprecated
 	public JavaSourceLocator() {
 		setSourceLocations(new IJavaSourceLocation[0]);
 	}
@@ -126,6 +128,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * 	as well
 	 * @throws CoreException if a new locator fails to be created
 	 */
+	@Deprecated
 	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws CoreException {
 		ArrayList<IJavaProject> requiredProjects = new ArrayList<>();
 		for (int i= 0; i < projects.length; i++) {
@@ -169,6 +172,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param locations the source locations to search for
 	 *  source, in the order they should be searched
 	 */
+	@Deprecated
 	public JavaSourceLocator(IJavaSourceLocation[] locations) {
 		setSourceLocations(locations);
 	}
@@ -181,6 +185,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @exception CoreException if an exception occurs reading
 	 *  the classpath of the given or any required project
 	 */
+	@Deprecated
 	public JavaSourceLocator(IJavaProject project) throws CoreException {
 		setSourceLocations(getDefaultSourceLocations(project));
 	}
@@ -192,6 +197,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param locations the locations that will be searched, in the order
 	 *  to be searched
 	 */
+	@Deprecated
 	public void setSourceLocations(IJavaSourceLocation[] locations) {
 		fLocations = locations;
 	}
@@ -203,6 +209,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @return the locations that this source locator is currently
 	 * searching, in the order that they are searched
 	 */
+	@Deprecated
 	public IJavaSourceLocation[] getSourceLocations() {
 		return fLocations;
 	}
@@ -216,6 +223,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * the given stack frame, or <code>null</code> if none
 	 * @since 2.1
 	 */
+	@Deprecated
 	public Object[] getSourceElements(IStackFrame stackFrame) {
 		if (stackFrame instanceof IJavaStackFrame frame) {
 			String name = null;
@@ -252,6 +260,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Deprecated
 	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		if (stackFrame instanceof IJavaStackFrame frame) {
@@ -331,6 +340,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param res the list to add all required projects too
 	 * @throws JavaModelException if there is a problem with the backing Java model
 	 */
+	@Deprecated
 	protected static void collectRequiredProjects(IJavaProject proj, ArrayList<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
 			res.add(proj);
@@ -361,6 +371,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @exception CoreException if an exception occurs reading
 	 *  computing the default locations
 	 */
+	@Deprecated
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
 		// create a temporary launch config
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
@@ -374,6 +385,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
+	@Deprecated
 	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
@@ -393,6 +405,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Deprecated
 	@Override
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
@@ -403,6 +416,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;

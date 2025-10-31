@@ -66,6 +66,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/**
 	 * Creates an empty source location.
 	 */
+	@Deprecated
 	public PackageFragmentRootSourceLocation() {
 	}
 
@@ -74,6 +75,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	 *
 	 * @param root package fragment root
 	 */
+	@Deprecated
 	public PackageFragmentRootSourceLocation(IPackageFragmentRoot root) {
 		setPackageFragmentRoot(root);
 	}
@@ -81,6 +83,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		if (name != null && getPackageFragmentRoot() != null) {
@@ -121,6 +124,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
+	@Deprecated
 	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
@@ -137,6 +141,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Deprecated
 	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
@@ -184,6 +189,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	 * @return the package fragment root associated with this
 	 *  source location, or <code>null</code> if none
 	 */
+	@Deprecated
 	public IPackageFragmentRoot getPackageFragmentRoot() {
 		return fRoot;
 	}
@@ -209,6 +215,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Deprecated
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof PackageFragmentRootSourceLocation) {
@@ -224,6 +231,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Deprecated
 	@Override
 	public int hashCode() {
 		if (getPackageFragmentRoot() == null) {

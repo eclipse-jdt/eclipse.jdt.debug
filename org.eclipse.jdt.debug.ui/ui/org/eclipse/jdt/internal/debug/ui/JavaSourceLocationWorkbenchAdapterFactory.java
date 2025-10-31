@@ -37,6 +37,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 @Deprecated
 /*package*/ class JavaSourceLocationWorkbenchAdapterFactory implements IAdapterFactory {
 
+	@Deprecated
 	class SourceLocationPropertiesAdapter implements IWorkbenchAdapter {
 
 		private final JavaElementLabelProvider fJavaElementLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS);
@@ -44,6 +45,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getChildren(Object)
 		 */
+		@Deprecated
 		@Override
 		public Object[] getChildren(Object o) {
 			return new Object[0];
@@ -52,6 +54,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 		 */
+		@Deprecated
 		@Override
 		public ImageDescriptor getImageDescriptor(Object o) {
 			if (o instanceof JavaProjectSourceLocation) {
@@ -67,6 +70,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getLabel(Object)
 		 */
+		@Deprecated
 		@Override
 		public String getLabel(Object o) {
 			if (o instanceof JavaProjectSourceLocation) {
@@ -87,6 +91,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getParent(Object)
 		 */
+		@Deprecated
 		@Override
 		public Object getParent(Object o) {
 			return null;
@@ -96,6 +101,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	/**
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */
+	@Deprecated
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object obj, Class<T> adapterType) {
@@ -113,6 +119,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
+	@Deprecated
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {

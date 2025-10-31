@@ -37,6 +37,7 @@ public class LocalFileStorage extends org.eclipse.debug.core.sourcelookup.contai
 	 *
 	 * @param file a local file
 	 */
+	@Deprecated
 	public LocalFileStorage(File file){
 		super(file);
 	}
