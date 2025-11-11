@@ -56,6 +56,7 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 	private final IJavaDebugContentAssistContext fContext;
 	private ContentAssistant fAssistant;
 
+	@SuppressWarnings("deprecation")
 	public JavaDebugContentAssistProcessor(IJavaDebugContentAssistContext context) {
 		fContext = context;
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_ALL);

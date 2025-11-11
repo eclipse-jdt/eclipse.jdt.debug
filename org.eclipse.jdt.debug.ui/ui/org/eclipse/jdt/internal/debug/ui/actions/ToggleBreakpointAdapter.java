@@ -1894,6 +1894,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * @return the type root or <code>null</code> if one cannot be derived
 	 * @since 3.8
 	 */
+	@SuppressWarnings("deprecation")
 	private static String getCodeTemplate(ITextSelection textSelection, JavaEditor part) {
 		ITextViewer viewer = part.getViewer();
 		if (viewer == null) {
@@ -1905,6 +1906,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		return templateBuffer.get();
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void doGetCodeTemplate(ITextSelection textSelection, JavaEditor part, ITextViewer viewer, TemplateContextType contextType, AtomicReference<String> templateBuffer) {
 		ITextEditor editor = getTextEditor(part);
 		if (editor == null) {

@@ -51,6 +51,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	private char[] fProposalAutoActivationSet;
 	private ContentAssistant fAssistant;
 
+	@SuppressWarnings("deprecation")
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fEditor= editor;
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
