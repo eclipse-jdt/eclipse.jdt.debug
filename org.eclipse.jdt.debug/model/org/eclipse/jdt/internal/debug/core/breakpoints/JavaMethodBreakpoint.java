@@ -94,6 +94,24 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	protected static final String NATIVE = "org.eclipse.jdt.debug.core.native"; //$NON-NLS-1$
 
 	/**
+	 * Breakpoint attribute storing the local name of lambda seen in the editor (value <code>"org.eclipse.jdt.debug.core.lambdaName"</code>). This
+	 * attribute is a <code>String</code>.
+	 */
+	protected static final String LAMBDA_LOCAL_NAME = "org.eclipse.jdt.debug.core.lambdaName"; //$NON-NLS-1$
+
+	/**
+	 * Breakpoint attribute storing the whether the method breakpoint is of type lambda or not (value
+	 * <code>"org.eclipse.jdt.debug.core.isLambda"</code>). This attribute is a <code>boolean</code>.
+	 */
+	protected static final String LAMBDA_BREAKPOINT = "org.eclipse.jdt.debug.core.isLambda"; //$NON-NLS-1$
+
+	/**
+	 * Breakpoint attribute storing in-line position of lambda for single -line chained lambda expressions (value
+	 * <code>"org.eclipse.jdt.debug.core.lambdaPosition"</code>). This attribute is a <code>integer</code>.
+	 */
+	protected static final String LAMBDA_INLINE_POSITION = "org.eclipse.jdt.debug.core.lambdaPosition"; //$NON-NLS-1$
+
+	/**
 	 * Cache of method name attribute
 	 */
 	private String fMethodName = null;
@@ -134,6 +152,21 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * Cache of whether this breakpoint uses a type name pattern
 	 */
 	private Boolean fUsesTypePattern = null;
+
+	/**
+	 * Cache of lambda type or not attribute
+	 */
+	private boolean isLambdaBreakpoint;
+
+	/**
+	 * Cache of lambda position attribute
+	 */
+	private int inlineLambdaPosition;
+
+	/**
+	 * Cache of lambda name attribute
+	 */
+	private String fLambdaName;
 
 	/**
 	 * Constructs a new method breakpoint
@@ -634,6 +667,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 						JDIDebugBreakpointMessages.JavaMethodBreakpoint_0, e));
 			}
 		}
+		isLambdaBreakpoint = marker.getAttribute(LAMBDA_BREAKPOINT, false);
+		if (isLambdaBreakpoint) {
+			fLambdaName = marker.getAttribute(LAMBDA_LOCAL_NAME, null);
+			inlineLambdaPosition = marker.getAttribute(LAMBDA_INLINE_POSITION, 0);
+		}
+
 	}
 
 	/**
@@ -778,4 +817,38 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 			super.addInstanceFilter(request, object);
 		}
 	}
+
+	@Override
+	public boolean isLambdaBreakpoint() {
+		return isLambdaBreakpoint;
+	}
+
+	@Override
+	public void setLambdaBreakpoint(boolean isLambdaBreakpoint) throws CoreException {
+		setAttribute(LAMBDA_BREAKPOINT, isLambdaBreakpoint);
+		this.isLambdaBreakpoint = isLambdaBreakpoint;
+	}
+
+	@Override
+	public int getInlineLambdaPosition() {
+		return inlineLambdaPosition;
+	}
+
+	@Override
+	public void setInlineLambdaPosition(int pos) throws CoreException {
+		setAttribute(LAMBDA_INLINE_POSITION, pos);
+		inlineLambdaPosition = pos;
+	}
+
+	@Override
+	public void setLambdaName(String lambda) throws CoreException {
+		setAttribute(LAMBDA_LOCAL_NAME, lambda);
+		fLambdaName = lambda;
+	}
+
+	@Override
+	public String getLambdaName() {
+		return fLambdaName;
+	}
+
 }

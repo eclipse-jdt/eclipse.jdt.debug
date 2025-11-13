@@ -22,7 +22,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
@@ -159,17 +159,14 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle implements 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {
-			if (event.getSource() instanceof JDIThread jdiThread) {
-				if(!jdiThread.isTerminated()) {
+			if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof JDIDebugTarget debugTarget) {
+				if (target != debugTarget) {
 					continue;
 				}
-				if (jdiThread.getDebugTarget().equals(target.getDebugTarget())) {
-					DebugPlugin.getDefault().removeDebugEventListener(this);
-					PlatformUI.getWorkbench().getDisplay().asyncExec(this::close);
-					return;
-				}
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				PlatformUI.getWorkbench().getDisplay().asyncExec(this::close);
+				return;
 			}
 		}
-
 	}
 }

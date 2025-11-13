@@ -52,11 +52,13 @@ import org.eclipse.ui.PlatformUI;
 @Deprecated
 public class JavaSourceLookupTab extends JavaLaunchTab {
 
+	@Deprecated
 	protected SourceLookupBlock fSourceLookupBlock;
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
+	@Deprecated
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -82,6 +84,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
+	@Deprecated
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// be default, use a prompting source locator
@@ -93,6 +96,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
+	@Deprecated
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSourceLookupBlock.initializeFrom(configuration);
@@ -101,6 +105,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
+	@Deprecated
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
@@ -112,6 +117,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	 *
 	 * @since 3.3
 	 */
+	@Deprecated
 	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaSourceLookupTab"; //$NON-NLS-1$
@@ -120,6 +126,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Deprecated
 	@Override
 	public String getName() {
 		return LauncherMessages.JavaSourceLookupTab_Source_1;
@@ -128,6 +135,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Deprecated
 	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);

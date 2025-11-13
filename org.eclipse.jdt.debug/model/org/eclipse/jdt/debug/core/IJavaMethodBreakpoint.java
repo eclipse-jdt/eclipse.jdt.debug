@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -156,4 +156,58 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 *         exit or if this breakpoint hasn't suspended the given target.
 	 */
 	public boolean isEntrySuspend(IDebugTarget target);
+
+	/**
+	 * Returns whether this breakpoint a lambda entry breakpoint or not.
+	 *
+	 * @return <code>true</code> if this breakpoint is a lambda entry breakpoint, <code>false</code> if not.
+	 * @since 3.25
+	 */
+	public boolean isLambdaBreakpoint();
+
+	/**
+	 * Sets whether this breakpoint lambda entry breakpoint or not
+	 *
+	 * @param isLambdaBreakpoint
+	 *            lambda status of the breakpoint
+	 * @throws CoreException
+	 * @since 3.25
+	 */
+	public void setLambdaBreakpoint(boolean isLambdaBreakpoint) throws CoreException;
+
+	/**
+	 * Returns the position of lambda in a single line chained lambda expression. Starts with 0
+	 *
+	 * @return the position of lambda in a lambda expression.
+	 * @since 3.25
+	 */
+	public int getInlineLambdaPosition();
+
+	/**
+	 * Sets the in-line lambda position
+	 *
+	 * @param pos
+	 *            lambda position, starts with 0 and cannot be negative
+	 * @throws CoreException
+	 * @since 3.25
+	 */
+	public void setInlineLambdaPosition(int pos) throws CoreException;
+
+	/**
+	 * Sets the local name used by user in the editor for single-lined lambdas
+	 *
+	 * @param lambda
+	 *            lambda name
+	 * @throws CoreException
+	 * @since 3.25
+	 */
+	public void setLambdaName(String lambda) throws CoreException;
+
+	/**
+	 * Returns the local lambda name used by the user in editor
+	 *
+	 * @return lambda name
+	 * @since 3.25
+	 */
+	public String getLambdaName();
 }
