@@ -108,6 +108,11 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		super.buttonPressed(id);
 	}
 
+	@Override
+	protected void buttonPressed(int id) {
+		buttonPressed(id, null);
+	}
+
 	private void storePreference(IDebugTarget target) {
 		fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 		if (fToggleButton2 != null) {
