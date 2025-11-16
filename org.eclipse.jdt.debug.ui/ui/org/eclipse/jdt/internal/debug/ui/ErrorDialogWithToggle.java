@@ -105,11 +105,17 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		if (id == IDialogConstants.OK_ID) {  // was the OK button pressed?
 			storePreference(target);
 		}
+	}
+
+	@Override
+	protected void buttonPressed(int id) {
+		if (id == IDialogConstants.OK_ID) { // was the OK button pressed?
+			fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
+		}
 		super.buttonPressed(id);
 	}
 
 	private void storePreference(IDebugTarget target) {
-		fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 		if (fToggleButton2 != null) {
 			if (target instanceof JDIDebugTarget jdiTarget) {
 				jdiTarget.setHcrDebugErrorPref(fToggleButton2.getSelection());
