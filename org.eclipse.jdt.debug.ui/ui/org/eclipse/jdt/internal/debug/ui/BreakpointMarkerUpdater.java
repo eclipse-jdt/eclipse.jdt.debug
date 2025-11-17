@@ -137,7 +137,8 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 				return false;
 			}
 
-			if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof JavaLineBreakpoint) {
+			if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof JavaLineBreakpoint
+					&& !(breakpoint instanceof IJavaWatchpoint)) {
 				return false;
 			}
 			int line = loc.getLineLocation();
