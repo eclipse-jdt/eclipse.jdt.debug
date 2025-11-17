@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -134,6 +134,10 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			}
 			// Remove the watch point if it is not a valid watch point now
 			if (loc.getLocationType() != ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof IJavaWatchpoint) {
+				return false;
+			}
+
+			if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof JavaLineBreakpoint) {
 				return false;
 			}
 			int line = loc.getLineLocation();
