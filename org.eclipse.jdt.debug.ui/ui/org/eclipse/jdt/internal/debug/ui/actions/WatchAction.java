@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,6 +54,9 @@ public class WatchAction extends InspectAction {
 	}
 
 	private void createWatchExpression(String snippet) {
+		if (snippet.isEmpty()) {
+			return;
+		}
 		IWatchExpression expression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression(snippet);
 		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
 		IAdaptable object = DebugUITools.getDebugContext();
