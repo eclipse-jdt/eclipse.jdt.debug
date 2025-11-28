@@ -153,6 +153,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle implements 
 			okPressed();
 		} else {
 			super.buttonPressed(id, target);
+			super.buttonPressed(id);
 		}
 	}
 

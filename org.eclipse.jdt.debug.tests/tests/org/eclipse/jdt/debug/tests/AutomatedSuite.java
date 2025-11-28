@@ -149,7 +149,9 @@ import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DebugHoverTests;
 import org.eclipse.jdt.debug.tests.ui.DebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
+import org.eclipse.jdt.debug.tests.ui.HotCodeReplaceErrorDialogTest;
 import org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest;
+import org.eclipse.jdt.debug.tests.ui.NoLineNumberAttributesStatusHandlerTest;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
@@ -340,6 +342,12 @@ public class AutomatedSuite extends DebugSuite {
 
 	// Scrapbook editor tests
 		addTest(new TestSuite(JavaSnippetEditorTest.class));
+
+	// No Line Number Attributes Status Handler tests
+		addTest(new TestSuite(NoLineNumberAttributesStatusHandlerTest.class));
+
+	// Test that ErrorDialogWithToggle Override functionalities won't cause a Stackoverflow Exception
+		addTest(new TestSuite(HotCodeReplaceErrorDialogTest.class));
 
 	// Debug hover tests
 		addTest(new TestSuite(DebugHoverTests.class));
