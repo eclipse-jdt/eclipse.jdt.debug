@@ -188,7 +188,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String CLONE_SUFFIX = "Clone";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = { "LargeSourceFile", "LotsOfFields",
-			"Breakpoints",
+			"Breakpoints", "StackFrameColoring",
 			"InstanceVariablesTests",
 			"LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
 			"DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
@@ -3068,7 +3068,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected void assertNoErrorMarkersExist(IProject project) throws Exception {
 		if (project.isAccessible()) {
 			IMarker[] projectMarkers = project.findMarkers(null, false, IResource.DEPTH_INFINITE);
-			List<IMarker> errorMarkers = Arrays.stream(projectMarkers).filter(marker -> isErrorMarker(marker)).collect(Collectors.toList());
+			List<IMarker> errorMarkers = Arrays.stream(projectMarkers).filter(AbstractDebugTest::isErrorMarker).toList();
 			String projectErrors = toString(errorMarkers);
 			assertEquals("found errors on project " + project + ":" + System.lineSeparator() + projectErrors, Collections.EMPTY_LIST, errorMarkers);
 		}
