@@ -179,7 +179,9 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		if (vm == null) {
 			vm = environment.getCompatibleVM();
 			if (vm == null) {
-				LaunchingPlugin.trace("\t*** NO COMPATIBLE VMS ***"); //$NON-NLS-1$
+				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
+					LaunchingPlugin.trace("\t*** NO COMPATIBLE VMS *** for " + environment.getId()); //$NON-NLS-1$
+				}
 				return null;
 			}
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
