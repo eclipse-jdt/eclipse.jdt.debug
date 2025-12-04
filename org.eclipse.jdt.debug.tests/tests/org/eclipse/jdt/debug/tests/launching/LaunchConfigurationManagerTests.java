@@ -110,6 +110,9 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * tests that the applet shortcut is found for a resource that extends applet
 	 */
 	public void testGetAppletLaunchShortcutsForSpecificResource() {
+		if (isJRE26plus) {
+			return;
+		}
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("AppletImpl.java");
 		assertNotNull("The resource AppletImpl must exist", resource);
@@ -121,6 +124,9 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * test that the correct shortcuts are returned for a resource which is an applet and has a main method
 	 */
 	public void testGetLaunchShortcutsForSpecificResource() {
+		if (isJRE26plus) {
+			return;
+		}
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
@@ -197,6 +203,9 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * in this test the applet and local java types should be found
 	 */
 	public void testGetApplicableLaunchConfigurationTypes() {
+		if (isJRE26plus) {
+			return;
+		}
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);

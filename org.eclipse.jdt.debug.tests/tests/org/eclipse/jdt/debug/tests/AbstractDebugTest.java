@@ -251,6 +251,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loadedMulti = false;
 	private static boolean loadedMR;
 	private static boolean welcomeClosed = false;
+	protected boolean isJRE26plus = false;
 
 	/**
 	 * Constructor
@@ -260,6 +261,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		// set error dialog to non-blocking to avoid hanging the UI during test
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
+		String javaVersion = System.getProperty("java.version");
+		if (javaVersion.startsWith("26")) {
+			isJRE26plus = true;
+		}
 	}
 
 	@Override
@@ -356,6 +361,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        		handleProjectCreationException(e, ONE_FOUR_PROJECT_CLOSED_NAME, jp);
 	        	}
 				jp = createProject(ONE_FOUR_PROJECT_NAME, JavaProjectHelper.TEST_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
+				if (isJRE26plus) {
+					// these files cannot be compiled against 26+
+					jp.getProject().getFile("src/AppletImpl.java").delete(true, null);
+					jp.getProject().getFile("src/RunnableAppletImpl.java").delete(true, null);
+				}
 	        	IPackageFragmentRoot src = jp.findPackageFragmentRoot(new Path(ONE_FOUR_PROJECT_NAME).append(JavaProjectHelper.SRC_DIR).makeAbsolute());
 	        	assertNotNull("The 'src' package fragment root should not be null", src);
 	        	File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
@@ -734,7 +744,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		try {
 			if (!loaded25) {
 				jp = createProject(TWENTYFIVE_PROJECT_NAME, JavaProjectHelper.TEST_25_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_25_EE_NAME, false);
-				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.DISABLED);
 				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_25);
 				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_25);
 				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_25);
