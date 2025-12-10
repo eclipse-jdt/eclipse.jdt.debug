@@ -104,6 +104,9 @@ public class LongClassPathTests extends AbstractDebugTest {
 	 * When classpathOnlyJar is enabled, a classpath-only jar is created.
 	 */
 	public void testVeryLongClasspathWithClasspathOnlyJar() throws Exception {
+		if (Platform.OS.isMac()) { // see https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/782
+			return;
+		}
 		// Given
 		javaProject = createJavaProjectClone("test ä VeryLongClasspathWithClasspathOnlyJar", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_1_6_EE_NAME, true);
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
@@ -137,6 +140,9 @@ public class LongClassPathTests extends AbstractDebugTest {
 	 * When JVM > 9, an argument file for the classpath is created when classpath is too long
 	 */
 	public void testVeryLongClasspathWithArgumentFile() throws Exception {
+		if (Platform.OS.isMac()) { // see https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/782
+			return;
+		}
 		javaProject = createJavaProjectClone("testVeryLongClasspathWithArgumentFile", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_9_EE_NAME, true);
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
 		assumeTrue(isArgumentFileSupported(launchConfiguration));
