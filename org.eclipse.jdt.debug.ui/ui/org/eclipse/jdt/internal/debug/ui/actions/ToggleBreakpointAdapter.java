@@ -1737,7 +1737,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 	}
 
-	private static List<LambdaExpression> findLambdaExpressions(ITextEditor editor, IRegion region) {
+	/**
+	 * Finds lambda expressions within the given region of the editor.
+	 *
+	 * @param editor
+	 *            the text editor to search
+	 * @param region
+	 *            the region in which lambda expressions should be collected
+	 * @return a list of lambda expressions found in the region, or an empty list if none are found
+	 */
+	public static List<LambdaExpression> findLambdaExpressions(ITextEditor editor, IRegion region) {
 		LambdaCollector lambdas = new LambdaCollector(region.getOffset(), region.getOffset() + region.getLength());
 		CompilationUnit unitForLambdas = parseCompilationUnit(editor);
 		if (unitForLambdas == null) {
