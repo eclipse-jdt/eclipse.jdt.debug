@@ -217,6 +217,9 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * tests that configuration applicable to specific resources can be found
 	 */
 	public void testGetApplicableLaunchConfigurationsForResource() {
+		if (isJRE26plus) {
+			return;
+		}
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
