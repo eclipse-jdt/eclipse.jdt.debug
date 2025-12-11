@@ -63,7 +63,9 @@ public class ConditionalBreakpointsWithFileClass extends AbstractDebugTest {
 			mainThread = launchToBreakpoint(typeName);
 			mainThread.getTopStackFrame().stepInto();
 
-			if (JavaProjectHelper.isJava25_Compatible()) {
+			if (isJRE26plus) {
+				bp2 = createConditionalLineBreakpoint(374, "java.io.File", "true", true);
+			} else if (JavaProjectHelper.isJava25_Compatible()) {
 				bp2 = createConditionalLineBreakpoint(369, "java.io.File", "true", true);
 			} else {
 				bp2 = createConditionalLineBreakpoint(364, "java.io.File", "true", true);
