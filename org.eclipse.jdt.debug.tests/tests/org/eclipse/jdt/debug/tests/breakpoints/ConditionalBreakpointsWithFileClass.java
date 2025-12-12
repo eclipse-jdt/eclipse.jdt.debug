@@ -76,7 +76,9 @@ public class ConditionalBreakpointsWithFileClass extends AbstractDebugTest {
 			Thread.sleep(1000);
 			assertTrue("Thread should be suspended", mainThread.isSuspended());
 			hitLine = mainThread.getStackFrames()[0].getLineNumber();
-			if (JavaProjectHelper.isJava25_Compatible()) {
+			if (isJRE26plus) {
+				assertEquals("Didn't suspend at the expected line", 374, hitLine);
+			} else if (JavaProjectHelper.isJava25_Compatible()) {
 				assertEquals("Didn't suspend at the expected line", 369, hitLine);
 			} else {
 				assertEquals("Didn't suspend at the expected line", 364, hitLine);
