@@ -221,13 +221,11 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             return evaluationResult;
         }
         var value = evaluationResult.getValue();
-        if (value instanceof IJavaPrimitiveValue) {
-            var primValue = (IJavaPrimitiveValue) value;
+        if (value instanceof IJavaPrimitiveValue primValue) {
             if (variable instanceof IJavaVariable) {
                 try {
                     var type = ((IJavaVariable) variable).getJavaType();
-                    if (type instanceof IJavaClassType) {
-                        var classType = (IJavaClassType) type;
+                    if (type instanceof IJavaClassType classType) {
                         var javaDebug = thread.getDebugTarget().getAdapter(IJavaDebugTarget.class);
                         switch (classType.getName()) {
                             case "java.lang.Long": //$NON-NLS-1$
@@ -283,8 +281,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * (copied from EvaluateAction)
      */
 	protected String getExceptionMessage(Throwable exception) {
-		if (exception instanceof CoreException) {
-			CoreException ce = (CoreException)exception;
+		if (exception instanceof CoreException ce) {
 			Throwable throwable= ce.getStatus().getException();
 			if (throwable instanceof com.sun.jdi.InvocationException) {
 				return getInvocationExceptionMessage((com.sun.jdi.InvocationException)throwable);

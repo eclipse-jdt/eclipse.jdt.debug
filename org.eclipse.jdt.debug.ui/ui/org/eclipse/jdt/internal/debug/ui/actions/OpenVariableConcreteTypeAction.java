@@ -39,8 +39,7 @@ public class OpenVariableConcreteTypeAction extends OpenVariableTypeAction {
 	 */
 	@Override
 	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
-		if (element instanceof IJavaVariable) {
-			IJavaVariable variable = (IJavaVariable) element;
+		if (element instanceof IJavaVariable variable) {
 			return ((IJavaValue)variable.getValue()).getJavaType();
 		}
 		return null;
@@ -48,8 +47,7 @@ public class OpenVariableConcreteTypeAction extends OpenVariableTypeAction {
 
 	@Override
 	public boolean openElement(IAction action, Object element) throws DebugException, CoreException {
-		if (element instanceof JDIVariable) {
-			final var jdiVariable = (JDIVariable) element;
+		if (element instanceof final JDIVariable jdiVariable) {
 			if (isInterfaceType(jdiVariable)) {
 				final var val = (JDIObjectValue) jdiVariable.getValue();
 				if (val.getJavaType().toString().contains("$$Lambda$")) { //$NON-NLS-1$

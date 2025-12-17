@@ -66,8 +66,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
 		}
 
         // set the value of chars directly if expression is a single character (not an expression to evaluate)
-    	if (expression.length() == 1 && variable instanceof IJavaVariable){
-    		IJavaVariable javaVariable = (IJavaVariable)variable;
+    	if (expression.length() == 1 && variable instanceof IJavaVariable javaVariable){
     		try {
 				if (javaVariable.getJavaType() != null && javaVariable.getJavaType().getSignature() == Signature.SIG_CHAR){
 					javaVariable.setValue(expression);
@@ -87,8 +86,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
 	 * @return {@code false} to prohibit editing a variable
 	 */
 	protected boolean isAllowedToModifyValue(IVariable variable) {
-		if (variable instanceof IJavaModifiers) {
-			IJavaModifiers modifiers = (IJavaModifiers) variable;
+		if (variable instanceof IJavaModifiers modifiers) {
 			boolean allowed = isAllowedToModifyFinalValue(modifiers);
 			if (!allowed) {
 				// prohibit editing a variable that is declared as final

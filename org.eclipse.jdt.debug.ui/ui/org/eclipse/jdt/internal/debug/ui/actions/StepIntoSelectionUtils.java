@@ -107,10 +107,9 @@ public class StepIntoSelectionUtils {
 	 */
 	@SuppressWarnings("deprecation")
 	public static IMethod getFirstMethodOnLine(int offset, IEditorPart activeEditor, IJavaElement element) throws JavaModelException {
-		if (! (activeEditor instanceof ITextEditor) || ! (element instanceof ICodeAssist)) {
+		if (! (activeEditor instanceof ITextEditor editor) || ! (element instanceof ICodeAssist)) {
 			return null;
 		}
-		ITextEditor editor = (ITextEditor)activeEditor;
 		IDocumentProvider documentProvider = editor.getDocumentProvider();
 		if (documentProvider == null) {
 			return null;

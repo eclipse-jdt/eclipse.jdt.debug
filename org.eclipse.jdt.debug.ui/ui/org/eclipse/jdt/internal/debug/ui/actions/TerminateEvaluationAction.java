@@ -82,8 +82,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection)selection;
+		if (selection instanceof IStructuredSelection ss) {
 			if (ss.isEmpty() || ss.size() > 1) {
 				return;
 			}

@@ -29,8 +29,7 @@ public class OpenVariableDeclaredTypeAction extends OpenVariableTypeAction {
 	 */
 	@Override
 	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
-		if (element instanceof IJavaVariable) {
-			IJavaVariable variable = (IJavaVariable) element;
+		if (element instanceof IJavaVariable variable) {
 			return variable.getJavaType();
 		}
 		return null;
