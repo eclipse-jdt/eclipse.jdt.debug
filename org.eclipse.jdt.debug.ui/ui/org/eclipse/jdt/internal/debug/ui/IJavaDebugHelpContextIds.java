@@ -52,6 +52,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String LAUNCH_JRE_PROPERTY_PAGE= PREFIX + "launch_jre_property_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DEBUG_PREFERENCE_PAGE= PREFIX + "java_debug_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_STEP_FILTER_PREFERENCE_PAGE= PREFIX + "java_step_filter_preference_page_context"; //$NON-NLS-1$
+	public static final String JAVA_STACK_FRAMES_PREFERENCE_PAGE = PREFIX + "java_stack_frames_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_BREAKPOINT_PREFERENCE_PAGE= PREFIX + "java_breakpoint_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE= PREFIX + "java_detail_formatter_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_PRIMITIVES_PREFERENCE_PAGE= PREFIX + "java_primitives_preference_page_context"; //$NON-NLS-1$
