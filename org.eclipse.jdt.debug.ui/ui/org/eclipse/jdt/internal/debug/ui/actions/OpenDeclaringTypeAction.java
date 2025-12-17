@@ -29,8 +29,7 @@ public class OpenDeclaringTypeAction extends OpenStackFrameAction {
 	 */
 	@Override
 	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
-		if (element instanceof IJavaStackFrame) {
-			IJavaStackFrame frame = (IJavaStackFrame) element;
+		if (element instanceof IJavaStackFrame frame) {
 			return frame.getReferenceType();
 		}
 		return null;

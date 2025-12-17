@@ -128,12 +128,10 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		}
 
 		Object o = selection.getFirstElement();
-		if (o instanceof IJavaVariable) {
-			final IJavaVariable var = (IJavaVariable)o;
+		if (o instanceof final IJavaVariable var) {
 			try {
 				IValue value = var.getValue();
-				if (value instanceof IJavaObject) {
-					final IJavaObject object = (IJavaObject)value;
+				if (value instanceof final IJavaObject object) {
 					final List<IJavaBreakpoint> breakpoints = getApplicableBreakpoints(var, object);
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
 
@@ -238,12 +236,9 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 
 			IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
 			for (int i = 0; i < allBreakpoints.length; i++) {
-				if (allBreakpoints[i] instanceof IJavaBreakpoint) {
-					IJavaBreakpoint jbp = (IJavaBreakpoint)allBreakpoints[i];
+				if (allBreakpoints[i] instanceof IJavaBreakpoint jbp) {
 					IJavaBreakpoint valid = null;
-					if (jbp instanceof IJavaWatchpoint && variable instanceof IJavaFieldVariable) {
-						IJavaWatchpoint wp = (IJavaWatchpoint)jbp;
-						IJavaFieldVariable fv = (IJavaFieldVariable)variable;
+					if (jbp instanceof IJavaWatchpoint wp && variable instanceof IJavaFieldVariable fv) {
 						if (variable.getName().equals(wp.getFieldName()) && fv.getDeclaringType().getName().equals(wp.getTypeName())) {
 							valid = wp;
 						}

@@ -29,8 +29,7 @@ public class OpenVariableDeclarationAction extends OpenVariableConcreteTypeActio
 
 	@Override
 	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
-		if (element instanceof IJavaFieldVariable) {
-			var variable = (IJavaFieldVariable) element;
+		if (element instanceof IJavaFieldVariable variable) {
 			return variable.getDeclaringType();
 		}
 		return null;
@@ -38,8 +37,7 @@ public class OpenVariableDeclarationAction extends OpenVariableConcreteTypeActio
 
 	@Override
 	protected void openInEditor(Object element, IType sourceElement) throws CoreException {
-		if (element instanceof JDIFieldVariable) {
-			var field = (JDIFieldVariable) element;
+		if (element instanceof JDIFieldVariable field) {
 			var fieldElement = sourceElement.getField(field.getName());
 			var editor = JavaUI.openInEditor(fieldElement);
 			if (editor != null) {

@@ -125,8 +125,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 
 	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
-	    if (target instanceof IDebugElement && target.canResume()) {
-            IDebugElement element = (IDebugElement) target;
+	    if (target instanceof IDebugElement element && target.canResume()) {
             IJavaDebugTarget adapter = element.getDebugTarget().getAdapter(IJavaDebugTarget.class);
             return adapter != null;
         }

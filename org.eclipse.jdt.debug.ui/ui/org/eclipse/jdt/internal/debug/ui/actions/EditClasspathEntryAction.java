@@ -89,8 +89,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
-			if (element instanceof IRuntimeClasspathEntry) {
-				IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry) element;
+			if (element instanceof IRuntimeClasspathEntry entry) {
 				IClasspathEditor editor = getEditor(entry);
 				if (editor != null) {
 					return editor.canEdit(fConfiguration, new IRuntimeClasspathEntry[]{((ClasspathEntry)entry).getDelegate()});
@@ -101,8 +100,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	}
 
 	protected IClasspathEditor getEditor(IRuntimeClasspathEntry entry) {
-		if (entry instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) entry;
+		if (entry instanceof IAdaptable adaptable) {
 			return adaptable.getAdapter(IClasspathEditor.class);
 		}
 		return null;

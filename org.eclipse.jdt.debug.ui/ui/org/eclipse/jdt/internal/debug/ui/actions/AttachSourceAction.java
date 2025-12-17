@@ -68,8 +68,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 		int i = 0;
 		while (iterator.hasNext()) {
 			Object selected= iterator.next();
-			if (selected instanceof IRuntimeClasspathEntry) {
-				IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)selected;
+			if (selected instanceof IRuntimeClasspathEntry entry) {
 				int type = entry.getType();
 				switch (type) {
 					case IRuntimeClasspathEntry.VARIABLE:
