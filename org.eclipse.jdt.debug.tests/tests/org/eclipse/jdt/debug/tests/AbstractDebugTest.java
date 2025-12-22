@@ -2228,6 +2228,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String packageName, String cuName, String typeName, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
 		assertNotNull("did not find type to install breakpoint in", type); //$NON-NLS-1$
+		return createMethodBreakpoint(type, methodName, methodSignature, entry, exit);
+	}
+
+	/**
+	 * Creates a method breakpoint in a specified type.
+	 *
+	 * @param type the type in which the method breakpoint is set
+	 * @param methodName method or <code>null</code> for all methods
+	 * @param methodSignature JLS method signature or <code>null</code> for all methods with the given name
+	 * @param entry whether to break on entry
+	 * @param exit whether to break on exit
+	 * @return method breakpoint
+	 */
+	protected IJavaMethodBreakpoint createMethodBreakpoint(IType type, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IMethod method= null;
 		if (methodSignature != null && methodName != null) {
 			if (type != null ) {
