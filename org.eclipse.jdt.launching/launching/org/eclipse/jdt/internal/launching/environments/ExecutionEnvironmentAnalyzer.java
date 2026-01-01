@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *
@@ -100,7 +104,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
-		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_25 });
+		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_26 });
 		mappings.put(JavaSE_11, new String[] { JavaSE_10 });
 		mappings.put(JavaSE_12, new String[] { JavaSE_11 });
 		mappings.put(JavaSE_13, new String[] { JavaSE_12 });
