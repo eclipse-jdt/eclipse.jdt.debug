@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1676,7 +1676,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LAMBDA_METHOD) {
 			toggleLambdaMethodBreakpoints(part, ts, loc);
 		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
-			toggleMethodBreakpoints(part, ts);
+			if (breakpoint != null) { // Issue : https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/836
+				deleteBreakpoint(breakpoint, part, null);
+			} else {
+				toggleMethodBreakpoints(part, ts);
+			}
 		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
 			if (BreakpointToggleUtils.isToggleTracepoint()) {
 				BreakpointToggleUtils.report(ActionMessages.TracepointToggleAction_Unavailable, part);
