@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1743,5 +1743,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	@Override
 	public synchronized void resetCategory() {
 		fCategory = null;
+	}
+
+	public long getCodeIndex() {
+		return fLocation.codeIndex();
 	}
 }
