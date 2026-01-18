@@ -10,7 +10,7 @@ pipeline {
 	}
 	tools {
 		maven 'apache-maven-latest'
-		jdk 'openjdk-jdk25-latest'
+		jdk 'openjdk-jdk26-latest'
 	}
 	environment {
 		NON_MODULAR_JAVA_HOME = tool(type:'jdk', name:'temurin-jdk8-latest')
@@ -21,7 +21,7 @@ pipeline {
 				xvnc(useXauthority: true) {
 					sh """
 					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						-Ptest-on-javase-25 -Pbree-libs -Papi-check -Pjavadoc\
+						-Ptest-on-javase-26 -Pbree-libs -Papi-check -Pjavadoc\
 						-Dmaven.test.failure.ignore=true\
 						-Dcompare-version-with-baselines.skip=false \
 						-Dproject.build.sourceEncoding=UTF-8 \

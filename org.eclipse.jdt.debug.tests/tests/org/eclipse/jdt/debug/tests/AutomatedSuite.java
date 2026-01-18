@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     SAP SE - Support hyperlinks for stack entries with method signature
@@ -201,7 +205,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
-		if (JavaProjectHelper.isJava25_Compatible()) {
+		if (JavaProjectHelper.isJava26_Compatible()) {
 			addTest(new TestSuite(InstanceMainMethodsTests.class));
 		}
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));

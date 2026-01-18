@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     Stephan Herrmann - initial API and implementation
  *     IBM Corporation - bug fixes
@@ -63,6 +67,35 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
 
+	private static final String ASSUMED_DEFAULT_MODULES_26 = "java.base," //
+			+ "java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging," //
+			+ "java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi," //
+			+ "java.scripting,java.security.jgss,java.security.sasl,java.smartcardio," //
+			+ "java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.vector,"
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net,jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+
+	private static final String ASSUMED_DEFAULT_MODULES_9_ON_26 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.vector," //
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell," //
+			+ "jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
 
 	public ModuleOptionsTests(String name) {
 		super(name);
@@ -142,7 +175,11 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			List<String> defaultModules = getDefaultModules(javaProject);
 			String expectedModules;
 			String moduleList = String.join(",", defaultModules);
-			assertEquals(ASSUMED_DEFAULT_MODULES_9, moduleList);
+			if (Runtime.version().feature() >= 26) {
+				assertEquals(ASSUMED_DEFAULT_MODULES_9_ON_26, moduleList);
+			} else {
+				assertEquals(ASSUMED_DEFAULT_MODULES_9, moduleList);
+			}
 			switch (moduleList) {
 				case ASSUMED_DEFAULT_MODULES_9:
 					expectedModules = //
@@ -153,8 +190,19 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 							+ "jdk.net," //
 							+ "jdk.nio.mapmode," //
 							// + "jdk.packager,jdk.packager.services,jdk.plugin.dom,"
-							// + "jdk.scripting.nashorn," 
+							// + "jdk.scripting.nashorn,"
 							+ "jdk.sctp,"
+							+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+							+ "jdk.unsupported.desktop,jdk.xml.dom";
+					break;
+				case ASSUMED_DEFAULT_MODULES_9_ON_26:
+					expectedModules = "java.instrument,java.net.http,java.scripting,java.sql.rowset,java.xml.crypto," //
+							+ "jdk.accessibility,jdk.dynalink,jdk.httpserver,jdk.incubator.vector," //
+							+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+							+ "jdk.management.jfr," //
+							+ "jdk.net," //
+							+ "jdk.nio.mapmode," //
+							+ "jdk.sctp," //
 							+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 							+ "jdk.unsupported.desktop,jdk.xml.dom";
 					break;
@@ -198,6 +246,13 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.sctp," //
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
+						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_26:
+				expectedModules = "java.instrument,java.net.http,java.scripting,java.smartcardio,java.sql.rowset,java.xml.crypto,"
+						+ "jdk.accessibility," + "jdk.dynalink," + "jdk.httpserver," + "jdk.incubator.vector,"
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," + "jdk.management.jfr," + "jdk.net," + "jdk.nio.mapmode," + "jdk.sctp,"
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop,"
 						+ "jdk.xml.dom";
 				break;
 			default:
