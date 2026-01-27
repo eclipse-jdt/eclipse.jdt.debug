@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -140,6 +140,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private boolean fIsTop;
 
 	private Category fCategory;
+
+	private StackFrame fLambdaUnderlyingStack;
 
 	@SuppressWarnings("restriction")
 	private static final String SYNTHETIC_OUTER_LOCAL_PREFIX = new String(org.eclipse.jdt.internal.compiler.lookup.TypeConstants.SYNTHETIC_OUTER_LOCAL_PREFIX);
@@ -309,8 +311,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	protected List<IJavaVariable> getVariables0() throws DebugException {
 		synchronized (fThread) {
-			if (fVariables == null) {
 
+			if (fVariables == null || isDifferentLambdaContext(this)) {
 				// throw exception if native method, so variable view will
 				// update
 				// with information message
@@ -372,6 +374,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					}
 				}
 				if (LambdaUtils.isLambdaFrame(this)) {
+					fLambdaUnderlyingStack = this.getUnderlyingStackFrame();
 					List<IJavaStackFrame> frames = fThread.computeStackFrames();
 					int previousIndex = frames.indexOf(this) + 1;
 					if (previousIndex > 0 && previousIndex < frames.size()) {
@@ -1743,5 +1746,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	@Override
 	public synchronized void resetCategory() {
 		fCategory = null;
+	}
+
+	private boolean isDifferentLambdaContext(IStackFrame frame) throws DebugException {
+		if (!LambdaUtils.isLambdaFrame(frame)) {
+			return false;
+		}
+		if (fLambdaUnderlyingStack != null && fLambdaUnderlyingStack != this.getUnderlyingStackFrame()) {
+			return true;
+		}
+		return false;
+
 	}
 }
