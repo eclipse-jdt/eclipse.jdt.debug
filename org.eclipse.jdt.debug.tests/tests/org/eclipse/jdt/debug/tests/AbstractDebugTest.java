@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -523,6 +523,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug578145LambdaOnChainCalls"));
 				cfgs.add(createLaunchConfiguration(jp, "LambdaBreakpoints1"));
 				cfgs.add(createLaunchConfiguration(jp, "GH275"));
+				cfgs.add(createLaunchConfiguration(jp, "LambdaTest"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
