@@ -1569,7 +1569,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see org.eclipse.debug.core.model.IFilteredStep#stepWithFilters()
 	 */
-	@SuppressWarnings("deprecation")
+	
 	@Override
 	public void stepWithFilters() throws DebugException {
 		((IJavaThread) getThread()).stepWithFilters();
