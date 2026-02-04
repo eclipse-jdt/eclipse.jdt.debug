@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
@@ -45,8 +46,13 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -69,6 +75,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
@@ -1187,6 +1194,16 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return new LocalFileStorageEditorInput(localFileStorage);
 		}
 		if (item instanceof ZipEntryStorage zipEntryStorage) {
+			String typeName = getTypeName(zipEntryStorage);
+			if (typeName != null) {
+				IType type = findTypeInWorkspace(typeName);
+				if (type != null) {
+					IEditorInput input = getClassFileEditorInput(type);
+					if (input != null) {
+						return input;
+					}
+				}
+			}
 			return new ZipEntryStorageEditorInput(zipEntryStorage);
 		}
 		// for types that correspond to external files, return null so we do not
@@ -1197,6 +1214,44 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		return EditorUtility.getEditorInput(item);
+	}
+
+	private static String getTypeName(ZipEntryStorage storage) {
+		String entryName = storage.getZipEntry().getName();
+		if (!entryName.endsWith(".java")) { //$NON-NLS-1$
+			return null;
+		}
+		entryName = entryName.substring(0, entryName.length() - ".java".length()); //$NON-NLS-1$
+		return entryName.replace('/', '.');
+	}
+
+	private static IEditorInput getClassFileEditorInput(IType type) {
+		try {
+			IOrdinaryClassFile classFile = type.getClassFile();
+			if (classFile != null && classFile.exists()) {
+				return EditorUtility.getEditorInput(classFile);
+			}
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+	private static IType findTypeInWorkspace(String typeName) {
+		try {
+			IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+			for (IJavaProject jp : model.getJavaProjects()) {
+				if (!jp.exists()) {
+					continue;
+				}
+				IType type = jp.findType(typeName);
+				if (type != null && type.exists()) {
+					return type;
+				}
+			}
+		} catch (JavaModelException e) {
+			JDIDebugPlugin.log(e);
+		}
+		return null;
 	}
 
 	/**
