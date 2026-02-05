@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -28,12 +29,15 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -428,6 +432,25 @@ public class JavaDebugUtils {
 					IJavaProject project = JavaCore.create(((IResource) sourceElement).getProject());
 					if (project.exists()) {
 						return project;
+					}
+				}
+				if (sourceElement instanceof ZipEntryStorage) {
+
+					IJavaType declaringType = frame.getReferenceType();
+					if (declaringType == null) {
+						return null;
+					}
+					String typeName = declaringType.getName();
+					IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+
+					for (IJavaProject jp : model.getJavaProjects()) {
+						try {
+							if (jp.findType(typeName) != null) {
+								return jp;
+							}
+						} catch (JavaModelException e) {
+							JDIDebugPlugin.log(e);
+						}
 					}
 				}
 			}
