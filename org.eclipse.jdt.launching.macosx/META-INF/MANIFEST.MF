@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.launching.macosx; singleton:=true
 Bundle-Version: 3.6.300.qualifier
-Bundle-Activator: org.eclipse.jdt.internal.launching.macosx.MacOSXLaunchingPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core;bundle-version="[3.12.0,4.0.0)",

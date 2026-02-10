@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -190,7 +191,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			}
 			return defaultLocation;
 		} catch (CoreException e) {
-			MacOSXLaunchingPlugin.getDefault().getLog().log(e.getStatus());
+			ILog.get().log(e.getStatus());
 			return detectInstallLocationOld();
 		}
 	}
@@ -376,13 +377,11 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 */
 	@Override
 	public IStatus validateInstallLocation(File javaHome) {
-		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
 		File java= new File(javaHome, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
-		if (java.isFile())
-		 {
-			return new Status(IStatus.OK, id, 0, "ok", null); //$NON-NLS-1$
+		if (java.isFile()) {
+			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, id, 0, Messages.MacOSXVMInstallType_2, null);
+		return Status.error(Messages.MacOSXVMInstallType_2);
 	}
 
 	/* (non-Javadoc)
