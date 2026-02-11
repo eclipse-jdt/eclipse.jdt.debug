@@ -303,8 +303,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			 * variables defined in a method, within a breakpoint condition inside a lambda also defined in that method.
 			 */
 			for (IVariable variable : lambdaFrameVariables) {
-				if (variable instanceof IJavaVariable && !isLambdaOrImplicitVariable(variable)) {
-					IJavaVariable javaVariable = (IJavaVariable) variable;
+				if (variable instanceof IJavaVariable javaVariable && !isLambdaOrImplicitVariable(variable)) {
 					final boolean lambdaField = LambdaUtils.isLambdaField(variable);
 					String name = variable.getName();
 					String variableName = (lambdaField && name.startsWith(ANONYMOUS_VAR_PREFIX)) ? name.substring(ANONYMOUS_VAR_PREFIX.length())
