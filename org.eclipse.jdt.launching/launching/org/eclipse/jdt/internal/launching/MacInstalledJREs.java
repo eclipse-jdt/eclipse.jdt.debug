@@ -29,9 +29,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.jdt.internal.launching.macosx.MacOSXVMInstallType;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.osgi.util.NLS;
 
@@ -159,7 +159,7 @@ public class MacInstalledJREs {
 			if (result instanceof Object[] maps) {
 				smonitor.setWorkRemaining(maps.length);
 				Set<VMStandin> jres = new LinkedHashSet<>(); // prevent duplicates
-				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType("org.eclipse.jdt.internal.launching.macosx.MacOSXType"); //$NON-NLS-1$
+				AbstractVMInstallType mactype = new MacOSXVMInstallType();
 				if(mactype != null) {
 					for (Object entry : maps) {
 						if(smonitor.isCanceled()) {
