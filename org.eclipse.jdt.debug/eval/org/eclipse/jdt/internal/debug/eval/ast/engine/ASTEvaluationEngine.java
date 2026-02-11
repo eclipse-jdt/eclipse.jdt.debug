@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -303,8 +303,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			 * variables defined in a method, within a breakpoint condition inside a lambda also defined in that method.
 			 */
 			for (IVariable variable : lambdaFrameVariables) {
-				if (variable instanceof IJavaVariable && !isLambdaOrImplicitVariable(variable)) {
-					IJavaVariable javaVariable = (IJavaVariable) variable;
+				if (variable instanceof IJavaVariable javaVariable && !isLambdaOrImplicitVariable(variable)) {
 					final boolean lambdaField = LambdaUtils.isLambdaField(variable);
 					String name = variable.getName();
 					String variableName = (lambdaField && name.startsWith(ANONYMOUS_VAR_PREFIX)) ? name.substring(ANONYMOUS_VAR_PREFIX.length())
