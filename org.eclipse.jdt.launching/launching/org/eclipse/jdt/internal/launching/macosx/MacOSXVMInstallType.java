@@ -44,7 +44,7 @@ import org.eclipse.osgi.util.NLS;
  * set using the Java preference tool in the system preferences. <br>
  * <br>
  * The directory structure for Java VMs prior to Snow Leopard is as follows:
- * 
+ *
  * <pre>
  * /System/Library/Frameworks/JavaVM.framework/Versions/
  *   1.3.1/
@@ -56,7 +56,7 @@ import org.eclipse.osgi.util.NLS;
  * </pre>
  *
  * The directory structure for developer VMs is:
- * 
+ *
  * <pre>
  * /Library/Java/JavaVirtualMachines/
  *   1.7.0.jdk/
@@ -69,7 +69,7 @@ import org.eclipse.osgi.util.NLS;
  * </pre>
  *
  * The directory structure for Snow Leopard and Lion VMs is:
- * 
+ *
  * <pre>
  * /System/Library/Java/JavaVirtualMachines/
  *   1.6.0.jdk/
@@ -125,6 +125,11 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 * @since 3.2.200
 	 */
 	static final String JVM_VERSIONS = "Versions"; //$NON-NLS-1$
+
+	@Override
+	public String getId() {
+		return "org.eclipse.jdt.internal.launching.macosx.MacOSXType"; //$NON-NLS-1$
+	}
 
 	@Override
 	public String getName() {
