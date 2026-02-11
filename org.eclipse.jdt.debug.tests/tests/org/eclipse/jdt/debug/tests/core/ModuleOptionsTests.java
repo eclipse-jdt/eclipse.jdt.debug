@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2024 GK Software SE and others.
+ * Copyright (c) 2019, 2026 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -59,6 +60,36 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.management.jfr," //
 			+ "jdk.net," //
 			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+
+	private static final String ASSUMED_DEFAULT_MODULES_9_MAC_21 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.naming.ldap," //
+			+ "jdk.net," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.scripting.nashorn," //
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+
+	private static final String ASSUMED_DEFAULT_MODULES_21_MAC = "java.base," //
+			+ "java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging," //
+			+ "java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi," //
+			+ "java.scripting,java.security.jgss,java.security.sasl,java.smartcardio," //
+			+ "java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.jsobject,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.naming.ldap," //
+			+ "jdk.net," //
+			+ "jdk.scripting.nashorn," //
 			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
@@ -142,6 +173,11 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			List<String> defaultModules = getDefaultModules(javaProject);
 			String expectedModules;
 			String moduleList = String.join(",", defaultModules);
+			if (Platform.OS.isMac() && Runtime.version().feature() == 21) {
+				assertEquals(ASSUMED_DEFAULT_MODULES_9_MAC_21, moduleList);
+			} else {
+				assertEquals(ASSUMED_DEFAULT_MODULES_9, moduleList);
+			}
 			assertEquals(ASSUMED_DEFAULT_MODULES_9, moduleList);
 			switch (moduleList) {
 				case ASSUMED_DEFAULT_MODULES_9:
@@ -153,10 +189,16 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 							+ "jdk.net," //
 							+ "jdk.nio.mapmode," //
 							// + "jdk.packager,jdk.packager.services,jdk.plugin.dom,"
-							// + "jdk.scripting.nashorn," 
+							// + "jdk.scripting.nashorn,"
 							+ "jdk.sctp,"
 							+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 							+ "jdk.unsupported.desktop,jdk.xml.dom";
+					break;
+				case ASSUMED_DEFAULT_MODULES_9_MAC_21:
+					expectedModules = "java.instrument,java.net.http,java.scripting,java.sql.rowset,java.xml.crypto,"
+							+ "jdk.accessibility,jdk.dynalink,jdk.httpserver," + "jdk.jartool,jdk.jconsole,jdk.jshell," + "jdk.management.jfr,"
+							+ "jdk.naming.ldap," + "jdk.net," + "jdk.sctp," + "jdk.security.auth,jdk.security.jgss,jdk.unsupported,"
+							+ "jdk.scripting.nashorn," + "jdk.unsupported.desktop,jdk.xml.dom";
 					break;
 				default:
 					fail("Unknown set of default modules " + moduleList);
@@ -199,6 +241,12 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 						+ "jdk.unsupported.desktop," //
 						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_21_MAC:
+				expectedModules = "java.instrument,java.net.http,java.scripting,java.smartcardio,java.sql.rowset,java.xml.crypto,"
+						+ "jdk.accessibility," + "jdk.dynalink," + "jdk.httpserver," + "jdk.jartool,jdk.jconsole,jdk.jshell," + "jdk.jsobject,"
+						+ "jdk.management.jfr," + "jdk.naming.ldap," + "jdk.net," + "jdk.scripting.nashorn," + "jdk.sctp,"
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," + "jdk.xml.dom";
 				break;
 			default:
 				fail("Unknown set of default modules " + moduleList);
