@@ -212,11 +212,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	// happen very quickly
 	private static String fgLastUsedID;
 
-	/**
-	 * VM install type id for OSX VMs
-	 */
-	public static final String MACOSX_VM_TYPE_ID = "org.eclipse.jdt.internal.launching.macosx.MacOSXType"; //$NON-NLS-1$
-
 	private String fVMListTimeStamp;
 
 	/**
