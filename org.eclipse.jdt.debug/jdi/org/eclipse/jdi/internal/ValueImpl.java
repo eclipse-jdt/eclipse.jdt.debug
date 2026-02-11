@@ -246,8 +246,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 			}
 		} else {
 			if (type instanceof ClassType) {
-				if (valueType instanceof ClassType) {
-					ClassType superClass = (ClassType) valueType;
+				if (valueType instanceof ClassType superClass) {
 					while (superClass != null) {
 						if (superClass.equals(type)) {
 							return;

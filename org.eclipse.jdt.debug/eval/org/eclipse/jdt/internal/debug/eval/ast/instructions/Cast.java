@@ -62,8 +62,7 @@ public class Cast extends CompoundInstruction {
 	public void execute() throws CoreException {
 		IJavaValue value = popValue();
 
-		if (value instanceof IJavaPrimitiveValue) {
-			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
+		if (value instanceof IJavaPrimitiveValue primitiveValue) {
 			int newTypeId = fTypeTypeId;
 			if (fTypeTypeId == T_Object) {
 				newTypeId = ASTInstructionCompiler.getPrimitiveTypeId(value.getJavaType().getName());

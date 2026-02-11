@@ -4123,8 +4123,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		for (Iterator<Statement> iter = node.statements().iterator(); iter.hasNext();) {
 			Statement statement = iter.next();
-			if (statement instanceof SwitchCase) {
-				SwitchCase switchCase = (SwitchCase) statement;
+			if (statement instanceof SwitchCase switchCase) {
 				if (switchCase.isDefault()) {
 					jumpDefault = new Jump();
 					push(jumpDefault);
