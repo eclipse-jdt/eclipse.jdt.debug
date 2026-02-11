@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -105,6 +105,7 @@ import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VMListener;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
+import org.eclipse.jdt.internal.launching.macosx.MacOSXVMInstallType;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -342,7 +343,7 @@ public final class JavaRuntime {
 	private static final Object fgVMLock = new Object();
 	private static boolean fgInitializingVMs = false;
 
-	private static Set<Object> fgVMTypes = null;
+	private static Set<IVMInstallType> fgVMTypes = null;
 	private static String fgDefaultVMId = null;
 	private static String fgDefaultVMConnectorId = null;
 
@@ -401,13 +402,16 @@ public final class JavaRuntime {
 			fgVMTypes = new HashSet<>();
 			for (int i= 0; i < configs.length; i++) {
 				try {
-					fgVMTypes.add(configs[i].createExecutableExtension("class")); //$NON-NLS-1$
+					fgVMTypes.add((IVMInstallType) configs[i].createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch (CoreException e) {status.add(e.getStatus());}
 			}
 			if (!status.isOK()) {
 				//only happens on a CoreException
 				LaunchingPlugin.log(status);
+			}
+			if (Platform.OS.isMac() && fgVMTypes.stream().noneMatch(t -> MacOSXVMInstallType.ID_MACOSX_VM_TYPE.equals(t.getId()))) {
+				fgVMTypes.add(new org.eclipse.jdt.internal.launching.macosx.MacOSXVMInstallType());
 			}
 		}
 		else {

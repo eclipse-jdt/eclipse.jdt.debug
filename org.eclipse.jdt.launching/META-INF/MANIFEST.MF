@@ -6,8 +6,9 @@ Bundle-Version: 3.24.300.qualifier
 Bundle-Activator: org.eclipse.jdt.internal.launching.LaunchingPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.jdt.internal.launching;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching.macosx",
+Export-Package: org.eclipse.jdt.internal.launching;x-friends:="org.eclipse.jdt.debug.ui",
  org.eclipse.jdt.internal.launching.environments;x-internal:=true,
+ org.eclipse.jdt.internal.launching.macosx;x-internal:=true,
  org.eclipse.jdt.internal.launching.sourcelookup.advanced;x-internal:=true,
  org.eclipse.jdt.launching,
  org.eclipse.jdt.launching.environments,
