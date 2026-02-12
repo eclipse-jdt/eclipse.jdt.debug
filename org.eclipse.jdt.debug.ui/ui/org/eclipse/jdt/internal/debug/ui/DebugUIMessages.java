@@ -474,4 +474,6 @@ public class DebugUIMessages extends NLS {
 
 	public static String ListSameElementsFor2;
 	public static String fExceptionBreakpointMsg;
+
+	protected static String JavaDebugOptionsManager_Lambda_Breakpoint;
 }
