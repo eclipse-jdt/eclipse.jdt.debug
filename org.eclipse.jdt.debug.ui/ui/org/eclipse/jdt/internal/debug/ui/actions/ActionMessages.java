@@ -178,6 +178,8 @@ public class ActionMessages extends NLS {
 
 	public static String LambdaSelectionDialog_title;
 
+	public static String LambdaSelectionDialog_filter;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);

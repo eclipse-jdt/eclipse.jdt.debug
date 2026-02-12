@@ -1990,6 +1990,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		ElementListSelectionDialog dialog = new LambdaSelectionDialog(DebugUIPlugin.getShellForModalDialog(), lambdaLabelProvider, lambdaExps, lambdaNames);
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(ActionMessages.LambdaSelectionDialog_title);
+		dialog.setMessage(ActionMessages.LambdaSelectionDialog_filter);
 		dialog.setElements(lambdaExps.toArray());
 		dialog.open();
 		if (dialog.getReturnCode() == Window.OK) {
