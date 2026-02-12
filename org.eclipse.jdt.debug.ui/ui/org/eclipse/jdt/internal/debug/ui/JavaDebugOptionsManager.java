@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -878,7 +878,13 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					if (breakpoint instanceof IJavaBreakpoint) {
 						String info = fLabelProvider.getText(breakpoint);
 						String type = DebugUIMessages.JavaDebugOptionsManager_Breakpoint___1;
-						if (breakpoint instanceof IJavaMethodBreakpoint || breakpoint instanceof IJavaMethodEntryBreakpoint) {
+						if (breakpoint instanceof IJavaMethodBreakpoint javaMBp) {
+							if (javaMBp.isLambdaBreakpoint()) {
+								type = DebugUIMessages.JavaDebugOptionsManager_Lambda_Breakpoint;
+							} else {
+								type = DebugUIMessages.JavaDebugOptionsManager_Method_breakpoint___2;
+							}
+						} else if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
 							type = DebugUIMessages.JavaDebugOptionsManager_Method_breakpoint___2;
 						} else if (breakpoint instanceof IJavaWatchpoint) {
 							type = DebugUIMessages.JavaDebugOptionsManager_Watchpoint___3;
