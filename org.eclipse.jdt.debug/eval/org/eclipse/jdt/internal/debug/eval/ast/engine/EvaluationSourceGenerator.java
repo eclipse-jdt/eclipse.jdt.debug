@@ -370,6 +370,8 @@ public class EvaluationSourceGenerator {
 			}
 		}
 		options.put(JavaCore.COMPILER_TASK_TAGS, ""); //$NON-NLS-1$
+		// We don't need this jdt.core developer specific comparison in debug mode - just disable it.
+		options.put("org.eclipse.jdt.core.compiler.problem.uninternedIdentityComparison", "disabled"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		toSupportedVersion(options, COMPILER_COMPLIANCE);
 		toSupportedVersion(options, COMPILER_CODEGEN_TARGET_PLATFORM);

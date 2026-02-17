@@ -1510,8 +1510,7 @@ public class RemoteEvaluatorBuilder {
 			// already pushed as a variable we don't need to handle length here. So if we have chained field access like
 			// obj.f1.f2 we will only push the obj as a variable.
 			if (!isLocalBinding(binding) && !isParentInLocalBinding(node.getParent())) {
-				if (binding instanceof IVariableBinding) {
-					IVariableBinding vb = ((IVariableBinding) binding);
+				if (binding instanceof IVariableBinding vb) {
 					// For future optimization: Check for duplicates, so same value is only bound once
 					if (vb.isField()) {
 						if (Modifier.isStatic(vb.getModifiers())) {

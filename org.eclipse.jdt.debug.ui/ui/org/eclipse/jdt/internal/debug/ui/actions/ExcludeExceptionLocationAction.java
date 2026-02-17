@@ -52,8 +52,7 @@ public class ExcludeExceptionLocationAction extends ObjectActionDelegate {
 				}
 				for (int i = 0; i < breakpoints.length; i++) {
 					IBreakpoint breakpoint = breakpoints[i];
-					if (breakpoint instanceof IJavaExceptionBreakpoint) {
-						IJavaExceptionBreakpoint exBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
+					if (breakpoint instanceof IJavaExceptionBreakpoint exBreakpoint) {
 						String[] current= exBreakpoint.getExclusionFilters();
 						String[] newFilters= new String[current.length+1];
 						System.arraycopy(current, 0, newFilters, 0, current.length);

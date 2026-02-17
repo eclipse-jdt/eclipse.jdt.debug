@@ -47,8 +47,7 @@ public class ShowNullArrayEntriesAction extends ViewFilterAction {
 			// when on, filter nothing
 			return true;
 		}
-		if (element instanceof JDIArrayEntryVariable) {
-			JDIArrayEntryVariable variable = (JDIArrayEntryVariable)element;
+		if (element instanceof JDIArrayEntryVariable variable) {
 			try {
 				return !variable.getValue().equals(((IJavaDebugTarget)variable.getDebugTarget()).nullValue());
 			} catch (DebugException e) {

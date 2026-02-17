@@ -13,11 +13,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 public class LambdaVariableTest extends AbstractDebugTest {
@@ -260,6 +262,31 @@ public class LambdaVariableTest extends AbstractDebugTest {
 
 		value = doEval(javaThread, "numberInMain");
 		assertEquals("wrong result : ", "1", value.getValueString());
+	}
+
+	public void testLambdaCapturedVariablesNotStaleOnReentry() throws Exception {
+		String typeName = "LambdaTest";
+		createLineBreakpoint(33, typeName);
+		IJavaThread mainThread = null;
+		try {
+			mainThread = launchToBreakpoint(typeName);
+			assertTrue("Thread should be suspended", mainThread.isSuspended());
+			IStackFrame frame = mainThread.getTopStackFrame();
+			int hitLine = frame.getLineNumber();
+			assertEquals("Didn't suspend at the expected line", 33, hitLine);
+			IJavaVariable lambda = (IJavaVariable) frame.getVariables()[1];
+			String value = lambda.getValue().getVariables()[0].getValue().getValueString();
+			assertEquals("Should match 'A' ", "A", value);
+			mainThread.resume();
+			Thread.sleep(5000);
+			frame = mainThread.getTopStackFrame();
+			lambda = (IJavaVariable) frame.getVariables()[1];
+			value = lambda.getValue().getVariables()[0].getValue().getValueString();
+			assertEquals("Should match 'B' ", "B", value);
+		} finally {
+			terminateAndRemove(mainThread);
+			removeAllBreakpoints();
+		}
 	}
 
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {

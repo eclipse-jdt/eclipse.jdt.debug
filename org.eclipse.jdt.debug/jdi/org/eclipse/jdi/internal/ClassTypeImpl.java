@@ -97,8 +97,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		Iterator<Object> itr = virtualMachineImpl().allCachedRefTypes();
 		while (itr.hasNext()) {
 			ReferenceTypeImpl refType = (ReferenceTypeImpl) itr.next();
-			if (refType instanceof ClassTypeImpl) {
-				ClassTypeImpl classType = (ClassTypeImpl) refType;
+			if (refType instanceof ClassTypeImpl classType) {
 				if (classType.fSuperclass != null && classType.fSuperclass.equals(this)) {
 					classType.flushStoredJdwpResults();
 				}
@@ -281,8 +280,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		while (itr.hasNext()) {
 			try {
 				ReferenceType refType = itr.next();
-				if (refType instanceof ClassTypeImpl) {
-					ClassTypeImpl classType = (ClassTypeImpl) refType;
+				if (refType instanceof ClassTypeImpl classType) {
 					if (classType.superclass() != null
 							&& classType.superclass().equals(this)) {
 						subclasses.add(classType);

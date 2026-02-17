@@ -523,8 +523,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	private static void openJavaElements(Object[] elements, int line) {
 		for (int i = 0; i < elements.length; i++) {
 			Object ob = elements[i];
-			if (ob instanceof IJavaElement) {
-				IJavaElement element = (IJavaElement) ob;
+			if (ob instanceof IJavaElement element) {
 				try {
 					IEditorPart editorPart = JavaUI.openInEditor(element);
 					gotoLine(editorPart, line, element);

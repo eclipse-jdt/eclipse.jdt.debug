@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025 IBM Corporation.
+ * Copyright (c) 2025, 2026 IBM Corporation.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -156,7 +156,11 @@ public class CompareObjectWithClipboard extends ObjectActionDelegate {
 	 */
 	private Object getClipboard() {
 		Clipboard clip = new Clipboard(Display.getDefault());
-		return clip.getContents(TextTransfer.getInstance());
+		try {
+			return clip.getContents(TextTransfer.getInstance());
+		} finally {
+			clip.dispose();
+		}
 	}
 
 }

@@ -40,8 +40,7 @@ public class AssignmentOperator extends CompoundInstruction {
 		IJavaVariable variable = null;
 		if (val instanceof IJavaVariable) {
 			variable = (IJavaVariable) val;
-		} else if (val instanceof JDIPrimitiveValue) {
-			JDIPrimitiveValue jdiPrimitiveValue = (JDIPrimitiveValue) val;
+		} else if (val instanceof JDIPrimitiveValue jdiPrimitiveValue) {
 			switch (fVariableTypeId) {
 				case T_boolean:
 					push(newValue(jdiPrimitiveValue.getBooleanValue()));
@@ -71,8 +70,7 @@ public class AssignmentOperator extends CompoundInstruction {
 			return;
 		}
 
-		if (value instanceof IJavaPrimitiveValue) {
-			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
+		if (value instanceof IJavaPrimitiveValue primitiveValue) {
 			switch (fVariableTypeId) {
 			case T_boolean:
 				variable.setValue(newValue(primitiveValue.getBooleanValue()));

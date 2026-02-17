@@ -441,20 +441,17 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				source.append(buildFieldDeclaration((FieldDeclaration) bodyDeclaration));
 			} else if (bodyDeclaration instanceof MethodDeclaration) {
 				source.append(buildMethodDeclaration((MethodDeclaration) bodyDeclaration));
-			} else if (bodyDeclaration instanceof TypeDeclaration) {
-				TypeDeclaration typeDeclaration = (TypeDeclaration) bodyDeclaration;
+			} else if (bodyDeclaration instanceof TypeDeclaration typeDeclaration) {
 				if (!typeDeclaration.getName().getIdentifier()
 						.equals(fLastTypeName)) {
 					source.append(buildTypeDeclaration(null, typeDeclaration));
 				}
-			} else if (bodyDeclaration instanceof EnumDeclaration) {
-				EnumDeclaration enumDeclaration = (EnumDeclaration) bodyDeclaration;
+			} else if (bodyDeclaration instanceof EnumDeclaration enumDeclaration) {
 				if (!enumDeclaration.getName().getIdentifier()
 						.equals(fLastTypeName)) {
 					source.append(buildEnumDeclaration(null, enumDeclaration));
 				}
-			} else if (bodyDeclaration instanceof RecordDeclaration) {
-				var recordDeclaration = (RecordDeclaration) bodyDeclaration;
+			} else if (bodyDeclaration instanceof RecordDeclaration recordDeclaration) {
 				if (!recordDeclaration.getName().getIdentifier().equals(fLastTypeName)) {
 					source.append(buildRecordDeclaration(null, recordDeclaration));
 				}
@@ -948,16 +945,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				if (parent instanceof Initializer) {
 					buildAnonymousEvalMethod(true, bodyDeclarations,
 							getTypeName(node.getType()), source);
-				} else if (parent instanceof MethodDeclaration) {
-					MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
+				} else if (parent instanceof MethodDeclaration enclosingMethodDeclaration) {
 					buildAnonymousEvalMethod(
 							Flags.isStatic(enclosingMethodDeclaration
 									.getModifiers()), bodyDeclarations,
 							getTypeName(node.getType()), source);
 
-				} else if (parent instanceof FieldDeclaration) {
-					FieldDeclaration enclosingFieldDeclaration = (FieldDeclaration) parent;
-
+				} else if (parent instanceof FieldDeclaration enclosingFieldDeclaration) {
 					if (Flags
 							.isStatic(enclosingFieldDeclaration.getModifiers())) {
 						fSource.append("static "); //$NON-NLS-1$

@@ -35,8 +35,7 @@ public class WatchAction extends InspectAction {
 	@Override
 	public void run() {
 		Object selectedObject= getSelectedObject();
-		if (selectedObject instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection)selectedObject;
+		if (selectedObject instanceof IStructuredSelection selection) {
 			Iterator<IJavaVariable> elements = selection.iterator();
 			while (elements.hasNext()) {
 				try {

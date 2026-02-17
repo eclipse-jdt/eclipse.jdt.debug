@@ -67,26 +67,37 @@ public class MultiReleaseLaunchTests extends AbstractDebugUiTests {
 		removeExistingJavaVersions(requiredJavaVersions, existingLocations);
 		if (!requiredJavaVersions.isEmpty()) {
 			final File rootDir = new File(System.getProperty(JVM_SEARCH_BASE, "/opt/tools/java/openjdk/"));
-			final List<File> locations = new ArrayList<>();
-			final List<IVMInstallType> types = new ArrayList<>();
-			DetectVMInstallationsJob.search(rootDir, locations, types, existingLocations, new NullProgressMonitor());
-			for (int i = 0; i < locations.size(); i++) {
-				File location = locations.get(i);
-				IVMInstallType type = types.get(i);
-				String id = "MultiReleaseLaunchTests-" + UUID.randomUUID() + "-" + i;
-				VMStandin workingCopy = new VMStandin(type, id);
-				workingCopy.setInstallLocation(location);
-				workingCopy.setName(id);
-				IVMInstall install = workingCopy.convertToRealVM();
-				if (removeIfMatch(requiredJavaVersions, install)) {
-					disposeVms.add(() -> type.disposeVMInstall(id));
-				} else {
-					type.disposeVMInstall(id);
+			matchInstallationsFrom(rootDir, requiredJavaVersions, existingLocations);
+			if (!requiredJavaVersions.isEmpty()) {
+				// another fallback: search the parent dir of java.home of the running JVM:
+				File parentDir = new File(System.getProperty("java.home")).getParentFile();
+				if (!parentDir.equals(rootDir)) {
+					matchInstallationsFrom(parentDir, requiredJavaVersions, existingLocations);
 				}
 			}
 		}
 		assertTrue("The following java versions are required by this test but can not be found: "
 				+ requiredJavaVersions, requiredJavaVersions.isEmpty());
+	}
+
+	private void matchInstallationsFrom(final File rootDir, List<RequiredJavaVersion> requiredJavaVersions, final Set<File> existingLocations) {
+		final List<File> locations = new ArrayList<>();
+		final List<IVMInstallType> types = new ArrayList<>();
+		DetectVMInstallationsJob.search(rootDir, locations, types, existingLocations, new NullProgressMonitor());
+		for (int i = 0; i < locations.size(); i++) {
+			File location = locations.get(i);
+			IVMInstallType type = types.get(i);
+			String id = "MultiReleaseLaunchTests-" + UUID.randomUUID() + "-" + i;
+			VMStandin workingCopy = new VMStandin(type, id);
+			workingCopy.setInstallLocation(location);
+			workingCopy.setName(id);
+			IVMInstall install = workingCopy.convertToRealVM();
+			if (removeIfMatch(requiredJavaVersions, install)) {
+				disposeVms.add(() -> type.disposeVMInstall(id));
+			} else {
+				type.disposeVMInstall(id);
+			}
+		}
 	}
 
 	@Override

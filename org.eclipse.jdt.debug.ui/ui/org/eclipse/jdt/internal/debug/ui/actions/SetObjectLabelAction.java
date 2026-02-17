@@ -44,19 +44,16 @@ public class SetObjectLabelAction extends ObjectActionDelegate {
 		try {
 			String name;
 			IValue value;
-			if (element instanceof IJavaVariable) {
-				IJavaVariable variable = (IJavaVariable) element;
+			if (element instanceof IJavaVariable variable) {
 				name = variable.getName();
 				value = variable.getValue();
-			} else if (element instanceof JavaInspectExpression) {
-				JavaInspectExpression jie = (JavaInspectExpression) element;
+			} else if (element instanceof JavaInspectExpression jie) {
 				name = jie.getExpressionText();
 				value = jie.getValue();
 			} else {
 				return;
 			}
-			if (value instanceof IJavaObject) {
-				final IJavaObject javaValue = (IJavaObject) value;
+			if (value instanceof final IJavaObject javaValue) {
 				if (!javaValue.isNull()) {
 					askForLabel(javaValue, name);
 				}

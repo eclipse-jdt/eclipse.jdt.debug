@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -62,14 +66,20 @@ import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
@@ -488,17 +498,87 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
      *
      * @since 3.4
      */
-    protected void initDragAndDrop() {
-        // Drag only
-    	DragSource ds = new DragSource(fSourceViewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
-    	ds.setTransfer(new Transfer[] {TextTransfer.getInstance()});
-    	ds.addDragListener(new DragSourceAdapter() {
-        	@Override
+	protected void initDragAndDrop() {
+		StyledText text = fSourceViewer.getTextWidget();
+		// Drag & Drop
+		DragSource ds = new DragSource(fSourceViewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
+		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+		ds.addDragListener(new DragSourceAdapter() {
+			@Override
 			public void dragSetData(org.eclipse.swt.dnd.DragSourceEvent event) {
-        		event.data = fSourceViewer.getTextWidget().getSelectionText();
-        	}
-        });
-    }
+				event.data = fSourceViewer.getTextWidget().getSelectionText();
+			}
+		});
+
+		DropTarget dropTarget = new DropTarget(text, DND.DROP_COPY | DND.DROP_MOVE);
+		dropTarget.setTransfer(new Transfer[] { LocalSelectionTransfer.getTransfer() });
+		dropTarget.addDropListener(new DropTargetAdapter() {
+
+			@Override
+			public void dragEnter(DropTargetEvent event) {
+				normalizeDrop(event);
+			}
+
+			@Override
+			public void dragOver(DropTargetEvent event) {
+				normalizeDrop(event);
+			}
+
+			@Override
+			public void drop(DropTargetEvent event) {
+				normalizeDrop(event);
+				String dropped = null;
+				if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
+					dropped = (String) event.data;
+				}
+				if (dropped == null && LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
+					ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
+
+					if (selection instanceof IStructuredSelection sel) {
+						List<Object> selections = sel.toList();
+						StringBuilder build = new StringBuilder();
+						for (Object obj : selections) {
+							if (obj instanceof IVariable var) {
+								try {
+									build.append(var.getName());
+								} catch (DebugException e) {
+									DebugUIPlugin.log(e);
+								}
+							} else if (obj instanceof IWatchExpression exp) {
+								build.append(exp.getExpressionText());
+							}
+							if (selections.size() > 1) {
+								build.append(System.lineSeparator());
+							}
+						}
+						dropped = build.toString();
+					}
+				}
+
+				if (dropped == null || dropped.isEmpty()) {
+					return;
+				}
+
+				StyledText text = fSourceViewer.getTextWidget();
+				int start = text.getSelection().x;
+				int len = text.getSelection().y - start;
+				text.replaceTextRange(start, len, dropped);
+				text.setCaretOffset(start + dropped.length());
+				text.setFocus();
+			}
+
+			private void normalizeDrop(DropTargetEvent event) {
+				if (event.detail == DND.DROP_NONE) {
+					event.detail = DND.DROP_COPY;
+				}
+
+				if (LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
+					return;
+				}
+				event.detail = DND.DROP_NONE;
+			}
+		});
+	}
 
 	/**
 	 * Returns the entire trimmed contents of the current document.

@@ -136,8 +136,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 		while (itr.hasNext()) {
 			try {
 				ReferenceType refType = itr.next();
-				if (refType instanceof InterfaceTypeImpl) {
-					InterfaceTypeImpl interFaceType = (InterfaceTypeImpl) refType;
+				if (refType instanceof InterfaceTypeImpl interFaceType) {
 					List<InterfaceType> interfaces = interFaceType.superinterfaces();
 					if (interfaces.contains(this)) {
 						implementors.add(interFaceType);

@@ -100,10 +100,9 @@ public class BinaryBasedSourceGenerator {
 	 */
 	public void buildSourceStatic(IJavaReferenceType type) {
 		Type underlyingType = ((JDIReferenceType) type).getUnderlyingType();
-		if (!(underlyingType instanceof ReferenceType)) {
+		if (!(underlyingType instanceof ReferenceType refType)) {
 			return;
 		}
-		ReferenceType refType = (ReferenceType) underlyingType;
 		fSource = buildTypeDeclaration(refType, buildRunMethod(refType), null,
 				false);
 		String packageName = getPackageName(refType.name());
@@ -256,9 +255,7 @@ public class BinaryBasedSourceGenerator {
 				source.append("static "); //$NON-NLS-1$
 			}
 
-			if (referenceType instanceof ClassType) {
-				ClassType classType = (ClassType) referenceType;
-
+			if (referenceType instanceof ClassType classType) {
 				if (classType.isAbstract()) {
 					source.append("abstract "); //$NON-NLS-1$
 				}
