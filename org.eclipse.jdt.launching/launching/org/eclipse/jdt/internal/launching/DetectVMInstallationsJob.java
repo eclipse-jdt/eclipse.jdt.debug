@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -320,9 +321,13 @@ public class DetectVMInstallationsJob extends Job {
 			// early exit no need to read preferences or check env variable!
 			return;
 		}
-		if (System.getProperty(PROPERTY_DETECT_VM_INSTALLATIONS_JOB_DISABLED) == null && Boolean.parseBoolean(System.getenv(ENV_CI))) {
-			// exit because no explicit value for the property was given and we are running in a CI environment
-			return;
+		boolean ci = false;
+		if (System.getProperty(PROPERTY_DETECT_VM_INSTALLATIONS_JOB_DISABLED) == null) {
+			ci = Boolean.parseBoolean(System.getenv(ENV_CI));
+			if (ci) {
+				// exit because no explicit value for the property was given and we are running in a CI environment
+				return;
+			}
 		}
 		// finally look what is defined in the preferences
 		IEclipsePreferences instanceNode = InstanceScope.INSTANCE.getNode(LaunchingPlugin.getDefault().getBundle().getSymbolicName());
@@ -330,6 +335,10 @@ public class DetectVMInstallationsJob extends Job {
 		boolean defaultValue = defaultNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, true);
 		if (instanceNode.getBoolean(LaunchingPlugin.PREF_DETECT_VMS_AT_STARTUP, defaultValue)) {
 			new DetectVMInstallationsJob().schedule();
+			if (ci) {
+				// log that this job will run in a CI environment
+				JDIDebugPlugin.log(Status.info("DetectVMInstallationsJob scheduled")); //$NON-NLS-1$
+			}
 		}
 	}
 

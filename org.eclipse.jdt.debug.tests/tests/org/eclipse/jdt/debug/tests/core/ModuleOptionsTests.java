@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 public class ModuleOptionsTests extends AbstractDebugTest {
@@ -112,8 +113,9 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		return -1;
 	}
 
-	public void testAddModules1() throws JavaModelException {
+	public void testAddModules1() throws Exception {
 		IJavaProject javaProject = getProjectContext();
+		checkVMInstall(javaProject);
 		List<String> defaultModules = getDefaultModules(javaProject);
 		defaultModules.add("jdk.crypto.cryptoki"); // requires jdk.crypto.ec up to Java 21
 		try {
@@ -135,8 +137,9 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		}
 	}
 
-	public void testLimitModules_release9() throws CoreException {
+	public void testLimitModules_release9() throws Exception {
 		IJavaProject javaProject = getProjectContext();
+		checkVMInstall(javaProject);
 		try {
 			javaProject.setOption(JavaCore.COMPILER_RELEASE, JavaCore.ENABLED);
 			List<String> defaultModules = getDefaultModules(javaProject);
@@ -153,7 +156,7 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 							+ "jdk.net," //
 							+ "jdk.nio.mapmode," //
 							// + "jdk.packager,jdk.packager.services,jdk.plugin.dom,"
-							// + "jdk.scripting.nashorn," 
+									// + "jdk.scripting.nashorn,"
 							+ "jdk.sctp,"
 							+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 							+ "jdk.unsupported.desktop,jdk.xml.dom";
@@ -178,8 +181,10 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		}
 	}
 
-	public void testLimitModules1() throws JavaModelException {
+	public void testLimitModules1() throws Exception {
 		IJavaProject javaProject = getProjectContext();
+		javaProject.setOption(JavaCore.COMPILER_RELEASE, JavaCore.DISABLED);
+		checkVMInstall(javaProject);
 		List<String> defaultModules = getDefaultModules(javaProject);
 		String expectedModules;
 		String moduleList = String.join(",", defaultModules);
@@ -217,5 +222,11 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		} finally {
 			removeClasspathAttributesFromSystemLibrary(javaProject);
 		}
+	}
+
+	private void checkVMInstall(IJavaProject javaProject) throws CoreException {
+		IVMInstall vm = JavaRuntime.getVMInstall(javaProject);
+		assertTrue("Expected at least Java 21 for project JVM but got: " + vm.getName() + ", with location: "
+				+ vm.getInstallLocation(), JavaRuntime.compareJavaVersions(vm, JavaCore.VERSION_21) >= 0);
 	}
 }
