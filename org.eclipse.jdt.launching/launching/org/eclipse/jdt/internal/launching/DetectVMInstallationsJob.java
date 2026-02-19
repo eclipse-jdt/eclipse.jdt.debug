@@ -169,9 +169,9 @@ public class DetectVMInstallationsJob extends Job {
 		if (jdkHome != null) {
 			directories.add(new File(jdkHome));
 		}
-		System.getenv().entrySet().forEach(entry -> {
-			if (entry.getKey().startsWith("JAVA_HOME_")) { //$NON-NLS-1$
-				directories.add(new File(entry.getValue()));
+		System.getenv().forEach((key, value) -> {
+			if (key.startsWith("JAVA_HOME_") || (key.startsWith("JAVA") && key.endsWith("_HOME"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				directories.add(new File(value));
 			}
 		});
 		// other common/standard lookup strategies can be added here
