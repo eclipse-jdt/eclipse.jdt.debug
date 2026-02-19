@@ -66,21 +66,12 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	private final IVMInstallChangedListener fListener = new IVMInstallChangedListener() {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void vmAdded(IVMInstall newVm) {}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
-		 */
 		@Override
 		public void vmChanged(PropertyChangeEvent event) {
 			if (event.getSource() != null) {
@@ -89,9 +80,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
-		 */
 		@Override
 		public void vmRemoved(IVMInstall removedVm) {
 			fParticipantMap.remove(removedVm);
@@ -133,12 +121,12 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * default VM install or <code>null</code> if none
 	 */
-	private IVMInstall fDefault = null;
+	private IVMInstall fDefault;
 
 	/**
 	 * Cache of access rule participants to consider for this environment.
 	 */
-	private IAccessRuleParticipant[] fParticipants = null;
+	private IAccessRuleParticipant[] fParticipants;
 
 	/**
 	 * Map of {IVMInstall -> Map of {participant -> IAccessRule[][]}}.
@@ -186,25 +174,16 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		EnvironmentsManager.getDefault().initializeCompatibilities();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getId()
-	 */
 	@Override
 	public String getId() {
 		return fElement.getAttribute("id"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return fElement.getAttribute("description"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getCompatibleVMs()
-	 */
 	@Override
 	public IVMInstall[] getCompatibleVMs() {
 		init();
@@ -280,27 +259,18 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#isStrictlyCompatible(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public boolean isStrictlyCompatible(IVMInstall vm) {
 		init();
 		return fStrictlyCompatible.contains(vm);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getDefaultVM()
-	 */
 	@Override
 	public IVMInstall getDefaultVM() {
 		init();
 		return fDefault;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#setDefaultVM(org.eclipse.jdt.launching.IVMInstall)
-	 */
 	@Override
 	public void setDefaultVM(IVMInstall vm) {
 		init();
@@ -384,9 +354,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		fDefault = vm;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getAccessRules(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
-	 */
 	@Override
 	public IAccessRule[][] getAccessRules(IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		IAccessRuleParticipant[] participants = getParticipants();
@@ -485,9 +452,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getProfileProperties()
-	 */
 	@Override
 	public Properties getProfileProperties() {
 		if (!fPropertiesInitialized) {
@@ -593,9 +557,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getSubEnvironments()
-	 */
 	@Override
 	public IExecutionEnvironment[] getSubEnvironments() {
 		Properties properties = getProfileProperties();
@@ -616,9 +577,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		return subenv.toArray(new IExecutionEnvironment[subenv.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getComplianceOptions()
-	 */
 	@Override
 	public Map<String, String> getComplianceOptions() {
 		Properties properties = getProfileProperties();
