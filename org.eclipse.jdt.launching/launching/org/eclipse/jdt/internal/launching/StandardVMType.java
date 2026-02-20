@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.Runtime.Version;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -859,6 +860,10 @@ public class StandardVMType extends AbstractVMInstallType {
 			} else if (version.startsWith(JavaCore.VERSION_1_3)) {
 				// archived: http://download.oracle.com/javase/1.3/docs/api/
 				return new URL("https://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
+			} else {
+				// heurisitc for not-yet declared versions
+				var v = Version.parse(version);
+				return new URI("https://docs.oracle.com/en/java/javase/" + v.feature() + "/docs/api/").toURL(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (URISyntaxException | MalformedURLException e) {
 		}
