@@ -1430,7 +1430,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *             if the event is never received.
 	 */
 	protected Object launchAndWait(ILaunchConfiguration configuration, String mode, DebugEventWaiter waiter, boolean register) throws CoreException {
-		ILaunch launch = configuration.launch(mode, null, false, register);
+		ILaunch launch = configuration.launch(mode, new TimeoutMonitor(DEFAULT_TIMEOUT), false, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
 			StringBuilder buf = new StringBuilder();
