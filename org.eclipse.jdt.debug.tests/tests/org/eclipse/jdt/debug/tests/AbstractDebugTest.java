@@ -3102,9 +3102,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	private static void logVMChange(String message, IVMInstall vm) {
-		IStatus status = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(),
-				message + " " + vm.getName() + ", location: " + vm.getInstallLocation(),
-				new RuntimeException("strack trace info"));
+		String detailed = message + " " + vm.getName() + ", location: " + vm.getInstallLocation();
+		IStatus status = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(), detailed, null);
 		JDIDebugPlugin.log(status);
 	}
 
