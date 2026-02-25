@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -112,6 +115,7 @@ public class MultiReleaseLaunchTests extends AbstractDebugUiTests {
 	}
 
 	public void testMultiReleaseLaunch() throws Exception {
+		assumeTrue("Not on Linux", Platform.OS.isLinux());
 		ILaunchConfiguration config = getLaunchConfiguration("p.Main");
 		Properties result = launchAndReadResult(config, 11);
 		assertTrue("Was not launched with a proper Java installation " + result, JAVA_11.matches(result.getProperty("Java")));
