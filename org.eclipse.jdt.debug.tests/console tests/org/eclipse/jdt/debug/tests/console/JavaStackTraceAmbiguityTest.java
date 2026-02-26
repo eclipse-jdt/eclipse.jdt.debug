@@ -14,9 +14,11 @@
 package org.eclipse.jdt.debug.tests.console;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -74,6 +76,7 @@ public class JavaStackTraceAmbiguityTest extends AbstractJavaStackTraceConsoleTe
 				String[] selectedText = new String[1];
 				sync(() -> selectedText[0] = getSelectedText(editor));
 				selectedText[0] = selectedText[0].trim();
+				JDIDebugPlugin.log(Status.info("Opened editor: " + editor.getEditorSite().getId() + ", for text: " + selectedText[0]));
 				assertEquals("Wrong text selected after hyperlink navigation", expectedText, selectedText[0]);
 
 			}
