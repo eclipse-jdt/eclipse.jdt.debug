@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import static org.junit.Assume.assumeTrue;
-
 import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -65,6 +63,10 @@ public class MultiReleaseLaunchTests extends AbstractDebugUiTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		// see https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/843
+		if (!Platform.OS.isLinux()) { // JUnit 3, don't use assumeTrue, the thrown AssumptionViolatedException is treated as an error
+			return;
+		}
 		final Set<File> existingLocations = new HashSet<>();
 		List<RequiredJavaVersion> requiredJavaVersions = new ArrayList<>(List.of(JAVA_11, JAVA_17, JAVA_21));
 		removeExistingJavaVersions(requiredJavaVersions, existingLocations);
@@ -115,7 +117,10 @@ public class MultiReleaseLaunchTests extends AbstractDebugUiTests {
 	}
 
 	public void testMultiReleaseLaunch() throws Exception {
-		assumeTrue("Not on Linux", Platform.OS.isLinux());
+		// see https://github.com/eclipse-jdt/eclipse.jdt.debug/issues/843
+		if (!Platform.OS.isLinux()) { // JUnit 3, don't use assumeTrue, the thrown AssumptionViolatedException is treated as an error
+			return;
+		}
 		ILaunchConfiguration config = getLaunchConfiguration("p.Main");
 		Properties result = launchAndReadResult(config, 11);
 		assertTrue("Was not launched with a proper Java installation " + result, JAVA_11.matches(result.getProperty("Java")));
