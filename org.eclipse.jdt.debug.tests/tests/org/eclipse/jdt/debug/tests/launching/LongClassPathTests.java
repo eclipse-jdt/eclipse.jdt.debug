@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.launching;
 
-import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
@@ -60,11 +59,15 @@ import junit.framework.TestSuite;
  * version and OS.
  */
 public class LongClassPathTests extends AbstractDebugTest {
+
 	protected static final String MAIN_TYPE_NAME = "test.classpath.Main";
 	protected static final IPath CLASSPATH_PROJECT_CONTENT_PATH = new Path("testresources/classpathProject");
 	protected IJavaProject javaProject;
 	protected ILaunchConfiguration launchConfiguration;
 	protected IJavaThread thread;
+
+	private IVMInstall defaultVM1_6;
+	private IVMInstall defaultVM9;
 
 	public LongClassPathTests(String name) {
 		super(name);
@@ -82,6 +85,13 @@ public class LongClassPathTests extends AbstractDebugTest {
 	}
 
 	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		defaultVM1_6 = prepareExecutionEnvironment(JavaProjectHelper.JAVA_SE_1_6_EE_NAME);
+		defaultVM9 = prepareExecutionEnvironment(JavaProjectHelper.JAVA_SE_9_EE_NAME);
+	}
+
+	@Override
 	protected void tearDown() throws Exception {
 		try {
 			if (thread != null) {
@@ -93,6 +103,8 @@ public class LongClassPathTests extends AbstractDebugTest {
 			if (launchConfiguration != null) {
 				launchConfiguration.delete();
 			}
+			setExecutionEnvironment(JavaProjectHelper.JAVA_SE_1_6_EE_NAME, defaultVM1_6);
+			setExecutionEnvironment(JavaProjectHelper.JAVA_SE_9_EE_NAME, defaultVM9);
 		} catch (CoreException ce) {
 			// ignore
 		} finally {
@@ -145,7 +157,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		}
 		javaProject = createJavaProjectClone("testVeryLongClasspathWithArgumentFile", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_9_EE_NAME, true);
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
-		assumeTrue(isArgumentFileSupported(launchConfiguration));
+		assertTrue(isArgumentFileSupported(launchConfiguration));
 		int minClasspathLength = 300000;
 
 		// Given
@@ -180,7 +192,7 @@ public class LongClassPathTests extends AbstractDebugTest {
 		// Given
 		javaProject = createJavaProjectClone("testVeryLongClasspath", CLASSPATH_PROJECT_CONTENT_PATH.toString(), JavaProjectHelper.JAVA_SE_1_6_EE_NAME, true);
 		launchConfiguration = createLaunchConfigurationStopInMain(javaProject, MAIN_TYPE_NAME);
-		assumeFalse(isArgumentFileSupported(launchConfiguration));
+		assertFalse(isArgumentFileSupported(launchConfiguration));
 		int minClasspathLength = 300000;
 		setLongClasspath(javaProject, minClasspathLength);
 		waitForBuild();

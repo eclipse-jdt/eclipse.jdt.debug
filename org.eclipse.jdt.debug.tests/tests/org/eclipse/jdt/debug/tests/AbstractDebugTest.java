@@ -140,6 +140,7 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -3095,6 +3096,42 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			markersInfo.append(marker);
 		}
 		return markersInfo.toString();
+	}
+
+	/**
+	 * JDT tests run in different environments where different major JVM installations might be selected as "default" JVM for a specific Execution
+	 * Environment (EE). Some test cases projects requires JavaSE-N EE, which can be resolved to e.g. Java 11, 17 or 21, depending on the installed
+	 * JVMs. JVM modules vary between Java major versions, while we need a stable set of modules for the test case. Therefore we "pin" the JVM used
+	 * for the JavaSE-N EE to the JVM on which the tests are executed - to avoid tests failing in different test environments.
+	 *
+	 * @param environmentId The ID of the EE, e.g.: "JavaSE-9"
+	 * @return The default VM install for the EE, before we change it.
+	 */
+	protected static IVMInstall prepareExecutionEnvironment(String environmentId) {
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		IExecutionEnvironment environment = getExecutionEnvironment(environmentId);
+		IVMInstall defaultVM = environment.getDefaultVM();
+		environment.setDefaultVM(vm);
+		TestUtil.logInfo("Set VM \"" + vm.getName() + "\" for execution environments: " + environment.getId());
+		return defaultVM;
+	}
+
+	/**
+	 * Set the default VM of an EE.
+	 *
+	 * @param environmentId The ID of the EE, e.g.: "JavaSE-9"
+	 * @param defaultVM The default VM to set.
+	 */
+	protected static void setExecutionEnvironment(String environmentId, IVMInstall defaultVM) {
+		IExecutionEnvironment environment = getExecutionEnvironment(environmentId);
+		environment.setDefaultVM(defaultVM);
+		TestUtil.logInfo("Set default VM for execution environment: " + environment.getId());
+	}
+
+	private static IExecutionEnvironment getExecutionEnvironment(String environmentId) {
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+		return Arrays.stream(environments).filter(e -> environmentId.equals(e.getId())).findFirst().orElseThrow();
 	}
 
 	public interface StackFrameSupplier {
