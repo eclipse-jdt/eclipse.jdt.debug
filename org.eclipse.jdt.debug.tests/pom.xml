@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.eclipse.jdt</groupId>
   <artifactId>org.eclipse.jdt.debug.tests</artifactId>
-  <version>3.12.900-SNAPSHOT</version>
+  <version>3.12.1000-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
     <testSuite>${project.artifactId}</testSuite>
