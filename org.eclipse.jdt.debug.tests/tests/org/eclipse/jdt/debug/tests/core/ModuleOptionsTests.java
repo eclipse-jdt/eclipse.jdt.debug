@@ -28,7 +28,9 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 public class ModuleOptionsTests extends AbstractDebugTest {
@@ -96,9 +98,25 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
+	private IVMInstall defaultVM9;
 
 	public ModuleOptionsTests(String name) {
 		super(name);
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		defaultVM9 = prepareExecutionEnvironment(JavaProjectHelper.JAVA_SE_9_EE_NAME);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		try {
+			setExecutionEnvironment(JavaProjectHelper.JAVA_SE_9_EE_NAME, defaultVM9);
+		} finally {
+			super.tearDown();
+		}
 	}
 
 	@Override
@@ -145,8 +163,9 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		return -1;
 	}
 
-	public void testAddModules1() throws JavaModelException {
+	public void testAddModules1() throws Exception {
 		IJavaProject javaProject = getProjectContext();
+		checkVMInstall(javaProject);
 		List<String> defaultModules = getDefaultModules(javaProject);
 		defaultModules.add("jdk.crypto.cryptoki"); // requires jdk.crypto.ec up to Java 21
 		try {
@@ -168,8 +187,9 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		}
 	}
 
-	public void testLimitModules_release9() throws CoreException {
+	public void testLimitModules_release9() throws Exception {
 		IJavaProject javaProject = getProjectContext();
+		checkVMInstall(javaProject);
 		try {
 			javaProject.setOption(JavaCore.COMPILER_RELEASE, JavaCore.ENABLED);
 			List<String> defaultModules = getDefaultModules(javaProject);
@@ -226,8 +246,10 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		}
 	}
 
-	public void testLimitModules1() throws JavaModelException {
+	public void testLimitModules1() throws Exception {
 		IJavaProject javaProject = getProjectContext();
+		javaProject.setOption(JavaCore.COMPILER_RELEASE, JavaCore.DISABLED);
+		checkVMInstall(javaProject);
 		List<String> defaultModules = getDefaultModules(javaProject);
 		String expectedModules;
 		String moduleList = String.join(",", defaultModules);
@@ -272,5 +294,11 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 		} finally {
 			removeClasspathAttributesFromSystemLibrary(javaProject);
 		}
+	}
+
+	private void checkVMInstall(IJavaProject javaProject) throws CoreException {
+		IVMInstall defaultVm = JavaRuntime.getDefaultVMInstall();
+		IVMInstall vm = JavaRuntime.getVMInstall(javaProject);
+		assertEquals("Expected default VM but got: " + vm.getInstallLocation(), defaultVm.getName(), vm.getName());
 	}
 }

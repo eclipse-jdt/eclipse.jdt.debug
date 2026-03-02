@@ -19,10 +19,8 @@ import java.util.Map.Entry;
  * Tests built in logical structures.
  */
 public class LogicalStructures {
-	
+
 	public static void main(String[] args) {
-		generateGarbage();
-		
 		Map<String, Integer> map = new HashMap<>();
 		map.put("one", 1);
 		map.put("two", 2);
@@ -33,18 +31,15 @@ public class LogicalStructures {
 		Map.Entry<String, Integer> entry = set.iterator().next();
 		entry.getKey();
 	}
-	
-	private static void generateGarbage() {
-		// generate garbage repeatedly to verify that logical values don't get GCed
-		Timer timer = new Timer(true);
-		timer.scheduleAtFixedRate(new TimerTask() {
-			private List<String> garbage;
-			@Override
-			public void run() {
-				System.gc();
-				garbage = Arrays.asList(new String("a"), new String("b"), new String("c"));
-			}
-		}, 200, 20);
+
+	// called from test to verify that logical values don't get GCed
+	private static void generateGarbageAndGC() throws InterruptedException {
+		List<Object> garbage;
+		for (int i = 0; i < 10; ++i) {
+			System.gc();
+			garbage = Arrays.asList(new Object(), new Object(), new Object());
+			Thread.sleep(20);
+		}
 	}
 
 }
