@@ -155,7 +155,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
@@ -1432,7 +1434,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *             if the event is never received.
 	 */
 	protected Object launchAndWait(ILaunchConfiguration configuration, String mode, DebugEventWaiter waiter, boolean register) throws CoreException {
-		ILaunch launch = configuration.launch(mode, new TimeoutMonitor(DEFAULT_TIMEOUT), false, register);
+		ILaunch launch;
+		try {
+			launch = configuration.launch(mode, new TimeoutMonitor(DEFAULT_TIMEOUT), false, register);
+		} catch (Throwable t) {
+			logProcessConsoleContents();
+			throw t;
+		}
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
 			StringBuilder buf = new StringBuilder();
@@ -3144,6 +3152,25 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		String detailed = message + " " + vm.getName() + ", location: " + vm.getInstallLocation();
 		IStatus status = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(), detailed, null);
 		JDIDebugPlugin.log(status);
+	}
+
+	private static void logProcessConsoleContents() {
+		try {
+			StringBuilder buf = new StringBuilder();
+			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+			for (IConsole console : manager.getConsoles()) {
+				if (console instanceof ProcessConsole) {
+					ProcessConsole processConsole = (ProcessConsole) console;
+					String string = processConsole.getDocument().get();
+					buf.append("Console output for \"" + processConsole.getName() + "\" follows:\n"); //$NON-NLS-1$
+					buf.append(string);
+				}
+			}
+			buf.append("\n"); //$NON-NLS-1$
+			DebugPlugin.log(new Status(IStatus.INFO, "org.eclipse.jdt.debug.ui.tests", buf.toString())); //$NON-NLS-1$
+		} catch (Throwable t) {
+			DebugPlugin.log(t);
+		}
 	}
 
 	private static class LogVMInstallChanges implements IVMInstallChangedListener {
