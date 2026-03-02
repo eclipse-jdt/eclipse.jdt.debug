@@ -15,9 +15,9 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -62,13 +62,8 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
 		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<>());
-		IDebugEventSetListener listener = new IDebugEventSetListener() {
-			@Override
-			public void handleDebugEvents(DebugEvent[] e) {
-				events.get().addAll(Arrays.asList(e));
-			}
-		};
+
+		DebugListener listener = new DebugListener();
 		DebugPlugin.getDefault().addDebugEventListener(listener);
 		IJavaThread thread = null;
 		try {
@@ -78,13 +73,19 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			// expect that thread with name "1" is started
 			IThread second = findThread(thread, "1");
 			assertNotNull(second);
-			events.get().clear();
+			listener.clearEvents();
 
 			resumeToLineBreakpoint(thread, bp2);
-			TestUtil.waitForJobs(getName(), 1000, 3000);
+			TestUtil.waitForJobs(getName(), 100, 3000);
 
 			// expect one single "CHANGE" event for second thread
-			List<DebugEvent> changeEvents = getStateChangeEvents(events, second);
+			List<DebugEvent> changeEvents = Collections.emptyList();
+			long start = System.currentTimeMillis();
+			while (changeEvents.isEmpty() && System.currentTimeMillis() - start <= DEFAULT_TIMEOUT) {
+				changeEvents = listener.getStateChangeEvents(second);
+				TestUtil.runEventLoop();
+				Thread.sleep(50);
+			}
 			assertEquals("unexpected number of events: " + changeEvents, 1, changeEvents.size());
 
 			// expect that thread name is changed to "2"
@@ -111,13 +112,7 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(bpLine2, "", typeName + ".java", typeName);
 		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		bp2.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		AtomicReference<List<DebugEvent>> events = new AtomicReference<>(new ArrayList<>());
-		IDebugEventSetListener listener = new IDebugEventSetListener() {
-			@Override
-			public void handleDebugEvents(DebugEvent[] e) {
-				events.get().addAll(Arrays.asList(e));
-			}
-		};
+		DebugListener listener = new DebugListener();
 		DebugPlugin.getDefault().addDebugEventListener(listener);
 		IJavaThread thread = null;
 		try {
@@ -127,13 +122,13 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			// expect that thread with name "1" is started
 			IThread second = findThread(thread, "1");
 			assertNotNull(second);
-			events.get().clear();
+			listener.clearEvents();
 
 			resumeToLineBreakpoint(thread, bp2);
 			TestUtil.waitForJobs(getName(), 100, 3000);
 
 			// expect no "CHANGE" events
-			List<DebugEvent> changeEvents = getStateChangeEvents(events, second);
+			List<DebugEvent> changeEvents = listener.getStateChangeEvents(second);
 			assertEquals("expected no events, instead got: " + changeEvents, 0, changeEvents.size());
 
 			// expect that thread name is changed to "2"
@@ -145,13 +140,6 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
 			System.getProperties().remove(DISABLE_THREAD_NAME_CHANGE_LISTENER);
 		}
-	}
-
-	private List<DebugEvent> getStateChangeEvents(AtomicReference<List<DebugEvent>> events, IThread second) {
-		List<DebugEvent> list = events.get();
-		Stream<DebugEvent> filtered = list.stream().filter(x -> x.getKind() == DebugEvent.CHANGE && x.getDetail() == DebugEvent.STATE
-				&& x.getSource() == second);
-		return filtered.collect(Collectors.toList());
 	}
 
 	private IThread findThread(IJavaThread thread, String name) throws DebugException {
@@ -193,5 +181,31 @@ public class ThreadNameChangeTests extends AbstractDebugTest {
 	@Override
 	protected IJavaProject getProjectContext() {
 		return super.get17Project();
+	}
+
+	private static class DebugListener implements IDebugEventSetListener {
+
+		private final List<DebugEvent> events = new ArrayList<>();
+
+		@Override
+		public void handleDebugEvents(DebugEvent[] e) {
+			synchronized (events) {
+				events.addAll(Arrays.asList(e));
+			}
+		}
+
+		private void clearEvents() {
+			synchronized (events) {
+				events.clear();
+			}
+		}
+
+		private List<DebugEvent> getStateChangeEvents(IThread second) {
+			synchronized (events) {
+				Stream<DebugEvent> filtered = events.stream().filter(x -> x.getKind() == DebugEvent.CHANGE && x.getDetail() == DebugEvent.STATE
+						&& x.getSource() == second);
+				return filtered.collect(Collectors.toList());
+			}
+		}
 	}
 }
