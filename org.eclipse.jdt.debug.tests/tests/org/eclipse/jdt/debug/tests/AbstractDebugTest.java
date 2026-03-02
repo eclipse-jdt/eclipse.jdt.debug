@@ -128,6 +128,7 @@ import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
@@ -2767,6 +2768,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
                 Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
 				// Let also all other pending jobs proceed, ignore console jobs
 				TestUtil.waitForJobs("waitForBuild", 100, 5000, ProcessConsole.class);
+				JavaModelManager.getIndexManager().waitForIndex(false, null);
                 wasInterrupted = false;
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
