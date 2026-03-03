@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ package org.eclipse.jdt.debug.tests;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
+import org.eclipse.jdt.debug.test.stepping.StatementSteppingTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionWithGenerics;
@@ -251,6 +252,7 @@ public class AutomatedSuite extends DebugSuite {
 		if (JavaProjectHelper.isJava6Compatible()) {
 			addTest(new TestSuite(ForceReturnTests.class));
 		}
+		addTest(new TestSuite(StatementSteppingTests.class));
 
 	//Classpath tests
 		addTest(new TestSuite(JavaLibraryPathTests.class));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -268,5 +268,10 @@ public interface IJDIPreferencesConstants {
 	 * breakpoint.
 	 */
 	public static final String PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT= IJavaDebugUIConstants.PLUGIN_ID + ".prompt_delete_conditional_breakpoint"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether debugger should suspend only for statement-level instructions.
+	 */
+	public static final String PREF_STATEMENT_LEVEL_STEPPING = IJavaDebugUIConstants.PLUGIN_ID + ".statement_only_stepping"; //$NON-NLS-1$
 
 }

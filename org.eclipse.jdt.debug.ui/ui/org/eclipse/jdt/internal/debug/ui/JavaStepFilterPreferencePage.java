@@ -52,6 +52,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private Button fFilterSetterButton;
 	private Button fFilterConstructorButton;
 	private Button fStepThruButton;
+	private Button statementLevelStepping;
 
 	/**
 	 * Constructor
@@ -134,6 +135,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterStaticButton.setEnabled(enabled);
 		fFilterSyntheticButton.setEnabled(enabled);
 		fStepFilterTable.setEnabled(enabled);
+		statementLevelStepping.setEnabled(enabled);
 	}
 
 	/**
@@ -141,6 +143,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * @param container the parent container
 	 */
 	private void createStepFilterCheckboxes(Composite container) {
+		statementLevelStepping = SWTFactory.createCheckButton(container, DebugUIMessages.JavaDebugPreferencePage_StatementLevelStepping, null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING), 2);
 		fFilterSyntheticButton = SWTFactory.createCheckButton(container,
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_s_ynthetic_methods__requires_VM_support__17,
 				null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS), 2);
@@ -176,6 +179,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_SETTERS, fFilterSetterButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS, fFilterSyntheticButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, fStepThruButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING, statementLevelStepping.getSelection());
 		return super.performOk();
 	}
 
@@ -193,7 +197,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterGetterButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_GETTERS));
 		fFilterSetterButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SETTERS));
 		fStepThruButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS));
-
+		statementLevelStepping.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING));
 		fStepFilterTable.performDefaults();
 		super.performDefaults();
 	}
