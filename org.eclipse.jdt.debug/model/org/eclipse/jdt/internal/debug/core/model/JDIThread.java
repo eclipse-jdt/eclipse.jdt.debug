@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -64,6 +64,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
@@ -322,6 +323,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	private final AtomicBoolean fCompletingBreakpointHandling;
 	private final AtomicBoolean fHandlingSuspendForBreakpoint;
+
+	/**
+	 * Range of simple load and constant push byte code instructions
+	 * <p>
+	 * See https://javaalmanac.io/bytecode/opcodes/ for the complete list of JVM opcodes
+	 * </p>
+	 */
+	private static final int INTERMEDIATE_OPCODE_START = 0;
+	private static final int INTERMEDIATE_OPCODE_END = 53;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -2878,6 +2888,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 
 				Location stepOverLocation2 = fStepOverLocation;
+
+				if (target.isStatementOnlyStepping()) {
+					if (skipImmediateInstructionsOnStepping(currentLocation)) {
+						deleteStepRequest();
+						createSecondaryStepRequest(StepRequest.STEP_OVER);
+						return true;
+					}
+				}
+
 				if (getStepKind() == StepRequest.STEP_OVER) {
 					if (stepOverLocation2 != null && fStepOverFrameCount >= 0) {
 						int underlyingFrameCount = getUnderlyingFrameCount();
@@ -2926,6 +2945,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				stepEnd(eventSet);
 				return false;
 			} catch (DebugException e) {
+				logError(e);
+				stepEnd(eventSet);
+				return false;
+			} catch (AbsentInformationException e) {
 				logError(e);
 				stepEnd(eventSet);
 				return false;
@@ -3092,6 +3115,57 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 			return false;
 		}
+
+		/**
+		 * Returns whether the to-be-stepped location represents an intermediate byte code instruction that should be skipped while stepping.
+		 *
+		 * @param toBeStepped
+		 *            the next execution location
+		 * @return <code>true</code> if the instruction should be skipped, <code>false</code> otherwise
+		 * @exception AbsentInformationException
+		 *                if line information is not available
+		 */
+		private boolean skipImmediateInstructionsOnStepping(Location toBeStepped) throws AbsentInformationException {
+			if (fStepOverLocation == null && fOriginalStepLocation == null) {
+				return false;
+			}
+			int currIndx = (int) toBeStepped.codeIndex();
+			if (currIndx < 0) {
+				return false;
+			}
+			Method method = toBeStepped.method();
+			int currOpCode = bytecodeToOpcode(method.bytecodes()[currIndx]);
+			if (currOpCode < INTERMEDIATE_OPCODE_START || currOpCode > INTERMEDIATE_OPCODE_END) {
+				return false;
+			}
+			List<Location> locs = method.allLineLocations();
+			int index = locs.indexOf(toBeStepped);
+			if (index >= 0 && index < locs.size() - 1) {
+				Location nextLoc = locs.get(index + 1);
+				int nxtIndx = (int) nextLoc.codeIndex();
+				if (nxtIndx < 0) {
+					return false;
+				}
+				int diff = nxtIndx - currIndx;
+				// Bytecode distance to next location; small values (1–3) indicate, intermediate instructions within the same statement
+				if (diff >= 1 && diff <= 3) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * In Java, byte is a signed type with a range of -128 to 127. When we read a bytecode instruction
+	 * from Method.bytecodes(), the raw byte value can be negative for opcodes &#8805; 0x80 (128).
+	 * For example, opcode 0xC4 (wide) would be stored as -60 in a signed byte, but we need it as 196 to
+	 * correctly compare it against opcode constants.
+	 *
+	 * @return the unsigned value in range 0–255
+	 */
+	private static int bytecodeToOpcode(byte b) {
+		return b & 0xFF;
 	}
 
 	/**
