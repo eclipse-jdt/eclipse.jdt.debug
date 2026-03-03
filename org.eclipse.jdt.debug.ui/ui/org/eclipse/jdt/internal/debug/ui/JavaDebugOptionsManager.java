@@ -290,6 +290,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		target.setFilterGetters(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_GETTERS));
 		target.setFilterSetters(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_SETTERS));
 		target.setStepThruFilters(store.getBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS));
+		target.setStatementOnlyStepping(store.getBoolean(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING));
 		target.setStepFilters(getActiveStepFilters());
 
 	}
