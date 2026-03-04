@@ -15,7 +15,7 @@
 
 <project name="Build Snippet support JAR" default="build" basedir="..">
 
-	<target name="build" description="Cleans, builds and refreshes the impacted resources" depends="clean, snippetsupport.jar"/>
+	<target name="build" description="Builds and refreshes the impacted resources" depends="snippetsupport.jar"/>
 
 	<!-- Empty target for "After a Clean" task (we don't want to rebuild the Jar here, e.g. on checkout). -->
 	<target name="dummy_clean"/>
@@ -29,14 +29,21 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 
-	<target name="snippetsupport.jar" depends="init" description="Creates the snippetsupport.jar">
+	<target name="checkSourceUpToDate" depends="init" description="Checks if the JAR is up to date with the source">
+		<uptodate property="jarUpToDate" targetfile="${build.result.folder}/snippetsupport.jar">
+			<srcfiles dir="Snippet Support/" includes="**/*"/>
+		</uptodate>
+	</target>
+
+	<target name="snippetsupport.jar" depends="init, checkSourceUpToDate" unless="jarUpToDate" description="Creates the snippetsupport.jar">
 		<property name="destdir" value="${temp.folder}/snippetsupport.jar.bin"/>
+		<delete dir="${temp.folder}"/>
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- Keep target level as low as possible!
 			snippetsupport.jar is used on the classpath of a separate VM that
 			uses the JRE that's on the build path of the scrapbook file's project. -->
-		<javac target="1.7" source="1.7" destdir="${destdir}"
+		<javac target="1.8" source="1.8" destdir="${destdir}"
 			failonerror="true"
 			verbose="false"
 			debug="on"
