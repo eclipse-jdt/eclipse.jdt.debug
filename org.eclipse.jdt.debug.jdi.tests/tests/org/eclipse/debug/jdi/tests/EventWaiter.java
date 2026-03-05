@@ -116,8 +116,8 @@ public class EventWaiter implements EventListener {
 	 * Notify any object that is waiting for an event.
 	 */
 	synchronized protected void notifyEvent(Event event) {
-		notify();
 		fEvent = event;
+		notify();
 	}
 	/**
 	 * @see org.eclipse.debug.jdi.tests.EventListener#step(com.sun.jdi.event.StepEvent)

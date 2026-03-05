@@ -95,7 +95,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				req = erm.createMethodExitRequest();
 				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
-				waiter = new EventWaiter(req, true);
+				waiter = new MethodExitEventWaiter(req, true, "print");
 				fEventReader.addEventListener(waiter);
 				tref.resume();
 				event = (MethodExitEvent)waiter.waitEvent(10000);
@@ -137,7 +137,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				req = erm.createMethodExitRequest();
 				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
-				waiter = new EventWaiter(req, true);
+				waiter = new MethodExitEventWaiter(req, true, "foo");
 				fEventReader.addEventListener(waiter);
 				tref.resume();
 				event = (MethodExitEvent)waiter.waitEvent(5000);
@@ -179,7 +179,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				req = erm.createMethodExitRequest();
 				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
-				waiter = new EventWaiter(req, true);
+				waiter = new MethodExitEventWaiter(req, true, "getInt");
 				fEventReader.addEventListener(waiter);
 				tref.resume();
 				event = (MethodExitEvent)waiter.waitEvent(5000);
@@ -221,7 +221,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				req = erm.createMethodExitRequest();
 				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
-				waiter = new EventWaiter(req, true);
+				waiter = new MethodExitEventWaiter(req, true, "getBoolean");
 				fEventReader.addEventListener(waiter);
 				tref.resume();
 				event = (MethodExitEvent)waiter.waitEvent(5000);
@@ -263,7 +263,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				req = erm.createMethodExitRequest();
 				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
-				waiter = new EventWaiter(req, true);
+				waiter = new MethodExitEventWaiter(req, true, "getLong");
 				fEventReader.addEventListener(waiter);
 				tref.resume();
 				event = (MethodExitEvent)waiter.waitEvent(5000);
