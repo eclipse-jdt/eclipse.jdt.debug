@@ -58,8 +58,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 			}
 			// internal
 			return res.getName();
-		} else if (element instanceof LocalFileStorage) {
-			LocalFileStorage storage = (LocalFileStorage)element;
+		} else if (element instanceof LocalFileStorage storage) {
 			File extFile = storage.getFile();
 			return extFile.getParent();
 		}

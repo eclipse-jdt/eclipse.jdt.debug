@@ -266,8 +266,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	private void detectJavadocLocation() {
 		if (fAutoDetectAttributes) {
 			IVMInstallType type = fVM.getVMInstallType();
-			if (type instanceof AbstractVMInstallType) {
-				AbstractVMInstallType atype = (AbstractVMInstallType)type;
+			if (type instanceof AbstractVMInstallType atype) {
 				fJavadocLocation = atype.getDefaultJavadocLocation(getInstallLocation());
 				String args = atype.getDefaultVMArguments(getInstallLocation());
 				if (args != null) {

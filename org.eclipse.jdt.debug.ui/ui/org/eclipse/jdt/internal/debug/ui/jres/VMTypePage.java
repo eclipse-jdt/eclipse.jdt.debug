@@ -68,8 +68,7 @@ public class VMTypePage extends WizardPage {
 		 */
 		@Override
 		public String getText(Object element) {
-			if (element instanceof IVMInstallType) {
-				IVMInstallType type = (IVMInstallType) element;
+			if (element instanceof IVMInstallType type) {
 				return type.getName();
 			}
 			return super.getText(element);

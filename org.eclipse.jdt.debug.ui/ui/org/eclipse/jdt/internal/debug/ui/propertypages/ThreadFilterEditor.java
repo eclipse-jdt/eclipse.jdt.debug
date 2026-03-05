@@ -129,10 +129,9 @@ public class ThreadFilterEditor {
 	 */
 	protected IDebugTarget[] getDebugTargets() {
 		Object input= fThreadViewer.getInput();
-		if (!(input instanceof ILaunchManager)) {
+		if (!(input instanceof ILaunchManager launchManager)) {
 			return new IJavaDebugTarget[0];
 		}
-		ILaunchManager launchManager= (ILaunchManager)input;
 		return launchManager.getDebugTargets();
 	}
 

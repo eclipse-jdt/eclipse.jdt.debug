@@ -337,8 +337,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		if(obj instanceof LibraryStandin) {
 			standin = (LibraryStandin) obj;
 		}
-		else if(obj instanceof SubElement){
-			SubElement sub = (SubElement)obj;
+		else if(obj instanceof SubElement sub){
 			standin = sub.getParent();
 		}
 		if(standin != null) {
@@ -419,9 +418,8 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 			for (Iterator<?> iter= selection.iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				Object lib;
-				if (element instanceof SubElement) {
+				if (element instanceof SubElement subElement) {
 					allRoots = false;
-					SubElement subElement= (SubElement)element;
 					lib = (subElement).getParent().toLibraryLocation();
 					switch (subElement.getType()) {
 						case SubElement.JAVADOC_URL:

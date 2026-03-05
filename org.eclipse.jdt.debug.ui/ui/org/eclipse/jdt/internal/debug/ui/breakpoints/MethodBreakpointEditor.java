@@ -81,8 +81,7 @@ public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
 	public void doSave() throws CoreException {
 		super.doSave();
 		IJavaBreakpoint breakpoint = getBreakpoint();
-		if (breakpoint instanceof IJavaMethodBreakpoint) {
-			IJavaMethodBreakpoint watchpoint = (IJavaMethodBreakpoint) breakpoint;
+		if (breakpoint instanceof IJavaMethodBreakpoint watchpoint) {
 			watchpoint.setEntry(fEntry.getSelection());
 			watchpoint.setExit(fExit.getSelection());
 		}
