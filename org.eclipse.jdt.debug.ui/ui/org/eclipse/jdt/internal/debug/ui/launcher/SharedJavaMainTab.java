@@ -111,8 +111,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = null;
 		String moduleName = EMPTY_STRING;
-		if (javaElement instanceof IMember) {
-			IMember member = (IMember)javaElement;
+		if (javaElement instanceof IMember member) {
 			if (member.isBinary()) {
 				javaElement = member.getClassFile();
 			}

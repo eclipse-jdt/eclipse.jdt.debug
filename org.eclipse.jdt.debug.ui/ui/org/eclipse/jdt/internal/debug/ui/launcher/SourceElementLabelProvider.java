@@ -38,11 +38,9 @@ public class SourceElementLabelProvider extends LabelProvider implements ILabelP
 	public String getText(Object element) {
 		if (element instanceof IJavaElement) {
 			return ((IJavaElement)element).getElementName();
-		} else if (element instanceof ZipEntryStorage) {
-			ZipEntryStorage storage = (ZipEntryStorage)element;
+		} else if (element instanceof ZipEntryStorage storage) {
 			return storage.getZipEntry().getName();
-		} else if (element instanceof LocalFileStorage) {
-			LocalFileStorage storage = (LocalFileStorage)element;
+		} else if (element instanceof LocalFileStorage storage) {
 			return storage.getName();
 		}
 		return super.getText(element);

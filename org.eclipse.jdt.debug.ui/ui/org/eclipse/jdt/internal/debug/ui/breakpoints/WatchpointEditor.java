@@ -57,8 +57,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 	@Override
 	protected void setBreakpoint(IJavaBreakpoint breakpoint) throws CoreException {
 		super.setBreakpoint(breakpoint);
-		if (breakpoint instanceof IJavaWatchpoint) {
-			IJavaWatchpoint watchpoint = (IJavaWatchpoint) breakpoint;
+		if (breakpoint instanceof IJavaWatchpoint watchpoint) {
 			fAccess.setEnabled(true);
 			fModification.setEnabled(true);
 			fAccess.setSelection(watchpoint.isAccess());
@@ -78,8 +77,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 	public void doSave() throws CoreException {
 		super.doSave();
 		IJavaBreakpoint breakpoint = getBreakpoint();
-		if (breakpoint instanceof IJavaWatchpoint) {
-			IJavaWatchpoint watchpoint = (IJavaWatchpoint) breakpoint;
+		if (breakpoint instanceof IJavaWatchpoint watchpoint) {
 			watchpoint.setAccess(fAccess.getSelection());
 			watchpoint.setModification(fModification.getSelection());
 		}

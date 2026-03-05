@@ -310,14 +310,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
 	static IStatus doToggleLambdaEntryMethodBreakpoints(IWorkbenchPart part, ISelection selection, String lambdaMethodName, String lambdaMethodSignature, LambdaProperties lambdaProperties, IProgressMonitor monitor) throws CoreException {
 		ITextEditor textEditor = getTextEditor(part);
-		if (textEditor == null || !(selection instanceof ITextSelection)) {
+		if (textEditor == null || !(selection instanceof ITextSelection textSelection)) {
 			return Status.OK_STATUS;
 		}
-		ITextSelection textSelection = (ITextSelection) selection;
 		IEditorInput editorInput = textEditor.getEditorInput();
 		ITypeRoot root = getTypeRoot(editorInput);
-		if (root instanceof ICompilationUnit) {
-			ICompilationUnit unit = (ICompilationUnit) root;
+		if (root instanceof ICompilationUnit unit) {
 			synchronized (unit) {
 				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 			}
@@ -345,14 +343,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
 	static IStatus doToggleLambdaMethodBreakpoints(IWorkbenchPart part, ISelection selection, ValidBreakpointLocationLocator loc, IProgressMonitor monitor) throws CoreException {
 		ITextEditor textEditor = getTextEditor(part);
-		if (textEditor == null || !(selection instanceof ITextSelection)) {
+		if (textEditor == null || !(selection instanceof ITextSelection textSelection)) {
 			return Status.OK_STATUS;
 		}
-		ITextSelection textSelection = (ITextSelection) selection;
 		IEditorInput editorInput = textEditor.getEditorInput();
 		ITypeRoot root = getTypeRoot(editorInput);
-		if (root instanceof ICompilationUnit) {
-			ICompilationUnit unit = (ICompilationUnit) root;
+		if (root instanceof ICompilationUnit unit) {
 			synchronized (unit) {
 				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 			}
@@ -859,8 +855,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if (isRemote(part, selection)) {
     		return false;
     	}
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
+        if (selection instanceof IStructuredSelection ss) {
             return getMethods(ss, isInterface(selection, part)).length > 0;
         }
         return (selection instanceof ITextSelection) && isMethod((ITextSelection) selection, part);
@@ -870,11 +865,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * Returns whether the given part/selection is remote (viewing a repository)
 	 */
 	protected static boolean isRemote(IWorkbenchPart part, ISelection selection) {
-    	if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
+    	if (selection instanceof IStructuredSelection ss) {
 			Object element = ss.getFirstElement();
-			if(element instanceof IMember) {
-				IMember member = (IMember) element;
+			if(element instanceof IMember member) {
 				return !member.getJavaProject().getProject().exists();
 			}
 		}
@@ -916,8 +909,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         while (iterator.hasNext()) {
             Object thing = iterator.next();
             try {
-                if (thing instanceof IMethod) {
-                	IMethod method = (IMethod) thing;
+                if (thing instanceof IMethod method) {
                 	if(isInterace){
                 		if (Flags.isDefaultMethod(method.getFlags()) || Flags.isStatic(method.getFlags())) {
 							methods.add(method);
@@ -947,8 +939,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         while (iterator.hasNext()) {
             Object thing = iterator.next();
             try {
-                if (thing instanceof IMethod) {
-                	IMethod method = (IMethod) thing;
+                if (thing instanceof IMethod method) {
                 	if (Flags.isDefaultMethod(method.getFlags())) {
                 		methods.add(method);
                 	}
@@ -1044,8 +1035,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					IType type = member.getDeclaringType();
 					return type != null && type.isInterface();
 				}
-				else if(obj instanceof IJavaFieldVariable) {
-					IJavaFieldVariable var = (IJavaFieldVariable) obj;
+				else if(obj instanceof IJavaFieldVariable var) {
 					IType type = JavaDebugUtils.resolveType(var.getDeclaringType());
 					return type != null && type.isInterface();
 				}
@@ -1099,8 +1089,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				if (thing instanceof IField) {
 					int flags = ((IField) thing).getFlags();
 					return !Flags.isFinal(flags);
-				} else if (thing instanceof IJavaFieldVariable) {
-					IJavaFieldVariable fv = (IJavaFieldVariable) thing;
+				} else if (thing instanceof IJavaFieldVariable fv) {
 					return !fv.isFinal();
 				}
 			}
@@ -1167,8 +1156,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					fin = javaField.getConstant() != null; // watch point is allowed if no constant value
 				}
 				allowed = !fin;
-			} else if (element instanceof IJavaFieldVariable) {
-				IJavaFieldVariable var = (IJavaFieldVariable) element;
+			} else if (element instanceof IJavaFieldVariable var) {
 				typeName = var.getDeclaringType().getName();
 				fieldName = var.getName();
 				boolean fin = var.isFinal();
@@ -1233,8 +1221,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         IBreakpoint[] breakpoints = breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
         for (int i = 0; i < breakpoints.length; i++) {
             IBreakpoint breakpoint = breakpoints[i];
-            if (breakpoint instanceof IJavaWatchpoint) {
-                IJavaWatchpoint watchpoint = (IJavaWatchpoint) breakpoint;
+            if (breakpoint instanceof IJavaWatchpoint watchpoint) {
                 if (typeName.equals(watchpoint.getTypeName()) && fieldName.equals(watchpoint.getFieldName())) {
                     return watchpoint;
                 }
@@ -1448,8 +1435,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if (isRemote(part, selection)) {
     		return false;
     	}
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
+        if (selection instanceof IStructuredSelection ss) {
             return isFields(ss);
         }
         return (selection instanceof ITextSelection) && isField((ITextSelection) selection, part);
@@ -1466,10 +1452,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
 	protected static ISelection translateToMembers(IWorkbenchPart part, ISelection selection) throws CoreException {
     	ITextEditor textEditor = getTextEditor(part);
-		if (textEditor == null || !(selection instanceof ITextSelection)) {
+		if (textEditor == null || !(selection instanceof ITextSelection textSelection)) {
 			return selection;
         }
-		ITextSelection textSelection = (ITextSelection) selection;
 		IEditorInput editorInput = textEditor.getEditorInput();
 		IDocumentProvider documentProvider = textEditor.getDocumentProvider();
 		if (documentProvider == null) {
@@ -1489,8 +1474,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 		IMember m = null;
 		ITypeRoot root = getTypeRoot(editorInput);
-		if (root instanceof ICompilationUnit) {
-			ICompilationUnit unit = (ICompilationUnit) root;
+		if (root instanceof ICompilationUnit unit) {
 			synchronized (unit) {
 				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 			}
@@ -1502,8 +1486,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			}
 			// Class breakpoint should be created if the offset was at the record component in the record definition
 			if (m != null && m.getParent() instanceof IType && ((IType) m.getParent()).isRecord()) {
-				if (m instanceof IField) {
-					IField field = (IField)m;
+				if (m instanceof IField field) {
 					if (field.isRecordComponent()) {
 						m = (IMember) field.getParent();
 					}
@@ -1597,10 +1580,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			if (!(object instanceof SimpleMarkerAnnotation)) {
+			if (!(object instanceof SimpleMarkerAnnotation markerAnnotation)) {
 				continue;
 			}
-			SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
 			IMarker marker = markerAnnotation.getMarker();
 			try {
 				if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
@@ -1623,10 +1605,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	}
 
 	private void toggleFieldOrMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		if (!(selection instanceof ITextSelection)) {
+		if (!(selection instanceof ITextSelection ts)) {
 			return;
 		}
-		ITextSelection ts = (ITextSelection) selection;
 		ITextEditor editor = getTextEditor(part);
 		if (editor == null) {
 			return;

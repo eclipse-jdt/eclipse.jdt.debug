@@ -52,13 +52,11 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		if (object instanceof PackageFragmentRootSourceContainer) {
-			PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) object;
+		if (object instanceof PackageFragmentRootSourceContainer container) {
 			IPackageFragmentRoot fragmentRoot = container.getPackageFragmentRoot();
 			return getImageDescriptor(fragmentRoot);
 		}
-		if (object instanceof JavaProjectSourceContainer) {
-			JavaProjectSourceContainer container = (JavaProjectSourceContainer) object;
+		if (object instanceof JavaProjectSourceContainer container) {
 			IJavaProject javaProject = container.getJavaProject();
 			return getImageDescriptor(javaProject);
 		}
@@ -92,8 +90,7 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	@Override
 	public String getLabel(Object o) {
-		if (o instanceof PackageFragmentRootSourceContainer) {
-			PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) o;
+		if (o instanceof PackageFragmentRootSourceContainer container) {
 			IPackageFragmentRoot fragmentRoot = container.getPackageFragmentRoot();
 			IPath path = fragmentRoot.getPath();
 			if (fragmentRoot instanceof JrtPackageFragmentRoot jrtPackageFragmentRoot) {

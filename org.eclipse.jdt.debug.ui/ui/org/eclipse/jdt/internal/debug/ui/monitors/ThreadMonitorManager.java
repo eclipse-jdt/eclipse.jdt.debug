@@ -84,8 +84,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			Object eventSource= debugEvent.getSource();
 			int eventKind= debugEvent.getKind();
 			IJavaThread javaThread = null;
-			if (eventSource instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable)eventSource;
+			if (eventSource instanceof IAdaptable adaptable) {
 				javaThread = adaptable.getAdapter(IJavaThread.class);
 				if (javaThread != null) {
 					switch (eventKind) {
