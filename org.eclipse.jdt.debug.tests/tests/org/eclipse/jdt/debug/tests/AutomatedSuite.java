@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -134,6 +134,7 @@ import org.eclipse.jdt.debug.tests.refactoring.RenamePackageUnitTests;
 import org.eclipse.jdt.debug.tests.refactoring.RenamePublicTypeUnitTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.Bug565462Tests;
+import org.eclipse.jdt.debug.tests.sourcelookup.ClassFileEditorHighlightingTest;
 import org.eclipse.jdt.debug.tests.sourcelookup.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.DirectorySourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.DirectorySourceLookupTests;
@@ -228,6 +229,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TypeResolutionTests.class));
 		addTest(new TestSuite(JarSourceLookupTests.class));
 		addTest(new TestSuite(Bug565462Tests.class));
+		addTest(new TestSuite(ClassFileEditorHighlightingTest.class));
 
 	// Variable tests
 		addTest(new TestSuite(InstanceVariableTests.class));
