@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -102,6 +102,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fShowStepResultRemote;
 	private Button fAdvancedSourcelookup;
 	private Button fExceptionBreakpoint;
+	private Button fStatementLevelStepping;
 
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
@@ -158,6 +159,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fWatchpoint = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
 		fWatchpoint.setItems(new String[] {DebugUIMessages.JavaDebugPreferencePage_25, DebugUIMessages.JavaDebugPreferencePage_26, DebugUIMessages.JavaDebugPreferencePage_27});
 		fWatchpoint.setFont(group.getFont());
+
+		fStatementLevelStepping = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_StatementLevelStepping, null, false, 2);
 
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);
 		fEnableHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Enable_hot_code_replace_1, null, true, 1);
@@ -229,10 +232,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING, fStatementLevelStepping.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS, fPromptBeforeModifyingFinalFields.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, fPromptDeleteConditionalBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
+
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
 			prefs.putBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, fEnableHCRButton.getSelection());
@@ -280,6 +285,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store = getPreferenceStore();
 		fSuspendButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
+		fStatementLevelStepping.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING));
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
@@ -329,7 +335,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fPromptDeleteConditionalBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
-
+		fStatementLevelStepping.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING));
 		IPreferencesService prefs = Platform.getPreferencesService();
 
 		String bundleId = JDIDebugPlugin.getUniqueIdentifier();

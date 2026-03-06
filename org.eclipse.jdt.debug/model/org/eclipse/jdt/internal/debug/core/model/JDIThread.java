@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -64,6 +64,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
@@ -322,6 +323,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	private final AtomicBoolean fCompletingBreakpointHandling;
 	private final AtomicBoolean fHandlingSuspendForBreakpoint;
+
+	/**
+	 * Range of simple load and constant push byte code instructions
+	 */
+	private static final int INTERMEDIATE_OPCODE_START = 1;
+	private static final int INTERMEDIATE_OPCODE_END = 53;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -2878,6 +2885,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 
 				Location stepOverLocation2 = fStepOverLocation;
+
+				if (target.isStatementOnlyStepping()) {
+					if (skipImmediateInstructionsOnStepping(currentLocation)) {
+						deleteStepRequest();
+						createSecondaryStepRequest(StepRequest.STEP_OVER);
+						return true;
+					}
+				}
+
 				if (getStepKind() == StepRequest.STEP_OVER) {
 					if (stepOverLocation2 != null && fStepOverFrameCount >= 0) {
 						int underlyingFrameCount = getUnderlyingFrameCount();
@@ -2926,6 +2942,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				stepEnd(eventSet);
 				return false;
 			} catch (DebugException e) {
+				logError(e);
+				stepEnd(eventSet);
+				return false;
+			} catch (AbsentInformationException e) {
 				logError(e);
 				stepEnd(eventSet);
 				return false;
@@ -3085,6 +3105,39 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					if (isLambdaMethod) {
 						int currentLineNumber = currentLocation.lineNumber();
 						if (currentLineNumber == -1) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * Returns whether the to-be-stepped location represents an intermediate byte code instruction that should be skipped while stepping.
+		 *
+		 * @param toBeStepped
+		 *            the next execution location
+		 * @return <code>true</code> if the instruction should be skipped, <code>false</code> otherwise
+		 * @exception AbsentInformationException
+		 *                if line information is not available
+		 */
+		private boolean skipImmediateInstructionsOnStepping(Location toBeStepped) throws AbsentInformationException {
+			Location stepLocation = fStepOverLocation != null ? fStepOverLocation : fOriginalStepLocation;
+			if (stepLocation != null) {
+				byte[] codes = toBeStepped.method().bytecodes();
+				int currIndx = (int) toBeStepped.codeIndex();
+				int currOpCode = codes[currIndx] & 0xFF;
+
+				if (currOpCode >= INTERMEDIATE_OPCODE_START && currOpCode <= INTERMEDIATE_OPCODE_END) {
+					Location nextLoc = null;
+					List<Location> locs = toBeStepped.method().allLineLocations();
+					int index = locs.indexOf(toBeStepped);
+					if (index < locs.size() - 1) {
+						nextLoc = locs.get(index + 1);
+						int nxtIndx = (int) nextLoc.codeIndex();
+						int diff = nxtIndx - currIndx;
+						if (diff >= 1 && diff <= 3) {
 							return true;
 						}
 					}
