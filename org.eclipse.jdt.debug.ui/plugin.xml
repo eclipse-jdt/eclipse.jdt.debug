@@ -2572,6 +2572,13 @@
          <keywordReference id="org.eclipse.jdt.debug.ui.general"/>
       </page>
       <page
+            name="%javaStackFramePrefName"
+            category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.JavaStackFramePreferencePage"
+            id="org.eclipse.jdt.debug.ui.JavaStackFramePreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.stepFilters"/>
+      </page>
+      <page
             name="%javaStepFilterPrefName"
             category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
