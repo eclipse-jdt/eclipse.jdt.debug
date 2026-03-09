@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2025 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,6 @@
 package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -28,6 +26,8 @@ import org.eclipse.ui.part.IShowInTargetList;
  * @since 3.2
  */
 public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
+
+	private JavaStackFrameSourceDisplayAdapter javaStackFrameSourceDisplayAdapter = new JavaStackFrameSourceDisplayAdapter();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -54,13 +54,8 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 					SourceLookupFacility.getDefault().displaySource(frame, page, forceSourceLookup);
 				};
 			}
-			try {
-				if (adaptableObject instanceof JDIStackFrame jdiFrame
-						&& org.eclipse.jdt.internal.debug.core.model.LambdaUtils.isLambdaFrame(jdiFrame)) {
-					return (T) new LambdaStackFrameSourceDisplayAdapter();
-				}
-			} catch (DebugException e) {
-				DebugUIPlugin.log(e);
+			if (adaptableObject instanceof JDIStackFrame) {
+				return (T) javaStackFrameSourceDisplayAdapter;// ensure the same instance is reused
 			}
 		}
 		return null;
@@ -73,5 +68,4 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
 		return new Class[] { IShowInSource.class, IShowInTargetList.class, ISourceDisplay.class };
 	}
-
 }
