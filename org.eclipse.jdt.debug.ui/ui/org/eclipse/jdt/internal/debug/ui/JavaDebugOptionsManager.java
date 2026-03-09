@@ -16,28 +16,27 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
@@ -900,58 +899,15 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			}
 		};
 
-		final ISchedulingRule modifyWorkspaceRule = modifyWorkspaceRule();
-
-		ISchedulingRule currentRule = Job.getJobManager().currentRule();
-		if (currentRule != null && currentRule.contains(modifyWorkspaceRule)) {
-			try {
-				ResourcesPlugin.getWorkspace().run(runnable, null, 0, null);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
-			}
-		} else {
-			UpdateBreakpointMessagesJob updateBreakpointMessagesJob = new UpdateBreakpointMessagesJob(modifyWorkspaceRule, runnable);
-			updateBreakpointMessagesJob.schedule();
-		}
-	}
-
-	private static ISchedulingRule modifyWorkspaceRule() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		IResourceRuleFactory rootFactory = workspace.getRuleFactory();
-		ISchedulingRule modifyWorkspaceRule = rootFactory.modifyRule(workspaceRoot);
-		return modifyWorkspaceRule;
-	}
-
-	private static class UpdateBreakpointMessagesJob extends Job {
-
-		private final ISchedulingRule rule;
-		private final ICoreRunnable runnable;
-
-		UpdateBreakpointMessagesJob(ISchedulingRule rule, ICoreRunnable runnable) {
-			super("Updating breakpoint messages"); //$NON-NLS-1$
-			this.rule = rule;
-			this.runnable = runnable;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			if (monitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
-			try {
-				ResourcesPlugin.getWorkspace().run(runnable, rule, 0, monitor);
-			} catch (CoreException e) {
-				String errorMessage = "Failed to update breakpoint messages"; //$NON-NLS-1$
-				IStatus errorStatus = new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, errorMessage, e);
-				return errorStatus;
-			}
-			return Status.OK_STATUS;
-		}
-
-		@Override
-		public boolean belongsTo(Object family) {
-			return JavaDebugOptionsManager.class == family;
+		try {
+			ISchedulingRule rule = MultiRule.combine(Arrays.stream(breakpoints)
+					.map(IBreakpoint::getMarker).filter(Objects::nonNull)
+					.map(IMarker::getResource).filter(Objects::nonNull)
+					.map(JavaDebugOptionsManager::getMarkerRule)
+					.toArray(ISchedulingRule[]::new));
+			ResourcesPlugin.getWorkspace().run(runnable, rule, 0, null);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 
@@ -1003,4 +959,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
         }
     }
 
+	private static ISchedulingRule getMarkerRule(IResource resource) {
+		return ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
+	}
 }
