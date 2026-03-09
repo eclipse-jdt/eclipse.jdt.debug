@@ -36,9 +36,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -233,6 +233,16 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			return JavaCore.VERSION_1_1;
 		} else {
 			return "1.0"; //$NON-NLS-1$
+		} else {
+			// an optimistic strategy for not-yet-declared versions
+			int lastNumberIndex = desc.length() - 1;
+			while (lastNumberIndex >= 0 && Character.isDigit(desc.charAt(lastNumberIndex))) {
+				lastNumberIndex--;
+			}
+			lastNumberIndex++; // fix consumed non-digit char
+			if (lastNumberIndex < desc.length()) {
+				return desc.substring(lastNumberIndex, desc.length());
+			}
 		}
 	}
 
