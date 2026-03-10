@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -89,6 +90,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -138,6 +140,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private IDebugModelPresentation fUtilPresentation;
 
 	private StackFrameCategorizer stackFrameCategorizer;
+
+	private static final int STATUS_LINE_LIMIT = 10;
 
 	/**
 	 * Java Debug UI listeners
@@ -276,19 +280,46 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			break;
 		}
 	}
+
 	public static void statusDialog(String title, IStatus status) {
 		Shell shell = getActiveWorkbenchShell();
+		String message = status.getMessage();
+		long currentLines = message.lines().limit(STATUS_LINE_LIMIT + 1).count();
+		boolean showInMulti = currentLines > STATUS_LINE_LIMIT;
+		String pluginId = status.getPlugin();
+		if (pluginId == null) {
+			JDIDebugUIPlugin plugin = getDefault();
+			pluginId = (plugin != null && JDIDebugUIPlugin.getUniqueIdentifier() != null) ? JDIDebugUIPlugin.getUniqueIdentifier()
+					: JDIDebugUIPlugin.class.getName();
+		}
+
 		if (shell != null) {
 			switch (status.getSeverity()) {
-			case IStatus.ERROR:
-				ErrorDialog.openError(shell, title, null, status);
-				break;
-			case IStatus.WARNING:
-				MessageDialog.openWarning(shell, title, status.getMessage());
-				break;
-			case IStatus.INFO:
-				MessageDialog.openInformation(shell, title, status.getMessage());
-				break;
+				case IStatus.ERROR:
+					if (showInMulti) {
+						status = new MultiStatus(pluginId, status.getCode(), new IStatus[] {
+								status }, NLS.bind(DebugUIMessages.JDIDebugUIPlugin_MultiStatusError, title.toLowerCase()), null);
+					} else {
+						ErrorDialog.openError(shell, title, null, status);
+					}
+					break;
+				case IStatus.WARNING:
+					if (showInMulti) {
+						status = new MultiStatus(pluginId, status.getCode(), new IStatus[] {
+								status }, NLS.bind(DebugUIMessages.JDIDebugUIPlugin_MultiStatusWarning, title.toLowerCase()), null);
+						ErrorDialog.openError(shell, title, null, status);
+					} else {
+						MessageDialog.openWarning(shell, title, status.getMessage());
+					}
+					break;
+				case IStatus.INFO:
+					if (showInMulti) {
+						status = new MultiStatus(pluginId, status.getCode(), new IStatus[] {
+								status }, NLS.bind(DebugUIMessages.JDIDebugUIPlugin_MultiStatusInfo, title.toLowerCase()), null);
+						ErrorDialog.openError(shell, title, null, status);
+					} else {
+						MessageDialog.openInformation(shell, title, status.getMessage());
+					}
 			}
 		}
 	}

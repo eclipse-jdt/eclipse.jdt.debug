@@ -146,6 +146,8 @@ public class DebugUIMessages extends NLS {
     public static String JDIDebugUIPlugin_4;
 	public static String JDIDebugUIPlugin_5;
 
+	public static String JDIDebugUIPlugin_MultiStatusError;
+
 	public static String JDIModelPresentation__No_explicit_return_value__30;
 	public static String JDIModelPresentation__conditional__2;
 	public static String JDIModelPresentation___may_be_out_of_synch__2;
@@ -478,4 +480,8 @@ public class DebugUIMessages extends NLS {
 	public static String fExceptionBreakpointMsg;
 
 	protected static String JavaDebugOptionsManager_Lambda_Breakpoint;
+
+	public static String JDIDebugUIPlugin_MultiStatusWarning;
+
+	public static String JDIDebugUIPlugin_MultiStatusInfo;
 }
