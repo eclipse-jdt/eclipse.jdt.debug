@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -143,6 +143,8 @@ public class DebugUIMessages extends NLS {
 	public static String JDIDebugUIPlugin_3;
     public static String JDIDebugUIPlugin_4;
 	public static String JDIDebugUIPlugin_5;
+
+	public static String JDIDebugUIPlugin_MultiStatusLabel;
 
 	public static String JDIModelPresentation__No_explicit_return_value__30;
 	public static String JDIModelPresentation__conditional__2;
