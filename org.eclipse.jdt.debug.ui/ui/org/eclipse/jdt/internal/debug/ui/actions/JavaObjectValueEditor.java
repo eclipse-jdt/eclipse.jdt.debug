@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2019 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -167,12 +167,13 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                 IEvaluationListener listener= new IEvaluationListener() {
                     @Override
                     public void evaluationComplete(IEvaluationResult result) {
-                        var convertedResult = convert((EvaluationResult) result, variable, thread);
-
-                        synchronized (JavaObjectValueEditor.this) {
-                            results[0] = convertedResult;
-                            JavaObjectValueEditor.this.notifyAll();
-                        }
+						if (result instanceof EvaluationResult evalResult) {
+							var convertedResult = convert(evalResult, variable, thread);
+							synchronized (JavaObjectValueEditor.this) {
+								results[0] = convertedResult;
+								JavaObjectValueEditor.this.notifyAll();
+							}
+						}
                     }
                 };
     			synchronized(this) {
