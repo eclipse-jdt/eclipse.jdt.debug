@@ -271,7 +271,6 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @exception DebugException
 	 *                if the request fails
 	 * @since 3.0
-	 * @see java.lang.Thread#stop() // From Java 26 onwards this method is removed
 	 */
 	public void stop(IJavaObject exception) throws DebugException;
 
