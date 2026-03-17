@@ -151,7 +151,7 @@ public class InstructionSequence implements ICompiledExpression {
 	}
 
 	/**
-	 * Adds the <code>IProblem<code> id of the error.
+	 * Adds the <code>IProblem</code> id of the error.
 	 */
 	public void addProblemID(int probID) {
 		fProblemIDs.add(probID);
