@@ -2948,10 +2948,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				logError(e);
 				stepEnd(eventSet);
 				return false;
-			} catch (AbsentInformationException e) {
-				logError(e);
-				stepEnd(eventSet);
-				return false;
 			}
 		}
 
@@ -3122,10 +3118,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * @param toBeStepped
 		 *            the next execution location
 		 * @return <code>true</code> if the instruction should be skipped, <code>false</code> otherwise
-		 * @exception AbsentInformationException
-		 *                if line information is not available
 		 */
-		private boolean skipImmediateInstructionsOnStepping(Location toBeStepped) throws AbsentInformationException {
+		private boolean skipImmediateInstructionsOnStepping(Location toBeStepped) {
 			if (fStepOverLocation == null && fOriginalStepLocation == null) {
 				return false;
 			}
@@ -3138,20 +3132,31 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (currOpCode < INTERMEDIATE_OPCODE_START || currOpCode > INTERMEDIATE_OPCODE_END) {
 				return false;
 			}
-			List<Location> locs = method.allLineLocations();
-			int index = locs.indexOf(toBeStepped);
-			if (index >= 0 && index < locs.size() - 1) {
-				Location nextLoc = locs.get(index + 1);
-				int nxtIndx = (int) nextLoc.codeIndex();
-				if (nxtIndx < 0) {
+			if (getStepKind() == StepRequest.STEP_OVER) {
+				if (fOriginalStepLocation != null && !method.equals(fOriginalStepLocation.method())) {
 					return false;
 				}
-				int diff = nxtIndx - currIndx;
-				// Bytecode distance to next location; small values (1–3) indicate, intermediate instructions within the same statement
-				if (diff >= 1 && diff <= 3) {
-					return true;
-				}
 			}
+			try {
+				List<Location> locs = method.allLineLocations();
+				int index = locs.indexOf(toBeStepped);
+				if (index >= 0 && index < locs.size() - 1) {
+					Location nextLoc = locs.get(index + 1);
+					int nxtIndx = (int) nextLoc.codeIndex();
+					if (nxtIndx < 0) {
+						return false;
+					}
+					int diff = nxtIndx - currIndx;
+					// Bytecode distance to next location; small values (1–3) indicate, intermediate instructions within the same statement
+					if (diff >= 1 && diff <= 3) {
+						return true;
+					}
+				}
+			} catch (AbsentInformationException e) {
+				logError(e);
+				return false;
+			}
+
 			return false;
 		}
 	}
