@@ -819,45 +819,45 @@ public class StandardVMType extends AbstractVMInstallType {
 			} else if (version.startsWith(JavaCore.VERSION_22)) {
 				return new URI("https://docs.oracle.com/en/java/javase/22/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_21)) {
-				return new URL("https://docs.oracle.com/en/java/javase/21/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/21/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_20)) {
-				return new URL("https://docs.oracle.com/en/java/javase/20/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/20/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_19)) {
-				return new URL("https://docs.oracle.com/en/java/javase/19/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/19/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_18)) {
-				return new URL("https://docs.oracle.com/en/java/javase/18/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/18/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_17)) {
-				return new URL("https://docs.oracle.com/en/java/javase/17/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/17/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_16)) {
-				return new URL("https://docs.oracle.com/en/java/javase/16/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/16/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_15)) {
-				return new URL("https://docs.oracle.com/en/java/javase/15/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/15/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_14)) {
-				return new URL("https://docs.oracle.com/en/java/javase/14/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/14/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_13)) {
-				return new URL("https://docs.oracle.com/en/java/javase/13/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/13/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_12)) {
-				return new URL("https://docs.oracle.com/en/java/javase/12/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/12/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_11)) {
-				return new URL("https://docs.oracle.com/en/java/javase/11/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/11/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_10)) {
-				return new URL("https://docs.oracle.com/javase/10/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/10/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_9)) {
-				return new URL("https://docs.oracle.com/javase/9/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/9/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_8)) {
-				return new URL("https://docs.oracle.com/javase/8/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/8/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_7)) {
-				return new URL("https://docs.oracle.com/javase/7/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/7/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_6)) {
-				return new URL("https://docs.oracle.com/javase/6/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/6/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_5)) {
-				return new URL("https://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/1.5.0/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_4)) {
 				// archived: http://download.oracle.com/javase/1.4.2/docs/api/
-				return new URL("https://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/1.5.0/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_3)) {
 				// archived: http://download.oracle.com/javase/1.3/docs/api/
-				return new URL("https://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/javase/1.5.0/docs/api/").toURL(); //$NON-NLS-1$
 			}
 		} catch (URISyntaxException | MalformedURLException e) {
 		}
