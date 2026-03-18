@@ -192,6 +192,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String TWENTYTHREE_PROJECT_NAME = "Two_Three";
 	public static final String TWENTYFOUR_PROJECT_NAME = "Two_Four";
 	public static final String TWENTYFIVE_PROJECT_NAME = "Two_Five";
+	public static final String TWENTYSIX_PROJECT_NAME = "Two_Six";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String MR_PROJECT_NAME = "MR";
 	public static final String CLONE_SUFFIX = "Clone";
@@ -256,11 +257,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded23 = false;
 	private static boolean loaded24 = false;
 	private static boolean loaded25 = false;
+	private static boolean loaded26 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
 	private static boolean loadedMR;
 	private static boolean welcomeClosed = false;
+	protected boolean isJRE26plus = false;
 
 	/**
 	 * Constructor
@@ -270,6 +273,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		// set error dialog to non-blocking to avoid hanging the UI during test
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
+		String javaVersion = System.getProperty("java.version");
+		if (javaVersion.startsWith("26")) {
+			isJRE26plus = true;
+		}
 	}
 
 	@Override
@@ -371,6 +378,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        		handleProjectCreationException(e, ONE_FOUR_PROJECT_CLOSED_NAME, jp);
 	        	}
 				jp = createProject(ONE_FOUR_PROJECT_NAME, JavaProjectHelper.TEST_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
+				if (isJRE26plus) {
+					// these files cannot be compiled against 26+
+					jp.getProject().getFile("src/AppletImpl.java").delete(true, null);
+					jp.getProject().getFile("src/RunnableAppletImpl.java").delete(true, null);
+				}
 	        	IPackageFragmentRoot src = jp.findPackageFragmentRoot(new Path(ONE_FOUR_PROJECT_NAME).append(JavaProjectHelper.SRC_DIR).makeAbsolute());
 	        	assertNotNull("The 'src' package fragment root should not be null", src);
 	        	File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
@@ -750,7 +762,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		try {
 			if (!loaded25) {
 				jp = createProject(TWENTYFIVE_PROJECT_NAME, JavaProjectHelper.TEST_25_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_25_EE_NAME, false);
-				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.DISABLED);
 				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_25);
 				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_25);
 				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_25);
@@ -775,6 +787,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 	}
 
+	synchronized void assert26Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded26) {
+				jp = createProject(TWENTYSIX_PROJECT_NAME, JavaProjectHelper.TEST_26_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_26_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.DISABLED);
+				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_26);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_26);
+				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_26);
+				cfgs.add(createLaunchConfiguration(jp, "Main1"));
+				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				loaded26 = true;
+				waitForBuild();
+				assertNoErrorMarkersExist(jp.getProject());
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, TWENTYSIX_PROJECT_NAME, jp);
+		}
+	}
 	/**
 	 * Creates the 'BoundJRE' project used for the JRE testing
 	 */
@@ -1109,6 +1151,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get25Project() {
 		assert25Project();
 		return getJavaProject(TWENTYFIVE_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'Two_Six' project, used for Java 26 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get26Project() {
+		assert26Project();
+		return getJavaProject(TWENTYSIX_PROJECT_NAME);
 	}
 
 	/**
