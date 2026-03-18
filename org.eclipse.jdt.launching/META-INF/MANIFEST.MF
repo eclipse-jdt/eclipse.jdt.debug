@@ -2,11 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.launching; singleton:=true
-<<<<<<< HEAD
 Bundle-Version: 3.24.200.qualifier
-=======
-Bundle-Version: 3.24.150.qualifier
->>>>>>> refs/remotes/origin/BETA_JAVA26
 Bundle-Activator: org.eclipse.jdt.internal.launching.LaunchingPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
