@@ -91,7 +91,9 @@ public class StatementSteppingTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(t);
 			removeAllBreakpoints();
-			javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			if (javaDebugTarget != null) {
+				javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			}
 		}
 	}
 
@@ -119,7 +121,9 @@ public class StatementSteppingTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(t);
 			removeAllBreakpoints();
-			javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			if (javaDebugTarget != null) {
+				javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			}
 		}
 	}
 
@@ -161,7 +165,44 @@ public class StatementSteppingTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(t);
 			removeAllBreakpoints();
-			javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			if (javaDebugTarget != null) {
+				javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			}
+		}
+	}
+
+	public void testStepOverWithOperationsInMultiLineArgs() throws Exception {
+
+		String typeName = "StatementStepWithOperations";
+		ILineBreakpoint bp = createLineBreakpoint(18, typeName);
+		IJavaDebugTarget javaDebugTarget = null;
+		IJavaThread t = null;
+		boolean originalStepFilter = false;
+		try {
+			IJavaThread thread = launchToLineBreakpoint(typeName, bp, true);
+			t = thread;
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			javaDebugTarget = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			originalStepFilter = javaDebugTarget.isStepFiltersEnabled();
+
+			javaDebugTarget.setStepFiltersEnabled(true);
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			assertEquals("Suspended at wrong line", 21, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 20, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 25, stackFrame.getLineNumber());
+
+		} finally {
+			terminateAndRemove(t);
+			removeAllBreakpoints();
+			if (javaDebugTarget != null) {
+				javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			}
 		}
 	}
 
