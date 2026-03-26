@@ -2,43 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="deadlock_view.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
-       id="linearGradient5156">
-      <stop
-         style="stop-color:#fdf3cb;stop-opacity:1;"
-         offset="0"
-         id="stop5158" />
-      <stop
-         id="stop5166"
-         offset="0.48612955"
-         style="stop-color:#fdf3cb;stop-opacity:1" />
-      <stop
-         id="stop5164"
-         offset="0.56520796"
-         style="stop-color:#a77e1c;stop-opacity:0.502" />
-      <stop
-         style="stop-color:#a77e1c;stop-opacity:0.5"
-         offset="1"
-         id="stop5160" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
        id="linearGradient4886">
       <stop
          style="stop-color:#dec26f;stop-opacity:1"
@@ -50,7 +26,6 @@
          id="stop4890" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4870">
       <stop
          style="stop-color:#fdf3cb;stop-opacity:1"
@@ -62,7 +37,6 @@
          id="stop4874" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4862">
       <stop
          style="stop-color:#a77e1c;stop-opacity:1"
@@ -74,7 +48,6 @@
          id="stop4866" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4886"
        id="linearGradient4892"
        x1="31.398306"
@@ -84,7 +57,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.86429026,0,0,0.89363978,-17.13725,112.4942)" />
     <linearGradient
-       inkscape:collect="always"
        id="linearGradient4878">
       <stop
          style="stop-color:#a77e1c;stop-opacity:1"
@@ -103,10 +75,8 @@
        x1="29.263437"
        gradientUnits="userSpaceOnUse"
        id="linearGradient5103"
-       xlink:href="#linearGradient4878"
-       inkscape:collect="always" />
+       xlink:href="#linearGradient4878" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4870"
        id="linearGradient4321"
        gradientUnits="userSpaceOnUse"
@@ -116,7 +86,6 @@
        x2="25.65625"
        y2="1040.8594" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4862"
        id="linearGradient4323"
        gradientUnits="userSpaceOnUse"
@@ -126,37 +95,6 @@
        x2="30.0625"
        y2="1040.7631" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.999998"
-     inkscape:cx="1.1449526"
-     inkscape:cy="10.236278"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="2120"
-     inkscape:window-height="1089"
-     inkscape:window-x="379"
-     inkscape:window-y="250"
-     inkscape:window-maximized="0"
-     showguides="false"
-     inkscape:guide-bbox="true"
-     inkscape:snap-global="true"
-     inkscape:snap-bbox="true"
-     inkscape:bbox-nodes="true">
-    <inkscape:grid
-       type="xygrid"
-       id="grid3999"
-       empspacing="5"
-       visible="true"
-       enabled="true"
-       snapvisiblegridlinesonly="true" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -165,13 +103,11 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
