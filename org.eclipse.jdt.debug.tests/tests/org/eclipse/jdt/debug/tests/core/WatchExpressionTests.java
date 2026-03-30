@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,10 +13,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.List;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -27,6 +30,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.testplugin.ExpressionWaiter;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaNestedWatchExpressionFilter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -158,6 +162,32 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			compare = target.newValue(1);
 			assertEquals("Watch expression should be 1", compare, value);
 
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			removeAllExpressions();
+		}
+	}
+
+	public void testExpressionContext() throws Exception {
+		String typeName = "WatchItemContext";
+		createLineBreakpoint(42, typeName);
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			IVariable v1 = stackFrame.findVariable("y");
+			IVariable v2 = v1.getValue().getVariables()[2];
+			JavaNestedWatchExpressionFilter javaFilter = new JavaNestedWatchExpressionFilter();
+			assertTrue(javaFilter.canCreateWatchExpression(List.of(v1, v2)));
+			String exp = javaFilter.createWatchExpression(List.of(v1, v2));
+			assertEquals("Invalid Expression", "y.y", exp);
+			IWatchExpression expression = getExpressionManager().newWatchExpression(exp);
+			DebugElementEventWaiter waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
+			getExpressionManager().addExpression(expression);
+			waiter.waitForEvent();
+			assertEquals("Wrong Value", "0", expression.getValue().toString());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
