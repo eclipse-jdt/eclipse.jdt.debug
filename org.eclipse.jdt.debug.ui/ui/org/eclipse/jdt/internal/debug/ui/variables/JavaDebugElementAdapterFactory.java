@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,10 +19,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentPr
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaNestedWatchExpressionFilter;
 import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaWatchExpressionFilter;
 
 /**
@@ -33,6 +35,7 @@ import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaWatchExpressionFilter;
  * @see JavaVariableContentProvider
  * @see ExpressionLabelProvider
  * @see JavaExpressionContentProvider
+ * @see JavaNestedWatchExpressionFilter
  * @see JavaWatchExpressionFilter
  * @see JavaStackFrameMementoProvider
  * @since 3.3
@@ -44,6 +47,7 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 	private static final IElementLabelProvider fgLPExpression = new ExpressionLabelProvider();
 	private static final IElementContentProvider fgCPExpression = new JavaExpressionContentProvider();
 	private static final IWatchExpressionFactoryAdapter fgWEVariable = new JavaWatchExpressionFilter();
+	private static final IWatchExpressionFactoryAdapter2 NestedWatchExpressionsAdapter = new JavaNestedWatchExpressionFilter();
 	private static final IElementMementoProvider fgMPStackFrame = new JavaStackFrameMementoProvider();
 	private static final IElementLabelProvider fgLPFrame = new JavaStackFrameLabelProvider();
 
@@ -83,6 +87,14 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 				return (T) fgWEVariable;
 			}
 		}
+		if (IWatchExpressionFactoryAdapter2.class.equals(adapterType)) {
+			if (adaptableObject instanceof IJavaVariable) {
+				return (T) NestedWatchExpressionsAdapter;
+			}
+			if (adaptableObject instanceof JavaInspectExpression) {
+				return (T) NestedWatchExpressionsAdapter;
+			}
+		}
 		if (IElementMementoProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaStackFrame) {
 				return (T) fgMPStackFrame;
@@ -96,6 +108,7 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 	 */
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[] {IElementLabelProvider.class, IElementContentProvider.class, IWatchExpressionFactoryAdapter.class, IElementMementoProvider.class};
+		return new Class[] { IElementLabelProvider.class, IElementContentProvider.class, IWatchExpressionFactoryAdapter.class,
+				IWatchExpressionFactoryAdapter2.class, IElementMementoProvider.class };
 	}
 }
