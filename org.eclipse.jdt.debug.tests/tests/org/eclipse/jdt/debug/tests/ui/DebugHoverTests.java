@@ -1559,4 +1559,39 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 		}
 	}
 
+	public void testResolveSameFieldsInSuperAndSub() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+
+		final String typeName = "SubClass";
+		final String expectedMethod = "<init>";
+		final int framesNumber = 2;
+		final int bpLine1 = 18;
+
+		IJavaBreakpoint bp1 = createLineBreakpoint(bpLine1, "", typeName + ".java", typeName);
+		bp1.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp1.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, framesNumber, file, thread);
+
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+			int offset = part.getViewer().getDocument().get().indexOf("fInitialized = ");
+			String variableName = "fInitialized";
+			IRegion region = new Region(offset, variableName.length());
+			String text = selectAndReveal(part, bpLine1, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+			assertNotNull(info);
+			assertEquals(variableName, info.getName());
+			assertEquals("false", info.getValue().getValueString());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 }
