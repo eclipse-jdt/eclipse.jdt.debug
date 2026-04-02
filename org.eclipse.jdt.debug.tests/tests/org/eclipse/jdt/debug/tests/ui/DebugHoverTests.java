@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2017, 2024 Andrey Loskutov and others.
+ *  Copyright (c) 2017, 2026 Andrey Loskutov and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -1521,6 +1521,38 @@ public class DebugHoverTests extends AbstractDebugUiTests {
 			assertNotNull(args);
 			JDIModificationVariable var = (JDIModificationVariable) args;
 			assertEquals(debugVarName, var.getName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testHoverOnInnerClassConstructorVariables() throws Exception {
+		sync(() -> TestUtil.waitForJobs(getName(), 1000, 10000, ProcessConsole.class));
+		final String typeName = "InnerClassBug";
+		final String expectedMethod = "<init>";
+		final int frameNumber = 3;
+		final int bpLine = 25;
+		IJavaBreakpoint bp = createLineBreakpoint(bpLine, "", typeName + ".java", typeName);
+		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		IFile file = (IFile) bp.getMarker().getResource();
+		assertEquals(typeName + ".java", file.getName());
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			CompilationUnitEditor part = openEditorAndValidateStack(expectedMethod, frameNumber, file, thread);
+			JavaDebugHover hover = new JavaDebugHover();
+			hover.setEditor(part);
+			String variableName = "x1";
+			int offset = part.getViewer().getDocument().get().indexOf("this.x = x1") + " this.x =".length();
+			IRegion region = new Region(offset, variableName.length());
+			String text = selectAndReveal(part, bpLine, region);
+			assertEquals(variableName, text);
+			IVariable info = (IVariable) sync(() -> hover.getHoverInfo2(part.getViewer(), region));
+
+			assertNotNull(info);
+			assertEquals(variableName, info.getName());
+			assertEquals("4", info.getValue().getValueString());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

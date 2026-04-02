@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -448,7 +448,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             					}
             					else { // Finding variables in anonymous class
 									int index = frame.getDeclaringTypeName().indexOf('$');
-									if (index > 0) {
+									if (method.isConstructor() && index > 0) {
+										equal = true;
+									} else if (index > 0) {
 										String name = frame.getDeclaringTypeName().substring(index + 1);
 										try {
 											Integer.getInteger(name);
