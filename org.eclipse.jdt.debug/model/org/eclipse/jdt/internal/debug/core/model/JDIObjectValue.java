@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -276,6 +276,17 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 					if (declaringTypeSignature.equals(signature)) {
 						field = fieldTmp;
 						break;
+					}
+					List<Field> fieldList = ref.allFields(); // Possible sub class fields with same name as of super class
+					fieldList.remove(fieldTmp);
+					for (Field fieldCurrentTmp : fieldList) {
+						if (name.equals(fieldCurrentTmp.name())) {
+							String signatureCurrent = fieldCurrentTmp.declaringType().signature();
+							if (declaringTypeSignature.equals(signatureCurrent)) {
+								field = fieldCurrentTmp;
+								break main;
+							}
+						}
 					}
 					// check if we are inside local type - Signature.createTypeSignature
 					// can't create proper type name out of source field in JavaDebugHover
