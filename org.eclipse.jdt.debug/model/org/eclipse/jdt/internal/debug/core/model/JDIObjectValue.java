@@ -277,7 +277,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 						field = fieldTmp;
 						break;
 					}
-					List<Field> fieldList = ref.allFields(); // Possible sub class fields with same name as of super class
+					List<Field> fieldList = new ArrayList<>(ref.allFields()); // Possible sub class fields with same name as of super class
 					fieldList.remove(fieldTmp);
 					for (Field fieldCurrentTmp : fieldList) {
 						if (name.equals(fieldCurrentTmp.name())) {
