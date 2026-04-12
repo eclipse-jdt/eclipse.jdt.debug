@@ -263,7 +263,7 @@ public abstract class AbstractDebugUiTests extends AbstractDebugTest {
 		return callInUi(callable);
 	}
 
-	private static <T> T callInUi(Callable<T> callable) throws RuntimeException {
+	protected static <T> T callInUi(Callable<T> callable) throws RuntimeException {
 		if (Display.getCurrent() != null) {
 			try {
 				return callable.call();
