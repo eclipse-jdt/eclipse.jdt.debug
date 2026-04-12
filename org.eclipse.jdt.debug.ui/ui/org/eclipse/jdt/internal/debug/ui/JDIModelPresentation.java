@@ -42,6 +42,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -111,6 +112,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -125,7 +127,7 @@ import com.sun.jdi.ObjectCollectedException;
  * @see IDebugModelPresentation
  */
 @SuppressWarnings("deprecation")
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentationExtension, IColorProvider {
+public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentationExtension, IColorProvider, IDebugEditorPresentation {
 
 	/**
 	 * Qualified names presentation property (value <code>"DISPLAY_QUALIFIED_NAMES"</code>).
@@ -157,12 +159,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * */
 	private static final String BREAKPOINT_LABEL_SUFFIX = "JDT_BREAKPOINT_LABEL_SUFFIX"; //$NON-NLS-1$
 
+	private final JavaStackFrameEditorPresenter fJavaStackFrameEditorPresenter;
+
 	private JavaElementLabelProvider fJavaLabelProvider;
 
 	private StackFramePresentationProvider fStackFrameProvider;
 
 	public JDIModelPresentation() {
 		super();
+		fJavaStackFrameEditorPresenter = new JavaStackFrameEditorPresenter();
 	}
 
 	/* (non-Javadoc)
@@ -2280,5 +2285,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
+		return fJavaStackFrameEditorPresenter.addAnnotations(editorPart, frame);
+	}
+
+	@Override
+	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
+		fJavaStackFrameEditorPresenter.removeAnnotations(editorPart, thread);
 	}
 }
