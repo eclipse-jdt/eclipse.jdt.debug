@@ -222,16 +222,16 @@ public class ClassFileEditorHighlightingTest extends AbstractDebugUiTests {
 			config = workingCopy.doSave();
 			thread = launchToBreakpoint(config);
 
-			String[] expectedHighlights = """
-					     0  getstatic NoSources.i : int [7]
-					     3  iconst_1
-					     4  iadd
-					     5  putstatic NoSources.i : int [7]
-					     8  getstatic java.lang.System.out : java.io.PrintStream [13]
-					    11  getstatic NoSources.i : int [7]
-					    14  invokevirtual java.io.PrintStream.println(int) : void [19]
-					    17  return
-					""".split(System.lineSeparator());
+			String[] expectedHighlights = {
+					     "     0  getstatic NoSources.i : int [7]",
+					     "     3  iconst_1",
+					     "     4  iadd",
+					     "     5  putstatic NoSources.i : int [7]",
+					     "     8  getstatic java.lang.System.out : java.io.PrintStream [13]",
+					     "    11  getstatic NoSources.i : int [7]",
+					     "    14  invokevirtual java.io.PrintStream.println(int) : void [19]",
+					     "    17  return",
+			};
 
 			for (int i = 0; i < expectedHighlights.length; i++) {
 				expectHighlightedText(expectedHighlights[i], TIMEOUT);
