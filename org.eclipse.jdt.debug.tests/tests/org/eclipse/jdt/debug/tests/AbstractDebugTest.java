@@ -273,8 +273,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		// set error dialog to non-blocking to avoid hanging the UI during test
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
-		String javaVersion = System.getProperty("java.version");
-		if (javaVersion.startsWith("26")) {
+		int javaVersion = Runtime.version().feature();
+		if (javaVersion > 25) {
 			isJRE26plus = true;
 		}
 	}
