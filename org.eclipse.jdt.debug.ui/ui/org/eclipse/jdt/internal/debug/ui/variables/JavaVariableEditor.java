@@ -42,8 +42,7 @@ public class JavaVariableEditor extends VariableEditor {
 	 */
 	@Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
-		if (element instanceof IJavaVariable) {
-			IJavaVariable var = (IJavaVariable) element;
+		if (element instanceof IJavaVariable var) {
 			if (JavaVariableCellModifier.isBoolean(var)) {
 				return new ComboBoxCellEditor(parent, new String[]{Boolean.toString(true), Boolean.toString(false)}, SWT.READ_ONLY);
 			}
