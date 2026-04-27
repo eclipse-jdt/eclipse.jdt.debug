@@ -44,8 +44,7 @@ public class LibraryLabelProvider extends LabelProvider {
 	public Image getImage(Object element) {
 		String key = null;
 		IStatus status = Status.OK_STATUS;
-		if (element instanceof LibraryStandin) {
-			LibraryStandin library= (LibraryStandin) element;
+		if (element instanceof LibraryStandin library) {
 			IPath sourcePath= library.getSystemLibrarySourcePath();
 			if (sourcePath != null && !Path.EMPTY.equals(sourcePath)) {
                 key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
@@ -88,8 +87,7 @@ public class LibraryLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element instanceof LibraryStandin) {
 			return ((LibraryStandin)element).getSystemLibraryPath().toOSString();
-		} else if (element instanceof SubElement) {
-			SubElement subElement= (SubElement) element;
+		} else if (element instanceof SubElement subElement) {
 			StringBuilder text= new StringBuilder();
 			switch (subElement.getType()) {
 			case SubElement.SOURCE_PATH:
