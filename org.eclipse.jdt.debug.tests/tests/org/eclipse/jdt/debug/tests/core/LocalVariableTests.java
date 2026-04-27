@@ -84,6 +84,10 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	}
 
 	public void testSimpleVisibility() throws Exception {
+		boolean stepFilterPref = DebugUITools.isUseStepFilters();
+		if (stepFilterPref) {
+			DebugUITools.setUseStepFilters(false);
+		}
 		String typeName = "LocalVariablesTests";
 
 		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
@@ -116,6 +120,9 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 			assertEquals("Visible var 2 should be 'i2'", "i2", vars[1].getName());
 
 		} finally {
+			if (!stepFilterPref) {
+				DebugUITools.setUseStepFilters(false);
+			}
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
