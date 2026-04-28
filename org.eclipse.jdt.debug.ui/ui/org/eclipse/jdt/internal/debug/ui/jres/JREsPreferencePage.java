@@ -199,8 +199,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		else {
 			String latest = JavaCore.getAllJavaSourceVersionsSupportedByCompiler().last();
 			String vmver = null;
-			if (vmInstall instanceof AbstractVMInstall) {
-				AbstractVMInstall vm = (AbstractVMInstall) vmInstall;
+			if (vmInstall instanceof AbstractVMInstall vm) {
 				vmver = vm.getJavaVersion();
 			}
 			if (vmver == null) {
@@ -255,8 +254,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * @since 3.3
 	 */
 	private boolean supportsCurrentCompliance(IVMInstall vm, String compliance) {
-		if(vm instanceof AbstractVMInstall) {
-			AbstractVMInstall install = (AbstractVMInstall) vm;
+		if(vm instanceof AbstractVMInstall install) {
 			String vmver = install.getJavaVersion();
 			if(vmver == null) {
 				vmver = getVersionFromRealVM(vm);

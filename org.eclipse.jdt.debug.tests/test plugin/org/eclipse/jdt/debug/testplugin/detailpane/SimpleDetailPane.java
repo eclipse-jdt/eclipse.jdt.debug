@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,24 +76,24 @@ public class SimpleDetailPane implements IDetailPane {
 	private Color getColor(int typeId){
 		if (typeId == TYPE_PRIVATE){
 			if (colorPrivate == null || colorPrivate.isDisposed()){
-				colorPrivate = new Color(theLabel.getDisplay(),255,0,0);
+				colorPrivate = new Color(255, 0, 0);
 			}
 			return colorPrivate;
 		}
 		if (typeId == TYPE_PROTECTED){
 			if (colorProtected == null || colorProtected.isDisposed()){
-				colorProtected = new Color(theLabel.getDisplay(),0,0,255);
+				colorProtected = new Color(0, 0, 255);
 			}
 			return colorProtected;
 		}
 		if (typeId == TYPE_PUBLIC){
 			if (colorPublic == null || colorPublic.isDisposed()){
-				colorPublic = new Color(theLabel.getDisplay(),0,255,0);
+				colorPublic = new Color(0, 255, 0);
 			}
 			return colorPublic;
 		}
 		if (colorOther == null || colorOther.isDisposed()){
-			colorOther = new Color(theLabel.getDisplay(),0,0,0);
+			colorOther = new Color(0, 0, 0);
 		}
 		return colorOther;
 	}

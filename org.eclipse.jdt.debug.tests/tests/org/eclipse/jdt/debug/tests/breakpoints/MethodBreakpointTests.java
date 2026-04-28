@@ -123,7 +123,9 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		try {
 			debugTarget= launchAndTerminate(typeName);
 		} finally {
-			terminateAndRemove(debugTarget);
+			if (debugTarget != null) {
+				terminateAndRemove(debugTarget);
+			}
 			removeAllBreakpoints();
 		}
 	}

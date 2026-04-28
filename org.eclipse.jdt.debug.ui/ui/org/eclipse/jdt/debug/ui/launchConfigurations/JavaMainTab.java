@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2023 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -105,8 +107,11 @@ public class JavaMainTab extends SharedJavaMainTab {
 		fConsiderInheritedMainButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_22, null, false, 2);
 		fConsiderInheritedMainButton.addSelectionListener(getDefaultListener());
 
-		fStopInMainCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1, null, false, 1);
-		fStopInMainCheckButton.addSelectionListener(getDefaultListener());
+		ILaunchConfigurationDialog dialog = getLaunchConfigurationDialog();
+		if (dialog != null && ILaunchManager.DEBUG_MODE.equals(dialog.getMode())) {
+			fStopInMainCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_Suspend_In_Main, null, false, 1);
+			fStopInMainCheckButton.addSelectionListener(getDefaultListener());
+		}
 	}
 
 	@Override
@@ -231,7 +236,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		mapResources(config);
 
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
-		if (fStopInMainCheckButton.getSelection()) {
+		if (fStopInMainCheckButton != null && fStopInMainCheckButton.getSelection()) {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
 		}
 		else {
@@ -315,7 +320,9 @@ public class JavaMainTab extends SharedJavaMainTab {
 			stop = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, false);
 		}
 		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
-		fStopInMainCheckButton.setSelection(stop);
+		if (fStopInMainCheckButton != null) {
+			fStopInMainCheckButton.setSelection(stop);
+		}
 	}
 
 }

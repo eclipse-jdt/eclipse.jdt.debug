@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025 IBM Corporation and others.
+ * Copyright (c) 2025, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.arrayExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.checkInterfaces;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareCustomObjects;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareObjects;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareSelectedLists;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareSelectedMaps;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.customObjectsReferencesExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.extractCustomObjects;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.extractOtherObjects;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.iterableExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.listExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.mapExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.objectsRefCheck;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.setExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.stringCompare;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.stringExtraction;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +99,6 @@ public class CompareObjectsAction extends ObjectActionDelegate implements IWorkb
 	 */
 	@SuppressWarnings("nls")
 	protected void compareSelectedObjects(List<IStructuredSelection> selections) {
-		ObjectComparison obcp = new ObjectComparison();
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		try {
 			Set<String> valueSet = selectionTypeChecker(selections);
@@ -92,56 +108,56 @@ public class CompareObjectsAction extends ObjectActionDelegate implements IWorkb
 			}
 			String temp = (String) valueSet.toArray()[0];
 			if (temp.equals("Lists")) {
-				result = obcp.listExtraction(selections);
-				result = obcp.compareSelectedLists(result, temp);
+				result = listExtraction(selections);
+				result = compareSelectedLists(result, temp);
 				if (selections.size() == 2) {
 					displayListResultsInDialogBox(result);
 					return;
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("Sets")) {
-				result = obcp.setExtraction(selections);
-				result = obcp.compareSelectedLists(result, temp);
+				result = setExtraction(selections);
+				result = compareSelectedLists(result, temp);
 				if (selections.size() == 2) {
 					displayListResultsInDialogBox(result);
 					return;
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("Queues") || temp.equals("Deques")) {
-				result = obcp.listExtraction(selections);
-				result = obcp.compareSelectedLists(result, temp);
+				result = listExtraction(selections);
+				result = compareSelectedLists(result, temp);
 				if (selections.size() == 2) {
 					displayListResultsInDialogBox(result);
 					return;
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("Maps")) {
-				result = obcp.mapExtraction(selections);
-				result = obcp.compareSelectedMaps(result);
+				result = mapExtraction(selections);
+				result = compareSelectedMaps(result);
 				if (selections.size() == 2) {
 					displayMapResultsInDialogBox(result);
 					return;
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("Iterables")) {
-				result = obcp.iterableExtraction(selections);
-				result = obcp.compareSelectedLists(result, temp);
+				result = iterableExtraction(selections);
+				result = compareSelectedLists(result, temp);
 				if (selections.size() == 2) {
 					displayListResultsInDialogBox(result);
 					return;
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("Arrays")) {
-				result = obcp.arrayExtraction(selections);
-				result = obcp.compareSelectedLists(result, temp);
+				result = arrayExtraction(selections);
+				result = compareSelectedLists(result, temp);
 				if (selections.size() == 2) {
 					displayListResultsInDialogBox(result);
 					return;
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("CharSequences")) {
-				result = obcp.stringExtraction(selections);
-				result = obcp.stringCompare(result);
+				result = stringExtraction(selections);
+				result = stringCompare(result);
 				if (selections.size() == 2) {
 					String type = temp.substring(temp.lastIndexOf('.') + 1);
 					displayComparisonResults(result, type);
@@ -149,8 +165,8 @@ public class CompareObjectsAction extends ObjectActionDelegate implements IWorkb
 				}
 				displayInDiffView(result, temp);
 			} else if (temp.equals("Wrappers")) {
-				result = obcp.extractOtherObjects(selections);
-				result = obcp.compareObjects(result);
+				result = extractOtherObjects(selections);
+				result = compareObjects(result);
 				if (selections.size() == 2) {
 					String type = temp.substring(temp.lastIndexOf('.') + 1);
 					displayComparisonResults(result, type);
@@ -158,13 +174,13 @@ public class CompareObjectsAction extends ObjectActionDelegate implements IWorkb
 				}
 				displayInDiffView(result, temp);
 			} else {
-				result = obcp.customObjectsReferencesExtraction(selections);
-				if (obcp.objectsRefCheck(result)) {
+				result = customObjectsReferencesExtraction(selections);
+				if (objectsRefCheck(result)) {
 					displayComparisonResults();
 					return;
 				}
-				result = obcp.extractCustomObjects(selections);
-				result = obcp.compareCustomObjects(result);
+				result = extractCustomObjects(selections);
+				result = compareCustomObjects(result);
 				displayInDiffViewForComplex(result);
 			}
 
@@ -191,7 +207,7 @@ public class CompareObjectsAction extends ObjectActionDelegate implements IWorkb
 		if (declarationReferenceType.endsWith("[]")) {
 			return "Arrays";
 		}
-		String interfaceType = ObjectComparison.checkInterfaces(valueReferenceType);
+		String interfaceType = checkInterfaces(valueReferenceType);
 		return interfaceType;
 	}
 

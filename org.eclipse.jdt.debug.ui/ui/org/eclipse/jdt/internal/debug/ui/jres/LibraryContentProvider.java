@@ -117,8 +117,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof LibraryStandin) {
-			LibraryStandin standin= (LibraryStandin) parentElement;
+		if (parentElement instanceof LibraryStandin standin) {
 			Object[] children= fChildren.get(standin);
 			if (children == null) {
 				children = new Object[] { new SubElement(standin, SubElement.SOURCE_PATH), new SubElement(standin, SubElement.JAVADOC_URL),

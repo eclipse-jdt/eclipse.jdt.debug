@@ -135,6 +135,7 @@ import org.eclipse.jdt.debug.tests.refactoring.RenamePackageUnitTests;
 import org.eclipse.jdt.debug.tests.refactoring.RenamePublicTypeUnitTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.Bug565462Tests;
+import org.eclipse.jdt.debug.tests.sourcelookup.ClassFileEditorHighlightingTest;
 import org.eclipse.jdt.debug.tests.sourcelookup.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.DirectorySourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.DirectorySourceLookupTests;
@@ -148,6 +149,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DebugHoverTests;
+import org.eclipse.jdt.debug.tests.ui.DebugSelectionTests;
 import org.eclipse.jdt.debug.tests.ui.DebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.HotCodeReplaceErrorDialogTest;
@@ -229,6 +231,8 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TypeResolutionTests.class));
 		addTest(new TestSuite(JarSourceLookupTests.class));
 		addTest(new TestSuite(Bug565462Tests.class));
+		addTest(new TestSuite(DebugSelectionTests.class));
+		addTest(new TestSuite(ClassFileEditorHighlightingTest.class));
 
 	// Variable tests
 		addTest(new TestSuite(InstanceVariableTests.class));

@@ -13,6 +13,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.variables;
 
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.arrayElementsExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareCustomObjects;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareObjects;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareSelectedLists;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.compareSelectedMaps;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.customObjectValueExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.listElementsExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.mapElementsExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.objectValueExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.setElementsExtraction;
+import static org.eclipse.jdt.internal.debug.ui.ObjectComparison.stringCompare;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -26,15 +37,11 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.debug.ui.ObjectComparison;
 
 public class CompareObjectsTest extends AbstractDebugTest {
 
-	private ObjectComparison objectComparision;
-
 	public CompareObjectsTest(String name) {
 		super(name);
-		objectComparision = new ObjectComparison();
 	}
 
 	@Override
@@ -68,38 +75,38 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable s9 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[10];
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(s1, objectComparision.objectValueExtraction((IJavaValue) s1.getValue()));
-			result.put(s2, objectComparision.objectValueExtraction((IJavaValue) s2.getValue()));
-			result = objectComparision.stringCompare(result);
+			result.put(s1, objectValueExtraction((IJavaValue) s1.getValue()));
+			result.put(s2, objectValueExtraction((IJavaValue) s2.getValue()));
+			result = stringCompare(result);
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(s1);
 			assertThat(compareResult.get("ImmediateResult"), containsString("Same"));
 			result.clear();
 
-			result.put(s3, objectComparision.objectValueExtraction((IJavaValue) s3.getValue()));
-			result.put(s4, objectComparision.objectValueExtraction((IJavaValue) s4.getValue()));
-			result = objectComparision.stringCompare(result);
+			result.put(s3, objectValueExtraction((IJavaValue) s3.getValue()));
+			result.put(s4, objectValueExtraction((IJavaValue) s4.getValue()));
+			result = stringCompare(result);
 			compareResult = (Map<String, String>) result.get(s3);
 			assertThat(compareResult.get("ImmediateResult"), containsString("Different"));
 			result.clear();
 
-			result.put(s5, objectComparision.objectValueExtraction((IJavaValue) s5.getValue()));
-			result.put(s6, objectComparision.objectValueExtraction((IJavaValue) s6.getValue()));
-			result = objectComparision.stringCompare(result);
+			result.put(s5, objectValueExtraction((IJavaValue) s5.getValue()));
+			result.put(s6, objectValueExtraction((IJavaValue) s6.getValue()));
+			result = stringCompare(result);
 			compareResult = (Map<String, String>) result.get(s5);
 			assertThat(compareResult.get("ImmediateResult"), containsString("Same"));
 			result.clear();
 
-			result.put(s7, objectComparision.objectValueExtraction((IJavaValue) s7.getValue()));
-			result.put(s8, objectComparision.objectValueExtraction((IJavaValue) s8.getValue()));
-			result = objectComparision.stringCompare(result);
+			result.put(s7, objectValueExtraction((IJavaValue) s7.getValue()));
+			result.put(s8, objectValueExtraction((IJavaValue) s8.getValue()));
+			result = stringCompare(result);
 			compareResult = (Map<String, String>) result.get(s8);
 			assertThat(compareResult.get("ImmediateResult"), containsString("Same"));
 			result.clear();
 
-			result.put(s1, objectComparision.objectValueExtraction((IJavaValue) s1.getValue()));
-			result.put(s9, objectComparision.objectValueExtraction((IJavaValue) s9.getValue()));
-			result = objectComparision.stringCompare(result);
+			result.put(s1, objectValueExtraction((IJavaValue) s1.getValue()));
+			result.put(s9, objectValueExtraction((IJavaValue) s9.getValue()));
+			result = stringCompare(result);
 			compareResult = (Map<String, String>) result.get(s9);
 			assertThat(compareResult.get("ImmediateResult"), containsString("Different"));
 			result.clear();
@@ -137,38 +144,38 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			IJavaVariable linkedList = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[11];
 
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(s1, objectComparision.listElementsExtraction((IJavaObject) s1.getValue()));
-			result.put(s2, objectComparision.listElementsExtraction((IJavaObject) s2.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Lists");
+			result.put(s1, listElementsExtraction((IJavaObject) s1.getValue()));
+			result.put(s2, listElementsExtraction((IJavaObject) s2.getValue()));
+			result = compareSelectedLists(result, "Lists");
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(s1);
 			String resultValue = compareResult.get("ImmediateResult");
 			assertEquals("Lists contain same elements as in s2, but in different order", resultValue);
 			result.clear();
 
-			result.put(s3, objectComparision.listElementsExtraction((IJavaObject) s3.getValue()));
-			result.put(s4, objectComparision.listElementsExtraction((IJavaObject) s4.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Lists");
+			result.put(s3, listElementsExtraction((IJavaObject) s3.getValue()));
+			result.put(s4, listElementsExtraction((IJavaObject) s4.getValue()));
+			result = compareSelectedLists(result, "Lists");
 			compareResult = (Map<String, String>) result.get(s3);
 			Object o = compareResult.get("Values");
 			resultValue = o.toString();
 			assertEquals("Element is actually missing - [apple1]", "[apple1]",resultValue);
 			result.clear();
 
-			result.put(s5, objectComparision.listElementsExtraction((IJavaObject) s5.getValue()));
-			result.put(s6, objectComparision.listElementsExtraction((IJavaObject) s6.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Lists");
+			result.put(s5, listElementsExtraction((IJavaObject) s5.getValue()));
+			result.put(s6, listElementsExtraction((IJavaObject) s6.getValue()));
+			result = compareSelectedLists(result, "Lists");
 			compareResult = (Map<String, String>) result.get(s6);
 			o = compareResult.get("Values");
 			resultValue = o.toString();
 			assertEquals("Element is actually missing - [22]","[22]" ,resultValue );
 			result.clear();
 
-			result.put(stack, objectComparision.listElementsExtraction((IJavaObject) stack.getValue()));
-			result.put(arrayList, objectComparision.listElementsExtraction((IJavaObject) arrayList.getValue()));
-			result.put(vector, objectComparision.listElementsExtraction((IJavaObject) vector.getValue()));
-			result.put(linkedList, objectComparision.listElementsExtraction((IJavaObject) linkedList.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Lists");
+			result.put(stack, listElementsExtraction((IJavaObject) stack.getValue()));
+			result.put(arrayList, listElementsExtraction((IJavaObject) arrayList.getValue()));
+			result.put(vector, listElementsExtraction((IJavaObject) vector.getValue()));
+			result.put(linkedList, listElementsExtraction((IJavaObject) linkedList.getValue()));
+			result = compareSelectedLists(result, "Lists");
 			compareResult = (Map<String, String>) result.get(stack);
 			o = compareResult.get("ImmediateResult");
 			resultValue = o.toString();
@@ -209,9 +216,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			IJavaVariable map1 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[2];
 			IJavaVariable map2 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[3];
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(map1, objectComparision.mapElementsExtraction(map1));
-			result.put(map2, objectComparision.mapElementsExtraction(map2));
-			result = objectComparision.compareSelectedMaps(result);
+			result.put(map1, mapElementsExtraction(map1));
+			result.put(map2, mapElementsExtraction(map2));
+			result = compareSelectedMaps(result);
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(map1);
 			Object o = compareResult.get("valSameInfo");
@@ -224,9 +231,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable map3 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[4];
 			IJavaVariable map4 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[5];
-			result.put(map3, objectComparision.mapElementsExtraction(map3));
-			result.put(map4, objectComparision.mapElementsExtraction(map4));
-			result = objectComparision.compareSelectedMaps(result);
+			result.put(map3, mapElementsExtraction(map3));
+			result.put(map4, mapElementsExtraction(map4));
+			result = compareSelectedMaps(result);
 			compareResult = (Map<String, String>) result.get(map3);
 			o = compareResult.get("valSameInfo");
 			resultValue = o.toString();
@@ -238,9 +245,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable map5 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[6];
 			IJavaVariable map6 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[7];
-			result.put(map5, objectComparision.mapElementsExtraction(map5));
-			result.put(map6, objectComparision.mapElementsExtraction(map6));
-			result = objectComparision.compareSelectedMaps(result);
+			result.put(map5, mapElementsExtraction(map5));
+			result.put(map6, mapElementsExtraction(map6));
+			result = compareSelectedMaps(result);
 			compareResult = (Map<String, String>) result.get(map6);
 			o = compareResult.get("MapValues");
 			resultValue = o.toString();
@@ -252,9 +259,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable map7 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[8];
 			IJavaVariable map8 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[9];
-			result.put(map7, objectComparision.mapElementsExtraction(map7));
-			result.put(map8, objectComparision.mapElementsExtraction(map8));
-			result = objectComparision.compareSelectedMaps(result);
+			result.put(map7, mapElementsExtraction(map7));
+			result.put(map8, mapElementsExtraction(map8));
+			result = compareSelectedMaps(result);
 			compareResult = (Map<String, String>) result.get(map7);
 			o = compareResult.get("MapValues");
 			resultValue = o.toString();
@@ -264,15 +271,15 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			assertEquals("[key2]", resultKey);
 			result.clear();
 
-			result.put(map1, objectComparision.mapElementsExtraction(map1));
-			result.put(map2, objectComparision.mapElementsExtraction(map2));
-			result.put(map3, objectComparision.mapElementsExtraction(map3));
-			result.put(map4, objectComparision.mapElementsExtraction(map4));
-			result.put(map5, objectComparision.mapElementsExtraction(map5));
-			result.put(map6, objectComparision.mapElementsExtraction(map6));
-			result.put(map7, objectComparision.mapElementsExtraction(map7));
-			result.put(map8, objectComparision.mapElementsExtraction(map8));
-			result = objectComparision.compareSelectedMaps(result);
+			result.put(map1, mapElementsExtraction(map1));
+			result.put(map2, mapElementsExtraction(map2));
+			result.put(map3, mapElementsExtraction(map3));
+			result.put(map4, mapElementsExtraction(map4));
+			result.put(map5, mapElementsExtraction(map5));
+			result.put(map6, mapElementsExtraction(map6));
+			result.put(map7, mapElementsExtraction(map7));
+			result.put(map8, mapElementsExtraction(map8));
+			result = compareSelectedMaps(result);
 			compareResult = (Map<String, String>) result.get(map7);
 			o = compareResult.get("MultiMapValues");
 			resultValue = o.toString();
@@ -311,9 +318,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			IJavaVariable s2 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[3];
 
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(s1, objectComparision.setElementsExtraction((IJavaObject) s1.getValue()));
-			result.put(s2, objectComparision.setElementsExtraction((IJavaObject) s2.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Sets");
+			result.put(s1, setElementsExtraction((IJavaObject) s1.getValue()));
+			result.put(s2, setElementsExtraction((IJavaObject) s2.getValue()));
+			result = compareSelectedLists(result, "Sets");
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(s1);
 			Object o = compareResult.get("Values");
@@ -323,9 +330,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable s3 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[4];
 			IJavaVariable s4 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[5];
-			result.put(s3, objectComparision.setElementsExtraction((IJavaObject) s3.getValue()));
-			result.put(s4, objectComparision.setElementsExtraction((IJavaObject) s4.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Sets");
+			result.put(s3, setElementsExtraction((IJavaObject) s3.getValue()));
+			result.put(s4, setElementsExtraction((IJavaObject) s4.getValue()));
+			result = compareSelectedLists(result, "Sets");
 			compareResult = (Map<String, String>) result.get(s3);
 			o = compareResult.get("ImmediateResult");
 			resultValue = o.toString();
@@ -334,9 +341,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable linkedHashS1 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[6];
 			IJavaVariable linkedHashS2 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[7];
-			result.put(linkedHashS1, objectComparision.setElementsExtraction((IJavaObject) linkedHashS1.getValue()));
-			result.put(linkedHashS2, objectComparision.setElementsExtraction((IJavaObject) linkedHashS2.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Sets");
+			result.put(linkedHashS1, setElementsExtraction((IJavaObject) linkedHashS1.getValue()));
+			result.put(linkedHashS2, setElementsExtraction((IJavaObject) linkedHashS2.getValue()));
+			result = compareSelectedLists(result, "Sets");
 			compareResult = (Map<String, String>) result.get(linkedHashS2);
 			o = compareResult.get("Values");
 			resultValue = o.toString();
@@ -345,24 +352,24 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable copyWr1 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[8];
 			IJavaVariable copyWr2 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[9];
-			result.put(copyWr1, objectComparision.setElementsExtraction((IJavaObject) copyWr1.getValue()));
-			result.put(copyWr2, objectComparision.setElementsExtraction((IJavaObject) copyWr2.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Sets");
+			result.put(copyWr1, setElementsExtraction((IJavaObject) copyWr1.getValue()));
+			result.put(copyWr2, setElementsExtraction((IJavaObject) copyWr2.getValue()));
+			result = compareSelectedLists(result, "Sets");
 			compareResult = (Map<String, String>) result.get(copyWr1);
 			o = compareResult.get("ImmediateResult");
 			resultValue = o.toString();
 			assertEquals("Sets same as of xx2", resultValue);
 			result.clear();
 
-			result.put(s1, objectComparision.setElementsExtraction((IJavaObject) s1.getValue()));
-			result.put(s2, objectComparision.setElementsExtraction((IJavaObject) s2.getValue()));
-			result.put(linkedHashS1, objectComparision.setElementsExtraction((IJavaObject) linkedHashS1.getValue()));
-			result.put(linkedHashS2, objectComparision.setElementsExtraction((IJavaObject) linkedHashS2.getValue()));
-			result.put(copyWr1, objectComparision.setElementsExtraction((IJavaObject) copyWr1.getValue()));
-			result.put(copyWr2, objectComparision.setElementsExtraction((IJavaObject) copyWr2.getValue()));
-			result.put(s3, objectComparision.setElementsExtraction((IJavaObject) s3.getValue()));
-			result.put(s4, objectComparision.setElementsExtraction((IJavaObject) s4.getValue()));
-			result = objectComparision.compareSelectedLists(result, "Sets");
+			result.put(s1, setElementsExtraction((IJavaObject) s1.getValue()));
+			result.put(s2, setElementsExtraction((IJavaObject) s2.getValue()));
+			result.put(linkedHashS1, setElementsExtraction((IJavaObject) linkedHashS1.getValue()));
+			result.put(linkedHashS2, setElementsExtraction((IJavaObject) linkedHashS2.getValue()));
+			result.put(copyWr1, setElementsExtraction((IJavaObject) copyWr1.getValue()));
+			result.put(copyWr2, setElementsExtraction((IJavaObject) copyWr2.getValue()));
+			result.put(s3, setElementsExtraction((IJavaObject) s3.getValue()));
+			result.put(s4, setElementsExtraction((IJavaObject) s4.getValue()));
+			result = compareSelectedLists(result, "Sets");
 			compareResult = (Map<String, String>) result.get(copyWr1);
 			o = compareResult.get("MultiValues");
 			resultValue = o.toString();
@@ -392,9 +399,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			IJavaVariable s2 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[3];
 
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(s1, objectComparision.arrayElementsExtraction(s1));
-			result.put(s2, objectComparision.arrayElementsExtraction(s2));
-			result = objectComparision.compareSelectedLists(result, "Arrays");
+			result.put(s1, arrayElementsExtraction(s1));
+			result.put(s2, arrayElementsExtraction(s2));
+			result = compareSelectedLists(result, "Arrays");
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(s1);
 			Object o = compareResult.get("ImmediateResult");
@@ -404,20 +411,20 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable s3 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[4];
 			IJavaVariable s4 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[5];
-			result.put(s3, objectComparision.arrayElementsExtraction(s3));
-			result.put(s4, objectComparision.arrayElementsExtraction(s4));
-			result = objectComparision.compareSelectedLists(result, "Arrays");
+			result.put(s3, arrayElementsExtraction(s3));
+			result.put(s4, arrayElementsExtraction(s4));
+			result = compareSelectedLists(result, "Arrays");
 			compareResult = (Map<String, String>) result.get(s4);
 			o = compareResult.get("Values");
 			resultValue = o.toString();
 			assertEquals("[1]", resultValue);
 			result.clear();
 
-			result.put(s1, objectComparision.arrayElementsExtraction(s1));
-			result.put(s2, objectComparision.arrayElementsExtraction(s2));
-			result.put(s3, objectComparision.arrayElementsExtraction(s3));
-			result.put(s4, objectComparision.arrayElementsExtraction(s4));
-			result = objectComparision.compareSelectedLists(result, "Arrays");
+			result.put(s1, arrayElementsExtraction(s1));
+			result.put(s2, arrayElementsExtraction(s2));
+			result.put(s3, arrayElementsExtraction(s3));
+			result.put(s4, arrayElementsExtraction(s4));
+			result = compareSelectedLists(result, "Arrays");
 			compareResult = (Map<String, String>) result.get(s3);
 			o = compareResult.get("MultiValues");
 			resultValue = o.toString();
@@ -447,9 +454,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			IJavaVariable wrap2 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[6];
 
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(wrap1, objectComparision.objectValueExtraction((IJavaValue) wrap1.getValue()));
-			result.put(wrap2, objectComparision.objectValueExtraction((IJavaValue) wrap2.getValue()));
-			result = objectComparision.compareObjects(result);
+			result.put(wrap1, objectValueExtraction((IJavaValue) wrap1.getValue()));
+			result.put(wrap2, objectValueExtraction((IJavaValue) wrap2.getValue()));
+			result = compareObjects(result);
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(wrap1);
 			Object o = compareResult.get("ImmediateResult");
@@ -459,9 +466,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 
 			IJavaVariable wrap3 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[7];
 			IJavaVariable wrap4 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[8];
-			result.put(wrap3, objectComparision.objectValueExtraction((IJavaValue) wrap3.getValue()));
-			result.put(wrap4, objectComparision.objectValueExtraction((IJavaValue) wrap4.getValue()));
-			result = objectComparision.compareObjects(result);
+			result.put(wrap3, objectValueExtraction((IJavaValue) wrap3.getValue()));
+			result.put(wrap4, objectValueExtraction((IJavaValue) wrap4.getValue()));
+			result = compareObjects(result);
 			compareResult = (Map<String, String>) result.get(wrap4);
 			o = compareResult.get("ImmediateResult");
 			resultValue = o.toString();
@@ -491,9 +498,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			IJavaVariable wrap3 = (IJavaVariable) mainThread.getTopStackFrame().getVariables()[4];
 
 			Map<IJavaVariable, Object> result = new HashMap<>();
-			result.put(wrap1, objectComparision.customObjectValueExtraction((IJavaObject) wrap1.getValue()));
-			result.put(wrap2, objectComparision.customObjectValueExtraction((IJavaObject) wrap2.getValue()));
-			result = objectComparision.compareCustomObjects(result);
+			result.put(wrap1, customObjectValueExtraction((IJavaObject) wrap1.getValue()));
+			result.put(wrap2, customObjectValueExtraction((IJavaObject) wrap2.getValue()));
+			result = compareCustomObjects(result);
 			Map<String, String> compareResult = new HashMap<>();
 			compareResult = (Map<String, String>) result.get(wrap1);
 			Object o = compareResult.get("fields");
@@ -505,9 +512,9 @@ public class CompareObjectsTest extends AbstractDebugTest {
 			assertEquals("{custom=Different in [a1]}", resultValue);
 			result.clear();
 
-			result.put(wrap1, objectComparision.customObjectValueExtraction((IJavaObject) wrap1.getValue()));
-			result.put(wrap3, objectComparision.customObjectValueExtraction((IJavaObject) wrap3.getValue()));
-			result = objectComparision.compareCustomObjects(result);
+			result.put(wrap1, customObjectValueExtraction((IJavaObject) wrap1.getValue()));
+			result.put(wrap3, customObjectValueExtraction((IJavaObject) wrap3.getValue()));
+			result = compareCustomObjects(result);
 			compareResult = (Map<String, String>) result.get(wrap1);
 			o = compareResult.get("fields");
 			resultValue = o.toString();

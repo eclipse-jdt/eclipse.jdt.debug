@@ -108,8 +108,7 @@ public final class LibraryStandin {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof LibraryStandin) {
-			LibraryStandin lib = (LibraryStandin)obj;
+		if (obj instanceof LibraryStandin lib) {
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath())
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
