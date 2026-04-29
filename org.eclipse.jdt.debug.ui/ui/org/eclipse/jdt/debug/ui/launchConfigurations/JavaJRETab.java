@@ -326,8 +326,7 @@ public class JavaJRETab extends JavaLaunchTab {
 				vm = JavaRuntime.getVMInstall(vmPath);
 			}
 			String environmentId = JavaRuntime.getExecutionEnvironmentId(vmPath);
-			if(vm instanceof AbstractVMInstall) {
-				AbstractVMInstall install = (AbstractVMInstall) vm;
+			if(vm instanceof AbstractVMInstall install) {
 				String vmver = install.getJavaVersion();
 				if(vmver != null) {
 					int val = JavaCore.compareJavaVersions(compliance, vmver);

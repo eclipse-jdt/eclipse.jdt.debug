@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,7 +45,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
@@ -166,15 +165,13 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
 			StyledText styledText= getTextWidget();
-			Color color= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)
-				? null
-				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
+			Color color = store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT) ? null
+					: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND);
 			styledText.setForeground(color);
 			setForegroundColor(color);
 
-			color= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
-				? null
-				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
+			color = store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT) ? null
+					: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 			styledText.setBackground(color);
 			setBackgroundColor(color);
 		}
@@ -184,7 +181,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	 * Creates a color from the information stored in the given preference store.
 	 * Returns <code>null</code> if there is no such information available.
 	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
+	private Color createColor(IPreferenceStore store, String key) {
 		RGB rgb= null;
 		if (store.contains(key)) {
 			if (store.isDefault(key)) {
@@ -193,7 +190,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 				rgb= PreferenceConverter.getColor(store, key);
 			}
 			if (rgb != null) {
-				return new Color(display, rgb);
+				return new Color(rgb);
 			}
 		}
 		return null;

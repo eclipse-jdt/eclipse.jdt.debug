@@ -67,8 +67,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
 			for (int i = 0; i < breakpoints.length; i++) {
 				IBreakpoint breakpoint = breakpoints[i];
-				if (breakpoint instanceof IJavaExceptionBreakpoint) {
-					IJavaExceptionBreakpoint exceptionBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
+				if (breakpoint instanceof IJavaExceptionBreakpoint exceptionBreakpoint) {
 					if (fExceptionName.equals(exceptionBreakpoint.getTypeName())) {
 						// reset enabled setting to true but save original value to reset if user cancels dialog
 						exceptionBreakpoint.getMarker().setAttribute(JavaBreakpointPage.ATTR_ENABLED_SETTING_ON_CANCEL, Boolean.toString(exceptionBreakpoint.isEnabled()));

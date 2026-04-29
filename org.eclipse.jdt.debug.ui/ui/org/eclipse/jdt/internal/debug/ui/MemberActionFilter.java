@@ -39,8 +39,7 @@ public class MemberActionFilter implements IActionFilter {
 	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		if (name.equals("MemberActionFilter")) { //$NON-NLS-1$
-			if (target instanceof IMember) {
-				IMember member = (IMember) target;
+			if (target instanceof IMember member) {
 				if (value.equals("isRemote")) { //$NON-NLS-1$
 					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 					if(window != null) {
@@ -95,8 +94,7 @@ public class MemberActionFilter implements IActionFilter {
 					IAdaptable adapt = DebugUITools.getDebugContext();
 					if(adapt != null) {
 						IDebugTarget adapter = adapt.getAdapter(IDebugTarget.class);
-						if(adapter instanceof IJavaDebugTarget) {
-							IJavaDebugTarget dtarget = (IJavaDebugTarget) adapter;
+						if(adapter instanceof IJavaDebugTarget dtarget) {
 							return dtarget.supportsInstanceRetrieval();
 						}
 					}

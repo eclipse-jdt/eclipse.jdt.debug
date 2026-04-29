@@ -35,10 +35,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Class to provides methods to extract and compare Java Collections, Java Types and Custom Types
+ * Helper class to provides methods to extract and compare Java Collections, Java Types and Custom Types
  *
  */
-public class ObjectComparison {
+public final class ObjectComparison {
 	public static final String IMMEDIATE_RESULT_KEY = "ImmediateResult"; //$NON-NLS-1$
 	public static final String KEYSET_1 = "keySet"; //$NON-NLS-1$
 	public static final String VALUESET_1 = "valueSet"; //$NON-NLS-1$
@@ -48,6 +48,8 @@ public class ObjectComparison {
 	public static final String OBJECT_TYPE = "Type"; //$NON-NLS-1$
 	public static final String OBJECT_VALUES = "Values"; //$NON-NLS-1$
 
+	private ObjectComparison() {
+	}
 	/**
 	 * Extracts the actual value as string representation of the given object
 	 *
@@ -58,7 +60,7 @@ public class ObjectComparison {
 	 *         presented in variable view
 	 */
 	@SuppressWarnings("nls")
-	public String objectValueExtraction(IJavaValue value) throws DebugException {
+	public static String objectValueExtraction(IJavaValue value) throws DebugException {
 		String refType1 = value.getReferenceTypeName();
 		List<String> interfaceCheck = getInterfaces(refType1);
 		if (interfaceCheck.contains("java.lang.CharSequence")) {
@@ -86,7 +88,7 @@ public class ObjectComparison {
 	 * @return Returns string content
 	 */
 	@SuppressWarnings("nls")
-	private String stringValueExtraction(IJavaObject value) throws DebugException {
+	private static String stringValueExtraction(IJavaObject value) throws DebugException {
 		IJavaThread thread = getSuspendedThread(value);
 		IJavaValue stringVal = value.sendMessage("toString", "()Ljava/lang/String;", null, thread, false);
 		return stringVal.getValueString();
@@ -100,7 +102,7 @@ public class ObjectComparison {
 	 * @return Returns a Map containing selected IJavaVariable and its extracted Set contents
 	 * @throws DebugException
 	 */
-	public Map<IJavaVariable, Object> setExtraction(List<IStructuredSelection> selections) throws DebugException {
+	public static Map<IJavaVariable, Object> setExtraction(List<IStructuredSelection> selections) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -122,7 +124,7 @@ public class ObjectComparison {
 	 * @return Returns a List of Set contents
 	 */
 	@SuppressWarnings("nls")
-	public List<String> setElementsExtraction(IJavaObject javaObject1) throws DebugException {
+	public static List<String> setElementsExtraction(IJavaObject javaObject1) throws DebugException {
 		List<String> contents = new ArrayList<>();
 		IJavaThread thread = getSuspendedThread(javaObject1);
 		IJavaValue toArray = javaObject1.sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false);
@@ -141,7 +143,7 @@ public class ObjectComparison {
 	 * @return Returns a Map of comparison result for given IJavaVariable keys
 	 */
 	@SuppressWarnings({ "unchecked", "nls" })
-	public Map<IJavaVariable, Object> compareCustomObjects(Map<IJavaVariable, Object> compareResults) throws DebugException {
+	public static Map<IJavaVariable, Object> compareCustomObjects(Map<IJavaVariable, Object> compareResults) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Map.Entry<IJavaVariable, Object> entry1 : compareResults.entrySet()) {
 			Map<String, Object> properties = new HashMap<>();
@@ -220,7 +222,7 @@ public class ObjectComparison {
 	 * @throws DebugException
 	 * @return returns a Map of comparison result details
 	 */
-	public Map<IJavaVariable, Object> compareObjects(Map<IJavaVariable, Object> compareResults) throws DebugException {
+	public static Map<IJavaVariable, Object> compareObjects(Map<IJavaVariable, Object> compareResults) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Map.Entry<IJavaVariable, Object> entry1 : compareResults.entrySet()) {
 			String val1 = entry1.getValue().toString();
@@ -265,7 +267,7 @@ public class ObjectComparison {
 	 * @throws Exception
 	 * @return Returns a Map of IJavaVariable and field value pair
 	 */
-	public Map<IJavaVariable, Object> extractCustomObjects(List<IStructuredSelection> selections) throws Exception {
+	public static Map<IJavaVariable, Object> extractCustomObjects(List<IStructuredSelection> selections) throws Exception {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -290,7 +292,7 @@ public class ObjectComparison {
 	 * @return Returns a Map of IJavaVariable and references
 	 * @throws DebugException
 	 */
-	public Map<IJavaVariable, Object> customObjectsReferencesExtraction(List<IStructuredSelection> selections) throws DebugException {
+	public static Map<IJavaVariable, Object> customObjectsReferencesExtraction(List<IStructuredSelection> selections) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -310,7 +312,7 @@ public class ObjectComparison {
 	 * @return Return <code>True</code> if all objects are of same reference. <code>False</code> if any one of the objects are from different
 	 *         reference
 	 */
-	public boolean objectsRefCheck(Map<IJavaVariable, Object> compareResults) {
+	public static boolean objectsRefCheck(Map<IJavaVariable, Object> compareResults) {
 		for (Map.Entry<IJavaVariable, Object> entry1 : compareResults.entrySet()) {
 			String val1 = entry1.getValue().toString();
 			IJavaVariable key1 = entry1.getKey();
@@ -335,7 +337,7 @@ public class ObjectComparison {
 	 * @throws DebugException
 	 * @return Returns a Map of IJavaVariable and field value pair
 	 */
-	public Map<String, String> customObjectValueExtraction(IJavaObject javaObject1) throws DebugException {
+	public static Map<String, String> customObjectValueExtraction(IJavaObject javaObject1) throws DebugException {
 		Map<String, String> contents = new HashMap<>();
 		for (IVariable ob : javaObject1.getVariables()) {
 			String content;
@@ -357,7 +359,7 @@ public class ObjectComparison {
 	 * @return Returns a Map of IJavaVariable and field value pair
 	 * @throws DebugException
 	 */
-	public Map<IJavaVariable, Object> extractOtherObjects(List<IStructuredSelection> selections) throws DebugException {
+	public static Map<IJavaVariable, Object> extractOtherObjects(List<IStructuredSelection> selections) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -378,7 +380,7 @@ public class ObjectComparison {
 	 * @return Returns a Map of IJavaVariable and array values
 	 * @throws DebugException
 	 */
-	public Map<IJavaVariable, Object> arrayExtraction(List<IStructuredSelection> selections) throws DebugException {
+	public static Map<IJavaVariable, Object> arrayExtraction(List<IStructuredSelection> selections) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -397,7 +399,7 @@ public class ObjectComparison {
 	 * @throws DebugException
 	 * @return Returns a List of array elements
 	 */
-	public List<String> arrayElementsExtraction(IJavaVariable selectedObject1) throws DebugException {
+	public static List<String> arrayElementsExtraction(IJavaVariable selectedObject1) throws DebugException {
 		List<String> arrayElements1 = new ArrayList<>();
 		if (selectedObject1.getValue() instanceof IJavaValue javaVal1) {
 			for (IVariable jv : javaVal1.getVariables()) {
@@ -418,7 +420,7 @@ public class ObjectComparison {
 	 * @return returns <code>true</code> if elements of all list1 elements are present in list2 .<code>false</code> if any element of list1 is missing
 	 *         from list2
 	 */
-	public <T> boolean listContentsCheck(List<T> l1, List<T> l2) {
+	public static <T> boolean listContentsCheck(List<T> l1, List<T> l2) {
 		for (T t : l1) {
 			if (!l2.contains(t)) {
 				return false;
@@ -435,7 +437,7 @@ public class ObjectComparison {
 	 * @throws DebugException
 	 * @return Returns a Map of comparison result for given IJavaVariable
 	 */
-	public Map<IJavaVariable, Object> stringCompare(Map<IJavaVariable, Object> compareResults) throws DebugException {
+	public static Map<IJavaVariable, Object> stringCompare(Map<IJavaVariable, Object> compareResults) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Map.Entry<IJavaVariable, Object> entry1 : compareResults.entrySet()) {
 			String val1 = (String) entry1.getValue();
@@ -482,7 +484,7 @@ public class ObjectComparison {
 	 * @return Returns a Map of comparison result for given IJavaVariable
 	 */
 	@SuppressWarnings({ "unchecked", "nls" })
-	public Map<IJavaVariable, Object> compareSelectedLists(Map<IJavaVariable, Object> compareResults, String interfaceType) throws DebugException {
+	public static Map<IJavaVariable, Object> compareSelectedLists(Map<IJavaVariable, Object> compareResults, String interfaceType) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Map.Entry<IJavaVariable, Object> entry1 : compareResults.entrySet()) {
 			List<String> listV1 = (List<String>) entry1.getValue();
@@ -548,7 +550,7 @@ public class ObjectComparison {
 	 * @return Returns a Map of comparison result for given IJavaVariable
 	 */
 	@SuppressWarnings({ "nls", "unchecked" })
-	public Map<IJavaVariable, Object> compareSelectedMaps(Map<IJavaVariable, Object> compareResults) throws DebugException {
+	public static Map<IJavaVariable, Object> compareSelectedMaps(Map<IJavaVariable, Object> compareResults) throws DebugException {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Map.Entry<IJavaVariable, Object> entry1 : compareResults.entrySet()) {
 			Map<String, Object> current = (Map<String, Object>) entry1.getValue();
@@ -639,7 +641,7 @@ public class ObjectComparison {
 	 * @throws Exception
 	 * @return Returns a Map of IJavaVariable and its Iterable contents
 	 */
-	public Map<IJavaVariable, Object> iterableExtraction(List<IStructuredSelection> selections) throws Exception {
+	public static Map<IJavaVariable, Object> iterableExtraction(List<IStructuredSelection> selections) throws Exception {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -661,7 +663,7 @@ public class ObjectComparison {
 	 * @return Returns actual List of selected Iterable object
 	 */
 	@SuppressWarnings("nls")
-	public List<String> iterableElementsExtraction(IJavaObject javaObject1) throws DebugException {
+	public static List<String> iterableElementsExtraction(IJavaObject javaObject1) throws DebugException {
 		List<String> contents = new ArrayList<>();
 		IJavaThread thread = getSuspendedThread(javaObject1);
 		IJavaObject iterator = (IJavaObject) javaObject1.sendMessage("iterator", "()Ljava/util/Iterator;", null, thread, false);
@@ -685,7 +687,7 @@ public class ObjectComparison {
 	 * @throws Exception
 	 * @return Returns a Map of IJavaVariable and its List contents
 	 */
-	public Map<IJavaVariable, Object> listExtraction(List<IStructuredSelection> selections) throws Exception {
+	public static Map<IJavaVariable, Object> listExtraction(List<IStructuredSelection> selections) throws Exception {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -707,7 +709,7 @@ public class ObjectComparison {
 	 * @return Returns actual List of selected List object
 	 */
 	@SuppressWarnings("nls")
-	public List<String> listElementsExtraction(IJavaObject javaObject1) throws DebugException {
+	public static List<String> listElementsExtraction(IJavaObject javaObject1) throws DebugException {
 		List<String> contents = new ArrayList<>();
 		IJavaThread thread = getSuspendedThread(javaObject1);
 		IJavaValue toArray = javaObject1.sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false);
@@ -725,7 +727,7 @@ public class ObjectComparison {
 	 * @throws DebugException
 	 * @return Returns actual List
 	 */
-	public Map<IJavaVariable, Object> mapExtraction(List<IStructuredSelection> selections) throws Exception {
+	public static Map<IJavaVariable, Object> mapExtraction(List<IStructuredSelection> selections) throws Exception {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -744,7 +746,7 @@ public class ObjectComparison {
 	 * @throws DebugException
 	 * @return Returns Map of IJavaVariable and string contents
 	 */
-	public Map<IJavaVariable, Object> stringExtraction(List<IStructuredSelection> selections) throws Exception {
+	public static Map<IJavaVariable, Object> stringExtraction(List<IStructuredSelection> selections) throws Exception {
 		Map<IJavaVariable, Object> result = new HashMap<>();
 		for (Object selection : selections) {
 			if (selection instanceof IJavaVariable selectedObject) {
@@ -766,7 +768,7 @@ public class ObjectComparison {
 	 * @return returns a Map of comparison result details
 	 */
 	@SuppressWarnings("nls")
-	public Map<String, Object> mapElementsExtraction(IJavaVariable selectedObject1) throws DebugException {
+	public static Map<String, Object> mapElementsExtraction(IJavaVariable selectedObject1) throws DebugException {
 		if (selectedObject1.getValue() instanceof IJavaObject javaObject1) {
 			IJavaThread thread = getSuspendedThread(javaObject1);
 			Map<String, Object> result = new HashMap<>();
@@ -863,7 +865,7 @@ public class ObjectComparison {
 	 *            IJavaValue object
 	 * @return returns a suspended IJavaThread object
 	 */
-	private IJavaThread getSuspendedThread(IJavaValue value) throws DebugException {
+	private static IJavaThread getSuspendedThread(IJavaValue value) throws DebugException {
 		IJavaThread thread = (IJavaThread) value.getDebugTarget().getThreads()[0];
 		if (!thread.isSuspended()) {
 			JDIStackFrame frame = (JDIStackFrame) DebugUITools.getDebugContext();

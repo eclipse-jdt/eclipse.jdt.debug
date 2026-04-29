@@ -17,10 +17,12 @@
 package org.eclipse.jdi.internal.connect;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
+import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
@@ -139,6 +141,12 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		String result = null;
 		try {
 			result = ((SocketTransportImpl) fTransport).startListening(fPort);
+		} catch (BindException e) {
+			BindException e1 = new BindException(NLS.bind(
+					ConnectMessages.SocketListeningConnectorImpl_ListeningConnector_Address_in_use,
+					Integer.valueOf(fPort)));
+			e1.initCause(e);
+			throw e1;
 		} catch (IllegalArgumentException e) {
 			throw new IllegalConnectorArgumentsException(
 					ConnectMessages.SocketListeningConnectorImpl_ListeningConnector_Socket_Port,

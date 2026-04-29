@@ -50,8 +50,7 @@ public class JavaVariableColumnPresentationFactory implements IColumnPresentatio
 	private boolean isApplicable(IPresentationContext context, Object element) {
 		IJavaStackFrame frame = null;
 		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
-			if (element instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable)element;
+			if (element instanceof IAdaptable adaptable) {
 				frame = adaptable.getAdapter(IJavaStackFrame.class);
 			}
 		}

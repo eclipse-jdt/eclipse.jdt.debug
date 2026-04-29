@@ -289,8 +289,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 
 	@Override
 	public IResource getLaunchableResource(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ss) {
 			if (ss.size() == 1) {
 				Object element = ss.getFirstElement();
 				if (element instanceof IAdaptable) {

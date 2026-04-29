@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.ui.actions.ToggleBreakpointAdapter;
+import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -39,14 +40,18 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class JavaStackFrameEditorPresenter implements IDebugEditorPresentation {
 
 	@Override
-	public boolean addAnnotations(IEditorPart editor, IStackFrame frame) {
+	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
+		if (!(frame instanceof JDIStackFrame jdiFrame && editorPart instanceof ITextEditor textEditor)) {
+			return false;
+		}
+		IDocument document = getDocument(textEditor);
+		if (document == null) {
+			return false;
+		}
 		try {
-			if (editor instanceof ITextEditor textEditor && frame instanceof JDIStackFrame jdiFrame
-					&& org.eclipse.jdt.internal.debug.core.model.LambdaUtils.isLambdaFrame(jdiFrame)) {
-				IEditorInput editorInput = editor.getEditorInput();
-				IDocumentProvider provider = textEditor.getDocumentProvider();
-				IDocument document = provider.getDocument(editorInput);
-				if (document != null && JavaUI.getEditorInputJavaElement(editorInput) != null) {
+			if (org.eclipse.jdt.internal.debug.core.model.LambdaUtils.isLambdaFrame(jdiFrame)) {
+				IEditorInput editorInput = editorPart.getEditorInput();
+				if (JavaUI.getEditorInputJavaElement(editorInput) != null) {
 					IRegion region = document.getLineInformation(jdiFrame.getLineNumber() - 1);
 					List<LambdaExpression> inLineLambdas = ToggleBreakpointAdapter.findLambdaExpressions(textEditor, region);
 					for (LambdaExpression exp : inLineLambdas) {
@@ -58,6 +63,15 @@ public class JavaStackFrameEditorPresenter implements IDebugEditorPresentation {
 					}
 				}
 			}
+			if (editorPart instanceof ClassFileEditor classFileEditor && document.getLength() == 0) {
+				String methodName = jdiFrame.getMethodName();
+				if (jdiFrame.isConstructor()) {
+					methodName = jdiFrame.getDeclaringTypeName();
+					methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
+				}
+				classFileEditor.highlightInstruction(methodName, jdiFrame.getSignature(), jdiFrame.getCodeIndex());
+				return true;
+			}
 		} catch (CoreException | BadLocationException e) {
 			JDIDebugPlugin.log(e);
 		}
@@ -66,7 +80,13 @@ public class JavaStackFrameEditorPresenter implements IDebugEditorPresentation {
 
 	@Override
 	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
-		// nothing to clean up
+		if (!(editorPart instanceof ClassFileEditor classFileEditor)) {
+			return;
+		}
+		IDocument document = getDocument(classFileEditor);
+		if (document != null && document.getLength() == 0) {
+			classFileEditor.unhighlight();
+		}
 	}
 
 	private static String getMethodBindingKey(LambdaExpression exp) {
@@ -76,5 +96,13 @@ public class JavaStackFrameEditorPresenter implements IDebugEditorPresentation {
 			key = methodBinding.getKey();
 		}
 		return key;
+	}
+
+	private static IDocument getDocument(ITextEditor textEditor) {
+		IDocumentProvider documentProvider = textEditor.getDocumentProvider();
+		if (documentProvider == null) {
+			return null;
+		}
+		return documentProvider.getDocument(textEditor.getEditorInput());
 	}
 }

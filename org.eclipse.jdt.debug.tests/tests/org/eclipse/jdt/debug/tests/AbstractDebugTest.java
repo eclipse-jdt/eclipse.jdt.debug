@@ -19,6 +19,7 @@ package org.eclipse.jdt.debug.tests;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -177,6 +178,7 @@ import junit.framework.TestCase;
 @SuppressWarnings("deprecation")
 public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
 
+	private static final int SOCKET_BIND_ERROR_MAX_RETRIES = 3;
 	private static boolean setupFirstTest = false;
 
 	public static final String MULTI_OUTPUT_PROJECT_NAME = "MultiOutput";
@@ -1490,13 +1492,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 *             if the event is never received.
 	 */
 	protected Object launchAndWait(ILaunchConfiguration configuration, String mode, DebugEventWaiter waiter, boolean register) throws CoreException {
-		ILaunch launch;
-		try {
-			launch = configuration.launch(mode, new TimeoutMonitor(DEFAULT_TIMEOUT), false, register);
-		} catch (Throwable t) {
-			logProcessConsoleContents();
-			throw t;
-		}
+		ILaunch launch = launchConfig(configuration, mode, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
 			StringBuilder buf = new StringBuilder();
@@ -1538,8 +1534,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return suspendee;
 	}
-
-
 
 	/**
 	 * Launches the type with the given name, and waits for a
@@ -2228,6 +2222,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String packageName, String cuName, String typeName, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
 		assertNotNull("did not find type to install breakpoint in", type); //$NON-NLS-1$
+		return createMethodBreakpoint(type, methodName, methodSignature, entry, exit);
+	}
+
+	/**
+	 * Creates a method breakpoint in a specified type.
+	 *
+	 * @param type the type in which the method breakpoint is set
+	 * @param methodName method or <code>null</code> for all methods
+	 * @param methodSignature JLS method signature or <code>null</code> for all methods with the given name
+	 * @param entry whether to break on entry
+	 * @param exit whether to break on exit
+	 * @return method breakpoint
+	 */
+	protected IJavaMethodBreakpoint createMethodBreakpoint(IType type, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IMethod method= null;
 		if (methodSignature != null && methodName != null) {
 			if (type != null ) {
@@ -3208,6 +3216,28 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		String detailed = message + " " + vm.getName() + ", location: " + vm.getInstallLocation();
 		IStatus status = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(), detailed, null);
 		JDIDebugPlugin.log(status);
+	}
+
+	private static ILaunch launchConfig(ILaunchConfiguration configuration, String mode, boolean register) throws CoreException {
+		ILaunch launch = null;
+		for (int retry = 1; retry <= SOCKET_BIND_ERROR_MAX_RETRIES; ++retry) {
+			try {
+				launch = configuration.launch(mode, new TimeoutMonitor(DEFAULT_TIMEOUT), false, register);
+				break;
+			} catch (CoreException e) {
+				Throwable cause = e.getStatus().getException();
+				if (retry < SOCKET_BIND_ERROR_MAX_RETRIES && cause instanceof BindException) {
+					// port might be in use between checking for a free port and launching, try a few times
+					DebugPlugin.log(Status.error("Could not bind socket for debugging, retry: " + retry, e));
+				} else {
+					throw e;
+				}
+			} catch (Throwable t) {
+				logProcessConsoleContents();
+				throw t;
+			}
+		}
+		return launch;
 	}
 
 	private static void logProcessConsoleContents() {

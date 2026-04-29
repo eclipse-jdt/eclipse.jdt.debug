@@ -2420,7 +2420,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Helper class to perform stepping an a thread.
 	 */
-	abstract class StepHandler implements IJDIEventListener {
+	protected abstract class StepHandler implements IJDIEventListener {
 		/**
 		 * Request for stepping in the underlying VM
 		 */
@@ -3176,7 +3176,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Handler for step over requests.
 	 */
-	class StepOverHandler extends StepHandler {
+	protected class StepOverHandler extends StepHandler {
 
 		@Override
 		protected int getStepKind() {

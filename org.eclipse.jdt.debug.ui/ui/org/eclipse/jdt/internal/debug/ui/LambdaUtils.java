@@ -98,10 +98,9 @@ public class LambdaUtils extends org.eclipse.jdt.internal.debug.core.model.Lambd
 	}
 
 	private static List<String> getArgumentTypeNames(IJavaElement parent) throws CoreException {
-		if (!(parent instanceof IMethod)) {
+		if (!(parent instanceof IMethod method)) {
 			return null;
 		}
-		IMethod method = (IMethod) parent;
 		IType type = method.getDeclaringType();
 		if (type == null) {
 			return null;

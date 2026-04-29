@@ -1758,4 +1758,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return false;
 
 	}
+
+	public long getCodeIndex() {
+		synchronized (fThread) {
+			return fLocation.codeIndex();
+		}
+	}
 }

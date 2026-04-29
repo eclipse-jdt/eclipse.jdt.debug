@@ -87,7 +87,7 @@ public class LauncherMessages extends NLS {
 	public static String JavaMainTab_E_xt__jars_6;
 	public static String JavaMainTab_Main_cla_ss__4;
 	public static String JavaMainTab_Main_type_not_specified_16;
-	public static String JavaMainTab_St_op_in_main_1;
+	public static String JavaMainTab_Suspend_In_Main;
 	public static String JavaMainTab_19;
 	public static String JavaMainTab_20;
 	public static String JavaMainTab_21;

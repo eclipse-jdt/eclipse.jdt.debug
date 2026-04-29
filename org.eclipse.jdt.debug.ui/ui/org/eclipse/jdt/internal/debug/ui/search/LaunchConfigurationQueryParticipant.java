@@ -96,11 +96,9 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		SubMonitor subMon = SubMonitor.convert(monitor, 8);
 		try {
 			Pattern pattern = null;
-			if (query instanceof ElementQuerySpecification) {
-				ElementQuerySpecification elementQuery = (ElementQuerySpecification) query;
+			if (query instanceof ElementQuerySpecification elementQuery) {
 				IJavaElement element = elementQuery.getElement();
-				if(element instanceof IMember) {
-					IMember member = (IMember) element;
+				if(element instanceof IMember member) {
 					IType type = null;
 					if(member.getElementType() == IJavaElement.TYPE) {
 						type = (IType) member;
@@ -121,8 +119,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 					return;
 				}
 			}
-			if (query instanceof PatternQuerySpecification) {
-				PatternQuerySpecification patternQuery = (PatternQuerySpecification) query;
+			if (query instanceof PatternQuerySpecification patternQuery) {
 				int flags = patternQuery.isCaseSensitive() ? 0
 						: Pattern.CASE_INSENSITIVE;
 				String quotedPattern = quotePattern(patternQuery.getPattern());
@@ -197,8 +194,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 			IJavaElement element = ((ElementQuerySpecification) query).getElement();
 			return element.getElementType() == IJavaElement.TYPE || element.getElementType() == IJavaElement.METHOD;
 		}
-		if (query instanceof PatternQuerySpecification) {
-			PatternQuerySpecification patternQuery = (PatternQuerySpecification) query;
+		if (query instanceof PatternQuerySpecification patternQuery) {
 			switch (patternQuery.getSearchFor()) {
 				case IJavaSearchConstants.UNKNOWN:
 				case IJavaSearchConstants.TYPE:

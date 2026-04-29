@@ -64,6 +64,7 @@ public class ConnectMessages extends NLS {
 	public static String SocketListeningConnectorImpl_Limit_incoming_connections;
 
 	public static String SocketListeningConnectorImpl_ListeningConnector_Socket_Port;
+	public static String SocketListeningConnectorImpl_ListeningConnector_Address_in_use;
 	public static String SocketRawLaunchingConnectorImpl_Raw_command_to_start_the_debugged_application_VM_1;
 	public static String SocketRawLaunchingConnectorImpl_Command_2;
 	public static String SocketRawLaunchingConnectorImpl_Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3;

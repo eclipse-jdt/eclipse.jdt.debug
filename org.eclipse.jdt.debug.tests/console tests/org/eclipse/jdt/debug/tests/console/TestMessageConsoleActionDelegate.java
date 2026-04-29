@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.ColorDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -77,7 +76,7 @@ public class TestMessageConsoleActionDelegate implements IActionDelegate2, IWork
 		stream.println("two.... three....");
 		ColorDialog dialog = new ColorDialog(DebugUIPlugin.getShell());
 		dialog.open();
-		Color color = new Color(Display.getCurrent(), dialog.getRGB());
+		Color color = new Color(dialog.getRGB());
 		stream.setColor(color);
 	}
 
