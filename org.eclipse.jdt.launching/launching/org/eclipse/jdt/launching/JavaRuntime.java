@@ -409,6 +409,9 @@ public final class JavaRuntime {
 				//only happens on a CoreException
 				LaunchingPlugin.log(status);
 			}
+			if (Platform.OS.isMac()) {
+				fgVMTypes.add(new org.eclipse.jdt.internal.launching.macosx.MacOSXVMInstallType());
+			}
 		}
 		else {
 			LaunchingPlugin.log(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), "VM Install extension point not found", null)); //$NON-NLS-1$
