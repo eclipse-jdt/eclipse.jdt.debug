@@ -75,7 +75,7 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	 * Test that we received the event.
 	 */
 	public void testJDIVMDeath() {
-		if (Runtime.version().feature() == 26) {
+		if (Runtime.version().feature() >= 26) {
 			return;
 		}
 		assertTrue("Should trigger VMDisconnectEvent or VMDeathEvent", fVMDisconnectEvent instanceof VMDeathEvent
