@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -976,6 +977,51 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	public void breakpointsRemoved(
 		IBreakpoint[] breakpoints,
 		IMarkerDelta[] deltas) {
+		List<IJavaBreakpoint> waitingBreakpoints = Arrays.stream(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()).filter(bp -> {
+			try {
+				return bp instanceof IJavaBreakpoint jBp && jBp.hasDependentBreakpoint();
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+			return false;
+		}).map(IJavaBreakpoint.class::cast).toList();
+
+		for (IBreakpoint breakpoint : breakpoints) {
+			if (breakpoint instanceof IJavaBreakpoint toBeRemovedBp) {
+				try {
+					if (toBeRemovedBp.isDependencyBreakpoint()) {
+						for (IJavaBreakpoint javaBp : waitingBreakpoints) {
+							IJavaBreakpoint depended = javaBp.getDependentBreakpoint();
+							if (depended != null && depended.equals(toBeRemovedBp)) {
+								javaBp.removeDependentBreakpoint();
+							}
+						}
+					}
+					IJavaBreakpoint depended = toBeRemovedBp.getDependentBreakpoint();
+					if (!isReferencedByOtherBreakpoint(depended, waitingBreakpoints)) {
+						depended.setDependencyBreakpoint(false);
+						if (depended.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+							depended.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+						}
+					}
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		}
+
+	}
+
+	private boolean isReferencedByOtherBreakpoint(IJavaBreakpoint currentDependencyBp, List<IJavaBreakpoint> bkps) throws CoreException {
+		for (IJavaBreakpoint breakpoint : bkps) {
+			if (!breakpoint.equals(currentDependencyBp)) {
+				IJavaBreakpoint dependencyBp = breakpoint.getDependentBreakpoint();
+				if (dependencyBp != null && dependencyBp.equals(currentDependencyBp)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
     /* (non-Javadoc)
