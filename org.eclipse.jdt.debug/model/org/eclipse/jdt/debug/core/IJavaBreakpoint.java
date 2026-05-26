@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -289,5 +289,104 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * @since 3.23
 	 */
 	public void setDisableOnHit(boolean disable);
+
+	/**
+	 * Returns whether this breakpoint is configured to wait for another breakpoint to be hit before it can suspend execution.
+	 *
+	 * @return whether this breakpoint is waiting for another breakpoint
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public boolean hasDependentBreakpoint() throws CoreException;
+
+	/**
+	 * Sets whether this breakpoint acts as a dependency breakpoint for other breakpoints.
+	 *
+	 * @param isWaiting
+	 *            whether this breakpoint is marked as a dependent breakpoint by other breakpoints
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public void setDependencyBreakpoint(boolean isDependency) throws CoreException;
+
+	/**
+	 * Returns whether this breakpoint acts as a dependency breakpoint for any other breakpoints.
+	 *
+	 * @return whether this breakpoint is a dependency breakpoint
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public boolean isDependencyBreakpoint() throws CoreException;
+
+	/**
+	 * Returns whether this breakpoint has been marked as hit for dependency breakpoint processing.
+	 *
+	 * @return whether this breakpoint has been marked as hit
+	 * @since 3.27
+	 */
+	public boolean hasBeenHit();
+
+	/**
+	 * Sets whether this breakpoint has been marked as hit for dependency breakpoint processing.
+	 *
+	 * @param hasHit
+	 *            whether this breakpoint has been marked as hit
+	 * @since 3.27
+	 */
+	public void setHit(boolean hasHit);
+
+	/**
+	 * Sets the breakpoint that must be hit before this breakpoint is allowed to suspend execution.
+	 *
+	 * @param bp
+	 *            the dependency breakpoint
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public void setDependentBreakpoint(IJavaBreakpoint bp) throws CoreException;
+
+	/**
+	 * Removes dependent breakpoints
+	 *
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public void removeDependentBreakpoint() throws CoreException;
+
+	/**
+	 * Returns the breakpoint that must be hit before this breakpoint is allowed to suspend execution.
+	 *
+	 * @return the dependency breakpoint, or {@code null} if none
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public IJavaBreakpoint getDependentBreakpoint() throws CoreException;
+
+	/**
+	 * Returns whether breakpoint dependency handling is enabled for this breakpoint.
+	 *
+	 * @return whether breakpoint dependency handling is enabled
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public boolean isDependencyEnabled() throws CoreException;
+
+	/**
+	 * Sets whether breakpoint dependency handling is enabled for this breakpoint.
+	 *
+	 * @param enabled
+	 *            whether breakpoint dependency handling is enabled
+	 * @throws CoreException
+	 *             if unable to access the underlying marker
+	 * @since 3.27
+	 */
+	public void setDependencyEnabled(boolean enabled) throws CoreException;
 
 }

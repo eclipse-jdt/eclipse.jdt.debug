@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2025 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,17 +13,26 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.ui.breakpoints.JavaBreakpointConditionEditor;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -35,7 +44,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * @since 3.6
@@ -50,6 +62,9 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	private Button fSuspendVM;
 	protected Button fTriggerPointButton;
 	protected Button fDisableOnHit;
+	protected Button waitForBreakpoint;
+	protected Link dependentBreakpoint;
+	private IDebugModelPresentation fPresentation;
 
 	private final JavaBreakpointConditionEditor javaBpConditionEditor;
 
@@ -108,6 +123,16 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fTriggerPointButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
+				IJavaBreakpoint breakpoint = getBreakpoint();
+				if (breakpoint != null) {
+					try {
+						if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+							fResumeOnHit.setSelection(true);
+						}
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+					}
+				}
 				boolean resumeOnHitEnabled = fResumeOnHit.isEnabled();
 				if (resumeOnHitEnabled) {
 					fResumeOnHit.setSelection(false);
@@ -160,6 +185,13 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	}
 
 	protected Control createStandardControls(Composite parent) {
+		fPresentation = DebugUITools.newDebugModelPresentation();
+		parent.addDisposeListener(e -> {
+			if (fPresentation != null) {
+				fPresentation.dispose();
+				fPresentation = null;
+			}
+		});
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
 		fDisableOnHit = SWTFactory.createCheckButton(comp, PropertyPageMessages.BreakpointDisableOnHit, null, false, 2);
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 4, 1, 0, 0, 0);
@@ -192,6 +224,55 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fSuspendThread.setLayoutData(new GridData());
 		fSuspendVM = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointPage_8), 1);
 		fSuspendVM.setLayoutData(new GridData());
+		Composite composite2 = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		composite2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		waitForBreakpoint = SWTFactory.createCheckButton(composite2, PropertyPageMessages.WaitForBreakpointLabel, null, false, 1);
+
+		Composite dependentComp = SWTFactory.createComposite(composite2, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		dependentComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		dependentBreakpoint = new Link(dependentComp, SWT.NONE);
+		dependentBreakpoint.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		dependentBreakpoint.setText(PropertyPageMessages.WaitForBreakpointDefaultSelection);
+		dependentBreakpoint.setEnabled(false);
+
+		waitForBreakpoint.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dependentBreakpoint.setEnabled(waitForBreakpoint.getSelection());
+				if (waitForBreakpoint.getSelection()) {
+					IJavaBreakpoint breakpoint = getBreakpoint();
+					try {
+						if (breakpoint != null && !breakpoint.hasDependentBreakpoint()) {
+							openBreakpointSelectionDialog(dependentBreakpoint.getShell());
+						} else {
+							breakpoint.setDependencyEnabled(true);
+						}
+					} catch (CoreException e1) {
+						JDIDebugUIPlugin.log(e1);
+					}
+				} else {
+					IJavaBreakpoint breakpoint = getBreakpoint();
+					try {
+						if (breakpoint != null && breakpoint.isDependencyEnabled()) {
+							breakpoint.setDependencyEnabled(false);
+						}
+					} catch (CoreException e1) {
+						JDIDebugUIPlugin.log(e1);
+					}
+				}
+			}
+		});
+
+		dependentBreakpoint.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				openBreakpointSelectionDialog(dependentBreakpoint.getShell());
+			}
+		});
+
 		fSuspendThread.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,6 +303,117 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			}
 		});
 		return composite;
+	}
+
+	private void openBreakpointSelectionDialog(Shell shell) {
+		IBreakpoint[] bps = Arrays.stream(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()).filter(bp -> bp instanceof IJavaBreakpoint).filter(bp -> !bp.equals(fBreakpoint)).toArray(IBreakpoint[]::new);
+
+		BreakpointSelectionDialog dialog = new BreakpointSelectionDialog(shell, new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Breakpoint breakpoint) {
+					return fPresentation.getText(breakpoint);
+				}
+				return fPresentation.getText(element);
+			}
+		});
+
+		dialog.setTitle(PropertyPageMessages.WaitForBreakpointSelectionTitle);
+		dialog.setMessage(PropertyPageMessages.WaitForBreakpointSelectionSearch);
+		dialog.setElements(bps);
+		dialog.setMultipleSelection(false);
+
+		int result = dialog.open();
+
+		if (result == IDialogConstants.OK_ID) {
+
+			if (dialog.getFirstResult() instanceof IJavaBreakpoint breakpoint) {
+
+				try {
+					fBreakpoint.setDependentBreakpoint(breakpoint);
+					breakpoint.setDependencyBreakpoint(true);
+					if (dialog.isChecked()) {
+						breakpoint.setSuspendPolicy(IJavaBreakpoint.RESUME_ON_HIT);
+					}
+					dependentBreakpoint.setText(NLS.bind(PropertyPageMessages.WaitForBreakpointSelection, fPresentation.getText(breakpoint)));
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+
+			}
+		}
+
+		if (result == IDialogConstants.CANCEL_ID) {
+			try {
+				fBreakpoint.setDependencyEnabled(fBreakpoint.isDependencyEnabled());
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+
+		if (result == IDialogConstants.CLIENT_ID) {
+
+			if (getBreakpoint() instanceof IJavaBreakpoint breakpoint) {
+				try {
+					if (breakpoint.hasDependentBreakpoint()) {
+						IJavaBreakpoint existingDependentBp = breakpoint.getDependentBreakpoint();
+						existingDependentBp.setDependencyBreakpoint(false);
+						breakpoint.removeDependentBreakpoint();
+						breakpoint.setDependencyEnabled(false);
+						dependentBreakpoint.setText(PropertyPageMessages.WaitForBreakpointDefaultSelection);
+						waitForBreakpoint.setSelection(false);
+						dependentBreakpoint.setEnabled(false);
+					}
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+
+			}
+		}
+	}
+
+	private static final class BreakpointSelectionDialog extends ElementListSelectionDialog {
+
+		private Button check;
+		private boolean checked;
+
+		public BreakpointSelectionDialog(Shell shell, LabelProvider labelProvider) {
+			super(shell, labelProvider);
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Control area = super.createDialogArea(parent);
+			check = new Button((Composite) area, SWT.CHECK);
+			check.setText(PropertyPageMessages.WaitForBreakpointSelectionResumeThread);
+			return area;
+		}
+
+		@Override
+		protected void createButtonsForButtonBar(Composite parent) {
+			createButton(parent, IDialogConstants.CLIENT_ID, PropertyPageMessages.WaitForBreakpointSelectionRemove, false);
+			super.createButtonsForButtonBar(parent);
+		}
+
+		@Override
+		protected void buttonPressed(int buttonId) {
+			if (buttonId == IDialogConstants.CLIENT_ID) {
+				setReturnCode(IDialogConstants.CLIENT_ID);
+				close();
+				return;
+			}
+			super.buttonPressed(buttonId);
+		}
+
+		@Override
+		protected void okPressed() {
+			checked = check.getSelection();
+			super.okPressed();
+		}
+
+		public boolean isChecked() {
+			return checked;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -263,6 +455,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		boolean suspendThread = true;
 		boolean resumeOnHit = false;
 		boolean isDisableOnHit = false;
+		boolean hasDependency = false;
+		boolean isWaitingEnabled = false;
+		boolean enableContinueOnHit = false;
+		String dependentBreakpointLabel = PropertyPageMessages.WaitForBreakpointDefaultSelection;
 		if (breakpoint != null) {
 			enabled = true;
 			int hitCount = breakpoint.getHitCount();
@@ -270,9 +466,20 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 				text = Integer.toString(hitCount);
 				hasHitCount = true;
 			}
-			suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
+			suspendThread = breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 			resumeOnHit = breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT && isTriggerPoint();
 			isDisableOnHit = breakpoint.isDisableOnHit();
+			isWaitingEnabled = breakpoint.isDependencyEnabled();
+			hasDependency = breakpoint.hasDependentBreakpoint();
+			if (hasDependency) {
+				IJavaBreakpoint depend = breakpoint.getDependentBreakpoint();
+				if (depend != null) {
+					dependentBreakpointLabel = NLS.bind(PropertyPageMessages.WaitForBreakpointSelection, fPresentation.getText(breakpoint.getDependentBreakpoint()));
+				}
+			}
+			if (breakpoint.isDependencyBreakpoint() && breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+				enableContinueOnHit = true;
+			}
 		}
 		fHitCountButton.setEnabled(enabled);
 		fHitCountButton.setSelection(enabled && hasHitCount);
@@ -281,13 +488,17 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fSuspendThread.setEnabled(enabled);
 		fSuspendVM.setEnabled(enabled);
 		fResumeOnHit.setEnabled(isTriggerPoint());
-		fResumeOnHit.setSelection(resumeOnHit);
+		fResumeOnHit.setSelection(resumeOnHit || enableContinueOnHit);
 		fSuspendThread.setSelection(suspendThread && !resumeOnHit);
 		fSuspendVM.setSelection(!suspendThread && !resumeOnHit);
 		fTriggerPointButton.setEnabled(enabled);
 		fTriggerPointButton.setSelection(isTriggerPoint());
 		fDisableOnHit.setEnabled(!isTriggerPoint() && enabled);
 		fDisableOnHit.setSelection(isDisableOnHit);
+		waitForBreakpoint.setEnabled(enabled);
+		waitForBreakpoint.setSelection(isWaitingEnabled);
+		dependentBreakpoint.setText(dependentBreakpointLabel);
+		dependentBreakpoint.setEnabled(waitForBreakpoint.getSelection());
 		setDirty(false);
 	}
 

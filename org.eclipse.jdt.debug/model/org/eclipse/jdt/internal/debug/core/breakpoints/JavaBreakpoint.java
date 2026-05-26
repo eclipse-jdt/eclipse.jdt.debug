@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -178,6 +179,32 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			EXPIRED, ENABLED };
 
 	private boolean disableOnHit;
+
+	private IJavaBreakpoint dependedBreakpoint;
+
+	private volatile boolean hasHit;
+
+	/**
+	 * Breakpoint attribute storing whether this breakpoint acts as a dependency breakpoint (value
+	 * <code>"org.eclipse.jdt.debug.core.isDependencyBreakpoint"</code>). This attribute is stored as a <code>boolean</code>.
+	 *
+	 */
+	protected static final String IS_DEPENDENCY_BREAKPOINT = "org.eclipse.jdt.debug.core.isDependencyBreakpoint"; //$NON-NLS-1$
+
+	/**
+	 * Breakpoint attribute storing whether a dependent breakpoint is configured and enabled for this breakpoint (value
+	 * <code>"org.eclipse.jdt.debug.core.dependentBreakpointEnabled"</code>). This attribute is stored as a <code>boolean</code>.
+	 *
+	 */
+	protected static final String DEPENDENT_BREAKPOINT_ENABLED = "org.eclipse.jdt.debug.core.dependentBreakpointEnabled"; //$NON-NLS-1$
+
+	/**
+	 * Breakpoint attribute storing the marker identifier of the dependent breakpoint associated with this breakpoint (value
+	 * <code>"org.eclipse.jdt.debug.core.dependentBreakpoint"</code>). This attribute is stored as a <code>String</code> containing the marker
+	 * identifier of the dependent breakpoint.
+	 *
+	 */
+	protected static final String DEPENDENT_BREAKPOINT = "org.eclipse.jdt.debug.core.dependentBreakpoint"; //$NON-NLS-1$
 
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap<>(1);
@@ -399,6 +426,110 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		expireHitCount(event);
 		disableTriggerPoint(event);
 		return !suspend(thread, suspendVote); // Resume if suspend fails
+	}
+
+	@Override
+	public boolean hasBeenHit() {
+		return hasHit;
+	}
+
+
+	@Override
+	public void setHit(boolean hasHit) {
+		this.hasHit = hasHit;
+	}
+
+	@Override
+	public void setDependencyBreakpoint(boolean isDependency) throws CoreException {
+		setAttribute(IS_DEPENDENCY_BREAKPOINT, isDependency);
+	}
+
+	@Override
+	public boolean isDependencyBreakpoint() throws CoreException {
+		return ensureMarker().getAttribute(IS_DEPENDENCY_BREAKPOINT, false);
+	}
+
+	@Override
+	public void setDependentBreakpoint(IJavaBreakpoint waitingBp) throws CoreException {
+		IJavaBreakpoint currentDependend = getDependentBreakpoint();
+		if (currentDependend == null) {
+			setAttribute(DEPENDENT_BREAKPOINT, String.valueOf(waitingBp.getMarker().getId()));
+			dependedBreakpoint = waitingBp;
+			setDependencyEnabled(true);
+			return;
+		}
+		if (!currentDependend.equals(waitingBp)) {
+			setAttribute(DEPENDENT_BREAKPOINT, String.valueOf(waitingBp.getMarker().getId()));
+			currentDependend.setDependencyBreakpoint(false);
+			dependedBreakpoint = waitingBp;
+			setDependencyEnabled(true);
+		}
+	}
+
+	@Override
+	public void removeDependentBreakpoint() throws CoreException {
+		dependedBreakpoint = null;
+		setAttribute(DEPENDENT_BREAKPOINT, null);
+	}
+
+	@Override
+	public IJavaBreakpoint getDependentBreakpoint() throws CoreException {
+		String value = ensureMarker().getAttribute(DEPENDENT_BREAKPOINT, null);
+		if (value != null && dependedBreakpoint == null) {
+			long markerId;
+			try {
+				markerId = Long.parseLong(value);
+			} catch (NumberFormatException nfe) {
+				setAttribute(DEPENDENT_BREAKPOINT, null);
+				setDependencyEnabled(false);
+				return null;
+			}
+			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+
+			for (IBreakpoint bp : breakpoints) {
+				if (bp instanceof IJavaBreakpoint javaBp && javaBp.getMarker() != null && javaBp.getMarker().getId() == markerId) {
+					dependedBreakpoint = javaBp;
+					break;
+				}
+			}
+			if (dependedBreakpoint == null) {
+				// Stale reference (breakpoint removed) - clear persisted dependency.
+				setAttribute(DEPENDENT_BREAKPOINT, null);
+				setDependencyEnabled(false);
+			}
+		}
+		return dependedBreakpoint;
+	}
+
+	@Override
+	public boolean hasDependentBreakpoint() throws CoreException {
+		if (dependedBreakpoint == null) {
+			String id = ensureMarker().getAttribute(DEPENDENT_BREAKPOINT, null);
+			if (id == null) {
+				return false;
+			}
+			// Try to resolve the breakpoint; this also clears stale ids.
+			getDependentBreakpoint();
+			if (dependedBreakpoint == null) {
+				return false;
+			}
+		}
+		if (!dependedBreakpoint.isRegistered()) { // stale breakpoints.
+			removeDependentBreakpoint();
+			setDependencyEnabled(false);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean isDependencyEnabled() throws CoreException {
+		return ensureMarker().getAttribute(DEPENDENT_BREAKPOINT_ENABLED, false);
+	}
+
+	@Override
+	public void setDependencyEnabled(boolean enabled) throws CoreException {
+		setAttribute(DEPENDENT_BREAKPOINT_ENABLED, enabled);
 	}
 
 	/**
@@ -1515,4 +1646,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void setDisableOnHit(boolean disable) {
 		disableOnHit = disable;
 	}
+
+
 }
