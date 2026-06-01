@@ -17,6 +17,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
+import org.eclipse.swt.widgets.Display;
 
 public class InstanceMainMethodsTests extends AbstractDebugTest {
 
@@ -41,8 +43,7 @@ public class InstanceMainMethodsTests extends AbstractDebugTest {
 				terminateAndRemove(target);
 			}
 		}
-		assertNotNull("Missing VM process.", process);
-		assertEquals("Process finished with error code", 0, process.getExitValue());
+		waitForExit(process, 10_000L);
 	}
 
 	public void testDefaultMainWithoutArgs() throws Exception {
@@ -57,7 +58,18 @@ public class InstanceMainMethodsTests extends AbstractDebugTest {
 				terminateAndRemove(target);
 			}
 		}
+		waitForExit(process, 10_000L);
+	}
+
+	private static void waitForExit(IProcess process, long timeoutMs) throws Exception {
 		assertNotNull("Missing VM process.", process);
+		long start = System.currentTimeMillis();
+		while (!process.isTerminated() && System.currentTimeMillis() - start < timeoutMs) {
+			if (Display.getCurrent() != null) {
+				TestUtil.runEventLoop();
+			}
+			Thread.sleep(50L);
+		}
 		assertEquals("Process finished with error code", 0, process.getExitValue());
 	}
 
