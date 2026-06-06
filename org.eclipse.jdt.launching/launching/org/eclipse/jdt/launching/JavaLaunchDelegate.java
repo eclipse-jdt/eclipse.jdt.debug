@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -162,8 +163,9 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 				return;
 			}
 			// stop in main
-			prepareStopInMain(configuration);
-
+			if (mode == ILaunchManager.DEBUG_MODE) {
+				prepareStopInMain(configuration);
+			}
 			// done the verification phase
 			monitor.worked(1);
 
