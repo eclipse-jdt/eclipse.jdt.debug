@@ -64,7 +64,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 * @return the document backingthis console
 	 */
 	public static IDocument getDocument() {
-		return fConsole.getDocument();
+		return fConsole != null ? fConsole.getDocument() : null;
 	}
 
 	/**
