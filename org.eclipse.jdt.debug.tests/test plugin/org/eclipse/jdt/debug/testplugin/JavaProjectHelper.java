@@ -8,6 +8,10 @@
  *
  *  SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -70,6 +74,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_24_EE_NAME = "JavaSE-24";
 	public static final String JAVA_SE_25_EE_NAME = "JavaSE-25";
 	public static final String JAVA_SE_26_EE_NAME = "JavaSE-26";
+	public static final String JAVA_SE_27_EE_NAME = "JavaSE-27";
 
 	/**
 	 * path to the test src for 'testprograms'
@@ -117,6 +122,11 @@ public class JavaProjectHelper {
 	 * path to the 26 test source
 	 */
 	public static final IPath TEST_26_SRC_DIR = new Path("java26");
+
+	/**
+	 * path to the 27 test source
+	 */
+	public static final IPath TEST_27_SRC_DIR = new Path("java27");
 
 	/**
 	 * path to the multirelease test source
@@ -236,6 +246,15 @@ public class JavaProjectHelper {
 	 */
 	public static boolean isJava26_Compatible() {
 		return isCompatible(26);
+	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 27
+	 *
+	 * @return <code>true</code> if a Java 27 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava27_Compatible() {
+		return isCompatible(27);
 	}
 
 	/**
