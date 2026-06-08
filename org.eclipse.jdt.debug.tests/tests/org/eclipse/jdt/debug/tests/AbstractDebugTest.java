@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -195,6 +199,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String TWENTYFOUR_PROJECT_NAME = "Two_Four";
 	public static final String TWENTYFIVE_PROJECT_NAME = "Two_Five";
 	public static final String TWENTYSIX_PROJECT_NAME = "Two_Six";
+	public static final String TWENTYSEVEN_PROJECT_NAME = "Two_Seven";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 	public static final String MR_PROJECT_NAME = "MR";
 	public static final String CLONE_SUFFIX = "Clone";
@@ -260,6 +265,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded24 = false;
 	private static boolean loaded25 = false;
 	private static boolean loaded26 = false;
+	private static boolean loaded27 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -822,6 +828,37 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, TWENTYSIX_PROJECT_NAME, jp);
 		}
 	}
+
+	synchronized void assert27Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
+		try {
+			if (!loaded27) {
+				jp = createProject(TWENTYSEVEN_PROJECT_NAME, JavaProjectHelper.TEST_27_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_27_EE_NAME, false);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.DISABLED);
+				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_27);
+				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_27);
+				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_27);
+				cfgs.add(createLaunchConfiguration(jp, "Main1"));
+				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				loaded27 = true;
+				waitForBuild();
+				assertNoErrorMarkersExist(jp.getProject());
+			}
+		} catch (Exception e) {
+			try {
+				if (jp != null) {
+					jp.getProject().delete(true, true, null);
+					for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+				}
+			} catch (CoreException ce) {
+				// ignore
+			}
+			handleProjectCreationException(e, TWENTYSEVEN_PROJECT_NAME, jp);
+		}
+	}
 	/**
 	 * Creates the 'BoundJRE' project used for the JRE testing
 	 */
@@ -1166,6 +1203,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get26Project() {
 		assert26Project();
 		return getJavaProject(TWENTYSIX_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'Two_Seven' project, used for Java 27 tests.
+	 *
+	 * @return the test project
+	 */
+	protected IJavaProject get27Project() {
+		assert27Project();
+		return getJavaProject(TWENTYSEVEN_PROJECT_NAME);
 	}
 
 	/**
