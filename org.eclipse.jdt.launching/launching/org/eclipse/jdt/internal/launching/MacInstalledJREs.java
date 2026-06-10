@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,6 +29,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.jdt.internal.launching.macosx.MacOSXVMInstallType;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -159,7 +160,11 @@ public class MacInstalledJREs {
 			if (result instanceof Object[] maps) {
 				smonitor.setWorkRemaining(maps.length);
 				Set<VMStandin> jres = new LinkedHashSet<>(); // prevent duplicates
-				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType("org.eclipse.jdt.internal.launching.macosx.MacOSXType"); //$NON-NLS-1$
+				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType(MacOSXVMInstallType.ID_MACOSX_VM_TYPE);
+				if (mactype == null) {
+					// Consider all external contributions even though the default implementation is now in this Plug-in
+					mactype = new MacOSXVMInstallType();
+				}
 				if(mactype != null) {
 					for (Object entry : maps) {
 						if(smonitor.isCanceled()) {
