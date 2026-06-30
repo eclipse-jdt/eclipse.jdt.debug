@@ -52,6 +52,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -650,7 +651,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	private static Predicate<IJavaStackFrame> forField(IField field) {
 		return frame -> {
 			try {
-				return frame.getThis() != null && frame.getThis().getJavaType().getName().equals(field.getDeclaringType().getFullyQualifiedName())
+				return frame.getThis() != null && isInstanceOfDeclaringType(frame.getThis(), field)
 						&& containsVariable(frame, field.getElementName());
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e);
@@ -658,6 +659,18 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 			}
 		};
 
+	}
+
+	private static boolean isInstanceOfDeclaringType(IJavaObject javaObject, IField field) throws DebugException {
+		String declaringTypeName = field.getDeclaringType().getFullyQualifiedName();
+		IJavaType type = javaObject.getJavaType();
+		while (type instanceof IJavaClassType classType) {
+			if (declaringTypeName.equals(classType.getName())) {
+				return true;
+			}
+			type = classType.getSuperclass();
+		}
+		return false;
 	}
 
 }
