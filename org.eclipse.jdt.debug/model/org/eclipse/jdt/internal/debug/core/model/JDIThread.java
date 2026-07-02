@@ -114,6 +114,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
 
 	/**
+	 * Constant for the name of the {@code RMI Runtime} thread group. See internal JDK method {@code sun.rmi.runtime.RuntimeUtil.newUserThread()},
+	 * which uses: {@code sun.rmi.runtime.RuntimeUtil.userThreadGroup}
+	 */
+	private static final String RMI_RUNTIME_THREAD_GROUP = "RMI Runtime"; //$NON-NLS-1$
+
+	/**
 	 * @since 3.5
 	 */
 	public static final int RESUME_QUIET = 500;
@@ -565,7 +571,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				// #targetRequestFailed will throw an exception
 				return;
 			}
-			if (tgn != null && tgn.equals(MAIN_THREAD_GROUP)) {
+			if (MAIN_THREAD_GROUP.equals(tgn) || RMI_RUNTIME_THREAD_GROUP.equals(tgn)) {
 				fIsSystemThread = false;
 				break;
 			}
