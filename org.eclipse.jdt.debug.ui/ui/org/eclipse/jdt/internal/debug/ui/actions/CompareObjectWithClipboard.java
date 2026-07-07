@@ -26,6 +26,9 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
@@ -37,8 +40,10 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -53,39 +58,94 @@ public class CompareObjectWithClipboard extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
+
+		Object clpbrd = getClipboard();
+		if (clpbrd == null) {
+			MessageDialog.openWarning(DebugUIPlugin.getShell(), "Comparison Failed", "Invalid clipboard content"); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+
 		if (selection.getFirstElement() instanceof IJavaVariable variable) {
 			try {
-				Object clpbrd = getClipboard();
-				if (clpbrd != null) {
-					String cb = clpbrd.toString();
-					String variableName = variable.getName();
-					if (variable.getValue() instanceof IJavaObject javaObject && !(javaObject instanceof JDINullValue)) {
-						if (javaObject.getJavaType() instanceof IJavaArrayType) {
-							StringBuilder arrBuilder = new StringBuilder("["); //$NON-NLS-1$
-							for (IVariable variableTemp : variable.getValue().getVariables()) {
-								arrBuilder.append(variableTemp.getValue() + ", "); //$NON-NLS-1$
-							}
-							arrBuilder.delete(arrBuilder.length() - 2, arrBuilder.length());
-							arrBuilder.append("]"); //$NON-NLS-1$
-							compareVariable(arrBuilder.toString(), variableName, cb);
-							return;
-						}
-						JDIStackFrame frame = (JDIStackFrame) DebugUITools.getDebugContext();
-						IJavaThread thread = (IJavaThread) frame.getThread();
-						IJavaValue stringVal = javaObject.sendMessage("toString", "()Ljava/lang/String;", null, thread, false); //$NON-NLS-1$//$NON-NLS-2$
-						String variableValue = stringVal.getValueString();
-						compareVariable(variableValue, variableName, cb);
-					}
-					if (variable.getValue() instanceof JDIPrimitiveValue javaPrimitive) {
-						compareVariable(javaPrimitive.toString(), variableName, cb);
-					}
-				} else {
-					MessageDialog.openWarning(DebugUIPlugin.getShell(), "Variable Value Comparision", "Invalid clipboard content"); //$NON-NLS-1$ //$NON-NLS-2$
+				handleCompareForValue(variable.getName(), clpbrd.toString(), variable.getValue());
+				return;
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+
+		if (selection.getFirstElement() instanceof IExpression expression) {
+			try {
+				String cb = clpbrd.toString();
+				String title = "Selected Expression"; //$NON-NLS-1$
+				if (expression instanceof JavaInspectExpression) {
+					handleCompareForValue(title, cb, expression.getValue());
+					return;
+				}
+				IValue expValue = expression.getValue();
+				if (expValue != null) {
+					compareVariable(expValue.getValueString(), title, cb);
 				}
 			} catch (DebugException e) {
 				DebugUIPlugin.log(e);
 			}
 		}
+	}
+
+	/**
+	 * Resolves the string representation of <code>value</code> and opens the compare editor.
+	 *
+	 * @param title
+	 *            label for the left side of the compare editor
+	 * @param clipboard
+	 *            active clipboard content to compare against
+	 * @param value
+	 *            value of the selected variable or expression
+	 * @throws DebugException
+	 *             if evaluating the value or retrieving array elements fails
+	 */
+	private void handleCompareForValue(String title, String clipboard, IValue value) throws DebugException {
+
+		if (value instanceof IJavaObject javaObject && !(javaObject instanceof JDINullValue)) {
+			if (javaObject.getJavaType() instanceof IJavaArrayType) {
+				handleCompareForArrayTypes(title, clipboard, value.getVariables());
+				return;
+			}
+			if (!(DebugUITools.getDebugContext() instanceof JDIStackFrame frame)) {
+				return;
+			}
+			IJavaThread thread = (IJavaThread) frame.getThread();
+			IJavaValue stringVal = javaObject.sendMessage("toString", "()Ljava/lang/String;", null, thread, false); //$NON-NLS-1$//$NON-NLS-2$
+			compareVariable(stringVal.getValueString(), title, clipboard);
+		} else if (value instanceof JDIPrimitiveValue javaPrimitive) {
+			compareVariable(javaPrimitive.getValueString(), title, clipboard);
+		}
+	}
+
+	/**
+	 * Builds a string representation of the given array variables and opens the compare editor.
+	 *
+	 * @param title
+	 *            Label shown on the left side of the compare editor (variable name or expression text)
+	 * @param clipboard
+	 *            Active clipboard content to compare against
+	 * @param variables
+	 *            The array elements as <code>IVariable[]</code>, obtained from the array value
+	 * @throws DebugException
+	 *             if retrieving a variable's value fails
+	 */
+	private void handleCompareForArrayTypes(String title, String clipboard, IVariable[] variables) throws DebugException {
+		if (variables.length == 0) {
+			compareVariable("[]", title, clipboard); //$NON-NLS-1$
+			return;
+		}
+		StringBuilder arrBuilder = new StringBuilder("["); //$NON-NLS-1$
+		for (IVariable variableTemp : variables) {
+			arrBuilder.append(variableTemp.getValue() + ", "); //$NON-NLS-1$
+		}
+		arrBuilder.delete(arrBuilder.length() - 2, arrBuilder.length());
+		arrBuilder.append("]"); //$NON-NLS-1$
+		compareVariable(arrBuilder.toString(), title, clipboard);
 	}
 
 	/**
@@ -136,7 +196,7 @@ public class CompareObjectWithClipboard extends ObjectActionDelegate {
 		config.setLeftLabel(variableName);
 		config.setRightLabel("Contents in clipboard"); //$NON-NLS-1$
 		config.setLeftEditable(false);
-		config.setLeftEditable(false);
+		config.setRightEditable(false);
 		CompareEditorInput compareInput = new CompareEditorInput(config) {
 			@Override
 			protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -160,6 +220,26 @@ public class CompareObjectWithClipboard extends ObjectActionDelegate {
 			return clip.getContents(TextTransfer.getInstance());
 		} finally {
 			clip.dispose();
+		}
+	}
+
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (selection instanceof IStructuredSelection ss) {
+			if (ss.getFirstElement() instanceof IExpression expression) {
+				if (expression.getValue() == null) {
+					action.setEnabled(false);
+					return;
+				}
+				IDebugTarget target = expression.getDebugTarget();
+				if (target == null) {
+					action.setEnabled(false);
+					return;
+				}
+				if (target.isTerminated() || target.isDisconnected()) {
+					action.setEnabled(false);
+				}
+			}
 		}
 	}
 

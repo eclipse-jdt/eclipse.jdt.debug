@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2025 IBM Corporation and others.
+     Copyright (c) 2005, 2026 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -1587,6 +1587,19 @@
                </not>
             </and>
          </visibility>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IExpression"
+            id="org.eclipse.debug.WatchExpressionActions.Compare">
+         <action
+               label="%CompareExpressionClipboard.label"
+               helpContextId="compare_expressions_clipboard_id"
+               class="org.eclipse.jdt.internal.debug.ui.actions.CompareObjectWithClipboard"
+               tooltip="%CompareExpressionClipboard.tooltip"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.watchExpressionActions.CompareWithClipboard">
+         </action>
       </objectContribution>
       <objectContribution
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
