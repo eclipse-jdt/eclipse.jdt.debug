@@ -30,6 +30,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsWithFileClass;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsWithGenerics;
 import org.eclipse.jdt.debug.tests.breakpoints.DeferredBreakpointTests;
+import org.eclipse.jdt.debug.tests.breakpoints.DependencyBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.DisableOnHitTest;
 import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
@@ -417,6 +418,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConditionalBreakpointsWithFileClass.class));
 		addTest(new TestSuite(CompareObjectsTest.class));
 		addTest(new TestSuite(DisableOnHitTest.class));
+		addTest(new TestSuite(DependencyBreakpointsTests.class));
 
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));

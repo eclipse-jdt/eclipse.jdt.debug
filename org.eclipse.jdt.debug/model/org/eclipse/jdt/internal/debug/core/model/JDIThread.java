@@ -1504,6 +1504,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		try {
 			if (resumeOnHit && breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+				if (breakpoint.isDependencyBreakpoint()) {
+					breakpoint.setHit(true);
+					breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+				}
+				if (breakpoint.isDependencyEnabled() && breakpoint.hasDependentBreakpoint()) {
+					IJavaBreakpoint dependent = breakpoint.getDependentBreakpoint();
+					if (dependent != null && !dependent.hasBeenHit()) {
+						synchronized (this) {
+							fSuspendVoteInProgress = false;
+							return false;
+						}
+					} else if (dependent != null && dependent.hasBeenHit()) {
+						dependent.setHit(false); // Resets the hit
+					}
+				}
 				synchronized (this) {
 					fSuspendVoteInProgress = false;
 					return false; // Won't be suspended
@@ -1531,6 +1546,24 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		if (suspend) {
 			handleDisableOnHit(breakpoint);
+			try {
+				if (breakpoint.isDependencyBreakpoint()) {
+					breakpoint.setHit(true);
+				}
+				if (breakpoint.isDependencyEnabled() && breakpoint.hasDependentBreakpoint()) {
+					IJavaBreakpoint dependent = breakpoint.getDependentBreakpoint();
+					if (dependent != null && !dependent.hasBeenHit()) {
+						synchronized (this) {
+							fSuspendVoteInProgress = false;
+							return false;
+						}
+					} else if (dependent != null && dependent.hasBeenHit()) {
+						dependent.setHit(false); // Resets the hit
+					}
+				}
+			} catch (CoreException e) {
+				logError(e);
+			}
 		}
 		return suspend;
 	}
