@@ -3395,6 +3395,20 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.debugging"
             parentId="org.eclipse.debug.ui.debugging">
       </context>
+      <context
+            name="%Context.javaConsoleScope.name"
+            description="%Context.javaConsoleScope.description"
+            id="org.eclipse.jdt.debug.ui.javaConsoleScope"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            sequence="M1+M2+F"
+            contextId="org.eclipse.jdt.debug.ui.javaConsoleScope"
+            commandId="org.eclipse.jdt.ui.edit.text.java.format"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.debug.ui.debugModelContextBindings">
