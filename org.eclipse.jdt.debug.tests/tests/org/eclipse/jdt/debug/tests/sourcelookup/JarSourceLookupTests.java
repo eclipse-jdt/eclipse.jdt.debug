@@ -27,6 +27,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -186,6 +187,10 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
 	 */
 	public void testInspectClassFileFromJar() throws Exception {
+		boolean stepFilterPref = DebugUITools.isUseStepFilters();
+		if (stepFilterPref) {
+			DebugUITools.setUseStepFilters(false);
+		}
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		createLineBreakpoint(21, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
@@ -201,6 +206,9 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			 assertEquals("the name of the type being inspected must be a.JarClass", "a.JarClass", value.getReferenceTypeName());
 		}
 		finally {
+			if (!stepFilterPref) {
+				DebugUITools.setUseStepFilters(false);
+			}
 			terminateAndRemove(thread);
 		}
 	}
@@ -211,6 +219,10 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
 	 */
 	public void testShowClassFileFromJar() throws Exception {
+		boolean stepFilterPref = DebugUITools.isUseStepFilters();
+		if (stepFilterPref) {
+			DebugUITools.setUseStepFilters(false);
+		}
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		createLineBreakpoint(21, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
@@ -235,6 +247,9 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 				assertEquals("we should have found a file named a.JarClass.class", "JarClass.class", ((ClassFile) source).getElementName());
 		}
 		finally {
+			if (!stepFilterPref) {
+				DebugUITools.setUseStepFilters(false);
+			}
 			terminateAndRemove(thread);
 		}
 	}

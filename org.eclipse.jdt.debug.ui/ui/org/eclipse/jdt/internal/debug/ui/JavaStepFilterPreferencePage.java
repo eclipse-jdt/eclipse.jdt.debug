@@ -87,7 +87,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 */
 	private void createStepFilterPreferences(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
-		fUseStepFiltersButton = SWTFactory.createCheckButton(container,	DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters,	null, DebugUITools.isUseStepFilters(), 2);
+		fUseStepFiltersButton = SWTFactory.createCheckButton(container, DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters, null, DebugUITools.isUseStepFilters(), 2);
 		fUseStepFiltersButton.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -189,8 +189,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	@Override
 	protected void performDefaults() {
 		// Cannot use DebugUITools.isUseStepFilters() as this not give the default value, no API from Platform to get the default value
-		fUseStepFiltersButton.setSelection(false);
-		setPageEnablement(false);
+		fUseStepFiltersButton.setSelection(true);
+		setPageEnablement(true);
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
 		fFilterStaticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		fFilterConstructorButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
