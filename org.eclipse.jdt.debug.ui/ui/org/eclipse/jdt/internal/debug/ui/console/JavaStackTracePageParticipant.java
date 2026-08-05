@@ -35,6 +35,14 @@ import org.eclipse.ui.part.IPageBookViewPage;
  */
 public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 
+	/**
+	 * Dedicated context activated while a Java stack trace console page is showing, used only to enable the Format command's key binding (see
+	 * jdt.debug.ui's plugin.xml). This is intentionally <b>not</b> the shared "org.eclipse.jdt.ui.javaEditorScope"/"org.eclipse.ui.textEditorScope"
+	 * context: activating those would also make unrelated generic text/java editor key bindings (e.g. the zoom in/out commands) take priority over
+	 * this console's own key bindings while it is showing.
+	 */
+    private static final String JAVA_CONSOLE_SCOPE = "org.eclipse.jdt.debug.ui.javaConsoleScope"; //$NON-NLS-1$
+
     private CloseConsoleAction fCloseAction;
     private FormatStackTraceActionDelegate fFormatAction;
     private IHandlerActivation fHandlerActivation;
@@ -88,8 +96,13 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 
         fHandlerActivation = handlerService.activateHandler("org.eclipse.jdt.ui.edit.text.java.format", formatHandler); //$NON-NLS-1$
 
+        // Activate our own dedicated context (rather than the shared java/text
+        // editor scope) so that the Format command's Ctrl+Shift+F key binding
+        // works here, without dragging in unrelated generic editor key bindings
+        // (e.g. zoom in/out) that would otherwise take priority over this
+        // console's own key bindings while it is showing.
         IContextService contextService = workbench.getAdapter(IContextService.class);
-        fContextActivation = contextService.activateContext("org.eclipse.jdt.ui.javaEditorScope"); //$NON-NLS-1$
+        fContextActivation = contextService.activateContext(JAVA_CONSOLE_SCOPE);
 	}
 
 	/* (non-Javadoc)
