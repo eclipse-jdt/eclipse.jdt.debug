@@ -120,7 +120,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_25, new String[] { JavaSE_24 });
 		mappings.put(JavaSE_26, new String[] { JavaSE_25 });
 		mappings.put(JavaSE_27, new String[] { JavaSE_26 });
-		mappings.put(JavaSE_28, new String[] { JavaSE_28 });
+		mappings.put(JavaSE_28, new String[] { JavaSE_27 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
