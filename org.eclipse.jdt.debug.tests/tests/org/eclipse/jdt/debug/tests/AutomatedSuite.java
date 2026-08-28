@@ -21,6 +21,7 @@ import org.eclipse.jdt.debug.test.stepping.StatementSteppingTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionWithGenerics;
+import org.eclipse.jdt.debug.test.stepping.StepOutOfCodeBlockTests;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
@@ -453,6 +454,7 @@ public class AutomatedSuite extends DebugSuite {
 		}
 		if (JavaProjectHelper.isJava23_Compatible()) {
 			addTest(new TestSuite(VirtualThreadsDebugViewTests.class));
+			addTest(new TestSuite(StepOutOfCodeBlockTests.class));
 		}
 	}
 }
