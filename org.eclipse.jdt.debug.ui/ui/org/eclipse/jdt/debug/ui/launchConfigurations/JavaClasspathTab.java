@@ -275,7 +275,8 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 
 		setLaunchConfiguration(configuration);
 		try {
-			createClasspathModel(configuration);
+			fModel = new ClasspathModel();
+			rebuildClasspathModel(configuration, fModel);
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
 		}
@@ -285,18 +286,26 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		setDirty(false);
 	}
 
-	private void createClasspathModel(ILaunchConfiguration configuration) throws CoreException {
-		fModel= new ClasspathModel();
+	/**
+	 * Creates the model used to display the runtime classpath of the specified
+	 * launch configuration.
+	 *
+	 * @param configuration the launch configuration to model
+	 * @param model the model to rebuild
+	 * @throws CoreException if the runtime classpath cannot be computed
+	 */
+	private void rebuildClasspathModel(ILaunchConfiguration configuration, ClasspathModel model) throws CoreException {
+		model.removeAll();
 		IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < entries.length; i++) {
 			entry= entries[i];
 			switch (entry.getClasspathProperty()) {
 				case IRuntimeClasspathEntry.USER_CLASSES:
-					fModel.addEntry(ClasspathModel.USER, entry);
+					model.addEntry(ClasspathModel.USER, entry);
 					break;
 				default:
-					fModel.addEntry(ClasspathModel.BOOTSTRAP, entry);
+					model.addEntry(ClasspathModel.BOOTSTRAP, entry);
 					break;
 			}
 		}
@@ -396,7 +405,9 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		try {
 			ILaunchConfigurationWorkingCopy wc = configuration.getWorkingCopy();
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-			IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(wc);
+			ClasspathModel wModel = new ClasspathModel();
+			rebuildClasspathModel(wc, wModel);
+			IRuntimeClasspathEntry[] entries = wModel.getAllEntries();
 			if (classpath.length == entries.length) {
 				for (int i = 0; i < entries.length; i++) {
 					IRuntimeClasspathEntry entry = entries[i];
