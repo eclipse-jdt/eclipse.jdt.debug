@@ -15,8 +15,10 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,9 +27,13 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaStackFrame.Category;
 import org.eclipse.jdt.internal.ui.filtertable.Filter;
@@ -35,7 +41,7 @@ import org.eclipse.jdt.internal.ui.filtertable.Filter;
 /**
  * Service to help categorize the stack frames into {@link IJavaStackFrame.Category}, based on the internally stored preferences.
  */
-public class StackFrameCategorizer implements IPreferenceChangeListener {
+public class StackFrameCategorizer implements IPreferenceChangeListener, IDebugEventSetListener {
 	private final static String PREFIX = JDIDebugUIPlugin.getUniqueIdentifier() + ".enable_category_"; //$NON-NLS-1$
 
 	/**
@@ -92,6 +98,35 @@ public class StackFrameCategorizer implements IPreferenceChangeListener {
 			return false;
 		}
 	}
+
+	/**
+	 * The origins of a stack frame's class, derived from where the class's source is located. This is independent of the enable/disable flags, so the
+	 * result can be safely cached per class name.
+	 */
+	private enum SourceOrigin {
+		/** The class comes from a test source folder in the project. */
+		TEST,
+		/** The class comes from a non-test source folder in the project. */
+		PRODUCTION,
+		/** The class comes from a library (jar, class file), not from the project. */
+		LIBRARY,
+		/** The source of the class is unknown. */
+		UNKNOWN;
+	}
+
+	/**
+	 * Cache key for a class's {@link SourceOrigin}. It combines the fully qualified class name with the {@link ISourceLocator} of the launch, so
+	 * concurrent debug sessions with different source containers are not conflated.
+	 */
+	record SourceKey(String refTypeName, ISourceLocator sourceLocator) {
+	}
+
+	/**
+	 * Cache of the {@link SourceOrigin} for a class, keyed by the {@link SourceKey}. The source lookup scans the filesystem recursively and is
+	 * very expensive, so the same class is never looked up more than once per breakpoint suspension. The cache is thread safe as frames may be
+	 * categorized concurrently on worker threads. Entries are only invalidated when the source containers change, see {@link #clearCache()}.
+	 */
+	private final Map<SourceKey, SourceOrigin> sourceOriginCache = new ConcurrentHashMap<>();
 
 	private Filters platform;
 	private Filters custom;
@@ -165,7 +200,7 @@ public class StackFrameCategorizer implements IPreferenceChangeListener {
 			if (isEnabled(CATEGORY_CUSTOM_FILTERED) && custom.match(refTypeName)) {
 				return CATEGORY_CUSTOM_FILTERED;
 			}
-			Category category = categorizeSourceElement(frame);
+			Category category = categorizeSourceElement(frame, refTypeName);
 			// if the category is prod or test, that's the most relevant.
 			if (category == CATEGORY_PRODUCTION || category == CATEGORY_TEST) {
 				return category;
@@ -187,32 +222,66 @@ public class StackFrameCategorizer implements IPreferenceChangeListener {
 
 	/**
 	 * Do the categorization with the help of a {@link org.eclipse.debug.core.model.ISourceLocator} coming from the associated
-	 * {@link org.eclipse.debug.core.ILaunch}. This is how we can find, if the class file is in a jar or comes from a source folder.
+	 * {@link org.eclipse.debug.core.ILaunch}.
 	 */
-	private Category categorizeSourceElement(IJavaStackFrame frame) {
-		var sourceLocator = frame.getLaunch().getSourceLocator();
+	private Category categorizeSourceElement(IJavaStackFrame frame, String refTypeName) {
+		return switch (getSourceOrigin(frame, refTypeName)) {
+		case TEST -> {
+			// a source file from a test classpath entry
+			if (isEnabled(CATEGORY_TEST)) {
+				yield CATEGORY_TEST;
+			}
+			yield isEnabled(CATEGORY_PRODUCTION) ? CATEGORY_PRODUCTION : CATEGORY_UNKNOWN;
+		}
+		case PRODUCTION -> isEnabled(CATEGORY_PRODUCTION) ? CATEGORY_PRODUCTION : CATEGORY_UNKNOWN;
+		case LIBRARY -> isEnabled(CATEGORY_LIBRARY) ? CATEGORY_LIBRARY : CATEGORY_UNKNOWN;
+		case UNKNOWN -> CATEGORY_UNKNOWN;
+		};
+	}
+
+	/**
+	 * Returns the {@link SourceOrigin} of the given frame's class, looking it up from the cache if it was already categorized in this session.
+	 */
+	private SourceOrigin getSourceOrigin(IJavaStackFrame frame, String refTypeName) {
+		ISourceLocator sourceLocator = frame.getLaunch().getSourceLocator();
+		SourceKey key = new SourceKey(refTypeName, sourceLocator);
+		return sourceOriginCache.computeIfAbsent(key, k -> computeSourceOrigin(frame, sourceLocator));
+	}
+
+	/**
+	 * Determine the {@link SourceOrigin} of the given frame's class by locating its source element through the launch's source locator.
+	 */
+	private SourceOrigin computeSourceOrigin(IJavaStackFrame frame, ISourceLocator sourceLocator) {
 		if (sourceLocator == null) {
-			return CATEGORY_UNKNOWN;
+			return SourceOrigin.UNKNOWN;
 		}
 		var source = sourceLocator.getSourceElement(frame);
 		if (source == null) {
-			return CATEGORY_UNKNOWN;
+			return SourceOrigin.UNKNOWN;
 		}
 		if (source instanceof IFile file) {
-			if (isEnabled(CATEGORY_TEST)) {
-				var jproj = JavaCore.create(file.getProject());
-				var cp = jproj.findContainingClasspathEntry(file);
-				if (cp != null && cp.isTest()) {
-					return CATEGORY_TEST;
-				}
-			}
-			if (isEnabled(CATEGORY_PRODUCTION)) {
-				return CATEGORY_PRODUCTION;
-			}
-		} else if (source instanceof IClassFile && isEnabled(CATEGORY_LIBRARY)) {
-			return CATEGORY_LIBRARY;
+			var jproj = JavaCore.create(file.getProject());
+			var cp = jproj.findContainingClasspathEntry(file);
+			return cp != null && cp.isTest() ? SourceOrigin.TEST : SourceOrigin.PRODUCTION;
 		}
-		return CATEGORY_UNKNOWN;
+		if (source instanceof IClassFile) {
+			return SourceOrigin.LIBRARY;
+		}
+		return SourceOrigin.UNKNOWN;
+	}
+
+	/**
+	 * When a debug target terminates, the entries held for its (now stale) source locator are dropped, so the cache does not grow without bound
+	 * across debug sessions.
+	 */
+	@Override
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (DebugEvent event : events) {
+			if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IJavaDebugTarget target) {
+				ISourceLocator locator = target.getLaunch().getSourceLocator();
+				sourceOriginCache.keySet().removeIf(key -> key.sourceLocator() == locator);
+			}
+		}
 	}
 
 	public boolean isEnabled(Category category) {

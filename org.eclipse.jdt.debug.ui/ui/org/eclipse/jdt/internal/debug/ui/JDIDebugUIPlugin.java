@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -472,6 +473,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		IEclipsePreferences instancePreferences = getInstancePreferences();
 		stackFrameCategorizer = new StackFrameCategorizer(Platform.getPreferencesService(), instancePreferences);
 		instancePreferences.addPreferenceChangeListener(stackFrameCategorizer);
+		DebugPlugin.getDefault().addDebugEventListener(stackFrameCategorizer);
 		JDIDebugPlugin.getDefault().setStackFrameCategorizer(stackFrameCategorizer::categorize);
 	}
 
@@ -484,6 +486,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			setShuttingDown(true);
 
 			getInstancePreferences().removePreferenceChangeListener(stackFrameCategorizer);
+			DebugPlugin.getDefault().removeDebugEventListener(stackFrameCategorizer);
 			JDIDebugPlugin.getDefault().setStackFrameCategorizer(null);
 
 			JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
