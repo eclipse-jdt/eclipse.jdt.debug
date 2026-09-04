@@ -81,7 +81,6 @@
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="org.eclipse.ant.core@default:default"/>
         <setEntry value="org.eclipse.ant.launching@default:default"/>
-        <setEntry value="org.eclipse.ant.optional.junit@default:false"/>
         <setEntry value="org.eclipse.ant.tests.core@default:default"/>
         <setEntry value="org.eclipse.ant.tests.ui@default:default"/>
         <setEntry value="org.eclipse.ant.ui@default:default"/>
