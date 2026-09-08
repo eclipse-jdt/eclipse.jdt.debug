@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.hcr;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +39,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
@@ -1144,11 +1145,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		/**
 		 * Answers whether children should be visited.
 		 * <p>
-		 * If the associated resource is a class file which has been changed,
-		 * record it.
+		 * If the associated resource is a class file which has been changed, record it.
+		 *
+		 * @throws CoreException
 		 */
 		@Override
-		public boolean visit(IResourceDelta delta) {
+		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (delta == null
 					|| 0 == (delta.getKind() & IResourceDelta.CHANGED)) {
 				return false;
@@ -1162,66 +1164,66 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 					}
 					if (CLASS_FILE_EXTENSION.equals(resource.getFullPath()
 							.getFileExtension())) {
-						IPath localLocation = resource.getLocation();
-						if (localLocation != null) {
-							String path = localLocation.toOSString();
-							IClassFileReader reader = ToolFactory
-									.createDefaultClassFileReader(
-											path,
-											IClassFileReader.CLASSFILE_ATTRIBUTES);
-							if (reader != null) {
-								// this name is slash-delimited
-								String qualifiedName = new String(
-										reader.getClassName());
-								boolean hasBlockingErrors = false;
-								try {
-									if (!Platform.getPreferencesService().getBoolean(
-											JDIDebugPlugin.getUniqueIdentifier(),
-											JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS,
-											true,
-											null)) {
-										// If the user doesn't want to replace
-										// classfiles containing
-										// compilation errors, get the source
-										// file associated with
-										// the class file and query it for
-										// compilation errors
-										IJavaProject pro = JavaCore
-												.create(resource.getProject());
-										ISourceAttribute sourceAttribute = reader
-												.getSourceFileAttribute();
-										String sourceName = null;
-										if (sourceAttribute != null) {
-											sourceName = new String(
-													sourceAttribute
-															.getSourceFileName());
-										}
-										IResource sourceFile = getSourceFile(
-												pro, qualifiedName, sourceName);
-										if (sourceFile != null) {
-											IMarker[] problemMarkers = null;
-											problemMarkers = sourceFile
-													.findMarkers(
-															IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER,
-															true,
-															IResource.DEPTH_INFINITE);
-											for (IMarker problemMarker : problemMarkers) {
-												if (problemMarker.getAttribute(
-														IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
-													hasBlockingErrors = true;
-													break;
-												}
+						IClassFileReader reader = null;
+						try (InputStream contents = ((IFile) resource).getContents(true)) {
+							reader = ToolFactory.createDefaultClassFileReader(
+									contents, IClassFileReader.CLASSFILE_ATTRIBUTES);
+						} catch (IOException e) {
+							throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(),
+									"Failed to read class file: " + resource.getFullPath(), e)); //$NON-NLS-1$
+						}
+						if (reader != null) {
+							// this name is slash-delimited
+							String qualifiedName = new String(
+									reader.getClassName());
+							boolean hasBlockingErrors = false;
+							try {
+								if (!Platform.getPreferencesService().getBoolean(
+										JDIDebugPlugin.getUniqueIdentifier(),
+										JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS,
+										true,
+										null)) {
+									// If the user doesn't want to replace
+									// classfiles containing
+									// compilation errors, get the source
+									// file associated with
+									// the class file and query it for
+									// compilation errors
+									IJavaProject pro = JavaCore
+											.create(resource.getProject());
+									ISourceAttribute sourceAttribute = reader
+											.getSourceFileAttribute();
+									String sourceName = null;
+									if (sourceAttribute != null) {
+										sourceName = new String(
+												sourceAttribute
+														.getSourceFileName());
+									}
+									IResource sourceFile = getSourceFile(
+											pro, qualifiedName, sourceName);
+									if (sourceFile != null) {
+										IMarker[] problemMarkers = null;
+										problemMarkers = sourceFile
+												.findMarkers(
+														IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER,
+														true,
+														IResource.DEPTH_INFINITE);
+										for (IMarker problemMarker : problemMarkers) {
+											if (problemMarker.getAttribute(
+													IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
+												hasBlockingErrors = true;
+												break;
 											}
 										}
 									}
-								} catch (CoreException e) {
-									JDIDebugPlugin.log(e);
 								}
-								if (!hasBlockingErrors) {
-									fFiles.add(resource);
-									// dot-delimit the name
-									fNames.add(qualifiedName.replace('/', '.'));
-								}
+							} catch (CoreException e) {
+								JDIDebugPlugin.log(e);
+							}
+							if (!hasBlockingErrors) {
+								fFiles.add(resource);
+								// dot-delimit the name
+								fNames.add(qualifiedName.replace('/', '.'));
 							}
 						}
 					}

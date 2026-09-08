@@ -494,4 +494,13 @@
          </description>
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="jdtdebugtestfs">
+         <run
+               class="org.eclipse.jdt.debug.testplugin.efs.WrapperFileSystem">
+         </run>
+      </filesystem>
+   </extension>
 </plugin>
