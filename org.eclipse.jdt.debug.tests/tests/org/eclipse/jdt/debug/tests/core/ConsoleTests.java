@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -230,7 +231,7 @@ public class ConsoleTests extends AbstractDebugTest {
 		assertTrue("Console is not a TextConsole.", console instanceof TextConsole);
 		final TextConsole textConsole = (TextConsole) console;
 		TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT); // wait for output appending
-		assertEquals("Test program failed with error.", 0, process.getExitValue());
+		checkExitValue(process);
 		final IDocument consoleDocument = textConsole.getDocument();
 		return consoleDocument.get();
 	}
@@ -293,7 +294,7 @@ public class ConsoleTests extends AbstractDebugTest {
 			assertTrue("Console is not a TextConsole", console instanceof TextConsole);
 			final TextConsole textConsole = (TextConsole) console;
 			TestUtil.waitForJobs(getName(), 100, DEFAULT_TIMEOUT); // wait for output appending
-			assertEquals("Test program failed with error.", 0, process.getExitValue());
+			checkExitValue(process);
 			final IDocument consoleDocument = textConsole.getDocument();
 			final int expectedLength = (numAscii + numUmlaut + 2) * repetitions;
 			if (consoleDocument.getLength() > expectedLength) {
@@ -315,5 +316,14 @@ public class ConsoleTests extends AbstractDebugTest {
 				getLaunchManager().removeLaunch(launch);
 			}
 		}
+	}
+
+	private static void checkExitValue(IProcess process) throws DebugException, InterruptedException {
+		long start = System.currentTimeMillis();
+		while (!process.isTerminated() && System.currentTimeMillis() - start < DEFAULT_TIMEOUT) {
+			TestUtil.runEventLoop();
+			Thread.sleep(50);
+		}
+		assertEquals("Test program failed with error.", 0, process.getExitValue());
 	}
 }
