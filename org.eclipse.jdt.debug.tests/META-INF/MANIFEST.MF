@@ -10,6 +10,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.jdt.debug.test.stepping,
  org.eclipse.jdt.debug.testplugin,
  org.eclipse.jdt.debug.testplugin.detailpane,
+ org.eclipse.jdt.debug.testplugin.efs,
  org.eclipse.jdt.debug.testplugin.launching,
  org.eclipse.jdt.debug.tests,
  org.eclipse.jdt.debug.tests.breakpoints,

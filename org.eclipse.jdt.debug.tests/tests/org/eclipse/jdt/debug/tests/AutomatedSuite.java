@@ -77,6 +77,7 @@ import org.eclipse.jdt.debug.tests.core.EnvironmentTests;
 import org.eclipse.jdt.debug.tests.core.EventDispatcherTest;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExecutionEnvironmentTests;
+import org.eclipse.jdt.debug.tests.core.HcrChangedClassFilesTests;
 import org.eclipse.jdt.debug.tests.core.HcrTests;
 import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
@@ -339,6 +340,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RefreshStateTests.class));
 
 	// HCR tests are last - they modify resources
+		addTest(new TestSuite(HcrChangedClassFilesTests.class));
 		addTest(new TestSuite(HcrTests.class));
 
 	// Layout tests
