@@ -77,7 +77,12 @@ public class CompilationUnitDelta {
 
 		// find underlying file
 		IFile file = (IFile) cu.getUnderlyingResource();
-
+		if (file.isContentRestricted()) {
+			// if the file is content restricted, we cannot access its history
+			// but we want HCR to happen anyway, so we assume that the file has changed
+			fHasHistory = true;
+			return;
+		}
 		// get available editions
 		IFileState[] states = file.getHistory(null);
 		if (states == null || states.length <= 0) {
