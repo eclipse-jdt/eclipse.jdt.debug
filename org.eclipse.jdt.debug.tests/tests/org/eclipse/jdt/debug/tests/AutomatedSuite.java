@@ -21,6 +21,7 @@ import org.eclipse.jdt.debug.test.stepping.StatementSteppingTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionWithGenerics;
+import org.eclipse.jdt.debug.test.stepping.StepOutOfCodeBlockTests;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
@@ -261,6 +262,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(ForceReturnTests.class));
 		}
 		addTest(new TestSuite(StatementSteppingTests.class));
+		addTest(new TestSuite(StepOutOfCodeBlockTests.class));
 
 	//Classpath tests
 		addTest(new TestSuite(JavaLibraryPathTests.class));

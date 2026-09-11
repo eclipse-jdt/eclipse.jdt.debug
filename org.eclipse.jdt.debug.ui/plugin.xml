@@ -466,7 +466,106 @@
        </menuContribution>
        <menuContribution
              allPopups="false"
+             locationURI="menu:org.eclipse.ui.run?endof=stepIntoGroup">
+          <command
+                commandId="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <with
+                      variable="activeContexts">
+                   <iterate
+                         ifEmpty="false"
+                         operator="or">
+                      <equals
+                            value="org.eclipse.debug.ui.debugActionSet">
+                      </equals>
+                   </iterate>
+                </with>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?after=stepReturnGroup">
+          <command
+                commandId="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock"
+                icon="$nl$/icons/full/elcl16/stepOutBlock.svg"
+                label="%StepOutCodeBlock.label"
+                tooltip="%StepOutCodeBlock.tooltip"
+                style="push">
+             <visibleWhen checkEnabled="false">
+                <with variable="activeContexts">
+                   <iterate ifEmpty="false" operator="or">
+                      <equals value="org.eclipse.debug.ui.debugActionSet"/>
+                   </iterate>
+                </with>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
              locationURI="popup:#ClassFileEditorContext?before=additions">
+          <separator
+                name="java.debug">
+          </separator>
+          <command
+                commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
+                         value="true">
+                   </systemTest>
+                   <with
+                         variable="activeMenuSelection">
+                      <instanceof
+                            value="org.eclipse.jface.text.ITextSelection">
+                      </instanceof>
+                   </with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="popup:#ClassFileEditorContext?before=additions">
+          <separator
+                name="java.debug">
+          </separator>
+          <command
+                commandId="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
+                         value="true">
+                   </systemTest>
+                   <with
+                         variable="activeMenuSelection">
+                      <instanceof
+                            value="org.eclipse.jface.text.ITextSelection">
+                      </instanceof>
+                   </with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="popup:#CompilationUnitEditorContext?before=additions">
           <separator
                 name="java.debug">
           </separator>
@@ -501,7 +600,7 @@
                 name="java.debug">
           </separator>
           <command
-                commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+                commandId="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock"
                 style="push">
              <visibleWhen
                    checkEnabled="false">
@@ -2850,6 +2949,12 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
             name="%ActionDefinition.stepIntoSelection.name">
       </command>
+            <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            helpContextId="step_into_selection_action_context2"
+            id="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock"
+            name="%StepOutCodeBlock.label">
+      </command>
       <command
             name="%ActionDefinition.execute.name"
             description="%ActionDefinition.execute.description"
@@ -2944,6 +3049,11 @@ M4 = Platform-specific fourth key
             sequence="M1+F5"
             contextId="org.eclipse.debug.ui.debugging"
             commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M2+F7"
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <!-- On carbon: Command+F5 starts Voice Over, Ctrl+F5 moves focus to toolbar -->
       <key
@@ -3999,7 +4109,32 @@ M4 = Platform-specific fourth key
        </enabledWhen>
     </handler>
  </extension>
-
+<extension
+       point="org.eclipse.ui.handlers">
+    <handler
+           class="org.eclipse.jdt.internal.debug.ui.actions.StepOutOfCodeBlockHandler"
+          commandId="org.eclipse.jdt.debug.ui.StepOutOfCodeBlock">
+       <enabledWhen>
+          <and>
+             <systemTest
+                   property="org.eclipse.jdt.debug.ui.debuggerActive"
+                   value="true">
+             </systemTest>
+             <systemTest
+                   property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
+                   value="true">
+             </systemTest>
+             <with
+                   variable="activeEditor">
+                <instanceof
+                      value="org.eclipse.ui.texteditor.ITextEditor">
+                </instanceof>
+             </with>
+          </and>
+       </enabledWhen>
+    </handler>
+ </extension>
+ 
  <extension
        point="org.eclipse.core.variables.valueVariables">
     <!-- For convenience, to use when we detect stack-trace links -->
