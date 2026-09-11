@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionWithGenerics;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
+import org.eclipse.jdt.debug.tests.breakpoints.BreakpointRemovalTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsInJava8Tests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
@@ -409,6 +410,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TargetPatternBreakpointTests.class));
 		addTest(new TestSuite(BreakpointListenerTests.class));
 		addTest(new TestSuite(JavaBreakpointListenerTests.class));
+		addTest(new TestSuite(BreakpointRemovalTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(ThreadNameChangeTests.class));
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
