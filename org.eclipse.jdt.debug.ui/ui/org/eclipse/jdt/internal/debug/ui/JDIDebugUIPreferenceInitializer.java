@@ -38,7 +38,12 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_PROMPT_BEFORE_MODIFYING_FINAL_FIELDS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, true);
+
 		store.setDefault(IJDIPreferencesConstants.PREF_STATEMENT_LEVEL_STEPPING, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_FILTER_GETTERS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_FILTER_SETTERS, true);
 
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, false);
 
