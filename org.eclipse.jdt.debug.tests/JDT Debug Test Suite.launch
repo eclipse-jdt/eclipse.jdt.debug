@@ -38,8 +38,8 @@
     <booleanAttribute key="run_in_ui_thread" value="true"/>
     <setAttribute key="selected_target_bundles">
         <setEntry value="com.api.tools.buildnotes.nl@default:false"/>
+        <setEntry value="com.github.mwiede.jsch@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
-        <setEntry value="com.jcraft.jsch@default:default"/>
         <setEntry value="javax.servlet.jsp@default:default"/>
         <setEntry value="javax.servlet@default:default"/>
         <setEntry value="org.apache.ant@default:default"/>

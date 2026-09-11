@@ -349,7 +349,6 @@
         <setEntry value="org.eclipse.jface.text@default:default"/>
         <setEntry value="org.eclipse.jface@default:default"/>
         <setEntry value="org.eclipse.jsch.core@default:default"/>
-        <setEntry value="org.eclipse.jsch.tests@default:default"/>
         <setEntry value="org.eclipse.jsch.ui@default:default"/>
         <setEntry value="org.eclipse.ltk.core.refactoring.tests@default:default"/>
         <setEntry value="org.eclipse.ltk.core.refactoring@default:default"/>
