@@ -221,7 +221,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982",
 			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2", "compare.CompareObjectsStringTest", "compare.CompareListObjects",
 			"compare.CompareMapObjects", "compare.CompareSetObjects", "compare.CompareNormalObjects", "compare.CompareArrayObjects",
-			"StatementStep", "StatementStepArgument", "StatementStepNested", "StatementStepWithOperations", "WatchItemContext" };
+			"StatementStep", "StatementStepArgument", "StatementStepNested", "StatementStepWithOperations", "WatchItemContext", "DependencyTest",
+			"ExternalClassTst" };
 
 	/**
 	 * the default timeout
