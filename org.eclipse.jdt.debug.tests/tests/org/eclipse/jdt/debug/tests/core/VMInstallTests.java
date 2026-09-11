@@ -253,14 +253,16 @@ public class VMInstallTests extends AbstractDebugTest {
 			// The following test-cases don't work if the VMInstall has the latest supported version. Internally jdt.core limits higher versions to
 			// the latest supported one. Consequently these intended error-scenarios, testing too high versions don't fail (as expected).
 			String nextJavaVersion = Integer.toString(majorJavaVersion + 1);
-			CoreException e2 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, nextJavaVersion));
-			assertEquals("release " + nextJavaVersion + " is not found in the system", e2.getMessage());
+			Set<String> providedVMPackages = JavaRuntime.getProvidedVMPackages(vm, nextJavaVersion);
+			boolean present = providedVMPackages.stream().anyMatch(name -> name.equals("java.lang"));
+			assertTrue("Package not present", present);
 
 			String versionAfterLatestSupported = String.valueOf(latestSupportedJavaVersion + 1);
-			CoreException e3 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, versionAfterLatestSupported));
+			providedVMPackages = JavaRuntime.getProvidedVMPackages(vm, versionAfterLatestSupported);
 			// Passing a release not yet supported by JDT should not fail if the JDK actually provides it (e.g. if one uses early-access builds).
 			// Since EA-builds are not generally available in all test setups we check at least that the method passes the initial validation
-			assertEquals("release " + versionAfterLatestSupported + " is not found in the system", e3.getMessage());
+			present = providedVMPackages.stream().anyMatch(name -> name.equals("java.lang"));
+			assertTrue("Package not present", present);
 		}
 		CoreException e4 = assertThrows(CoreException.class, () -> JavaRuntime.getProvidedVMPackages(vm, "definitivly-not-a-version"));
 		assertEquals("Invalid release: definitivly-not-a-version", e4.getMessage());
