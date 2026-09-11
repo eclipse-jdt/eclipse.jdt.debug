@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Carsten Hammer - cleanup after failed test VM startup
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
@@ -24,9 +25,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.debug.jdi.tests.program.MainClass;
 import org.eclipse.jdi.Bootstrap;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 import com.sun.jdi.AbsentInformationException;
@@ -562,7 +565,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * NOTE: This assumes that the VM can watch field access.
 	 */
 	protected AccessWatchpointRequest getStaticAccessWatchpointRequest() {
-		// Get the static field
+		// Get the field
 		Field field = getField("fString");
 
 		// Create an access watchpoint for this field
@@ -671,8 +674,13 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Launches the target VM and connects to VM.
 	 */
 	protected void launchTargetAndConnectToVM() {
-		launchTarget();
-		connectToVM();
+		try {
+			launchTarget();
+			connectToVM();
+		} catch (RuntimeException | Error failure) {
+			cleanupAfterFailedStartup(failure);
+			throw failure;
+		}
 	}
 
 	protected boolean vmIsRunning() {
@@ -912,9 +920,15 @@ public abstract class AbstractJDITest extends TestCase {
 		startConsoleReaders();
 
 
-		// Contact the VM (try at least 10 times for 5 seconds)
+		// Bound each attach as well as the retry loop. A zero connector timeout
+		// waits forever if a peer accepts the socket but does not complete JDWP.
+		long timeoutNanos = TimeUnit.SECONDS.toNanos(5);
+		Throwable connectionFailure = null;
 		long n0 = System.nanoTime();
 		for (int i = 0; i < 10000; i++) {
+			if (Thread.currentThread().isInterrupted()) {
+				throw new Error("Interrupted while connecting to the VM", new InterruptedException());
+			}
 			try {
 				VirtualMachineManager manager = Bootstrap.virtualMachineManager();
 				List<AttachingConnector> connectors = manager.attachingConnectors();
@@ -925,6 +939,8 @@ public abstract class AbstractJDITest extends TestCase {
 				Map<String, Argument> args = connector.defaultArguments();
 				args.get("port").setValue(String.valueOf(fBackEndPort));
 				args.get("hostname").setValue("localhost");
+				long remainingMillis = Math.max(1, TimeUnit.NANOSECONDS.toMillis(timeoutNanos - (System.nanoTime() - n0)));
+				args.get("timeout").setValue(Long.toString(remainingMillis));
 
 				fVM = connector.attach(args);
 				if (fVMTraceFlags != com.sun.jdi.VirtualMachine.TRACE_NONE) {
@@ -933,9 +949,10 @@ public abstract class AbstractJDITest extends TestCase {
 				break;
 			} catch (IllegalConnectorArgumentsException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (IOException | TimeoutException e) {
+				connectionFailure = e;
 				long n1 = System.nanoTime();
-				if (i > 10 && n1 - n0 > 5_000_000_000L) {
+				if (n1 - n0 >= timeoutNanos) {
 					e.printStackTrace();
 					System.out.println("Could not contact the VM at localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000L + "ms");
 					break;
@@ -943,6 +960,8 @@ public abstract class AbstractJDITest extends TestCase {
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException interrupted) {
+					Thread.currentThread().interrupt();
+					throw new Error("Interrupted while connecting to the VM", interrupted);
 				}
 			}
 		}
@@ -963,14 +982,35 @@ public abstract class AbstractJDITest extends TestCase {
 				} catch (IOException e) {
 				}
 
-				// Shut it down
-				killVM();
 			}
-			throw new Error("Could not contact the VM");
+			Error failure = new Error("Could not contact the VM", connectionFailure);
+			// Retain pre-cleanup state in the test failure even when console output
+			// from the target process is missing from the CI test report.
+			failure.addSuppressed(new IllegalStateException("JDI startup at localhost:" + fBackEndPort
+					+ "; target " + describeProcess(fLaunchedVM) + "; proxy " + describeProcess(fLaunchedProxy)
+					+ "; runtime=" + Runtime.version() + "; vendor=" + System.getProperty("java.vendor")));
+			throw failure;
 		}
 		long n1 = System.nanoTime(); // for example after ~ 110ms
 		System.out.println("Connected to localhost" + ":" + fBackEndPort + " after " + (n1 - n0) / 1_000_000L + "ms");
 		startEventReader();
+	}
+
+	private static String describeProcess(Process process) {
+		if (process == null) {
+			return "not started";
+		}
+		String pid;
+		try {
+			pid = Long.toString(process.pid());
+		} catch (UnsupportedOperationException e) {
+			pid = "unavailable";
+		}
+		try {
+			return "pid=" + pid + ", alive=false, exitCode=" + process.exitValue();
+		} catch (IllegalThreadStateException e) {
+			return "pid=" + pid + ", alive=true";
+		}
 	}
 	/**
 	 * Initializes the fields that are used by this test only.
@@ -1158,7 +1198,23 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected void launchTargetAndStartProgram() {
 		launchTargetAndConnectToVM();
-		startProgram();
+		try {
+			startProgram();
+		} catch (RuntimeException | Error failure) {
+			cleanupAfterFailedStartup(failure);
+			throw failure;
+		}
+	}
+
+	private void cleanupAfterFailedStartup(Throwable failure) {
+		// JUnit does not call tearDown() when setUp() fails.
+		try {
+			shutDownTarget();
+		} catch (RuntimeException | Error cleanupFailure) {
+			if (cleanupFailure != failure) {
+				failure.addSuppressed(cleanupFailure);
+			}
+		}
 	}
 	/**
 	 * Init tests
@@ -1201,29 +1257,57 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Shut down the target.
 	 */
 	public void shutDownTarget() {
-		stopReaders();
-		if (fVM != null) {
+		boolean hadTarget = fVM != null || fLaunchedVM != null || fLaunchedProxy != null;
+		Throwable failure = null;
+		try {
+			stopReaders();
+			if (fVM != null) {
+				try {
+					fVM.exit(0);
+				} catch (VMDisconnectedException e) {
+				}
+			}
+		} catch (RuntimeException | Error e) {
+			failure = e;
+			throw e;
+		} finally {
 			try {
-				fVM.exit(0);
-			} catch (VMDisconnectedException e) {
+				killVM();
+			} catch (RuntimeException | Error cleanupFailure) {
+				if (failure == null) {
+					throw cleanupFailure;
+				}
+				if (failure != cleanupFailure) {
+					failure.addSuppressed(cleanupFailure);
+				}
+			} finally {
+				fVM = null;
+				// Keep a handle to a process whose termination failed.
+				if (fLaunchedVM != null && !fLaunchedVM.isAlive()) {
+					fLaunchedVM = null;
+				}
+				if (fLaunchedProxy != null && !fLaunchedProxy.isAlive()) {
+					fLaunchedProxy = null;
+				}
+				fEventReader = null;
+				fConsoleReader = null;
+				fConsoleErrorReader = null;
+				fProxyReader = null;
+				fProxyErrorReader = null;
+				if (hadTarget) {
+					selectNextPort();
+				}
 			}
 		}
+	}
 
-		fVM = null;
-		fLaunchedVM = null;
-
-		// We want subsequent connections to use different ports, unless a
-		// VM exec sting is given.
+	private static void selectNextPort() {
+		// Preserve the port embedded in a user-supplied VM command.
 		if (fVmCmd == null) {
-			ServerSocket socket;
-			try {
-				socket = new ServerSocket(0);
-				int availablePort = socket.getLocalPort();
-				socket.close(); //Available but always initialized
-				fBackEndPort = availablePort;
+			try (ServerSocket socket = new ServerSocket(0)) {
+				fBackEndPort = socket.getLocalPort();
 			} catch (IOException e) {
-				fBackEndPort +=2;
-
+				fBackEndPort += 2;
 			}
 		}
 	}
@@ -1317,15 +1401,12 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Stops the event reader.
 	 */
 	private void stopEventReader() {
-		fEventReader.stop();
+		if (fEventReader != null) {
+			fEventReader.stop();
+		}
 	}
 	protected void killVM() {
-		if (fLaunchedVM != null) {
-			fLaunchedVM.destroy();
-		}
-		if (fLaunchedProxy != null) {
-			fLaunchedProxy.destroy();
-		}
+		TestProcessCleanup.terminate(fLaunchedVM, fLaunchedProxy);
 	}
 	/**
 	 * Starts the target program.
