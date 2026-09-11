@@ -1,0 +1,31 @@
+/*******************************************************************************
+ * Copyright (c) 2024 Zsombor Gegesy and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Zsombor Gegesy - initial API and implementation
+ *******************************************************************************/
+
+/* ############################## Debug preferences ############################## */
+
+IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-jdt-debug-ui {
+	preferences:
+		'org.eclipse.jdt.debug.ui.CustomFilteredStackFrameFgColor=252,226,186'
+		'org.eclipse.jdt.debug.ui.CustomFilteredStackFrameBgColor=53,53,53'
+		'org.eclipse.jdt.debug.ui.ProductionStackFrameFgColor=238,238,255'
+		'org.eclipse.jdt.debug.ui.ProductionStackFrameBgColor=53,53,53'
+		'org.eclipse.jdt.debug.ui.TestStackFrameFgColor=238,255,238'
+		'org.eclipse.jdt.debug.ui.TestStackFrameBgColor=53,53,53'
+		'org.eclipse.jdt.debug.ui.SyntheticStackFrameFgColor=101,101,65'
+		'org.eclipse.jdt.debug.ui.SyntheticStackFrameBgColor=53,53,53'
+		'org.eclipse.jdt.debug.ui.LibraryStackFrameFgColor=182,164,206'
+		'org.eclipse.jdt.debug.ui.LibraryStackFrameBgColor=53,53,53'
+		'org.eclipse.jdt.debug.ui.PlatformStackFrameFgColor=108,132,108'
+		'org.eclipse.jdt.debug.ui.PlatformStackFrameBgColor=53,53,53'
+}
