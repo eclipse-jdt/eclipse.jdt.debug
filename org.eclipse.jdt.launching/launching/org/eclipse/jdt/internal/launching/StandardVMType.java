@@ -810,9 +810,8 @@ public class StandardVMType extends AbstractVMInstallType {
 		try {
 			if (version.startsWith(JavaCore.VERSION_28)) {
 				// Java 28 docs aren't published yet
-				return new URI("https://docs.oracle.com/en/java/javase/26/docs/api/").toURL(); //$NON-NLS-1$
+				return new URI("https://docs.oracle.com/en/java/javase/27/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_27)) {
-				// Java 27 docs aren't published yet
 				return new URI("https://docs.oracle.com/en/java/javase/26/docs/api/").toURL(); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_26)) {
 				return new URI("https://docs.oracle.com/en/java/javase/26/docs/api/").toURL(); //$NON-NLS-1$
