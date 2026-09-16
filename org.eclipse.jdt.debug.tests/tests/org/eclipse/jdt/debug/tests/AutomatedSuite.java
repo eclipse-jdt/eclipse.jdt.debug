@@ -210,7 +210,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
-		if (JavaProjectHelper.isJava26_Compatible()) {
+		if (JavaProjectHelper.isJava27_Compatible()) {
 			addTest(new TestSuite(InstanceMainMethodsTests.class));
 		}
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
