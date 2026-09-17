@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Igor Fedorenko
+ * Copyright (c) 2015, 2026 Igor Fedorenko and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *      Igor Fedorenko - initial API and implementation
+ *      IBM Corporation - Javaagent with ClassFile API on JDK 25+
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.sourcelookup.advanced;
 
@@ -30,8 +31,11 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 public class AdvancedSourceLookupSupport {
 
@@ -117,12 +121,35 @@ public class AdvancedSourceLookupSupport {
 		return workspaceProjects;
 	}
 
-	public static String getJavaagentString() {
-		return "-javaagent:\"" + getJavaagentLocation() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getJavaagentString(ILaunchConfiguration configuration) {
+		return "-javaagent:\"" + getJavaagentLocation(configuration) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String getJavaagentLocation() {
 		return LaunchingPlugin.getFileInPlugin(new Path("lib/javaagent-shaded.jar")).getAbsolutePath(); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the absolute path to the javaagent JAR for the target JVM of the given launch configuration.<br>
+	 *
+	 * Java 25+: {@code lib/Javaagent25.jar} (uses {@code java.lang.classfile}, no ASM) <br>
+	 * Java &lt 25: {@code lib/javaagent-shaded.jar} (ASM-based)
+	 *
+	 *
+	 * @param configuration
+	 *            the launch configuration used to determine the target JVM version
+	 * @return absolute path to the javaagent JAR
+	 */
+	public static String getJavaagentLocation(ILaunchConfiguration configuration) {
+		try {
+			IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
+			if (JavaRuntime.compareJavaVersions(vm, JavaCore.VERSION_25) >= 0) {
+				return LaunchingPlugin.getFileInPlugin(new Path("lib/Javaagent25.jar")).getAbsolutePath(); //$NON-NLS-1$
+			}
+		} catch (CoreException e) {
+			LaunchingPlugin.log(e);
+		}
+		return getJavaagentLocation();
 	}
 
 	/**

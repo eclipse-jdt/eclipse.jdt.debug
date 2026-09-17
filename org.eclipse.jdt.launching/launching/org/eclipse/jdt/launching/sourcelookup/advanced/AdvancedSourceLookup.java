@@ -107,7 +107,7 @@ public class AdvancedSourceLookup {
 	 * Returns {@code -javaagent} jvm launch argument.
 	 */
 	public static String getJavaagentString() {
-		return AdvancedSourceLookupSupport.getJavaagentString();
+		return AdvancedSourceLookupSupport.getJavaagentLocation();
 	}
 
 	/**

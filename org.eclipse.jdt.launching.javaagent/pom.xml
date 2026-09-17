@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2011, 2022 Igor Fedorenko
+  Copyright (c) 2011, 2026 Igor Fedorenko and others
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the Eclipse Public License 2.0
   which accompanies this distribution, and is available at
   https://www.eclipse.org/legal/epl-2.0/
 
   SPDX-License-Identifier: EPL-2.0
-  
+
    Contributors:
       Igor Fedorenko - initial API and implementation
       IBM Corporation - ASM version update
@@ -20,13 +20,10 @@
   <artifactId>org.eclipse.jdt.launching.javaagent</artifactId>
   <version>3.10.600-SNAPSHOT</version>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>9.10.1</version>
-    </dependency>
-  </dependencies>
+  <!--
+    No external dependencies: java.lang.classfile is in java.base (Java 24+).
+    ASM dependency removed — ClassfileTransformer2 uses the JVM Classfile API.
+  -->
 
   <build>
     <plugins>
@@ -35,7 +32,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
         <configuration>
-          <release>8</release>
+          <release>25</release>
         </configuration>
       </plugin>
 
@@ -44,14 +41,17 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.2</version>
         <configuration>
+          <finalName>Javaagent25</finalName>
           <archive>
             <manifestEntries>
               <Premain-Class>org.eclipse.jdt.launching.internal.javaagent.Premain</Premain-Class>
+              <Can-Redefine-Classes>false</Can-Redefine-Classes>
+              <Can-Retransform-Classes>false</Can-Retransform-Classes>
             </manifestEntries>
           </archive>
         </configuration>
       </plugin>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -64,21 +64,12 @@
             </goals>
             <configuration>
               <createSourcesJar>true</createSourcesJar>
-              <relocations>
-                <relocation>
-                  <!--
-                    | javaagent classes are added to application classpath
-                    | relocate ASM to our internal package to avoid possible conflicts 
-                    -->
-                  <pattern>org.objectweb.asm</pattern>
-                  <shadedPattern>org.eclipse.jdt.launching.internal.org.objectweb.asm</shadedPattern>
-                </relocation>
-              </relocations>
-              <finalName>javaagent-shaded</finalName>
+              <finalName>Javaagent25</finalName>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
 </project>
