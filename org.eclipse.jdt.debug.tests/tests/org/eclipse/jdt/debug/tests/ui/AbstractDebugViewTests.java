@@ -147,14 +147,14 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 		return thread;
 	}
 
-	protected void assertStackFrameIsSelected(String breakpointMethodName) throws Exception {
+	protected TreeItem assertStackFrameIsSelected(String breakpointMethodName) throws Exception {
 		// Get and check the selection form the tree, we expect only one method selected
 		TreeItem[] selected = getSelectedItemsFromDebugView(true);
 		Object[] selectedText = selectedText(selected);
 		if (selected.length != 1) {
 			if (Platform.OS.isMac()) {
 				// skip this test on Mac - see bug 516024
-				return;
+				return null;
 			}
 			throw new TestAgainException("Unexpected selection: " + Arrays.toString(selectedText));
 		}
@@ -162,7 +162,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 		IJavaStackFrame selectedFrame = selectedFrame(selected);
 
 		assertEquals("\"breakpointMethod\" should be selected after reaching breakpoint", selectedFrame.getMethodName(), breakpointMethodName);
-
+		return selected[0];
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 	}
 
 	protected Object[] selectedText(TreeItem[] selected) throws Exception {
-		Object[] selectedText = sync(() -> Arrays.stream(selected).map(x -> x.getText()).toArray());
+		Object[] selectedText = sync(() -> Arrays.stream(selected).map(TreeItem::getText).toArray());
 		return selectedText;
 	}
 
@@ -235,7 +235,7 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 
 	protected TreeItem[] getSelectedItemsFromDebugView(boolean wait) throws Exception {
 		return sync(() -> {
-			Tree tree = (Tree) debugView.getViewer().getControl();
+			Tree tree = getDebugViewTree();
 			TreeItem[] selected = tree.getSelection();
 			if (!wait) {
 				return selected;
@@ -252,6 +252,24 @@ public abstract class AbstractDebugViewTests extends AbstractDebugUiTests {
 			}
 			return selected;
 		});
+	}
+
+	private Tree getDebugViewTree() {
+		return (Tree) debugView.getViewer().getControl();
+	}
+
+	protected IJavaThread runCodeUntilBreakpoint(String typeName, String breakpointMethodName) throws Exception {
+		sync(() -> getActivePage().hideView(getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW)));
+
+		waitForNonConsoleJobs();
+		assertNoErrorMarkersExist();
+		setPreferenceToShowSystemThreads();
+		sync(() -> openEditor(typeName + ".java"));
+
+		var thread = launchToBreakpoint(typeName, breakpointMethodName, 1);
+		assertDebugViewIsOpen();
+
+		return thread;
 	}
 
 	protected ISelection getDebugViewSelection() throws Exception {

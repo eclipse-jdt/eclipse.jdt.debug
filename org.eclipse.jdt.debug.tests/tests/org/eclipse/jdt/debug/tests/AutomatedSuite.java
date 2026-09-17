@@ -155,10 +155,12 @@ import org.eclipse.jdt.debug.tests.ui.DebugHoverTests;
 import org.eclipse.jdt.debug.tests.ui.DebugSelectionTests;
 import org.eclipse.jdt.debug.tests.ui.DebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
+import org.eclipse.jdt.debug.tests.ui.GroupedStackFrameTest;
 import org.eclipse.jdt.debug.tests.ui.HotCodeReplaceErrorDialogTest;
 import org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest;
 import org.eclipse.jdt.debug.tests.ui.NoLineNumberAttributesStatusHandlerTest;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
+import org.eclipse.jdt.debug.tests.ui.StackFrameGroupingTest;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
@@ -257,6 +259,8 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StepFilterTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
 		addTest(new TestSuite(InstanceFilterTests.class));
+		addTest(new TestSuite(StackFrameGroupingTest.class));
+		addTest(new TestSuite(GroupedStackFrameTest.class));
 		if (JavaProjectHelper.isJava6Compatible()) {
 			addTest(new TestSuite(ForceReturnTests.class));
 		}
