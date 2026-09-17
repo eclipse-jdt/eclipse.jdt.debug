@@ -10,7 +10,6 @@ JDT debug provides the following debugging features:
 - Scrapbook pages for interactive Java code snippet evaluation
 - Dynamic class reloading where supported by Java virtual machine
 
-For more information about JDT Debug refer to the [JDT Debug website](https://eclipse.dev/eclipse/debug/index.php).
 For general information about JDT and important links, refer to the [JDT wiki page](https://github.com/eclipse-jdt/eclipse.jdt.core/wiki) or the [JDT project overview page](https://projects.eclipse.org/projects/eclipse.jdt).
 
 ## Contributing
