@@ -484,4 +484,8 @@ public class DebugUIMessages extends NLS {
 	public static String JDIDebugUIPlugin_MultiStatusWarning;
 
 	public static String JDIDebugUIPlugin_MultiStatusInfo;
+
+	public static String JDIModelPresentation_waiting;
+
+	public static String JDIModelPresentation_dependency;
 }

@@ -1648,6 +1648,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		StringBuilder label= new StringBuilder(sourceName);
 		appendLineNumber(breakpoint, label);
+		appendIsDependentStatus(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
 		appendThreadFilter(breakpoint, label);
@@ -1666,6 +1667,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (typeName != null) {
 			buffer.append(getQualifiedName(typeName));
 		}
+		appendIsDependentStatus(breakpoint, buffer);
 		appendHitCount(breakpoint, buffer);
 		appendSuspendPolicy(breakpoint, buffer);
 		//TODO remove the cast once the API freeze has thawed
@@ -1705,6 +1707,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			label.append(getQualifiedName(typeName));
 		}
 		appendLineNumber(breakpoint, label);
+		appendIsDependentStatus(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
 		appendThreadFilter(breakpoint, label);
@@ -1725,9 +1728,22 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
+		appendIsDependentStatus(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint, label);
 		return label.toString();
+	}
+
+	protected StringBuilder appendIsDependentStatus(IJavaBreakpoint breakpoint, StringBuilder label) throws CoreException {
+		if (breakpoint.isDependencyBreakpoint()) {
+			label.append(' ');
+			label.append(DebugUIMessages.JDIModelPresentation_dependency);
+		}
+		if (breakpoint.isDependencyEnabled() && breakpoint.hasDependentBreakpoint()) {
+			label.append(' ');
+			label.append(DebugUIMessages.JDIModelPresentation_waiting);
+		}
+		return label;
 	}
 
 	protected StringBuilder appendLineNumber(IJavaLineBreakpoint breakpoint, StringBuilder label) throws CoreException {
@@ -1760,6 +1776,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuilder label= new StringBuilder(resource.getName());
 		appendLineNumber(breakpoint, label);
+		appendIsDependentStatus(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
 		appendThreadFilter(breakpoint, label);
@@ -1776,6 +1793,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuilder label= new StringBuilder(breakpoint.getSourceName());
 		appendLineNumber(breakpoint, label);
+		appendIsDependentStatus(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
 		appendThreadFilter(breakpoint, label);
@@ -1795,6 +1813,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
+		appendIsDependentStatus(watchpoint, label);
 		appendHitCount(watchpoint, label);
 		appendSuspendPolicy(watchpoint,label);
 		appendThreadFilter(watchpoint, label);
@@ -1827,6 +1846,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (typeName != null) {
 			label.append(getQualifiedName(typeName));
 		}
+		appendIsDependentStatus(methodBreakpoint, label);
 		appendHitCount(methodBreakpoint, label);
 		appendSuspendPolicy(methodBreakpoint,label);
 		appendThreadFilter(methodBreakpoint, label);
