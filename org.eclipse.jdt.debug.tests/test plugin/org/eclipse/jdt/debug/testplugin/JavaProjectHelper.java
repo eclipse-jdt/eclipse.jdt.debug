@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2025 IBM Corporation and others.
+ *  Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
@@ -71,7 +75,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_25_EE_NAME = "JavaSE-25";
 	public static final String JAVA_SE_26_EE_NAME = "JavaSE-26";
 	public static final String JAVA_SE_27_EE_NAME = "JavaSE-27";
-
+	public static final String JAVA_SE_28_EE_NAME = "JavaSE-28";
 	/**
 	 * path to the test src for 'testprograms'
 	 */
@@ -123,6 +127,11 @@ public class JavaProjectHelper {
 	 * path to the 27 test source
 	 */
 	public static final IPath TEST_27_SRC_DIR = new Path("java27");
+
+	/**
+	 * path to the 28 test source
+	 */
+	public static final IPath TEST_28_SRC_DIR = new Path("java28");
 
 	/**
 	 * path to the multirelease test source
@@ -251,6 +260,15 @@ public class JavaProjectHelper {
 	 */
 	public static boolean isJava27_Compatible() {
 		return isCompatible(27);
+	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 28
+	 *
+	 * @return <code>true</code> if a Java 28 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava28_Compatible() {
+		return isCompatible(28);
 	}
 
 	/**
