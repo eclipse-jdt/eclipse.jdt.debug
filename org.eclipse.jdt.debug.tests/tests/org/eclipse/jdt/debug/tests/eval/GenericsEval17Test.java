@@ -141,6 +141,18 @@ public class GenericsEval17Test extends AbstractDebugTest {
 		assertEquals("value is not false", "false", value.getValueString());
 	}
 
+	public void testEvaluate_Issue693() throws Exception {
+		createConditionalLineBreakpoint(17, "Issue693", "generic.u.intValue() == 5", true);
+		javaThread = launchToBreakpoint("Issue693");
+		assertNotNull("The program did not suspend", javaThread);
+
+		String snippet = "generic.u.intValue()";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not 5", "5", value.getValueString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);
