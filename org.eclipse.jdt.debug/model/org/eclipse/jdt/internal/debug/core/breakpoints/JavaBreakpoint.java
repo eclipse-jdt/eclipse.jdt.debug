@@ -286,7 +286,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// deletion.
 		// Don't try updating the marker (decrementing the install count) if
 		// it no longer exists.
-		if (!(request instanceof ClassPrepareRequest) && getMarker().exists()) {
+		if (!(request instanceof ClassPrepareRequest) && markerExists()) {
 			decrementInstallCount();
 		}
 	}
