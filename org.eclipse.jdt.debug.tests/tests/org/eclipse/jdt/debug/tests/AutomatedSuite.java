@@ -159,6 +159,7 @@ import org.eclipse.jdt.debug.tests.ui.HotCodeReplaceErrorDialogTest;
 import org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest;
 import org.eclipse.jdt.debug.tests.ui.NoLineNumberAttributesStatusHandlerTest;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
+import org.eclipse.jdt.debug.tests.ui.TemplateRegistryTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
@@ -354,6 +355,7 @@ public class AutomatedSuite extends DebugSuite {
 
 	// Scrapbook editor tests
 		addTest(new TestSuite(JavaSnippetEditorTest.class));
+		addTest(new TestSuite(TemplateRegistryTests.class));
 
 	// No Line Number Attributes Status Handler tests
 		addTest(new TestSuite(NoLineNumberAttributesStatusHandlerTest.class));

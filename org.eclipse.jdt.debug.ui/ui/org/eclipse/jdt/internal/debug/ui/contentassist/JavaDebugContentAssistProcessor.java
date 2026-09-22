@@ -58,11 +58,11 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 
 	public JavaDebugContentAssistProcessor(IJavaDebugContentAssistContext context) {
 		fContext = context;
-		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_ALL);
+		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistryCore().getContextType(JavaContextType.ID_ALL);
 		if (contextType != null) {
 			fJavaEngine= new TemplateEngine(contextType);
 		}
-		contextType = JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_STATEMENTS);
+		contextType = JavaPlugin.getDefault().getTemplateContextRegistryCore().getContextType(JavaContextType.ID_STATEMENTS);
 		if (contextType != null) {
 			fStatementEngine= new TemplateEngine(contextType);
 		}
