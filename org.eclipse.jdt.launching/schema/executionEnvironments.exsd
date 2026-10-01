@@ -209,6 +209,9 @@
 &lt;li&gt;JavaSE-1.8&lt;/li&gt;
 &lt;li&gt;CDC-1.0/Foundation-1.0&lt;/li&gt;
 &lt;li&gt;CDC-1.1/Foundation-1.1&lt;/li&gt;
+&lt;li&gt;JavaSE/compact1-1.8&lt;/li&gt;
+&lt;li&gt;JavaSE/compact2-1.8&lt;/li&gt;
+&lt;li&gt;JavaSE/compact3-1.8&lt;/li&gt;
 &lt;/ul&gt;
 Since 3.5, a default access rule participant provides access rules for system packages associated with an execution environment. System packages are specified by an OSGi profile properties file (see &lt;code&gt;profileProperties&lt;/code&gt; above) via the &lt;code&gt;org.osgi.framework.system.packages&lt;/code&gt; property.
       </documentation>
