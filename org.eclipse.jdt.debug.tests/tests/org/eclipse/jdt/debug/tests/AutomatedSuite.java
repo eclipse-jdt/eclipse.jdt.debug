@@ -194,6 +194,7 @@ public class AutomatedSuite extends DebugSuite {
 	 */
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
+		addTest(new TestSuite(DebugSuiteTests.class));
 
 	//Launching tests
 
