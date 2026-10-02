@@ -141,6 +141,39 @@ public class GenericsEval17Test extends AbstractDebugTest {
 		assertEquals("value is not false", "false", value.getValueString());
 	}
 
+	public void testEvaluate_GH693_BoundedTypeVariableArgument_ConditionalBreakpoint() throws Exception {
+		createConditionalLineBreakpoint(8, "GH693", "param != null && map.get(\"key\") == param", true);
+		javaThread = launchToBreakpoint("GH693");
+		assertNotNull("The program did not suspend", javaThread);
+
+		String snippet = "param != null && map.get(\"key\") == param";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not true", "true", value.getValueString());
+	}
+
+	public void testEvaluate_GH693_BoundedTypeVariableArgument_KeepsBoundType() throws Exception {
+		debugWithBreakpoint("GH693", 8);
+		String snippet = "param.value.intValue()";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not 5", "5", value.getValueString());
+	}
+
+	public void testEvaluate_GH693_BoundedMethodTypeVariableArgument_ConditionalBreakpoint() throws Exception {
+		createConditionalLineBreakpoint(12, "GH693", "param.value.intValue() == 5", true);
+		javaThread = launchToBreakpoint("GH693");
+		assertNotNull("The program did not suspend", javaThread);
+
+		String snippet = "param.value.intValue() == 5";
+		IValue value = doEval(javaThread, snippet);
+
+		assertNotNull("value is null", value);
+		assertEquals("value is not true", "true", value.getValueString());
+	}
+
 	private void debugWithBreakpoint(String testClass, int lineNumber) throws Exception {
 		createLineBreakpoint(lineNumber, testClass);
 		javaThread = launchToBreakpoint(testClass);
