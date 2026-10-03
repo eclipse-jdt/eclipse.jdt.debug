@@ -53,7 +53,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fEditor= editor;
-		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
+		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistryCore().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}

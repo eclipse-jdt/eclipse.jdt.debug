@@ -1893,7 +1893,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		if (viewer == null) {
 			return null;
 		}
-		TemplateContextType contextType = JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_STATEMENTS);
+		TemplateContextType contextType = JavaPlugin.getDefault().getTemplateContextRegistryCore().getContextType(JavaContextType.ID_STATEMENTS);
 		final AtomicReference<String> templateBuffer = new AtomicReference<>();
 		Display.getDefault().syncExec(() -> doGetCodeTemplate(textSelection, part, viewer, contextType, templateBuffer));
 		return templateBuffer.get();
@@ -1923,7 +1923,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			for (TemplateProposal templateProposal : templateProposals) {
 				Template template = templateProposal.getTemplate();
 				if (template.getName().equals("systrace")) { //$NON-NLS-1$
-					CompilationUnitContextType cuContextType = (CompilationUnitContextType) JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(template.getContextTypeId());
+					CompilationUnitContextType cuContextType = (CompilationUnitContextType) JavaPlugin.getDefault().getTemplateContextRegistryCore().getContextType(template.getContextTypeId());
 					DocumentTemplateContext context = cuContextType.createContext(document, line.getOffset(), 0, cunit);
 					context.setVariable("selection", EMPTY_STRING); //$NON-NLS-1$
 					((CompilationUnitContext) context).setForceEvaluation(true);
