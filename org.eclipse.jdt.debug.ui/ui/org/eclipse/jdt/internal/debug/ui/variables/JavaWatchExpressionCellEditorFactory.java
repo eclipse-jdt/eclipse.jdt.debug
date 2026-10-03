@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
+import java.util.Optional;
+
 import org.eclipse.debug.ui.IWatchExpressionCellEditorFactory;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
@@ -28,8 +30,8 @@ import org.eclipse.swt.widgets.Composite;
 public class JavaWatchExpressionCellEditorFactory implements IWatchExpressionCellEditorFactory {
 
 	@Override
-	public CellEditor createCellEditor(Composite parent) {
-		return new JDISourceViewerCellEditor(parent);
+	public Optional<CellEditor> createCellEditor(Composite parent) {
+		return Optional.of(new JDISourceViewerCellEditor(parent));
 	}
 
 	@Override

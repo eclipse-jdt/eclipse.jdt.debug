@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
@@ -29,10 +32,12 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * A {@link CellEditor} for the Expressions view that wraps a {@link JDISourceViewer} configured with Java content assist.
@@ -43,6 +48,9 @@ public class JDISourceViewerCellEditor extends CellEditor {
 	private String fValue = ""; //$NON-NLS-1$
 	/** Tracks whether the content-assist proposal popup is currently open. */
 	private boolean fProposalPopupOpen = false;
+	private IHandlerService fHandlerService;
+	private IHandler fContentAssistHandler;
+	private IHandlerActivation fContentAssistActivation;
 
 	public JDISourceViewerCellEditor(Composite parent) {
 		super(parent, SWT.NONE);
@@ -82,25 +90,38 @@ public class JDISourceViewerCellEditor extends CellEditor {
 			});
 		}
 
+		fContentAssistHandler = new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+				return null;
+			}
+		};
+		fHandlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+
 		fViewer.getTextWidget().addFocusListener(new FocusAdapter() {
 			@Override
+			public void focusGained(FocusEvent e) {
+				activateContentAssistHandler();
+			}
+			@Override
 			public void focusLost(FocusEvent e) {
+				deactivateContentAssistHandler();
 				if (!fProposalPopupOpen) {
 					JDISourceViewerCellEditor.this.focusLost();
 				}
 			}
 		});
 
-		fViewer.getTextWidget().addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == ' ' && (e.stateMask & SWT.CTRL) != 0) {
-					fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-					e.doit = false;
-				} else if (e.keyCode == SWT.CR && (e.stateMask & SWT.SHIFT) == 0) {
-					if (fProposalPopupOpen) {
-						return;
-					}
+		fViewer.appendVerifyKeyListener(e -> {
+			if (!e.doit) {
+				return;
+			}
+			if (e.keyCode == ' ' && (e.stateMask & SWT.CTRL) != 0) {
+				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+				e.doit = false;
+			} else if (!fProposalPopupOpen) {
+				if (e.keyCode == SWT.CR && (e.stateMask & SWT.SHIFT) == 0) {
 					fireApplyEditorValue();
 					deactivate();
 					e.doit = false;
@@ -145,11 +166,31 @@ public class JDISourceViewerCellEditor extends CellEditor {
 	}
 
 	@Override
+	public void deactivate() {
+		deactivateContentAssistHandler();
+		super.deactivate();
+	}
+
+	@Override
 	public void dispose() {
+		deactivateContentAssistHandler();
 		if (fViewer != null) {
 			fViewer.dispose();
 		}
 		super.dispose();
+	}
+
+	private void activateContentAssistHandler() {
+		if (fHandlerService != null && fContentAssistActivation == null) {
+			fContentAssistActivation = fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fContentAssistHandler);
+		}
+	}
+
+	private void deactivateContentAssistHandler() {
+		if (fHandlerService != null && fContentAssistActivation != null) {
+			fHandlerService.deactivateHandler(fContentAssistActivation);
+			fContentAssistActivation = null;
+		}
 	}
 
 }
