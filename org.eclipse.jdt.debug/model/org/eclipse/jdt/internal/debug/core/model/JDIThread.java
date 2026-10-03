@@ -1510,6 +1510,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		try {
 			if (resumeOnHit && breakpoint.getSuspendPolicy() == IJavaBreakpoint.RESUME_ON_HIT) {
+				if (breakpoint.isDependencyEnabled() && breakpoint.hasDependentBreakpoint()) {
+					IJavaBreakpoint dependent = breakpoint.getDependentBreakpoint();
+					if (dependent != null && !dependent.hasBeenHit()) {
+						synchronized (this) {
+							fSuspendVoteInProgress = false;
+							return false;
+						}
+					}
+				}
+				if (breakpoint.isDependencyBreakpoint()) {
+					breakpoint.setHit(true);
+					breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+				}
 				synchronized (this) {
 					fSuspendVoteInProgress = false;
 					return false; // Won't be suspended
@@ -1519,12 +1532,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			logError(e);
 		}
 
+		handleDisableOnHit(breakpoint);
+		try {
+			if (breakpoint.isDependencyEnabled() && breakpoint.hasDependentBreakpoint()) {
+				IJavaBreakpoint dependent = breakpoint.getDependentBreakpoint();
+				if (dependent != null && !dependent.hasBeenHit()) {
+					synchronized (this) {
+						fSuspendVoteInProgress = false;
+						return false;
+					}
+				}
+			}
+			if (breakpoint.isDependencyBreakpoint()) {
+				breakpoint.setHit(true);
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}
+
 		// poll listeners without holding lock on thread
 		boolean suspend = true;
 		try {
-
-			suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this,
-					breakpoint);
+			suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this, breakpoint);
 		} finally {
 			synchronized (this) {
 				fSuspendVoteInProgress = false;
@@ -1534,9 +1563,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					suspend = true;
 				}
 			}
-		}
-		if (suspend) {
-			handleDisableOnHit(breakpoint);
 		}
 		return suspend;
 	}
