@@ -159,12 +159,15 @@ import org.eclipse.jdt.debug.tests.ui.HotCodeReplaceErrorDialogTest;
 import org.eclipse.jdt.debug.tests.ui.JavaSnippetEditorTest;
 import org.eclipse.jdt.debug.tests.ui.NoLineNumberAttributesStatusHandlerTest;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
+import org.eclipse.jdt.debug.tests.ui.PinnedFieldsViewTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.VirtualThreadsDebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests18;
 import org.eclipse.jdt.debug.tests.variables.CompareObjectsTest;
 import org.eclipse.jdt.debug.tests.variables.DetailFormatterTests;
+import org.eclipse.jdt.debug.tests.variables.PinnedFieldsEdgeCaseTests;
+import org.eclipse.jdt.debug.tests.variables.PinnedFieldsTests;
 import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
@@ -423,6 +426,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(JavaThreadEventHandlerTests.class));
 		addTest(new TestSuite(ConditionalBreakpointsWithFileClass.class));
 		addTest(new TestSuite(CompareObjectsTest.class));
+		addTest(new TestSuite(PinnedFieldsTests.class));
+		addTest(new TestSuite(PinnedFieldsEdgeCaseTests.class));
+		addTest(new TestSuite(PinnedFieldsViewTests.class));
 		addTest(new TestSuite(DisableOnHitTest.class));
 
 		if (JavaProjectHelper.isJava8Compatible()) {
