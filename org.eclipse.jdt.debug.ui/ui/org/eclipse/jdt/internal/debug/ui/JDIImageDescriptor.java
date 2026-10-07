@@ -67,6 +67,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 
 	public final static int LOGICAL_STRUCTURE = 0x400000;
 
+	/** Flag to render the pinned field adornment */
+	public final static int PINNED = 0x800000;
+
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;

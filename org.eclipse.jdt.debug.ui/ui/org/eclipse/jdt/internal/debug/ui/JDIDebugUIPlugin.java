@@ -76,6 +76,7 @@ import org.eclipse.jdt.internal.debug.ui.threadgroups.TargetAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.ThreadGroupAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.ColumnPresentationAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.JavaDebugElementAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.variables.PinnedFieldsManager;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -491,6 +492,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
 			JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
 			JavaDebugOptionsManager.getDefault().shutdown();
+			PinnedFieldsManager.shutdown();
 			if (fImageDescriptorRegistry != null) {
 				fImageDescriptorRegistry.dispose();
 			}

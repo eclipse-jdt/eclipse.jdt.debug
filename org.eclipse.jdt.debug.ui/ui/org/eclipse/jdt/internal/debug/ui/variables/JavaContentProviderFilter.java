@@ -37,12 +37,17 @@ public class JavaContentProviderFilter {
 
 	/**
 	 * Filters the given array of variables based on preference settings.  Currently
-	 * removes static variables and constants if the appropriate preference is set.
+	 * removes static variables and constants if the appropriate preference is set,
+	 * and moves the fields pinned by the user in the view first (see {@link PinnedFieldsManager}).
 	 * @param variables array of variables to filter
 	 * @param context the current view's context, required because the preferences are view specific
 	 * @return array of filtered variables
 	 */
 	public static Object[] filterVariables(Object[] variables, IPresentationContext context) throws DebugException {
+		return PinnedFieldsManager.getDefault().movePinnedFirst(context.getId(), filterHiddenVariables(variables, context));
+	}
+
+	private static Object[] filterHiddenVariables(Object[] variables, IPresentationContext context) throws DebugException {
 		boolean filterStatics = !includeStatic(context);
 		boolean filterConstants = !includeConstants(context);
 

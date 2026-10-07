@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -45,10 +46,14 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.DebugUIMessages;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIElementImageDescriptor;
+import org.eclipse.jdt.internal.debug.ui.JDIImageDescriptor;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Base implementation of a label provider for Java variables
@@ -72,6 +77,8 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	private static final int SERIALIZE_ALL = 0; // no toString()'s in line, so serialize labels
 	private static final int SERIALIZE_NONE = 1; // all toString()'s in line, so don't serialize labels (evaluations will be serialized)
 	private static final int SERIALIZE_SOME = 2; // some - only serialize those that don't have formatters (ones with formatters will be serialized by evaluation)
+
+	private static final Point PINNED_IMAGE_SIZE = new Point(16, 16);
 
 	public JavaVariableLabelProvider() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugUIPlugin.getUniqueIdentifier());
@@ -99,6 +106,20 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			}
 		} catch (DebugException e) {}
 		return typeName;
+	}
+
+	/**
+	 * Adds the pin adornment to the image of the fields pinned in the view: pins are view specific, so the adornment
+	 * cannot be computed by the model presentation.
+	 */
+	@Override
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		ImageDescriptor descriptor = super.getImageDescriptor(elementPath, presentationContext, columnId);
+		if (descriptor != null && elementPath.getLastSegment() instanceof IJavaFieldVariable field
+				&& PinnedFieldsManager.getDefault().isPinned(presentationContext.getId(), field)) {
+			return new JDIElementImageDescriptor(descriptor, JDIImageDescriptor.PINNED, PINNED_IMAGE_SIZE);
+		}
+		return descriptor;
 	}
 
 	@Override

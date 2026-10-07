@@ -38,6 +38,13 @@ public class JDIElementImageDescriptor extends CompositeImageDescriptor {
 	protected void drawCompositeImage(int width, int height) {
 		drawImage(createCachedImageDataProvider(fBaseImage), 0, 0);
 		drawRightBottom();
+		drawTopLeft();
+	}
+
+	private void drawTopLeft() {
+		if ((fFlags & JDIImageDescriptor.PINNED) != 0) {
+			drawImage(createCachedImageDataProvider(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OVR_PINNED)), 0, 0);
+		}
 	}
 
 	private void drawRightBottom() {
