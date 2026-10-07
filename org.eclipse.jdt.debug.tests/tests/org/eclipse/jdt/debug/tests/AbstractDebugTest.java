@@ -3048,13 +3048,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         return config.doSave();
     }
 
-    private void setEnvironment(ILaunchConfigurationWorkingCopy workingCopy) {
-      Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream()
-        .filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-      workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
-      workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
-    }
+	private void setEnvironment(ILaunchConfigurationWorkingCopy workingCopy) {
+		Map<String, String> nativeEnvironment = getLaunchManager().getNativeEnvironment();
+		if (nativeEnvironment.get("JAVA_TOOL_OPTIONS") == null) {
+			return;
+		}
+		Map<String, String> env = nativeEnvironment.entrySet().stream().filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
+	}
 
 	/**
 	 * Exception to indicate a test should be run again when it fails.

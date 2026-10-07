@@ -1,6 +1,6 @@
 pipeline {
 	options {
-		timeout(time: 40, unit: 'MINUTES')
+		timeout(time: 60, unit: 'MINUTES')
 		buildDiscarder(logRotator(numToKeepStr: (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'BETA.*') ? '100':'5', artifactNumToKeepStr: (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'BETA.*') ? '15':'2'))
 		disableConcurrentBuilds(abortPrevious: true)
 		timestamps()
