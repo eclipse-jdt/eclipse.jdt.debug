@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2022 IBM Corporation and others.
+ * Copyright (c) 2004, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,8 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		AbstractJDITest.parseArgs(new String[] {});
 
+		addTest(new TestSuite(VMConnectionTimeoutTest.class));
+		addTest(new TestSuite(VMStartupCleanupTest.class));
 		addTest(new TestSuite(AccessibleTest.class));
 		addTest(new TestSuite(ArrayReferenceTest.class));
 		addTest(new TestSuite(ArrayTypeTest.class));
