@@ -72,6 +72,10 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	private static final String J2SE_1_2 = "J2SE-1.2"; //$NON-NLS-1$
 	private static final String JRE_1_1 = "JRE-1.1"; //$NON-NLS-1$
 
+	private static final String JAVASE_COMPACT1_1_8 = "JavaSE/compact1-1.8"; //$NON-NLS-1$
+	private static final String JAVASE_COMPACT2_1_8 = "JavaSE/compact2-1.8"; //$NON-NLS-1$
+	private static final String JAVASE_COMPACT3_1_8 = "JavaSE/compact3-1.8"; //$NON-NLS-1$
+
 	private static final String CDC_FOUNDATION_1_1 = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
 	private static final String CDC_FOUNDATION_1_0 = "CDC-1.0/Foundation-1.0"; //$NON-NLS-1$
 
@@ -99,7 +103,10 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(J2SE_1_5, new String[] {J2SE_1_4});
 		mappings.put(JavaSE_1_6, new String[] {J2SE_1_5});
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
-		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
+		mappings.put(JAVASE_COMPACT1_1_8, new String[] { OSGI_MINIMUM_1_2 });
+		mappings.put(JAVASE_COMPACT2_1_8, new String[] { JAVASE_COMPACT1_1_8 });
+		mappings.put(JAVASE_COMPACT3_1_8, new String[] { JAVASE_COMPACT2_1_8 });
+		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7, JAVASE_COMPACT3_1_8 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
 		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_27 });
