@@ -178,7 +178,7 @@ import junit.framework.TestCase;
 @SuppressWarnings("deprecation")
 public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
 
-	private static final int SOCKET_BIND_ERROR_MAX_RETRIES = 3;
+	protected static final int SOCKET_BIND_ERROR_MAX_RETRIES = 3;
 	private static boolean setupFirstTest = false;
 
 	public static final String MULTI_OUTPUT_PROJECT_NAME = "MultiOutput";
