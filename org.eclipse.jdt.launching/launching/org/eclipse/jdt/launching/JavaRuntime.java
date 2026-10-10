@@ -1651,6 +1651,9 @@ public final class JavaRuntime {
 		try {
 			for (int i = 0; i < cpes.length; i++) {
 				IClasspathEntry cpe = cpes[i];
+				if (excludeTestCode && cpe.isTest()) {
+					continue;
+				}
 				if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 					IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
 					IJavaProject jp = JavaCore.create(p);
