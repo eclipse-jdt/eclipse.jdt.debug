@@ -86,6 +86,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	public static final String ANONYMOUS_VAR_PREFIX = "val$"; //$NON-NLS-1$
 	private static final int EVALUATION_DETAIL_BITMASK = DebugEvent.EVALUATION | DebugEvent.EVALUATION_IMPLICIT;
 	private static final String QN_OBJECT = "java.lang.Object"; //$NON-NLS-1$
+	private static final String OBJECT_SIGNATURE = "Ljava/lang/Object;"; //$NON-NLS-1$
 	private IJavaProject fProject;
 
 	private IJavaDebugTarget fDebugTarget;
@@ -414,15 +415,98 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				return;
 			}
 
+			List<String[]> typeParameters = null;
 			fixedSignature.append(Signature.C_GENERIC_START);
 			for (int i = 0; i < typeArguments.length; i++) {
 				if (i > 0) {
 					fixedSignature.append(',');
 				}
+				if (isTypeVariableArgument(typeArguments[i])) {
+					if (typeParameters == null) {
+						typeParameters = getDeclaredTypeParameters(genericSignature);
+					}
+					if (isBoundedTypeParameter(typeParameters, i)) {
+						// The type variable would be replaced by java.lang.Object which is not a valid substitute for a bounded
+						// type parameter (e.g. Foo<U> with class Foo<U extends Number>), use a wildcard which is always valid.
+						fixedSignature.append('?');
+						continue;
+					}
+				}
 				scanAndFixSignature(typeArguments[i], QN_OBJECT, fixedSignature);
 			}
 			fixedSignature.append(Signature.C_GENERIC_END);
 		}
+	}
+
+	/**
+	 * Returns whether the given type argument signature is a type variable (or a captured type, or a lower bounded wildcard on them) which cannot
+	 * be resolved in the evaluation context and is replaced by java.lang.Object.
+	 */
+	private static boolean isTypeVariableArgument(String typeArgument) {
+		String signature = typeArgument;
+		if (signature.length() > 1 && signature.charAt(0) == Signature.C_SUPER) {
+			signature = signature.substring(1);
+		}
+		return signature.length() > 0 && (signature.charAt(0) == Signature.C_TYPE_VARIABLE || signature.charAt(0) == Signature.C_CAPTURE);
+	}
+
+	/**
+	 * Returns the type parameter signatures declared by the erasure of the given parameterized type signature, or an empty list if they cannot be
+	 * computed (e.g. the type is not loaded in the target VM).
+	 * <p>
+	 * The list has one element per generic type with that name loaded in the target VM: types with the same name loaded by different class loaders
+	 * may declare different type parameters.
+	 * </p>
+	 */
+	private List<String[]> getDeclaredTypeParameters(String parameterizedTypeSignature) {
+		List<String[]> typeParameters = new ArrayList<>();
+		IJavaDebugTarget debugTarget = getDebugTarget();
+		if (debugTarget == null) {
+			return typeParameters;
+		}
+		try {
+			String erasure = Signature.getTypeErasure(parameterizedTypeSignature);
+			if (erasure.length() < 3 || erasure.charAt(0) != Signature.C_RESOLVED || erasure.indexOf(Signature.C_DOT) >= 0) {
+				// not a simple resolved type signature (e.g. a member type of a parameterized outer type)
+				return typeParameters;
+			}
+			String typeName = erasure.substring(1, erasure.length() - 1).replace('/', '.');
+			IJavaType[] types = debugTarget.getJavaTypes(typeName);
+			if (types != null) {
+				for (IJavaType type : types) {
+					if (type instanceof IJavaReferenceType referenceType) {
+						String genericSignature = referenceType.getGenericSignature();
+						if (genericSignature != null) {
+							typeParameters.add(Signature.getTypeParameters(genericSignature));
+						}
+					}
+				}
+			}
+		} catch (DebugException | IllegalArgumentException e) {
+			// unable to get the type parameters, keep the default behavior
+		}
+		return typeParameters;
+	}
+
+	/**
+	 * Returns whether the type parameter at the given index is known to have a bound other than java.lang.Object in at least one of the given type
+	 * parameter declarations.
+	 * <p>
+	 * The declaration actually used by the evaluated code is not looked up among the types with the same name: a wildcard is a valid type argument
+	 * for all of them, whereas java.lang.Object is not if the parameter is bounded.
+	 * </p>
+	 */
+	private static boolean isBoundedTypeParameter(List<String[]> typeParameterDeclarations, int index) {
+		for (String[] typeParameters : typeParameterDeclarations) {
+			if (index < typeParameters.length) {
+				for (String bound : Signature.getTypeParameterBounds(typeParameters[index])) {
+					if (!OBJECT_SIGNATURE.equals(bound)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private String toDotQualified(String fqn) {
