@@ -623,7 +623,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		if (!isJavaagentOptionSupported(configuration)) {
 			return ""; //$NON-NLS-1$
 		}
-		return getJavaagentString();
+		return getJavaagentString(configuration);
 	}
 
 	private boolean isJavaagentOptionSupported(ILaunchConfiguration configuration) {
