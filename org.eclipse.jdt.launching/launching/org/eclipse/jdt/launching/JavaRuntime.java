@@ -1657,7 +1657,7 @@ public final class JavaRuntime {
 					if (!projects.contains(jp)) {
 						projects.add(jp);
 						IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
-						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp, excludeTestCode);
+						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp, excludeTestCode || cpe.isWithoutTestCode());
 						for (int j = 0; j < entries.length; j++) {
 							IRuntimeClasspathEntry e = entries[j];
 							if (!resolved.contains(e)) {
