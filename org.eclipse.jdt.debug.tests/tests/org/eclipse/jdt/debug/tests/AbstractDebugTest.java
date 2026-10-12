@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -3050,6 +3051,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				attempts++;
 				super.runBare();
 				tryAgain = false;
+			} catch (NoSocketAvailableException e) {
+				// we tried to find an available socket multiple times and failed, ignore this error
+				tryAgain = false;
+				break;
 			} catch (TestAgainException e) {
 				TestUtil.log(IStatus.ERROR, getName(), "Test failed attempt " + attempts + ". Re-testing.", e);
 				TestUtil.cleanUp(getName());
@@ -3279,6 +3284,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				if (retry < SOCKET_BIND_ERROR_MAX_RETRIES && cause instanceof BindException) {
 					// port might be in use between checking for a free port and launching, try a few times
 					DebugPlugin.log(Status.error("Could not bind socket for debugging, retry: " + retry, e));
+				} else if (OS.isMac() && retry >= SOCKET_BIND_ERROR_MAX_RETRIES && cause instanceof BindException) {
+					throw new NoSocketAvailableException("Max retries reached without finding an available socket on MacOS");
 				} else {
 					throw e;
 				}
@@ -3331,5 +3338,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			logVMChange("Default VM changed", current);
 		}
 
+	}
+
+	private static class NoSocketAvailableException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
+
+		private NoSocketAvailableException(String msg) {
+			super(msg);
+		}
 	}
 }
