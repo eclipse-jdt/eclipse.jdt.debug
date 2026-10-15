@@ -91,6 +91,7 @@ public class JavaDebugImages {
 	public static final String IMG_OVR_OUT_OF_SYNCH = "IMG_OVR_OUT_OF_SYNCH"; //$NON-NLS-1$
 	public static final String IMG_OVR_MAY_BE_OUT_OF_SYNCH = "IMG_OVR_MAY_BE_OUT_OF_SYNCH"; //$NON-NLS-1$
 	public static final String IMG_OVR_SYNCHRONIZED = "IMG_OVR_SYNCHRONIZED"; //$NON-NLS-1$
+	public static final String IMG_OVR_PINNED = "IMG_OVR_PINNED"; //$NON-NLS-1$
 
 	public static final String IMG_WIZBAN_NEWSCRAPPAGE = "IMG_WIZBAN_NEWSCRAPPAGE"; //$NON-NLS-1$
 	public static final String IMG_WIZBAN_LIBRARY = "IMG_WIZBAN_LIBRARY"; //$NON-NLS-1$
@@ -189,6 +190,7 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_VIEW_ARGUMENTS_TAB, T_EVIEW + "variable_tab.svg"); //$NON-NLS-1$
 
 		declareRegistryImage(IMG_OVR_OUT_OF_SYNCH, T_OVR + "error_co.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_PINNED, T_OVR + "pinned_ovr.svg"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OVR_MAY_BE_OUT_OF_SYNCH, T_OVR + "warning_co.svg"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OVR_SYNCHRONIZED, T_OVR + "sync_ovr.svg"); //$NON-NLS-1$
 

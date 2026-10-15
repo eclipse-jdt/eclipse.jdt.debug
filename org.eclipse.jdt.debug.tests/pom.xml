@@ -24,6 +24,8 @@
     <testSuite>${project.artifactId}</testSuite>
     <testClass>org.eclipse.jdt.debug.tests.AutomatedSuite</testClass>
   	<defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
+    <!-- AutomatedSuite runs > 20 min; overrides default 1200s from eclipse-platform-parent -->
+    <surefire.timeout>2400</surefire.timeout>
   </properties>
   <build>
     <plugins>
