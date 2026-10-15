@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2023 IBM Corporation and others.
+ *  Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -352,6 +352,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 		vmargs = ensureArgument("-Dfile.encoding=", encoding, vmargs); //$NON-NLS-1$
 		vmargs = ensureArgument("-Dstdout.encoding=", encoding, vmargs); //$NON-NLS-1$
 		vmargs = ensureArgument("-Dstderr.encoding=", encoding, vmargs); //$NON-NLS-1$
+		// Required for >= JDK 25
+		vmargs = ensureArgument("-Dstdin.encoding=", encoding, vmargs); //$NON-NLS-1$
 		return vmargs;
 	}
 
