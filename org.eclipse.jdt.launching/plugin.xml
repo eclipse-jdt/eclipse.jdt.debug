@@ -303,6 +303,18 @@
             id="CDC-1.1/Foundation-1.1"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.compact1"
+            id="JavaSE/compact1-1.8"
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
+      <environment
+            description="%environment.description.compact2"
+            id="JavaSE/compact2-1.8"
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
+      <environment
+            description="%environment.description.compact3"
+            id="JavaSE/compact3-1.8"
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
+      <environment
             description="%environment.description.9"
             id="JavaSE-1.6"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>

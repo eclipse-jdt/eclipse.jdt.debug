@@ -50,6 +50,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jdt.core.dom.Message;
@@ -64,6 +65,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -76,6 +78,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnCompilationErrorListener;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
+import org.eclipse.jdt.internal.debug.ui.variables.PinnedFieldsManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -354,7 +357,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 				}
 				notifyTargets(breakpoint, kind);
 			}
-		} else if (fgDisplayOptions.contains(property)) {
+		} else if (fgDisplayOptions.contains(property) || PinnedFieldsManager.isPinnedFieldsPreference(property)) {
 			variableViewSettingsChanged();
 		} else if (isUseFilterProperty(property)) {
 			notifyTargetsOfFilters();
@@ -988,20 +991,28 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 
     /**
 	 * Refreshes the variables view by firing a change event on a stack frame (active
-	 * debug context).
+	 * debug context), and the expressions view by firing a content change event on
+	 * the expressions having a Java value.
 	 */
     protected void variableViewSettingsChanged() {
+		List<DebugEvent> events = new ArrayList<>();
         // If a Java stack frame is selected in the Debug view, fire a change event on
         // it so the variables view will update for any structure changes.
         IAdaptable selected = DebugUITools.getDebugContext();
         if (selected != null) {
 			IJavaStackFrame frame = selected.getAdapter(IJavaStackFrame.class);
             if (frame != null) {
-                DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {
-                        new DebugEvent(frame, DebugEvent.CHANGE)
-                });
+				events.add(new DebugEvent(frame, DebugEvent.CHANGE));
             }
         }
+		for (IExpression expression : DebugPlugin.getDefault().getExpressionManager().getExpressions()) {
+			if (expression.getValue() instanceof IJavaValue) {
+				events.add(new DebugEvent(expression, DebugEvent.CHANGE, DebugEvent.CONTENT));
+			}
+		}
+		if (!events.isEmpty()) {
+			DebugPlugin.getDefault().fireDebugEventSet(events.toArray(new DebugEvent[events.size()]));
+		}
     }
 
 }

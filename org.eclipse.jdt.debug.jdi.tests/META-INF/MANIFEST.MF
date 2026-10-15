@@ -10,6 +10,6 @@ Require-Bundle: org.junit,
  org.eclipse.equinox.common,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jdt.debug.jdi.tests
