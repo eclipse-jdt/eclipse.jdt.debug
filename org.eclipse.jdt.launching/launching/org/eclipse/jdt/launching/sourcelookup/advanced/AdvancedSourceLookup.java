@@ -104,10 +104,25 @@ public class AdvancedSourceLookup {
 	}
 
 	/**
-	 * Returns {@code -javaagent} jvm launch argument.
+	 * Returns {@code -javaagent} jvm launch argument for Java versions less than 25.
 	 */
 	public static String getJavaagentString() {
-		return AdvancedSourceLookupSupport.getJavaagentString();
+		return "-javaagent:\"" + AdvancedSourceLookupSupport.getJavaagentLocation() + "\""; //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	/**
+	 * Returns {@code -javaagent} jvm launch argument for Java versions greater or equal 25, or {@code null} if the
+	 * {@code org.eclipse.jdt.launching.javaagent25} bundle is not installed.
+	 *
+	 * @return the {@code -javaagent} argument string, or {@code null}
+	 * @since 3.25
+	 */
+	public static String getJavaagent25String() {
+		String location = AdvancedSourceLookupSupport.getJavaagent25Location();
+		if (location == null) {
+			return null;
+		}
+		return "-javaagent:\"" + location + "\""; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
