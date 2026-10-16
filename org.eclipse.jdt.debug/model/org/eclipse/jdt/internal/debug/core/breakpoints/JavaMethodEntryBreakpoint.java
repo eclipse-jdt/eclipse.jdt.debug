@@ -76,7 +76,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 			final String methodSignature, final int lineNumber,
 			final int charStart, final int charEnd, final int hitCount,
 			final boolean register, final Map<String, Object> attributes) throws CoreException {
-		IWorkspaceRunnable wr = monitor -> {
+		IWorkspaceRunnable wr = _ -> {
 			// add attributes
 			addLineBreakpointAttributes(attributes, getModelIdentifier(),
 					true, lineNumber, charStart, charEnd);

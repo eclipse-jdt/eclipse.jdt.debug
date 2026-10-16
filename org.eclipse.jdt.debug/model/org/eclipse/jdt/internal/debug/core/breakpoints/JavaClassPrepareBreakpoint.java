@@ -89,7 +89,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 			final String typeName, final int memberType, final int charStart,
 			final int charEnd, final boolean add, final Map<String, Object> attributes)
 			throws DebugException {
-		IWorkspaceRunnable wr = monitor -> {
+		IWorkspaceRunnable wr = _ -> {
 			// add attributes
 			attributes.put(IBreakpoint.ID, getModelIdentifier());
 			attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
