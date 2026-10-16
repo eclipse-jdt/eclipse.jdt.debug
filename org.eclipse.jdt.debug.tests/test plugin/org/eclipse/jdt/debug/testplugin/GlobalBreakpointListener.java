@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.testplugin;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -33,7 +35,8 @@ public class GlobalBreakpointListener implements IJavaBreakpointListener {
 	public static Set<IJavaBreakpoint> ADDED = new LinkedHashSet<>();
 	public static Set<IJavaBreakpoint> HIT = new LinkedHashSet<>();
 	public static Set<IJavaBreakpoint> INSTALLED = new LinkedHashSet<>();
-	public static Set<IJavaBreakpoint> REMOVED = new LinkedHashSet<>();
+	// Removed breakpoints may no longer have a marker backing equals/hashCode.
+	public static Set<IJavaBreakpoint> REMOVED = Collections.synchronizedSet(Collections.newSetFromMap(new IdentityHashMap<>()));
 	public static Set<IJavaBreakpoint> INSTALLING = new LinkedHashSet<>();
 
 	public static void clear() {

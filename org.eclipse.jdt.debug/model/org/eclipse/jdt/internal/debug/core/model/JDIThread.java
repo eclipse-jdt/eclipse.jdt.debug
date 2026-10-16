@@ -476,7 +476,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected void removeCurrentBreakpoint(IBreakpoint bp) {
 		synchronized (breakpointAcessLock) {
-			fCurrentBreakpoints.remove(bp);
+			fCurrentBreakpoints.removeIf(breakpoint -> breakpoint == bp);
 		}
 	}
 
