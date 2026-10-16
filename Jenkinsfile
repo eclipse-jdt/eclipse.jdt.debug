@@ -19,16 +19,36 @@ pipeline {
 		stage('Build') {
 			steps {
 				xvnc(useXauthority: true) {
-					sh """
-					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						-Ptest-on-javase-27 -Pbree-libs -Papi-check -Pjavadoc\
-						-Dmaven.test.failure.ignore=true\
-						-Dcompare-version-with-baselines.skip=false \
-						-Dproject.build.sourceEncoding=UTF-8 \
-						-DDetectVMInstallationsJob.disabled=true \
-						-Dtycho.apitools.debug \
-						-DtrimStackTrace=false
-					"""
+					sh '''#!/usr/bin/env bash
+set +e
+mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \\
+						-Ptest-on-javase-27 -Pbree-libs -Papi-check -Pjavadoc\\
+						-Dmaven.test.failure.ignore=true\\
+						-Dcompare-version-with-baselines.skip=false \\
+						-Dproject.build.sourceEncoding=UTF-8 \\
+						-DDetectVMInstallationsJob.disabled=true \\
+						-Dtycho.apitools.debug \\
+						-DtrimStackTrace=false 2>&1 | tee pr992-maven.log
+                    result=${PIPESTATUS[0]}
+                    if [ "$result" -ne 0 ]; then
+                        # Temporary PR-992 diagnostics: the later JDI output otherwise
+                        # hides the failed UI runtime in the GitHub check's log tail.
+                        awk '
+                            / @ org[.]eclipse[.]jdt[.]debug[.]tests ---/ { ui = 1 }
+                            / @ org[.]eclipse[.]jdt[.]debug[.]jdi[.]tests ---/ { ui = 0 }
+                            ui { print }
+                        ' pr992-maven.log > pr992-ui-runtime.log
+                        printf '\\n=== UI Eclipse error log (last 120 lines) ===\\n'
+                        ui_log=org.eclipse.jdt.debug.tests/target/work/data/.metadata/.log
+                        if [ -f "$ui_log" ]; then
+                            tail -n 120 "$ui_log"
+                        fi
+                        printf '\\n=== UI runtime output (last 500 lines) ===\\n'
+                        tail -n 500 pr992-ui-runtime.log
+                        printf '\\n=== Original Maven exit code: %s ===\\n' "$result"
+                    fi
+                    exit "$result"
+					'''
 				}
 			}
 			post {
