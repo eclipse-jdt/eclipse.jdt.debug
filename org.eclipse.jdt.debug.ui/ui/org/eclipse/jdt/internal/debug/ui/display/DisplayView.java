@@ -205,7 +205,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		};
 		IThemeManager themeManager = getViewSite().getWorkbenchWindow().getWorkbench().getThemeManager();
 		themeManager.addPropertyChangeListener(fontListener);
-		fSourceViewer.getTextWidget().addDisposeListener(e -> themeManager.removePropertyChangeListener(fontListener));
+		fSourceViewer.getTextWidget().addDisposeListener(_ -> themeManager.removePropertyChangeListener(fontListener));
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fSourceViewer.setDocument(getRestoredDocument());
 		fSourceViewer.addTextInputListener(this);

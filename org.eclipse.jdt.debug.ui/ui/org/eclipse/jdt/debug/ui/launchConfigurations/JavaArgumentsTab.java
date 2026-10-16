@@ -136,7 +136,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.setFont(font);
-		fPrgmArgumentsText.addModifyListener(evt -> scheduleUpdateJob());
+		fPrgmArgumentsText.addModifyListener(_ -> scheduleUpdateJob());
 		ControlAccessibleListener.addListener(fPrgmArgumentsText, group.getText());
 
 		String buttonLabel = LauncherMessages.JavaArgumentsTab_5;
