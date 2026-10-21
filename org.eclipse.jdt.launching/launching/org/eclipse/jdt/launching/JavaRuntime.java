@@ -94,6 +94,7 @@ import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
+import org.eclipse.jdt.internal.launching.JreConfigurationFile;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
@@ -256,6 +257,12 @@ public final class JavaRuntime {
 
 	/**
 	 * Preference key for the String of XML that defines all installed VMs.
+	 * <p>
+	 * Installed VMs and default VMs per execution environment can also be provisioned without touching this
+	 * preference by pointing to a JSON configuration file via the command line argument <code>-jreConfig &lt;file&gt;</code>,
+	 * the system property <code>org.eclipse.jdt.launching.jreConfig</code> or the environment variable
+	 * <code>JDT_JRE_CONFIG</code>. See <code>org.eclipse.jdt.internal.launching.JreConfigurationFile</code> for the format.
+	 * </p>
 	 *
 	 * @since 2.1
 	 */
@@ -3258,6 +3265,7 @@ public final class JavaRuntime {
 						vmDefs = new VMDefinitionsContainer();
 						// 2. add persisted VMs
 						setPref = addPersistedVMs(vmDefs);
+						boolean freshWorkspace = setPref;
 						IStatus status = vmDefs.getStatus();
 						if (status != null) {
 							if (status.isMultiStatus()) {
@@ -3271,6 +3279,17 @@ public final class JavaRuntime {
 								}
 							} else if (!status.isOK()) {
 								LaunchingPlugin.log(status);
+							}
+						}
+
+						// 2b. add VMs from an optional JRE configuration file (-jreConfig, system property or env variable).
+						// Done before the Eclipse runtime detection so that a configured set of JREs is taken as is.
+						JreConfigurationFile configuration = JreConfigurationFile.getInstance();
+						if (configuration != null && configuration.addVMs(vmDefs)) {
+							setPref = true;
+							if (freshWorkspace) {
+								// align compiler compliance with the configured default VM, as done for a detected runtime
+								updateCompliance = true;
 							}
 						}
 
