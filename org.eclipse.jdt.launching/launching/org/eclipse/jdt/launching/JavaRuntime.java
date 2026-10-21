@@ -3255,6 +3255,7 @@ public final class JavaRuntime {
 		VMDefinitionsContainer vmDefs = null;
 		boolean setPref = false;
 		boolean updateCompliance = false;
+		JreConfigurationFile configuration = null;
 		synchronized (fgVMLock) {
 			if (fgVMTypes == null) {
 				try {
@@ -3284,7 +3285,8 @@ public final class JavaRuntime {
 
 						// 2b. add VMs from an optional JRE configuration file (-jreConfig, system property or env variable).
 						// Done before the Eclipse runtime detection so that a configured set of JREs is taken as is.
-						JreConfigurationFile configuration = JreConfigurationFile.getInstance();
+						// Runtimes contributed via the vmInstalls extension point are left to step 4.
+						configuration = JreConfigurationFile.getInstance();
 						if (configuration != null && configuration.addVMs(vmDefs)) {
 							setPref = true;
 							if (freshWorkspace) {
@@ -3377,6 +3379,12 @@ public final class JavaRuntime {
 				}  catch (CoreException e) {
 					LaunchingPlugin.log(e);
 				}
+			}
+
+			// rename JREs matched by the JRE configuration file now that real VMs exist, so that the regular
+			// change notification migrates JRE container paths and launch configurations
+			if (configuration != null) {
+				configuration.applyPendingRenames();
 			}
 
 			boolean testsRunning = List.of(JavaCore.getClasspathVariableNames()).contains("TEST_LIB"); //$NON-NLS-1$

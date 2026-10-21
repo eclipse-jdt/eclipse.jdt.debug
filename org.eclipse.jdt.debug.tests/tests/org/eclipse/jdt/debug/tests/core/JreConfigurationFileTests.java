@@ -136,14 +136,15 @@ public class JreConfigurationFileTests extends AbstractDebugTest {
 		// a source attachment different from the default one forces explicit library locations
 		File sources = File.createTempFile("jre-config-sources", ".zip");
 		sources.deleteOnExit();
+		String javadoc = "https://example.org/jre-config/api/";
 
 		// a VM at a location that does not exist must be skipped
 		JreConfigurationFile config = JreConfigurationFile.parse("""
 				{ "java.configuration.runtimes": [
-				    { "label": "configured", "path": "%s", "sources": "%s", "vendor": "Test", "default": true },
+				    { "label": "configured", "path": "%s", "sources": "%s", "javadoc": "%s", "vendor": "Test", "default": true },
 				    { "label": "missing", "path": "%s" }
 				] }
-				""".formatted(home, json(sources.getAbsolutePath()), json(new File(javaHome(), "does-not-exist").getAbsolutePath())), "test");
+				""".formatted(home, json(sources.getAbsolutePath()), javadoc, json(new File(javaHome(), "does-not-exist").getAbsolutePath())), "test");
 		assertTrue(config.addVMs(container));
 		assertEquals(1, container.getVMList().size());
 		IVMInstall vm = container.getVMList().get(0);
@@ -151,6 +152,7 @@ public class JreConfigurationFileTests extends AbstractDebugTest {
 		assertEquals("configured", vm.getName());
 		assertEquals(javaHome().getAbsoluteFile(), vm.getInstallLocation());
 		assertEquals("Test", ((VMStandin) vm).getAttribute(JreConfigurationFile.ATTRIBUTE_VENDOR));
+		assertEquals(javadoc, vm.getJavadocLocation().toExternalForm());
 		assertEquals(JavaRuntime.getCompositeIdFromVM(vm), container.getDefaultVMInstallCompositeID());
 		LibraryLocation[] libraries = vm.getLibraryLocations();
 		assertNotNull(libraries);
@@ -158,13 +160,16 @@ public class JreConfigurationFileTests extends AbstractDebugTest {
 		IPath expectedSource = IPath.fromOSString(sources.getAbsolutePath());
 		for (LibraryLocation library : libraries) {
 			assertEquals(expectedSource, library.getSystemLibrarySourcePath());
+			// the configured javadoc location must also be applied to the explicit library locations
+			assertEquals(javadoc, library.getJavadocLocation().toExternalForm());
 		}
 
 		// applying the same configuration again must not change anything
 		assertFalse(config.addVMs(container));
 		assertEquals(1, container.getVMList().size());
 
-		// an existing VM at the same location is updated in place, never duplicated
+		// an existing VM at the same location is updated in place, never duplicated; the rename is deferred
+		// until real VMs exist so that the regular change notification can migrate references
 		VMDefinitionsContainer existing = new VMDefinitionsContainer();
 		VMStandin persisted = new VMStandin(standardType, "persisted-id");
 		persisted.setName("old name");
@@ -174,6 +179,86 @@ public class JreConfigurationFileTests extends AbstractDebugTest {
 		assertEquals(1, existing.getVMList().size());
 		assertSame(persisted, existing.getVMList().get(0));
 		assertEquals("persisted-id", persisted.getId());
-		assertEquals("configured", persisted.getName());
+		assertEquals("old name", persisted.getName());
+		assertEquals("Test", persisted.getAttribute(JreConfigurationFile.ATTRIBUTE_VENDOR));
+	}
+
+	public void testAddVMsAvoidsDuplicateNames() throws Exception {
+		IVMInstallType standardType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
+		VMStandin other = new VMStandin(standardType, "other-id");
+		other.setName("configured");
+		other.setInstallLocation(new File(javaHome(), "does-not-exist"));
+		container.addVM(other);
+
+		JreConfigurationFile config = JreConfigurationFile.parse("""
+				{ "java.configuration.runtimes": [ { "label": "configured", "path": "%s" } ] }
+				""".formatted(json(javaHome().getAbsolutePath())), "test");
+		assertTrue(config.addVMs(container));
+		assertEquals(2, container.getVMList().size());
+		assertEquals("configured", other.getName());
+		IVMInstall added = container.getVMList().get(1);
+		assertEquals(javaHome().getAbsoluteFile(), added.getInstallLocation());
+		assertEquals("configured (2)", added.getName());
+	}
+
+	public void testJavadocAppliedToExplicitLibraries() throws Exception {
+		IVMInstallType standardType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
+		VMStandin existing = new VMStandin(standardType, "explicit-libs-id");
+		existing.setName("explicit");
+		existing.setInstallLocation(javaHome());
+		LibraryLocation[] defaults = standardType.getDefaultLibraryLocations(javaHome());
+		assertTrue(defaults.length > 0);
+		// explicit library locations: defaults with a custom source attachment on the first library
+		File customSource = File.createTempFile("jre-config-explicit-sources", ".zip");
+		customSource.deleteOnExit();
+		LibraryLocation[] explicit = defaults.clone();
+		LibraryLocation first = defaults[0];
+		explicit[0] = new LibraryLocation(first.getSystemLibraryPath(), IPath.fromOSString(customSource.getAbsolutePath()), first.getPackageRootPath(), first.getJavadocLocation(), first.getIndexLocation(), first.getExternalAnnotationsPath());
+		existing.setLibraryLocations(explicit);
+		assertNotNull(existing.getLibraryLocations());
+		container.addVM(existing);
+
+		String javadoc = "https://example.org/explicit/api/";
+		JreConfigurationFile config = JreConfigurationFile.parse("""
+				{ "java.configuration.runtimes": [ { "label": "explicit", "path": "%s", "javadoc": "%s" } ] }
+				""".formatted(json(javaHome().getAbsolutePath()), javadoc), "test");
+		assertTrue(config.addVMs(container));
+		LibraryLocation[] libraries = existing.getLibraryLocations();
+		assertEquals(explicit.length, libraries.length);
+		for (int i = 0; i < libraries.length; i++) {
+			assertEquals(javadoc, libraries[i].getJavadocLocation().toExternalForm());
+			// source attachments are preserved when only the javadoc location changes
+			assertEquals(explicit[i].getSystemLibrarySourcePath(), libraries[i].getSystemLibrarySourcePath());
+		}
+		assertFalse(config.addVMs(container));
+	}
+
+	public void testApplyPendingRenamesRenamesRealVM() throws Exception {
+		IVMInstallType standardType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+		VMStandin standin = new VMStandin(standardType, "jre-config-rename-id");
+		standin.setName("jre-config old name");
+		standin.setInstallLocation(javaHome());
+		IVMInstall real = standin.convertToRealVM();
+		try {
+			VMDefinitionsContainer container = new VMDefinitionsContainer();
+			container.addVM(new VMStandin(real));
+			JreConfigurationFile config = JreConfigurationFile.parse("""
+					{ "java.configuration.runtimes": [ { "label": "jre-config new name", "path": "%s" } ] }
+					""".formatted(json(javaHome().getAbsolutePath())), "test");
+			// nothing changes in the container, the rename is only recorded
+			assertFalse(config.addVMs(container));
+			assertEquals("jre-config old name", real.getName());
+			config.applyPendingRenames();
+			assertEquals("jre-config new name", real.getName());
+			// renames are applied only once
+			real.setName("jre-config old name");
+			config.applyPendingRenames();
+			assertEquals("jre-config old name", real.getName());
+		} finally {
+			standardType.disposeVMInstall(real.getId());
+			JavaRuntime.saveVMConfiguration();
+		}
 	}
 }

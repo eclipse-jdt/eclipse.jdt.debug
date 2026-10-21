@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -134,9 +136,16 @@ public final class JreConfigurationFile {
 	public record EnvironmentDefault(String environmentId, File path) {
 	}
 
+	/**
+	 * A rename of an existing VM deferred until the real VM exists.
+	 */
+	private record PendingRename(String compositeId, String oldName, String newName) {
+	}
+
 	private final String fOrigin;
 	private final List<Runtime> fRuntimes;
 	private final List<EnvironmentDefault> fEnvironmentDefaults;
+	private final List<PendingRename> fPendingRenames = new ArrayList<>();
 
 	private JreConfigurationFile(String origin, List<Runtime> runtimes, List<EnvironmentDefault> environmentDefaults) {
 		fOrigin = origin;
@@ -365,6 +374,11 @@ public final class JreConfigurationFile {
 	 * Adds the configured runtimes to the given container. A runtime whose install location matches a VM already present
 	 * in the container updates that VM in place, otherwise a new {@link VMStandin} of the standard VM type is added. If a
 	 * runtime is flagged as default, the container's default VM is set accordingly.
+	 * <p>
+	 * Runtimes whose install location is contributed through the <code>vmInstalls</code> extension point are left to the
+	 * extension (only the default flag is honored). Existing VMs are not renamed here because stand-ins do not fire change
+	 * events; renames are recorded and performed by {@link #applyPendingRenames()} once the real VMs exist.
+	 * </p>
 	 *
 	 * @param container the container being populated during VM initialization
 	 * @return whether the container was modified
@@ -384,35 +398,87 @@ public final class JreConfigurationFile {
 				continue;
 			}
 			VMStandin standin = findStandin(container, home);
+			String compositeId;
 			if (standin == null) {
-				standin = new VMStandin(standardType, uniqueId(container, home));
-				standin.setInstallLocation(home);
-				container.addVM(standin);
-				changed = true;
-			}
-			changed |= configure(standin, runtime, standardType);
-			if (runtime.isDefault()) {
-				String compositeId = JavaRuntime.getCompositeIdFromVM(standin);
-				if (!compositeId.equals(container.getDefaultVMInstallCompositeID())) {
-					container.setDefaultVMInstallCompositeID(compositeId);
+				String contributedId = findContributedVMId(standardType, home);
+				if (contributedId != null) {
+					// managed by the vmInstalls extension, which is loaded after this step
+					log(IStatus.INFO, "Runtime '" + runtime.label() + "' from " + fOrigin + " is contributed by an extension as '" + contributedId + "', using the contributed definition"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					compositeId = new CompositeId(new String[] { standardType.getId(), contributedId }).toString();
+				} else {
+					standin = new VMStandin(standardType, uniqueId(container, home));
+					standin.setInstallLocation(home);
+					standin.setName(uniqueName(container, standardType, runtime.label(), standin));
+					container.addVM(standin);
 					changed = true;
+					compositeId = JavaRuntime.getCompositeIdFromVM(standin);
+					changed |= configure(standin, runtime, standardType);
 				}
+			} else {
+				compositeId = JavaRuntime.getCompositeIdFromVM(standin);
+				changed |= configure(standin, runtime, standardType);
+				if (!runtime.label().equals(standin.getName())) {
+					if (isNameUsed(container, standardType, runtime.label(), standin)) {
+						log(IStatus.WARNING, "Not renaming JRE '" + standin.getName() + "' to '" + runtime.label() + "' (" + fOrigin + "): the name is already used by another JRE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					} else {
+						synchronized (fPendingRenames) {
+							fPendingRenames.add(new PendingRename(compositeId, standin.getName(), runtime.label()));
+						}
+					}
+				}
+			}
+			if (runtime.isDefault() && !compositeId.equals(container.getDefaultVMInstallCompositeID())) {
+				container.setDefaultVMInstallCompositeID(compositeId);
+				changed = true;
 			}
 		}
 		return changed;
 	}
 
+	/**
+	 * Renames real VMs that were matched to a runtime with a different label during {@link #addVMs(VMDefinitionsContainer)}.
+	 * Must be called after VM initialization has completed and without holding VM locks, so that the regular
+	 * {@link org.eclipse.jdt.launching.IVMInstallChangedListener#PROPERTY_NAME} notification migrates JRE container
+	 * paths and launch configurations referencing the old name.
+	 */
+	public void applyPendingRenames() {
+		List<PendingRename> renames;
+		synchronized (fPendingRenames) {
+			if (fPendingRenames.isEmpty()) {
+				return;
+			}
+			renames = new ArrayList<>(fPendingRenames);
+			fPendingRenames.clear();
+		}
+		boolean renamed = false;
+		for (PendingRename rename : renames) {
+			IVMInstall vm = JavaRuntime.getVMFromCompositeId(rename.compositeId());
+			if (vm == null || !rename.oldName().equals(vm.getName())) {
+				continue;
+			}
+			if (vm.getVMInstallType().findVMInstallByName(rename.newName()) != null) {
+				log(IStatus.WARNING, "Not renaming JRE '" + rename.oldName() + "' to '" + rename.newName() + "' (" + fOrigin + "): the name is already used by another JRE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				continue;
+			}
+			vm.setName(rename.newName());
+			renamed = true;
+		}
+		if (renamed) {
+			try {
+				JavaRuntime.saveVMConfiguration();
+			} catch (CoreException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
+	}
+
 	private boolean configure(VMStandin standin, Runtime runtime, IVMInstallType standardType) {
 		boolean changed = false;
-		if (!runtime.label().equals(standin.getName())) {
-			standin.setName(runtime.label());
-			changed = true;
-		}
 		if (runtime.vendor() != null && !runtime.vendor().equals(standin.getAttribute(ATTRIBUTE_VENDOR))) {
 			standin.setAttribute(ATTRIBUTE_VENDOR, runtime.vendor());
 			changed = true;
 		}
-		if (runtime.javadoc() != null && !runtime.javadoc().equals(standin.getJavadocLocation())) {
+		if (runtime.javadoc() != null && !sameURL(runtime.javadoc(), standin.getJavadocLocation())) {
 			standin.setJavadocLocation(runtime.javadoc());
 			changed = true;
 		}
@@ -420,18 +486,21 @@ public final class JreConfigurationFile {
 			standin.setVMArgs(runtime.vmArgs());
 			changed = true;
 		}
-		if (runtime.sources() != null) {
-			LibraryLocation[] libraries = standin.getLibraryLocations();
+		LibraryLocation[] libraries = standin.getLibraryLocations();
+		// explicit library locations are needed for a source override; a javadoc override only needs to be
+		// propagated to already explicit libraries, implicit ones pick up the VM level javadoc location
+		if (runtime.sources() != null || (runtime.javadoc() != null && libraries != null)) {
 			if (libraries == null) {
 				libraries = standardType.getDefaultLibraryLocations(runtime.path());
 			}
 			if (libraries != null && libraries.length > 0) {
-				IPath sourcePath = IPath.fromOSString(runtime.sources().getAbsolutePath());
 				LibraryLocation[] updated = new LibraryLocation[libraries.length];
 				boolean librariesChanged = false;
 				for (int i = 0; i < libraries.length; i++) {
 					LibraryLocation library = libraries[i];
-					updated[i] = new LibraryLocation(library.getSystemLibraryPath(), sourcePath, library.getPackageRootPath(), library.getJavadocLocation(), library.getIndexLocation(), library.getExternalAnnotationsPath());
+					IPath sourcePath = runtime.sources() != null ? IPath.fromOSString(runtime.sources().getAbsolutePath()) : library.getSystemLibrarySourcePath();
+					URL javadoc = runtime.javadoc() != null ? runtime.javadoc() : library.getJavadocLocation();
+					updated[i] = new LibraryLocation(library.getSystemLibraryPath(), sourcePath, library.getPackageRootPath(), javadoc, library.getIndexLocation(), library.getExternalAnnotationsPath());
 					librariesChanged |= !updated[i].equals(library);
 				}
 				if (librariesChanged) {
@@ -443,6 +512,14 @@ public final class JreConfigurationFile {
 		return changed;
 	}
 
+	private static boolean sameURL(URL a, URL b) {
+		// URL.equals() may resolve host names, compare external forms instead
+		if (a == null || b == null) {
+			return a == b;
+		}
+		return a.toExternalForm().equals(b.toExternalForm());
+	}
+
 	private static VMStandin findStandin(VMDefinitionsContainer container, File home) {
 		for (IVMInstall vm : container.getVMList()) {
 			if (vm instanceof VMStandin standin && sameLocation(standin.getInstallLocation(), home)) {
@@ -450,6 +527,49 @@ public final class JreConfigurationFile {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the id of a VM contributed via the <code>vmInstalls</code> extension point for the given type and install
+	 * location, or <code>null</code> if none is contributed.
+	 */
+	private static String findContributedVMId(IVMInstallType type, File home) {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_VM_INSTALLS);
+		if (point == null) {
+			return null;
+		}
+		for (IConfigurationElement element : point.getConfigurationElements()) {
+			if (!"vmInstall".equals(element.getName()) || !type.getId().equals(element.getAttribute("vmInstallType"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
+			String id = element.getAttribute("id"); //$NON-NLS-1$
+			String contributedHome = element.getAttribute("home"); //$NON-NLS-1$
+			if (id != null && contributedHome != null && sameLocation(new File(substitute(contributedHome)), home)) {
+				return id;
+			}
+		}
+		return null;
+	}
+
+	private static boolean isNameUsed(VMDefinitionsContainer container, IVMInstallType type, String name, IVMInstall except) {
+		for (IVMInstall vm : container.getVMList()) {
+			if (vm != except && type.equals(vm.getVMInstallType()) && name.equals(vm.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String uniqueName(VMDefinitionsContainer container, IVMInstallType type, String name, IVMInstall except) {
+		String candidate = name;
+		int suffix = 2;
+		while (isNameUsed(container, type, candidate, except)) {
+			candidate = name + " (" + suffix++ + ')'; //$NON-NLS-1$
+		}
+		if (!candidate.equals(name)) {
+			log(IStatus.WARNING, "JRE name '" + name + "' from " + fOrigin + " is already used, using '" + candidate + '\''); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return candidate;
 	}
 
 	private static String uniqueId(VMDefinitionsContainer container, File home) {
