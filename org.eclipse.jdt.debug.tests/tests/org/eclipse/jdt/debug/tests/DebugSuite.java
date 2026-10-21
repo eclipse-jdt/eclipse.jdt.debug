@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -33,9 +33,11 @@ public abstract class DebugSuite extends TestSuite {
 	protected boolean fTesting = true;
 
 	/**
-	 * Construct the test suite.
+	 * Construct the test suite with its concrete class name so that the JUnit view
+	 * can open the suite even when it is run with JUnit 4.
 	 */
 	public DebugSuite() {
+		setName(getClass().getName());
 	}
 
 	/**

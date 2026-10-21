@@ -334,10 +334,13 @@ public class ArgumentTests extends AbstractDebugTest {
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_ARGFILE, fUseArgfile);
-
-		Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream().filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
-		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
+		
+		Map<String, String> nativeEnvironment = getLaunchManager().getNativeEnvironment();
+		if (nativeEnvironment.get("JAVA_TOOL_OPTIONS") != null) {
+			Map<String, String> env = nativeEnvironment.entrySet().stream().filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+			workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
+		}
 
 		IVMInstall vm = JavaRuntime.getVMInstall(get14Project());
 		assertNotNull("should be able to get a VM install from the 1.4 project", vm);

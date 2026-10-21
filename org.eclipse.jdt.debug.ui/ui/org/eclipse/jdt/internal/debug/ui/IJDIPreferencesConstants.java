@@ -178,6 +178,16 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_SHOW_CONSTANTS= IJavaDebugUIConstants.PLUGIN_ID + ".show_constants"; //$NON-NLS-1$
 
 	/**
+	 * String preference holding the fields pinned to the top of variable views. Value is a
+	 * comma separated list of <code>declaringTypeName#fieldName</code> entries. The pins are
+	 * view specific: the actual preference key is prefixed by the id of the view, like
+	 * {@link #PREF_SHOW_CONSTANTS}.
+	 *
+	 * @since 3.16
+	 */
+	public static final String PREF_PINNED_FIELDS = IJavaDebugUIConstants.PLUGIN_ID + ".pinned_fields"; //$NON-NLS-1$
+
+	/**
 	 * Boolean preference indicating whether null array entries should be shown
 	 * in variable views. A view may over-ride this preference, and if so, stores
 	 * its preference, prefixed by view id.

@@ -227,7 +227,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"OutSync", "OutSync2", "ConsoleOutputUmlaut", "ErrorRecurrence", "ModelPresentationTests", "Bug565982",
 			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2", "compare.CompareObjectsStringTest", "compare.CompareListObjects",
 			"compare.CompareMapObjects", "compare.CompareSetObjects", "compare.CompareNormalObjects", "compare.CompareArrayObjects",
-			"StatementStep", "StatementStepArgument", "StatementStepNested", "StatementStepWithOperations", "WatchItemContext" };
+			"StatementStep", "StatementStepArgument", "StatementStepNested", "StatementStepWithOperations", "WatchItemContext",
+			"PinnedFieldsTarget" };
 
 	/**
 	 * the default timeout
@@ -489,6 +490,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "Bug567801"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug572782"));
 				cfgs.add(createLaunchConfiguration(jp, "Bug576829"));
+				cfgs.add(createLaunchConfiguration(jp, "GH693"));
 	    		loaded17 = true;
 	    		waitForBuild();
 	        }
@@ -3048,13 +3050,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         return config.doSave();
     }
 
-    private void setEnvironment(ILaunchConfigurationWorkingCopy workingCopy) {
-      Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream()
-        .filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-      workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
-      workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
-    }
+	private void setEnvironment(ILaunchConfigurationWorkingCopy workingCopy) {
+		Map<String, String> nativeEnvironment = getLaunchManager().getNativeEnvironment();
+		if (nativeEnvironment.get("JAVA_TOOL_OPTIONS") == null) {
+			return;
+		}
+		Map<String, String> env = nativeEnvironment.entrySet().stream().filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
+	}
 
 	/**
 	 * Exception to indicate a test should be run again when it fails.
