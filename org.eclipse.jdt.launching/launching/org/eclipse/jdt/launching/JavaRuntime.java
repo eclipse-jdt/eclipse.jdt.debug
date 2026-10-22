@@ -3294,6 +3294,8 @@ public final class JavaRuntime {
 								updateCompliance = true;
 							}
 						}
+						// a default chosen by the configuration may refer to a contributed VM that is only added in step 4
+						boolean configuredDefault = configuration != null && vmDefs.getDefaultVMInstallCompositeID() != null;
 
 						// 3. if there are none, detect the eclipse runtime
 						if (vmDefs.getValidVMList().isEmpty()) {
@@ -3308,7 +3310,9 @@ public final class JavaRuntime {
 								if (runtime != null) {
 									updateCompliance = true;
 									vmDefs.addVM(runtime);
-									vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(runtime));
+									if (!configuredDefault) {
+										vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(runtime));
+									}
 								}
 							} else {
 								// VMs were changed - reflect current settings

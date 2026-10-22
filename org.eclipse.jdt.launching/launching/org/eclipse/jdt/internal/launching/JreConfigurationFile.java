@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -375,9 +377,11 @@ public final class JreConfigurationFile {
 	 * in the container updates that VM in place, otherwise a new {@link VMStandin} of the standard VM type is added. If a
 	 * runtime is flagged as default, the container's default VM is set accordingly.
 	 * <p>
-	 * Runtimes whose install location is contributed through the <code>vmInstalls</code> extension point are left to the
-	 * extension (only the default flag is honored). Existing VMs are not renamed here because stand-ins do not fire change
-	 * events; renames are recorded and performed by {@link #applyPendingRenames()} once the real VMs exist.
+	 * Runtimes whose install location is contributed through the <code>vmInstalls</code> extension point, whether or not a
+	 * persisted VM exists at that location, are left to the extension (only the default flag is honored). Existing VMs are
+	 * not renamed here because stand-ins do not fire change events; renames are recorded and performed by
+	 * {@link #applyPendingRenames()} once the real VMs exist. Labels must be valid JRE names (see {@link #validateName(String)}),
+	 * entries with invalid labels are skipped.
 	 * </p>
 	 *
 	 * @param container the container being populated during VM initialization
@@ -389,6 +393,19 @@ public final class JreConfigurationFile {
 			log(IStatus.ERROR, "Standard VM install type is not available, ignoring JRE configuration " + fOrigin); //$NON-NLS-1$
 			return false;
 		}
+		return addVMs(container, standardType, contributedVMs(standardType));
+	}
+
+	/**
+	 * Variant of {@link #addVMs(VMDefinitionsContainer)} with an explicit list of VMs contributed via the
+	 * <code>vmInstalls</code> extension point. Visible for testing.
+	 *
+	 * @param container the container being populated during VM initialization
+	 * @param standardType the standard VM install type
+	 * @param contributed VMs of the standard type contributed via the <code>vmInstalls</code> extension point
+	 * @return whether the container was modified
+	 */
+	public boolean addVMs(VMDefinitionsContainer container, IVMInstallType standardType, List<ContributedVM> contributed) {
 		boolean changed = false;
 		for (Runtime runtime : fRuntimes) {
 			File home = runtime.path();
@@ -397,28 +414,31 @@ public final class JreConfigurationFile {
 				log(IStatus.WARNING, "Ignoring runtime '" + runtime.label() + "' from " + fOrigin + ": " + status.getMessage() + " (" + home + ')'); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				continue;
 			}
+			IStatus nameStatus = validateName(runtime.label());
+			if (!nameStatus.isOK()) {
+				log(IStatus.WARNING, "Ignoring runtime '" + runtime.label() + "' from " + fOrigin + ": " + nameStatus.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				continue;
+			}
 			VMStandin standin = findStandin(container, home);
+			ContributedVM contribution = findContributedVM(contributed, home);
 			String compositeId;
-			if (standin == null) {
-				String contributedId = findContributedVMId(standardType, home);
-				if (contributedId != null) {
-					// managed by the vmInstalls extension, which is loaded after this step
-					log(IStatus.INFO, "Runtime '" + runtime.label() + "' from " + fOrigin + " is contributed by an extension as '" + contributedId + "', using the contributed definition"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					compositeId = new CompositeId(new String[] { standardType.getId(), contributedId }).toString();
-				} else {
-					standin = new VMStandin(standardType, uniqueId(container, home));
-					standin.setInstallLocation(home);
-					standin.setName(uniqueName(container, standardType, runtime.label(), standin));
-					container.addVM(standin);
-					changed = true;
-					compositeId = JavaRuntime.getCompositeIdFromVM(standin);
-					changed |= configure(standin, runtime, standardType);
-				}
+			if (contribution != null) {
+				// managed by the vmInstalls extension, which (re)defines this VM after this step; honor only the default flag
+				log(IStatus.INFO, "Runtime '" + runtime.label() + "' from " + fOrigin + " is contributed by an extension as '" + contribution.id() + "', using the contributed definition"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				compositeId = new CompositeId(new String[] { standardType.getId(), contribution.id() }).toString();
+			} else if (standin == null) {
+				standin = new VMStandin(standardType, uniqueId(container, home));
+				standin.setInstallLocation(home);
+				standin.setName(uniqueName(container, contributed, standardType, runtime.label(), standin));
+				container.addVM(standin);
+				changed = true;
+				compositeId = JavaRuntime.getCompositeIdFromVM(standin);
+				changed |= configure(standin, runtime, standardType);
 			} else {
 				compositeId = JavaRuntime.getCompositeIdFromVM(standin);
 				changed |= configure(standin, runtime, standardType);
 				if (!runtime.label().equals(standin.getName())) {
-					if (isNameUsed(container, standardType, runtime.label(), standin)) {
+					if (isNameUsed(container, contributed, standardType, runtime.label(), standin)) {
 						log(IStatus.WARNING, "Not renaming JRE '" + standin.getName() + "' to '" + runtime.label() + "' (" + fOrigin + "): the name is already used by another JRE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					} else {
 						synchronized (fPendingRenames) {
@@ -433,6 +453,24 @@ public final class JreConfigurationFile {
 			}
 		}
 		return changed;
+	}
+
+	/**
+	 * Validates a configured label as JRE name. JRE names are used as segment of JRE container paths, so they must be
+	 * valid resource names (same rule as the "Installed JREs" preference page).
+	 *
+	 * @param name the name to validate
+	 * @return OK status if the name is valid, error status otherwise
+	 */
+	public static IStatus validateName(String name) {
+		if (name == null || name.isBlank()) {
+			return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, "JRE name must not be empty"); //$NON-NLS-1$
+		}
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
+		if (!status.isOK()) {
+			return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, "JRE name must be a valid file name: " + status.getMessage()); //$NON-NLS-1$
+		}
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -530,40 +568,64 @@ public final class JreConfigurationFile {
 	}
 
 	/**
-	 * Returns the id of a VM contributed via the <code>vmInstalls</code> extension point for the given type and install
-	 * location, or <code>null</code> if none is contributed.
+	 * A VM contributed via the <code>vmInstalls</code> extension point.
+	 *
+	 * @param id contributed VM id
+	 * @param name contributed VM name, may be <code>null</code>
+	 * @param home contributed install location after variable substitution
 	 */
-	private static String findContributedVMId(IVMInstallType type, File home) {
+	public record ContributedVM(String id, String name, File home) {
+	}
+
+	/**
+	 * Returns the VMs of the given type contributed via the <code>vmInstalls</code> extension point.
+	 */
+	private static List<ContributedVM> contributedVMs(IVMInstallType type) {
+		List<ContributedVM> result = new ArrayList<>();
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_VM_INSTALLS);
 		if (point == null) {
-			return null;
+			return result;
 		}
 		for (IConfigurationElement element : point.getConfigurationElements()) {
 			if (!"vmInstall".equals(element.getName()) || !type.getId().equals(element.getAttribute("vmInstallType"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
 			String id = element.getAttribute("id"); //$NON-NLS-1$
-			String contributedHome = element.getAttribute("home"); //$NON-NLS-1$
-			if (id != null && contributedHome != null && sameLocation(new File(substitute(contributedHome)), home)) {
-				return id;
+			String home = element.getAttribute("home"); //$NON-NLS-1$
+			if (id != null && home != null) {
+				result.add(new ContributedVM(id, element.getAttribute("name"), new File(substitute(home)))); //$NON-NLS-1$
+			}
+		}
+		return result;
+	}
+
+	private static ContributedVM findContributedVM(List<ContributedVM> contributed, File home) {
+		for (ContributedVM vm : contributed) {
+			if (sameLocation(vm.home(), home)) {
+				return vm;
 			}
 		}
 		return null;
 	}
 
-	private static boolean isNameUsed(VMDefinitionsContainer container, IVMInstallType type, String name, IVMInstall except) {
+	private static boolean isNameUsed(VMDefinitionsContainer container, List<ContributedVM> contributed, IVMInstallType type, String name, IVMInstall except) {
 		for (IVMInstall vm : container.getVMList()) {
 			if (vm != except && type.equals(vm.getVMInstallType()) && name.equals(vm.getName())) {
+				return true;
+			}
+		}
+		for (ContributedVM vm : contributed) {
+			if (name.equals(vm.name())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private String uniqueName(VMDefinitionsContainer container, IVMInstallType type, String name, IVMInstall except) {
+	private String uniqueName(VMDefinitionsContainer container, List<ContributedVM> contributed, IVMInstallType type, String name, IVMInstall except) {
 		String candidate = name;
 		int suffix = 2;
-		while (isNameUsed(container, type, candidate, except)) {
+		while (isNameUsed(container, contributed, type, candidate, except)) {
 			candidate = name + " (" + suffix++ + ')'; //$NON-NLS-1$
 		}
 		if (!candidate.equals(name)) {

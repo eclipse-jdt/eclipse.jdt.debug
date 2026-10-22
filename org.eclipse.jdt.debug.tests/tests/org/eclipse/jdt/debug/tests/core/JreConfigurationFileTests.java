@@ -18,7 +18,9 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.JreConfigurationFile;
+import org.eclipse.jdt.internal.launching.JreConfigurationFile.ContributedVM;
 import org.eclipse.jdt.internal.launching.JreConfigurationFile.EnvironmentDefault;
 import org.eclipse.jdt.internal.launching.JreConfigurationFile.Runtime;
 import org.eclipse.jdt.internal.launching.SimpleJsonParser;
@@ -260,5 +262,80 @@ public class JreConfigurationFileTests extends AbstractDebugTest {
 			standardType.disposeVMInstall(real.getId());
 			JavaRuntime.saveVMConfiguration();
 		}
+	}
+
+	public void testInvalidLabelIsSkipped() throws Exception {
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
+		JreConfigurationFile config = JreConfigurationFile.parse("""
+				{ "java.configuration.runtimes": [
+				    { "label": "Temurin/JDK21", "path": "%s", "default": true },
+				    { "label": "valid", "path": "%s" }
+				] }
+				""".formatted(json(javaHome().getAbsolutePath()), json(javaHome().getAbsolutePath())), "test");
+		assertTrue(config.addVMs(container));
+		assertEquals(1, container.getVMList().size());
+		assertEquals("valid", container.getVMList().get(0).getName());
+		assertNull(container.getDefaultVMInstallCompositeID());
+		assertFalse(JreConfigurationFile.validateName("a\\b").isOK());
+		assertFalse(JreConfigurationFile.validateName(" ").isOK());
+		assertTrue(JreConfigurationFile.validateName("[JDK 21] Temurin 21.0.6+7-LTS").isOK());
+	}
+
+	public void testContributedVMsAreLeftToExtension() throws Exception {
+		IVMInstallType standardType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+		String home = json(javaHome().getAbsolutePath());
+		File otherHome = new File(javaHome(), "does-not-exist");
+		List<ContributedVM> contributed = List.of(new ContributedVM("contributed-id", "Contributed JDK", javaHome()));
+		String contributedCompositeId = new CompositeId(new String[] { standardType.getId(), "contributed-id" }).toString();
+
+		// fresh workspace: a configured runtime at a contributed location adds no stand-in but may become the default
+		VMDefinitionsContainer fresh = new VMDefinitionsContainer();
+		JreConfigurationFile config = JreConfigurationFile.parse("""
+				{ "java.configuration.runtimes": [ { "label": "configured", "path": "%s", "default": true } ] }
+				""".formatted(home), "test");
+		assertTrue(config.addVMs(fresh, standardType, contributed));
+		assertTrue(fresh.getVMList().isEmpty());
+		assertEquals(contributedCompositeId, fresh.getDefaultVMInstallCompositeID());
+
+		// persisted VM at a contributed location: not configured, not renamed, default flag honored for the contribution
+		VMDefinitionsContainer persisted = new VMDefinitionsContainer();
+		VMStandin existing = new VMStandin(standardType, "contributed-id");
+		existing.setName("Contributed JDK");
+		existing.setInstallLocation(javaHome());
+		persisted.addVM(existing);
+		IVMInstall real = existing.convertToRealVM();
+		try {
+			config = JreConfigurationFile.parse("""
+					{ "java.configuration.runtimes": [ { "label": "renamed", "path": "%s", "vendor": "Test", "default": true } ] }
+					""".formatted(home), "test");
+			assertTrue(config.addVMs(persisted, standardType, contributed));
+			assertEquals(1, persisted.getVMList().size());
+			assertEquals("Contributed JDK", existing.getName());
+			assertNull(existing.getAttribute(JreConfigurationFile.ATTRIBUTE_VENDOR));
+			assertEquals(contributedCompositeId, persisted.getDefaultVMInstallCompositeID());
+			config.applyPendingRenames();
+			assertEquals("Contributed JDK", real.getName());
+		} finally {
+			standardType.disposeVMInstall(real.getId());
+			JavaRuntime.saveVMConfiguration();
+		}
+
+		// a configured runtime at another location must not take the name of a contributed VM
+		List<ContributedVM> contributedElsewhere = List.of(new ContributedVM("contributed-id", "Contributed JDK", otherHome));
+		config = JreConfigurationFile.parse("""
+				{ "java.configuration.runtimes": [ { "label": "Contributed JDK", "path": "%s" } ] }
+				""".formatted(home), "test");
+		VMDefinitionsContainer added = new VMDefinitionsContainer();
+		assertTrue(config.addVMs(added, standardType, contributedElsewhere));
+		assertEquals(1, added.getVMList().size());
+		assertEquals("Contributed JDK (2)", added.getVMList().get(0).getName());
+		VMDefinitionsContainer renamed = new VMDefinitionsContainer();
+		VMStandin elsewhere = new VMStandin(standardType, "elsewhere-id");
+		elsewhere.setName("elsewhere");
+		elsewhere.setInstallLocation(javaHome());
+		renamed.addVM(elsewhere);
+		assertFalse(config.addVMs(renamed, standardType, contributedElsewhere));
+		config.applyPendingRenames();
+		assertEquals("elsewhere", elsewhere.getName());
 	}
 }
