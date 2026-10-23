@@ -144,6 +144,27 @@ public class ResolveRuntimeClasspathTests extends AbstractDebugTest {
 		assertFalse(isOnRuntimeClasspath(resolved, "/projectA/bin/main"));
 	}
 
+	public void testInclusionOfTestCodeFromContainerProject() throws CoreException {
+		IJavaProject project = createProjectWithContainerProjectDependency(false);
+		IRuntimeClasspathEntry container = JavaRuntime.newRuntimeContainerClasspathEntry(CONTAINER_PATH, IRuntimeClasspathEntry.USER_CLASSES, project);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(container, project, false);
+
+		assertTrue(isOnRuntimeClasspath(resolved, "/projectA/bin/main"));
+		assertTrue(isOnRuntimeClasspath(resolved, "/projectA/bin/test"));
+		assertTrue(isOnRuntimeClasspath(resolved, "/projectA/lib/test"));
+	}
+
+	public void testExclusionOfTestCodeFromContainerProjectWithoutTestCode() throws CoreException {
+		IJavaProject project = createProjectWithContainerProjectDependency(true);
+		IRuntimeClasspathEntry container = JavaRuntime.newRuntimeContainerClasspathEntry(CONTAINER_PATH, IRuntimeClasspathEntry.USER_CLASSES, project);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(container, project, false);
+
+		assertTrue(isOnRuntimeClasspath(resolved, "/projectA/bin/main"));
+		// even with "excludeTestCode=false" test code from project A is not accessible
+		assertFalse(isOnRuntimeClasspath(resolved, "/projectA/bin/test"));
+		assertFalse(isOnRuntimeClasspath(resolved, "/projectA/lib/test"));
+	}
+
 	private boolean isOnRuntimeClasspath(IRuntimeClasspathEntry[] runtimeClasspathEntries, String path) {
 		for (IRuntimeClasspathEntry runtimeClasspathEntry : runtimeClasspathEntries) {
 			if (runtimeClasspathEntry.getPath().equals(new Path(path))) {
@@ -252,6 +273,73 @@ public class ResolveRuntimeClasspathTests extends AbstractDebugTest {
 		};
 		JavaCore.setClasspathContainer(CONTAINER_PATH, new IJavaProject[] { javaProjectB }, new IClasspathContainer[] { container }, null);
 		JavaProjectHelper.addContainerEntry(javaProjectB, CONTAINER_PATH);
+		return javaProjectB;
+	}
+
+	/**
+	 * Creates two Java projects A and B. Project A contains a folder with non-test code, a folder with test code and a library with test code.
+	 * Project B has a classpath container that has no runtime classpath entry resolver. The container contains project A.
+	 *
+	 * <ol>
+	 * <li>Classpath of project A
+	 * <ul>
+	 * <li>path="main", output="bin/main"
+	 * <li>path="test", output="bin/test", test=true
+	 * <li>path="lib/test", test=true
+	 * </ul>
+	 * <li>Entries of the container of project B
+	 * <ul>
+	 * <li>path="/projectA", without_test_code=true or false
+	 * </ul>
+	 * </ol>
+	 *
+	 * @param withoutTestCode
+	 *            {@code true} if project B can access test code from project A, otherwise {@code false}.
+	 * @return Java project B
+	 * @throws CoreException
+	 *             if this method fails.
+	 */
+	private IJavaProject createProjectWithContainerProjectDependency(boolean withoutTestCode) throws CoreException {
+		// create and configure project A
+		IJavaProject javaProjectA = JavaProjectHelper.createJavaProject(projectA.getName());
+		IFolder mainFolder = createFolders(projectA, "main");
+		IFolder testFolder = createFolders(projectA, "test");
+		IFolder binMainFolder = createFolders(projectA, "bin/main");
+		IFolder binTestFolder = createFolders(projectA, "bin/test");
+		IFolder libTestFolder = createFolders(projectA, "lib/test");
+		IClasspathAttribute[] testAttributes = new IClasspathAttribute[] { JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true") };
+		JavaProjectHelper.addToClasspath(javaProjectA, JavaCore.newSourceEntry(mainFolder.getFullPath(), new IPath[0], new IPath[0], binMainFolder.getFullPath(), new IClasspathAttribute[0]));
+		JavaProjectHelper.addToClasspath(javaProjectA, JavaCore.newSourceEntry(testFolder.getFullPath(), new IPath[0], new IPath[0], binTestFolder.getFullPath(), testAttributes));
+		JavaProjectHelper.addToClasspath(javaProjectA, JavaCore.newLibraryEntry(libTestFolder.getFullPath(), null, null, new IAccessRule[0], testAttributes, false));
+
+		// create and configure project B
+		IJavaProject javaProjectB = JavaProjectHelper.createJavaProject(projectB.getName());
+		IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectA.getFullPath(), new IAccessRule[0], true, new IClasspathAttribute[] {
+				JavaCore.newClasspathAttribute(IClasspathAttribute.WITHOUT_TEST_CODE, Boolean.toString(withoutTestCode)) }, false);
+		IClasspathContainer container = new IClasspathContainer() {
+			@Override
+			public IClasspathEntry[] getClasspathEntries() {
+				return new IClasspathEntry[] { projectEntry };
+			}
+
+			@Override
+			public String getDescription() {
+				return "Test Container";
+			}
+
+			@Override
+			public int getKind() {
+				return IClasspathContainer.K_APPLICATION;
+			}
+
+			@Override
+			public IPath getPath() {
+				return CONTAINER_PATH;
+			}
+		};
+		JavaCore.setClasspathContainer(CONTAINER_PATH, new IJavaProject[] { javaProjectB }, new IClasspathContainer[] { container }, null);
+		JavaProjectHelper.addContainerEntry(javaProjectB, CONTAINER_PATH);
+
 		return javaProjectB;
 	}
 
