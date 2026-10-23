@@ -281,6 +281,23 @@ public class JreConfigurationFileTests extends AbstractDebugTest {
 		assertTrue(JreConfigurationFile.validateName("[JDK 21] Temurin 21.0.6+7-LTS").isOK());
 	}
 
+	public void testInvalidPathIsSkippedAndFollowingRuntimeIsAdded() throws Exception {
+		String invalidPath = "bad" + '\\' + 'u' + "0000path";
+		String configuration = """
+				{ "java.configuration.runtimes": [
+				    { "label": "invalid", "path": "%s" },
+				    { "label": "valid", "path": "%s" }
+				] }
+				""".formatted(invalidPath, json(javaHome().getAbsolutePath()));
+		JreConfigurationFile config = JreConfigurationFile.parse(configuration, "test");
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
+
+		assertTrue(config.addVMs(container));
+		assertEquals(1, container.getVMList().size());
+		assertEquals("valid", container.getVMList().get(0).getName());
+		assertEquals(javaHome().getAbsoluteFile(), container.getVMList().get(0).getInstallLocation());
+	}
+
 	public void testContributedVMsAreLeftToExtension() throws Exception {
 		IVMInstallType standardType = JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
 		String home = json(javaHome().getAbsolutePath());

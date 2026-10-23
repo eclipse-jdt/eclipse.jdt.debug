@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -409,7 +410,13 @@ public final class JreConfigurationFile {
 		boolean changed = false;
 		for (Runtime runtime : fRuntimes) {
 			File home = runtime.path();
-			IStatus status = standardType.validateInstallLocation(home);
+			IStatus status;
+			try {
+				status = standardType.validateInstallLocation(home);
+			} catch (InvalidPathException e) {
+				log(IStatus.WARNING, "Ignoring runtime '" + runtime.label() + "' from " + fOrigin + ": invalid install path (" + home + ')', e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				continue;
+			}
 			if (status.getSeverity() == IStatus.ERROR) {
 				log(IStatus.WARNING, "Ignoring runtime '" + runtime.label() + "' from " + fOrigin + ": " + status.getMessage() + " (" + home + ')'); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				continue;
