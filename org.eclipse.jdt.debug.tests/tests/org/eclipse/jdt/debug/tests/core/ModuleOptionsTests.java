@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2024 GK Software SE and others.
+ * Copyright (c) 2019, 2026 GK Software SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *
  * Contributors:
  *     Stephan Herrmann - initial API and implementation
@@ -81,6 +85,21 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
 
+	private static final String ASSUMED_DEFAULT_MODULES_28 = "java.base," //
+			+ "java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging," //
+			+ "java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi," //
+			+ "java.scripting,java.security.jgss,java.security.sasl,java.smartcardio," //
+			+ "java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.json,jdk.incubator.vector," + "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell,jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net,jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+
 	private static final String ASSUMED_DEFAULT_MODULES_9_ON_26 = "java.se," //
 			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
 			+ "jdk.incubator.vector," //
@@ -94,6 +113,21 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
 			+ "jdk.unsupported.desktop," //
 			+ "jdk.xml.dom";
+
+	private static final String ASSUMED_DEFAULT_MODULES_9_ON_28 = "java.se," //
+			+ "jdk.accessibility,jdk.attach,jdk.compiler,jdk.dynalink,jdk.httpserver," //
+			+ "jdk.incubator.json,jdk.incubator.vector," //
+			+ "jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi," //
+			+ "jdk.jfr," //
+			+ "jdk.jshell," //
+			+ "jdk.management," //
+			+ "jdk.management.jfr," //
+			+ "jdk.net," //
+			+ "jdk.nio.mapmode," //
+			+ "jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+			+ "jdk.unsupported.desktop," //
+			+ "jdk.xml.dom";
+
 	private IVMInstall defaultVM9;
 
 	public ModuleOptionsTests(String name) {
@@ -191,8 +225,11 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 			List<String> defaultModules = getDefaultModules(javaProject);
 			String expectedModules;
 			String moduleList = String.join(",", defaultModules);
-			if (Runtime.version().feature() >= 26) {
+			int javaVersion = Runtime.version().feature();
+			if (javaVersion == 26 || javaVersion == 27) {
 				assertEquals(ASSUMED_DEFAULT_MODULES_9_ON_26, moduleList);
+			} else if (javaVersion >= 28) {
+				assertEquals(ASSUMED_DEFAULT_MODULES_9_ON_28, moduleList);
 			} else {
 				assertEquals(ASSUMED_DEFAULT_MODULES_9, moduleList);
 			}
@@ -214,6 +251,17 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 				case ASSUMED_DEFAULT_MODULES_9_ON_26:
 					expectedModules = "java.instrument,java.net.http,java.scripting,java.sql.rowset,java.xml.crypto," //
 							+ "jdk.accessibility,jdk.dynalink,jdk.httpserver,jdk.incubator.vector," //
+							+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
+							+ "jdk.management.jfr," //
+							+ "jdk.net," //
+							+ "jdk.nio.mapmode," //
+							+ "jdk.sctp," //
+							+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," //
+							+ "jdk.unsupported.desktop,jdk.xml.dom";
+					break;
+				case ASSUMED_DEFAULT_MODULES_9_ON_28:
+					expectedModules = "java.instrument,java.net.http,java.scripting,java.sql.rowset,java.xml.crypto," //
+							+ "jdk.accessibility,jdk.dynalink,jdk.httpserver,jdk.incubator.json,jdk.incubator.vector," //
 							+ "jdk.jartool,jdk.jconsole,jdk.jshell," //
 							+ "jdk.management.jfr," //
 							+ "jdk.net," //
@@ -272,6 +320,12 @@ public class ModuleOptionsTests extends AbstractDebugTest {
 						+ "jdk.jartool,jdk.jconsole,jdk.jshell," + "jdk.management.jfr," + "jdk.net," + "jdk.nio.mapmode," + "jdk.sctp,"
 						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop,"
 						+ "jdk.xml.dom";
+				break;
+			case ASSUMED_DEFAULT_MODULES_28:
+				expectedModules = "java.instrument,java.net.http,java.scripting,java.smartcardio,java.sql.rowset,java.xml.crypto,"
+						+ "jdk.accessibility," + "jdk.dynalink," + "jdk.httpserver," + "jdk.incubator.json,jdk.incubator.vector,"
+						+ "jdk.jartool,jdk.jconsole,jdk.jshell," + "jdk.management.jfr," + "jdk.net," + "jdk.nio.mapmode," + "jdk.sctp,"
+						+ "jdk.security.auth,jdk.security.jgss,jdk.unsupported," + "jdk.unsupported.desktop," + "jdk.xml.dom";
 				break;
 			default:
 				fail("Unknown set of default modules " + moduleList);
