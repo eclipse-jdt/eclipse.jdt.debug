@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -201,6 +202,13 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			boolean equal = true;
 			while (i < newLocations.length && equal) {
 				equal = newLocations[i].equals(prevLocations[i]);
+				if (equal) {
+					URL newJavadoc = newLocations[i].getJavadocLocation();
+					URL previousJavadoc = prevLocations[i].getJavadocLocation();
+					// LibraryLocation.equals() ignores URL path case, but Javadoc servers may not.
+					equal = Objects.equals(newJavadoc == null ? null : newJavadoc.toExternalForm(),
+							previousJavadoc == null ? null : previousJavadoc.toExternalForm());
+				}
 				i++;
 			}
 			if (equal) {

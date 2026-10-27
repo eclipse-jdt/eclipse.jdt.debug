@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.launching.environments;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,13 +35,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.JreConfigurationFile;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
@@ -360,6 +364,63 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		} catch (IOException e) {
 			LaunchingPlugin.log(e);
 		}
+		JreConfigurationFile configuration = JreConfigurationFile.getInstance();
+		if (configuration != null) {
+			applyConfiguredDefaultVMs(configuration);
+		}
+	}
+
+	/**
+	 * Applies the default VMs per execution environment from the JRE configuration file. Explicit
+	 * <code>java.configuration.ee</code> entries override persisted defaults; the <code>version</code> of a configured
+	 * runtime is only used for environments that have no default yet. Runtime entries with invalid JRE names are
+	 * ignored, consistently with VM provisioning.
+	 *
+	 * @param configuration the JRE configuration file
+	 */
+	private void applyConfiguredDefaultVMs(JreConfigurationFile configuration) {
+		for (JreConfigurationFile.EnvironmentDefault entry : configuration.getEnvironmentDefaults()) {
+			ExecutionEnvironment environment = (ExecutionEnvironment) getEnvironment(entry.environmentId());
+			if (environment == null) {
+				LaunchingPlugin.log(new Status(IStatus.WARNING, LaunchingPlugin.ID_PLUGIN, NLS.bind("Unknown execution environment ''{0}'' in JRE configuration {1}", entry.environmentId(), configuration.getOrigin()))); //$NON-NLS-1$
+				continue;
+			}
+			IVMInstall vm = JreConfigurationFile.findInstalledVM(entry.path());
+			if (vm == null) {
+				LaunchingPlugin.log(new Status(IStatus.WARNING, LaunchingPlugin.ID_PLUGIN, NLS.bind("No installed JRE at ''{0}'' for execution environment ''{1}'' in JRE configuration {2}", new Object[] { entry.path(), entry.environmentId(), configuration.getOrigin() }))); //$NON-NLS-1$
+				continue;
+			}
+			setConfiguredDefaultVM(environment, vm, configuration);
+		}
+		for (JreConfigurationFile.Runtime runtime : configuration.getRuntimes()) {
+			if (runtime.version() == null) {
+				continue;
+			}
+			IStatus nameStatus = JreConfigurationFile.validateName(runtime.label());
+			if (!nameStatus.isOK()) {
+				LaunchingPlugin.log(new Status(IStatus.WARNING, LaunchingPlugin.ID_PLUGIN, NLS.bind("Ignoring runtime ''{0}'' in JRE configuration {1}: {2}", new Object[] { runtime.label(), configuration.getOrigin(), nameStatus.getMessage() }))); //$NON-NLS-1$
+				continue;
+			}
+			ExecutionEnvironment environment = (ExecutionEnvironment) getEnvironment(runtime.version());
+			if (environment == null || environment.getDefaultVM() != null) {
+				continue;
+			}
+			IVMInstall vm = JreConfigurationFile.findInstalledVM(runtime.path());
+			if (vm != null) {
+				setConfiguredDefaultVM(environment, vm, configuration);
+			}
+		}
+	}
+
+	private void setConfiguredDefaultVM(ExecutionEnvironment environment, IVMInstall vm, JreConfigurationFile configuration) {
+		if (vm.equals(environment.getDefaultVM())) {
+			return;
+		}
+		if (!Arrays.asList(environment.getCompatibleVMs()).contains(vm)) {
+			LaunchingPlugin.log(new Status(IStatus.WARNING, LaunchingPlugin.ID_PLUGIN, NLS.bind("JRE ''{0}'' is not compatible with execution environment ''{1}'' in JRE configuration {2}", new Object[] { vm.getName(), environment.getId(), configuration.getOrigin() }))); //$NON-NLS-1$
+			return;
+		}
+		environment.initDefaultVM(vm);
 	}
 
 	/**
