@@ -22,6 +22,7 @@ package org.eclipse.jdt.debug.tests;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
 import org.eclipse.jdt.debug.test.stepping.StatementSteppingTests;
+import org.eclipse.jdt.debug.test.stepping.SteppingTestsForJava28;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionWithGenerics;
@@ -220,6 +221,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		if (JavaProjectHelper.isJava28_Compatible()) {
 			addTest(new TestSuite(InstanceMainMethodsTests.class));
+			addTest(new TestSuite(SteppingTestsForJava28.class));
 		}
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
 

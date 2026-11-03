@@ -873,12 +873,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		try {
 			if (!loaded28) {
 				jp = createProject(TWENTYEIGHT_PROJECT_NAME, JavaProjectHelper.TEST_28_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_28_EE_NAME, false);
-				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.DISABLED);
+				jp.setOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, JavaCore.ENABLED);
 				jp.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_28);
 				jp.setOption(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_28);
 				jp.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_28);
 				cfgs.add(createLaunchConfiguration(jp, "Main1"));
 				cfgs.add(createLaunchConfiguration(jp, "Main2"));
+				cfgs.add(createLaunchConfiguration(jp, "EarlyRead"));
 				loaded28 = true;
 				waitForBuild();
 				assertNoErrorMarkersExist(jp.getProject());

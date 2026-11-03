@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     BEA - Daniel R Somerfield - Bug 89643
@@ -43,6 +47,7 @@ import org.eclipse.debug.core.model.IStepFilter;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -338,6 +343,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private static final int INTERMEDIATE_OPCODE_START = 0;
 	private static final int INTERMEDIATE_OPCODE_END = 53;
+	private static final int OPCODE_ALOAD_0 = 0x2a;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -2875,7 +2881,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
-
+				if (stepToFirstConstructorLine(currentLocation, target)) {
+					deleteStepRequest();
+					createSecondaryStepRequest(StepRequest.STEP_OVER);
+					return true;
+				}
 				if (fStepResultTimeoutTriggered.get()) {
 					Method m = fStepResultMethod;
 					if (m != null) {
@@ -3115,6 +3125,54 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				}
 			}
+			return false;
+		}
+
+		/**
+		 * Returns whether a step into a constructor stopped at a line that comes after the next line location (for example the closing brace) instead
+		 * of at the first statement, so that one more step into is needed. Only applies to targets running Java 28 or higher.
+		 *
+		 * @param currentLocation
+		 *            the location of the step event
+		 * @param target
+		 *            the debug target
+		 * @return {@code true} if an additional step into should be done
+		 * @throws DebugException
+		 */
+		private boolean stepToFirstConstructorLine(Location currentLocation, JDIDebugTarget target) throws DebugException {
+			String targetVersion = target.getVersion();
+			if (JavaCore.compareJavaVersions(targetVersion, JavaCore.VERSION_28) < 0) {
+				return false;
+			}
+			if (getStepKind() != StepRequest.STEP_INTO || currentLocation.codeIndex() != 0 || !currentLocation.method().isConstructor()) {
+				return false;
+			}
+
+			try {
+				Method method = currentLocation.method();
+				if (!method.virtualMachine().canGetBytecodes()) {
+					return false;
+				}
+				// A constructor that starts with the usual load of 'this' (super()/this() call, outer instance store)
+				// has a line table that matches its code. Only code that starts with something else
+				// (synthetic initialization in front of the first statement) can be attributed to a wrong line.
+				byte[] bytecodes = method.bytecodes();
+				if (bytecodes.length == 0 || (bytecodes[0] & 0xFF) == OPCODE_ALOAD_0) {
+					return false;
+				}
+				List<Location> lineLocations = currentLocation.method().allLineLocations();
+				if (lineLocations.size() > 1) {
+					int currentLine = currentLocation.lineNumber();
+					int firstLine = lineLocations.get(0).lineNumber();
+					if (currentLine == firstLine && firstLine > lineLocations.get(1).lineNumber()) {
+						return true;
+					}
+				}
+			} catch (AbsentInformationException e) {
+				logError(e);
+				return false;
+			}
+
 			return false;
 		}
 
