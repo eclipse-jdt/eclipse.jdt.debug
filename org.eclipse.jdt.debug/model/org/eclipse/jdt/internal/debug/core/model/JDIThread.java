@@ -3155,6 +3155,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					int diff = nxtIndx - currIndx;
 					// Bytecode distance to next location; small values (1–3) indicate, intermediate instructions within the same statement
 					if (diff >= 1 && diff <= 3) {
+						int newIndex = currIndx + sizeOfSimpleInstruction(currOpCode);
+						if (newIndex < nxtIndx && JDIMethod.isXReturn(method.bytecodes()[newIndex])) {
+							return false;
+						}
 						return true;
 					}
 				}
@@ -3164,6 +3168,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 
 			return false;
+		}
+	}
+
+	/** Size in bytes of a load/constant-push instruction (opcodes 0-53). */
+	private static int sizeOfSimpleInstruction(int opCode) {
+		switch (opCode) {
+			case 16:
+			case 18:
+			case 21:
+			case 22:
+			case 23:
+			case 24:
+			case 25:
+				return 2;
+			case 17:
+			case 19:
+			case 20:
+				return 3;
+			default:
+				return 1;
 		}
 	}
 
