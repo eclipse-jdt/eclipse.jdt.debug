@@ -73,7 +73,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					Runnable r = new Runnable() {
 						@Override
 						public void run() {
-							lineNumber[0] = textSelection.getStartLine() + 1;
+							int initialLine = textSelection.getStartLine() + 1;
 							ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 							parser.setSource(document.get().toCharArray());
 							Map<String, String> options = JavaCore.getOptions();
@@ -83,6 +83,10 @@ public class RunToLineAdapter implements IRunToLineTarget {
 							options.put(JavaCore.COMPILER_SOURCE, JavaCore.latestSupportedJavaVersion());
 							parser.setCompilerOptions(options);
 							CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
+							lineNumber[0] = computeTargetLine(compilationUnit, document, initialLine);
+							if (lineNumber[0] < 1) {
+								return;
+							}
 							ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
 							compilationUnit.accept(locator);
 							validLine[0] = locator.getLineLocation();
@@ -121,6 +125,18 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		}
 		throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
 				errorMessage, null));
+	}
+
+	/**
+	 * Computes the target line to run to. Subclasses may override to customize the target line.
+	 *
+	 * @param compilationUnit compilation unit AST
+	 * @param document document
+	 * @param lineNumber initial line number from selection
+	 * @return target line number, or <code>-1</code> if no valid line
+	 */
+	protected int computeTargetLine(CompilationUnit compilationUnit, IDocument document, int lineNumber) {
+		return lineNumber;
 	}
 
 	@Override
