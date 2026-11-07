@@ -224,7 +224,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"SuspendVMConditionalBreakpointsTestSnippet", "FileConditionSnippet2", "compare.CompareObjectsStringTest", "compare.CompareListObjects",
 			"compare.CompareMapObjects", "compare.CompareSetObjects", "compare.CompareNormalObjects", "compare.CompareArrayObjects",
 			"StatementStep", "StatementStepArgument", "StatementStepNested", "StatementStepWithOperations", "WatchItemContext",
-			"PinnedFieldsTarget" };
+			"PinnedFieldsTarget", "StatementStepReturn" };
 
 	/**
 	 * the default timeout

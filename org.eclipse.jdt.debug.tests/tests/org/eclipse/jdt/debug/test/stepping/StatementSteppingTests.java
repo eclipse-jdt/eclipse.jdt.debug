@@ -206,6 +206,34 @@ public class StatementSteppingTests extends AbstractDebugTest {
 		}
 	}
 
+	public void testStepOverDoesNotSkipReturnStatement() throws Exception {
+
+		String typeName = "StatementStepReturn";
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		IJavaThread t = null;
+		try {
+			IJavaThread thread = launchToLineBreakpoint(typeName, bp, true);
+			t = thread;
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 21, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 23, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("'return false;' must not be skipped", 24, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 17, stackFrame.getLineNumber());
+		} finally {
+			terminateAndRemove(t);
+			removeAllBreakpoints();
+		}
+	}
+
 	/**
 	 * Returns the <code>JDIDebugUIPlugin</code> preference store
 	 */
