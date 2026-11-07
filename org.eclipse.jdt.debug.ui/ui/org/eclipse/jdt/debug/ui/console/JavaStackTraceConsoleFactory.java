@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBM Corporation and others.
+ * Copyright (c) 2016, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -65,6 +65,14 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 	 *            text to put in the console or <code>null</code>.
 	 */
 	public void openConsole(String initialText) {
+		if (fConsole == null) {
+			for (IConsole console : fConsoleManager.getConsoles()) {
+				if (console instanceof JavaStackTraceConsole existing) {
+					fConsole = existing;
+					break;
+				}
+			}
+		}
 		if (fConsole == null) {
 			fConsole = new JavaStackTraceConsole();
 			if (initialText != null) {

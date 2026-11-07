@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2020 SAP SE and others.
+ * Copyright (c) 2014, 2026 SAP SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,11 +23,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory;
 import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsole;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
@@ -102,6 +105,53 @@ public class JavaStackTraceConsoleTest extends AbstractJavaStackTraceConsoleTest
 		sync(() -> initConsole(false));
 		assertNotSame("Failed to create new console.", initialDocument, fConsole.getDocument());
 		assertEquals("Failed to restore previous content.", storedContent, fConsole.getDocument().get());
+	}
+
+	public void testMultipleFactoriesShareConsole() throws Exception {
+		JavaStackTraceConsoleFactory otherFactory = new JavaStackTraceConsoleFactory();
+		String storedContent = "at foo.bar.Type.method1(Type.java:fff)";
+		consoleDocumentWithText(storedContent);
+
+		sync(() -> otherFactory.openConsole());
+		assertEquals("Second factory created a duplicate console.", 1, countStackTraceConsoles());
+		assertSame("Second factory did not reuse the existing console.", fConsole, getStackTraceConsole());
+		assertEquals("Content was not preserved.", storedContent, fConsole.getDocument().get());
+
+		sync(() -> removeConsole(true));
+		assertEquals("Console was not removed.", 0, countStackTraceConsoles());
+
+		sync(() -> fConsoleFactory.openConsole());
+		assertEquals("First factory failed to reopen console.", 1, countStackTraceConsoles());
+		sync(() -> otherFactory.openConsole());
+		assertEquals("Second factory created a duplicate console.", 1, countStackTraceConsoles());
+
+		fConsole = getStackTraceConsole();
+		assertEquals("Content was not restored.", storedContent, fConsole.getDocument().get());
+
+		sync(() -> removeConsole(true));
+		sync(() -> otherFactory.openConsole());
+		sync(() -> fConsoleFactory.openConsole());
+		assertEquals("Duplicate console after reopening.", 1, countStackTraceConsoles());
+		fConsole = getStackTraceConsole();
+	}
+
+	private static int countStackTraceConsoles() {
+		int count = 0;
+		for (IConsole console : ConsolePlugin.getDefault().getConsoleManager().getConsoles()) {
+			if (console instanceof JavaStackTraceConsole) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	private static JavaStackTraceConsole getStackTraceConsole() {
+		for (IConsole console : ConsolePlugin.getDefault().getConsoleManager().getConsoles()) {
+			if (console instanceof JavaStackTraceConsole) {
+				return (JavaStackTraceConsole) console;
+			}
+		}
+		return null;
 	}
 
 	/**

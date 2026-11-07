@@ -2962,6 +2962,12 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.command.OpenFromClipboard"
             name="%OpenFromClipboardAction.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%OpenJavaStackTraceConsole.description"
+            id="org.eclipse.jdt.debug.ui.command.OpenJavaStackTraceConsole"
+            name="%OpenJavaStackTraceConsole.name">
+      </command>
    </extension>
    <extension point="org.eclipse.ui.bindings">
       <key
@@ -4008,6 +4014,10 @@ M4 = Platform-specific fourth key
                 definitionId="org.eclipse.jdt.debug.ui.selectionIsJavaFields">
           </reference>
        </enabledWhen>
+    </handler>
+    <handler
+          class="org.eclipse.jdt.internal.debug.ui.console.OpenJavaStackTraceConsoleHandler"
+          commandId="org.eclipse.jdt.debug.ui.command.OpenJavaStackTraceConsole">
     </handler>
     <handler
           class="org.eclipse.jdt.internal.debug.ui.variables.UnpinAllFieldsHandler"
