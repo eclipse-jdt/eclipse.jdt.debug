@@ -161,6 +161,10 @@ public class DetectVMInstallationsJob extends Job {
 				.collect(Collectors.toCollection(HashSet::new));
 
 		// particular VM installations
+		String current = System.getProperty("java.home"); //$NON-NLS-1$
+		if (current != null) {
+			directories.add(new File(current));
+		}
 		String javaHome = System.getenv("JAVA_HOME"); //$NON-NLS-1$
 		if (javaHome != null) {
 			directories.add(new File(javaHome));
