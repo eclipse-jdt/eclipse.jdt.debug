@@ -210,12 +210,20 @@ public class StatementSteppingTests extends AbstractDebugTest {
 
 		String typeName = "StatementStepReturn";
 		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		IJavaDebugTarget javaDebugTarget = null;
 		IJavaThread t = null;
+		boolean originalStepFilter = false;
 		try {
 			IJavaThread thread = launchToLineBreakpoint(typeName, bp, true);
 			t = thread;
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertEquals("Suspended at wrong line", 21, stackFrame.getLineNumber());
+			javaDebugTarget = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			originalStepFilter = javaDebugTarget.isStepFiltersEnabled();
+
+			// statement level stepping is only active if step filters are enabled
+			javaDebugTarget.setStepFiltersEnabled(true);
+			assertTrue("Statement level stepping should be enabled", javaDebugTarget.isStatementOnlyStepping());
 
 			runAndWaitForSuspendEvent(() -> thread.stepOver());
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
@@ -231,6 +239,60 @@ public class StatementSteppingTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(t);
 			removeAllBreakpoints();
+			if (javaDebugTarget != null) {
+				javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			}
+		}
+	}
+
+	public void testStepDoesNotSkipConstantAssignments() throws Exception {
+
+		String typeName = "StatementStepAssignment";
+		ILineBreakpoint bp = createLineBreakpoint(17, typeName);
+		IJavaDebugTarget javaDebugTarget = null;
+		IJavaThread t = null;
+		boolean originalStepFilter = false;
+		try {
+			IJavaThread thread = launchToLineBreakpoint(typeName, bp, true);
+			t = thread;
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 17, stackFrame.getLineNumber());
+			javaDebugTarget = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			originalStepFilter = javaDebugTarget.isStepFiltersEnabled();
+
+			// statement level stepping is only active if step filters are enabled
+			javaDebugTarget.setStepFiltersEnabled(true);
+			assertTrue("Statement level stepping should be enabled", javaDebugTarget.isStatementOnlyStepping());
+
+			runAndWaitForSuspendEvent(() -> thread.stepInto());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("'boolean result = true;' must not be skipped", 21, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 22, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 24, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("'result = false;' must not be skipped", 25, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 26, stackFrame.getLineNumber());
+
+			runAndWaitForSuspendEvent(() -> thread.stepOver());
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Suspended at wrong line", 28, stackFrame.getLineNumber());
+		} finally {
+			terminateAndRemove(t);
+			removeAllBreakpoints();
+			if (javaDebugTarget != null) {
+				javaDebugTarget.setStepFiltersEnabled(originalStepFilter);
+			}
 		}
 	}
 
