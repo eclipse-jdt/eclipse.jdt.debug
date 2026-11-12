@@ -438,6 +438,14 @@ public class MainClass extends Date implements Runnable, Printable {
 			triggerClassPrepareEvent7();
 		} else if (eventType.equals("ClassPrepareEvent8")) {
 			triggerClassPrepareEvent8();
+		} else if (eventType.equals("ClassUnloadEvent")) {
+			UnloadedClassLoader.triggerClassUnloadEvent(false);
+		} else if (eventType.equals("ClassUnloadEvent1")) {
+			UnloadedClassLoader.triggerClassUnloadEvent(true);
+		} else if (eventType.equals("ClassUnloadEvent2")) {
+			UnloadedClassLoader.loadClassToUnload();
+		} else if (eventType.equals("ClassUnloadEvent3")) {
+			UnloadedClassLoader.triggerClassUnloadEventForLoadedClass();
 		} else if (eventType.equals("ExceptionEvent")) {
 			triggerExceptionEvent();
 		} else if (eventType.equals("ModificationWatchpointEvent")) {
