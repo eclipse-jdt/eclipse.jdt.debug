@@ -15,6 +15,7 @@
 package org.eclipse.jdt.debug.tests.connectors;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -28,7 +29,6 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.SocketListenConnector;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jdi.connect.Connector;
@@ -48,15 +48,8 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 
 	private int port;
 
-	@Override
-	@Before
-	protected void setUp() throws Exception {
-		super.setUp();
-		port = SocketUtil.findFreePort();
-	}
-
 	@Test
-	public void testDefaultSettings() throws CoreException {
+	public void testDefaultSettings() throws Exception {
 		connector = new SocketListenConnector();
 		Map<String, Connector.Argument> defaults = connector.getDefaultArguments();
 		assertTrue(defaults.containsKey("connectionLimit"));
@@ -68,12 +61,10 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	 * single connection
 	 */
 	@Test
-	public void testDefaultBehaviour() throws CoreException, InterruptedException {
+	public void testDefaultBehaviour() throws Exception {
 		connector = new SocketListenConnector();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("port", Integer.toString(port));
-		connector.connect(arguments, new NullProgressMonitor(), launch);
-		Thread.sleep(200);
+		initialConnect(arguments);
 
 		assertTrue("first connect should succeed", connect());
 		assertFalse("second connect should fail", connect());
@@ -83,13 +74,11 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	 * Ensure connector accepts a single connection
 	 */
 	@Test
-	public void testSingleConnectionBehaviour() throws CoreException, InterruptedException {
+	public void testSingleConnectionBehaviour() throws Exception {
 		connector = new SocketListenConnector();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("port", Integer.toString(port));
 		arguments.put("connectionLimit", "1");
-		connector.connect(arguments, new NullProgressMonitor(), launch);
-		Thread.sleep(200);
+		initialConnect(arguments);
 
 		assertTrue("first connect should succeed", connect());
 		assertFalse("second connect should fail", connect());
@@ -100,13 +89,11 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	 * single connection
 	 */
 	@Test
-	public void testTwoConnectionsBehaviour() throws CoreException, InterruptedException {
+	public void testTwoConnectionsBehaviour() throws Exception {
 		connector = new SocketListenConnector();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("port", Integer.toString(port));
 		arguments.put("connectionLimit", "2");
-		connector.connect(arguments, new NullProgressMonitor(), launch);
-		Thread.sleep(200);
+		initialConnect(arguments);
 
 		assertTrue("first connect should succeed", connect());
 		assertTrue("second connect should succeed", connect());
@@ -117,16 +104,29 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	 * single connection
 	 */
 	@Test
-	public void testUnlimitedConnectionsBehaviour() throws CoreException, InterruptedException {
+	public void testUnlimitedConnectionsBehaviour() throws Exception {
 		connector = new SocketListenConnector();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("port", Integer.toString(port));
 		arguments.put("connectionLimit", "0");
-		connector.connect(arguments, new NullProgressMonitor(), launch);
-		Thread.sleep(200);
+		initialConnect(arguments);
 
 		for (int i = 0; i < 10; i++) {
 			assertTrue("connection " + i + " should succeed", connect());
+		}
+	}
+
+	private void initialConnect(Map<String, String> arguments) throws Exception {
+		for (int i = 0; i < SOCKET_BIND_ERROR_MAX_RETRIES; ++i) {
+			try {
+				port = SocketUtil.findFreePort();
+				arguments.put("port", Integer.toString(port));
+				connector.connect(arguments, new NullProgressMonitor(), launch);
+				break;
+			} catch (CoreException e) {
+				if (!(e.getCause() instanceof BindException) || i + 1 >= SOCKET_BIND_ERROR_MAX_RETRIES) {
+					throw e;
+				}
+			}
 		}
 	}
 
@@ -137,7 +137,7 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 		super.tearDown();
 	}
 
-	private boolean connect() {
+	private boolean connect() throws Exception {
 		boolean result = true;
 		// Two try blocks to distinguish between exceptions from socket close (ignorable)
 		// and from dealing with the remote (errors)
@@ -157,12 +157,6 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 				result = false;
 			}
 		} catch(IOException e) {
-		}
-		try {
-			// sleep to allow the remote side to setup the connection
-			Thread.sleep(1000);
-		} catch (InterruptedException ex) {
-			// ignore
 		}
 		return result;
 	}
