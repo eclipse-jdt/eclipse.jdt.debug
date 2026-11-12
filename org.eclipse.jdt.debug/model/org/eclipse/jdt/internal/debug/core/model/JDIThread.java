@@ -3155,11 +3155,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					int diff = nxtIndx - currIndx;
 					// Bytecode distance to next location; small values (1–3) indicate, intermediate instructions within the same statement
 					if (diff >= 1 && diff <= 3) {
-						int newIndex = currIndx + sizeOfSimpleInstruction(currOpCode);
-						if (newIndex < nxtIndx && JDIMethod.isXReturn(method.bytecodes()[newIndex])) {
-							return false;
-						}
-						return true;
+						// Only skip if the location contains nothing but load / constant push instructions, i.e. the pushed values are
+						// consumed by a later location of the same statement. Any other instruction (store, return, branch, invoke, ...)
+						// means that this location represents a real statement (e.g. "result = false;" or "return false;").
+						return isOnlyLoadOrPushInstructions(method.bytecodes(), currIndx, nxtIndx);
 					}
 				}
 			} catch (AbsentInformationException e) {
@@ -3169,6 +3168,32 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 			return false;
 		}
+	}
+
+	/**
+	 * Returns whether all byte code instructions in the range [start, end) are simple load / constant push instructions (opcodes 0-53).
+	 *
+	 * @param bytecodes
+	 *            method byte codes
+	 * @param start
+	 *            start index (inclusive)
+	 * @param end
+	 *            end index (exclusive)
+	 * @return <code>true</code> if the range only contains load / constant push instructions, <code>false</code> otherwise
+	 */
+	private static boolean isOnlyLoadOrPushInstructions(byte[] bytecodes, int start, int end) {
+		if (start < 0 || end > bytecodes.length || start >= end) {
+			return false;
+		}
+		int index = start;
+		while (index < end) {
+			int opCode = bytecodeToOpcode(bytecodes[index]);
+			if (opCode < INTERMEDIATE_OPCODE_START || opCode > INTERMEDIATE_OPCODE_END) {
+				return false;
+			}
+			index += sizeOfSimpleInstruction(opCode);
+		}
+		return index == end;
 	}
 
 	/** Size in bytes of a load/constant-push instruction (opcodes 0-53). */
