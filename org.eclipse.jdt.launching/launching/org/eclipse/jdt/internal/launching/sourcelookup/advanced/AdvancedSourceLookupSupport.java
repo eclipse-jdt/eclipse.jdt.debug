@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Igor Fedorenko
+ * Copyright (c) 2015, 2026 Igor Fedorenko and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,14 +10,19 @@
  *
  * Contributors:
  *      Igor Fedorenko - initial API and implementation
+ *      IBM Corporation - Javaagent with ClassFile API on JDK 25+
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.sourcelookup.advanced;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -30,8 +35,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.osgi.framework.Bundle;
 
 public class AdvancedSourceLookupSupport {
 
@@ -40,6 +49,8 @@ public class AdvancedSourceLookupSupport {
 
 	// TODO consider moving to LaunchingPlugin
 	public static final String ID_workspaceProjectDescribers = LaunchingPlugin.ID_PLUGIN + ".workspaceProjectDescribers"; //$NON-NLS-1$
+
+	public static final String javaAgent = "org.eclipse.jdt.launching.javaagent25"; //$NON-NLS-1$
 
 	private static BackgroundProcessingJob backgroundJob;
 
@@ -117,12 +128,66 @@ public class AdvancedSourceLookupSupport {
 		return workspaceProjects;
 	}
 
-	public static String getJavaagentString() {
-		return "-javaagent:\"" + getJavaagentLocation() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getJavaagentString(ILaunchConfiguration configuration) {
+		return "-javaagent:\"" + getJavaagentLocation(configuration) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String getJavaagentLocation() {
 		return LaunchingPlugin.getFileInPlugin(new Path("lib/javaagent-shaded.jar")).getAbsolutePath(); //$NON-NLS-1$
+	}
+
+	public static String getJavaagent25Location() {
+		Bundle agentBundle = Platform.getBundle(javaAgent);
+		if (agentBundle != null) {
+			Optional<File> bundleFile = FileLocator.getBundleFileLocation(agentBundle);
+			if (bundleFile.isPresent()) {
+				File location = bundleFile.get();
+				if (location.getName().endsWith(".jar")) { //$NON-NLS-1$
+					return location.getAbsolutePath();
+				}
+				if (location.isDirectory()) {
+					File dir = location;
+					while (dir != null) {
+						File targetDir = new File(dir, "target"); //$NON-NLS-1$
+						if (targetDir.isDirectory()) {
+							File[] jars = targetDir.listFiles((FilenameFilter) (d, name) -> name.startsWith(javaAgent) && name.endsWith(".jar") //$NON-NLS-1$
+									&& !name.endsWith("-sources.jar")); //$NON-NLS-1$
+							if (jars != null && jars.length > 0) {
+								return jars[0].getAbsolutePath();
+							}
+						}
+						dir = dir.getParentFile();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the absolute path to the javaagent JAR for the target JVM of the given launch configuration.<br>
+	 *
+	 * Java 25+: {@code org.eclipse.jdt.launching.javaagent25} bundle (uses {@code java.lang.classfile}, no ASM),
+	 * falling back to the ASM-based agent if the bundle is not installed. <br>
+	 * Java &lt; 25: {@code lib/javaagent-shaded.jar} (ASM-based)
+	 *
+	 * @param configuration
+	 *            the launch configuration used to determine the target JVM version
+	 * @return absolute path to the javaagent JAR
+	 */
+	public static String getJavaagentLocation(ILaunchConfiguration configuration) {
+		try {
+			IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
+			if (JavaRuntime.compareJavaVersions(vm, JavaCore.VERSION_25) >= 0) {
+				String agent25 = getJavaagent25Location();
+				if (agent25 != null) {
+					return agent25;
+				}
+			}
+		} catch (CoreException e) {
+			LaunchingPlugin.log(e);
+		}
+		return getJavaagentLocation();
 	}
 
 	/**
