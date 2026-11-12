@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
+import org.eclipse.debug.ui.IWatchExpressionCellEditorFactory;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
@@ -28,6 +29,7 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 
 	private static final IColumnPresentationFactory fgColumnPresentation = new JavaVariableColumnPresentationFactory();
 	private static final IElementEditor fgEEJavaVariable = new JavaVariableEditor();
+	private static final IWatchExpressionCellEditorFactory fgWatchExpressionCellEditorFactory = new JavaWatchExpressionCellEditorFactory();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -44,6 +46,9 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 			if (IColumnPresentationFactory.class.equals(adapterType)) {
 				return (T) fgColumnPresentation;
 			}
+			if (IWatchExpressionCellEditorFactory.class.equals(adapterType)) {
+				return (T) fgWatchExpressionCellEditorFactory;
+			}
 		}
 		return null;
 	}
@@ -55,7 +60,8 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
 		return new Class[]{
 				IColumnPresentationFactory.class,
-				IElementEditor.class};
+				IElementEditor.class,
+				IWatchExpressionCellEditorFactory.class};
 	}
 
 }
