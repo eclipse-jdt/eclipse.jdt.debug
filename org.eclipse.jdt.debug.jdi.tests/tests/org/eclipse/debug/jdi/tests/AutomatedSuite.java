@@ -43,6 +43,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ClassPrepareEventTest.class));
 		addTest(new TestSuite(ClassPrepareRequestTest.class));
 		addTest(new TestSuite(ClassTypeTest.class));
+		addTest(new TestSuite(ClassUnloadEventTest.class));
 		addTest(new TestSuite(DoubleValueTest.class));
 		addTest(new TestSuite(EventRequestManagerTest.class));
 		addTest(new TestSuite(EventRequestTest.class));
