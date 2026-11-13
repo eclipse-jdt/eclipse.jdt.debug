@@ -1282,8 +1282,18 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 																// types
 			}
 
-			JdwpReplyPacket reply = requestVM(
-					JdwpCommandPacket.VM_REDEFINE_CLASSES, outBytes);
+			JdwpReplyPacket reply;
+			try {
+				reply = requestVM(JdwpCommandPacket.VM_REDEFINE_CLASSES, outBytes);
+			} finally {
+				// A redefined type may have been cached again, with what the
+				// VM knew about it before the redefinition (e.g. method IDs
+				// that a VM with enhanced class redefinition replaces), while
+				// the request was being built and handled.
+				for (ReferenceType type : types) {
+					fCachedReftypes.remove(((ReferenceTypeImpl) type).getRefTypeID());
+				}
+			}
 			switch (reply.errorCode()) {
 			case JdwpReplyPacket.UNSUPPORTED_VERSION:
 				throw new UnsupportedClassVersionError();
