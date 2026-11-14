@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -84,6 +85,7 @@ public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
 		if (breakpoint instanceof IJavaMethodBreakpoint watchpoint) {
 			watchpoint.setEntry(fEntry.getSelection());
 			watchpoint.setExit(fExit.getSelection());
+			BreakpointUtils.updateMethodBreakpointLocation(watchpoint);
 		}
 	}
 }

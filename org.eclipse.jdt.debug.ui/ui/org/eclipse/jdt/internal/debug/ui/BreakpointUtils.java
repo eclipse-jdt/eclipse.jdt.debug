@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -263,6 +265,52 @@ public class BreakpointUtils {
 	public static void addRunToLineAttributes(Map<String, Object> attributes) {
 		attributes.put(IBreakpoint.PERSISTED, Boolean.FALSE);
 		attributes.put(RUN_TO_LINE, Boolean.TRUE);
+	}
+
+	/**
+	 * Positions the given method breakpoint's marker: at the closing brace of the method if the breakpoint is an exit-only breakpoint, otherwise at
+	 * the method name (the default location).
+	 *
+	 * @param breakpoint the method breakpoint
+	 * @throws CoreException if accessing the breakpoint or the Java model fails
+	 */
+	public static void updateMethodBreakpointLocation(IJavaMethodBreakpoint breakpoint) throws CoreException {
+		if (breakpoint.isLambdaBreakpoint()) {
+			return;
+		}
+		IMethod method = getMethod(breakpoint);
+		if (method == null || !method.exists() || method.getTypeRoot() == null) {
+			return;
+		}
+		ISourceRange nameRange = method.getNameRange();
+		ISourceRange methodRange = method.getSourceRange();
+		if (nameRange == null || methodRange == null || nameRange.getOffset() < 0 || methodRange.getOffset() < 0) {
+			return;
+		}
+		int start = nameRange.getOffset();
+		int end = start + nameRange.getLength();
+		int line = -1;
+		if (breakpoint.isExit() && !breakpoint.isEntry()) {
+			String source = method.getCompilationUnit().getSource();
+			int closingBrace = methodRange.getOffset() + methodRange.getLength() - 1;
+			if (source == null || closingBrace < 0 || closingBrace >= source.length()) {
+				return;
+			}
+			try {
+				line = new Document(source).getLineOfOffset(closingBrace) + 1;
+			} catch (BadLocationException e) {
+				return;
+			}
+			start = closingBrace;
+			end = closingBrace + 1;
+		}
+		IMarker marker = breakpoint.getMarker();
+		if (marker.getAttribute(IMarker.CHAR_START, -1) == start && marker.getAttribute(IMarker.CHAR_END, -1) == end
+				&& marker.getAttribute(IMarker.LINE_NUMBER, -1) == line) {
+			return;
+		}
+		marker.setAttributes(new String[] { IMarker.CHAR_START, IMarker.CHAR_END, IMarker.LINE_NUMBER },
+				new Object[] { Integer.valueOf(start), Integer.valueOf(end), Integer.valueOf(line) });
 	}
 
 	/**
