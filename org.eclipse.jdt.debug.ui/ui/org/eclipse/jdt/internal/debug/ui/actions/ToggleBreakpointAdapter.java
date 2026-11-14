@@ -420,6 +420,20 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			if (BreakpointToggleUtils.isToggleTracepoint()) {
 				deleteTracepoint(breakpoint, part, monitor);
 				BreakpointToggleUtils.setUnsetTracepoint(false);
+			} else if (ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE && breakpoint instanceof IJavaMethodBreakpoint existing && !existing.isLambdaBreakpoint()) {
+				// toggled at the method's closing brace: switch the exit mode of the existing breakpoint instead of deleting it
+				ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE = false;
+				if (existing.isExit() && !existing.isEntry()) {
+					deleteBreakpoint(breakpoint, part, monitor);
+				} else {
+					existing.setExit(!existing.isExit());
+					BreakpointUtils.updateMethodBreakpointLocation(existing);
+				}
+			} else if (!ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE && finalSelection instanceof ITextSelection && breakpoint instanceof IJavaMethodBreakpoint existing
+					&& !existing.isLambdaBreakpoint() && existing.isExit() && !existing.isEntry()) {
+				// toggled at the method line of an exit-only breakpoint: add entry instead of deleting it
+				existing.setEntry(true);
+				BreakpointUtils.updateMethodBreakpointLocation(existing);
 			} else {
 				if (ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE) {
 					ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE = false;
@@ -477,6 +491,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		if (ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE) {
 			methodBreakpoint.setEntry(false);
 			methodBreakpoint.setExit(true);
+			BreakpointUtils.updateMethodBreakpointLocation(methodBreakpoint);
 			ValidBreakpointLocationLocator.LOCATION_METHOD_CLOSE = false;
 		}
 

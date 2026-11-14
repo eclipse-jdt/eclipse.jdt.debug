@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,11 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.manipulation.SharedASTProviderCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -112,6 +116,18 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			return false;
 		}
 		try {
+			if (breakpoint instanceof IJavaMethodBreakpoint mBreakpoint && !mBreakpoint.isLambdaBreakpoint() && mBreakpoint.isExit() && !mBreakpoint.isEntry()
+					&& MarkerUtilities.getLineNumber(marker) != -1) {
+				// exit-only method breakpoint is located on the closing brace of its method: keep it only while that is still the case
+				if (!isClosingBraceOfMethod(unit, position.getOffset(), mBreakpoint.getMethodName())) {
+					return false;
+				}
+				int exitLine = document.getLineOfOffset(position.getOffset()) + 1;
+				if (MarkerUtilities.getLineNumber(marker) != exitLine) {
+					MarkerUtilities.setLineNumber(marker, exitLine);
+				}
+				return true;
+			}
 			ValidBreakpointLocationLocator loc;
 			if (breakpoint instanceof IJavaMethodBreakpoint && ((IJavaMethodBreakpoint) breakpoint).isEntry()) {
 				IMarker m = breakpoint.getMarker();
@@ -160,6 +176,26 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		catch (BadLocationException e) {JDIDebugUIPlugin.log(e);}
 		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		return false;
+	}
+
+	/**
+	 * Returns whether the given offset is the closing brace of the body of the method with the given name.
+	 *
+	 * @param unit the AST of the current source
+	 * @param offset the offset to check
+	 * @param methodName the method name of the breakpoint, <code>&lt;init&gt;</code> for constructors
+	 * @return <code>true</code> if the offset is the closing brace of the method, <code>false</code> otherwise
+	 */
+	private boolean isClosingBraceOfMethod(CompilationUnit unit, int offset, String methodName) {
+		ASTNode node = NodeFinder.perform(unit, offset, 1);
+		if (!(node instanceof Block block) || !(block.getParent() instanceof MethodDeclaration method)) {
+			return false;
+		}
+		if (block.getStartPosition() + block.getLength() - 1 != offset) {
+			return false;
+		}
+		String name = method.isConstructor() ? "<init>" : method.getName().getIdentifier(); //$NON-NLS-1$
+		return name.equals(methodName);
 	}
 
 	/**
