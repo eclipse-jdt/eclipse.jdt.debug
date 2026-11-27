@@ -96,6 +96,7 @@ import org.eclipse.jdt.internal.debug.ui.monitors.NoMonitorInformationElement;
 import org.eclipse.jdt.internal.debug.ui.monitors.ThreadMonitorManager;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetMessages;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementImageDescriptor;
@@ -887,6 +888,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected Image getClassPrepareBreakpointImage(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
 		int flags= computeBreakpointAdornmentFlags(breakpoint);
 		if (breakpoint.getMemberType() == IJavaClassPrepareBreakpoint.TYPE_CLASS) {
+			IType type = BreakpointUtils.getType(breakpoint);
+			if (type != null && type.exists() && type.isRecord()) {
+				return getDebugImage(JavaPluginImages.DESC_OBJS_RECORD, flags);
+			}
 			return getDebugImage(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_CLASS), flags);
 		}
 		return getDebugImage(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INTERFACE), flags);
