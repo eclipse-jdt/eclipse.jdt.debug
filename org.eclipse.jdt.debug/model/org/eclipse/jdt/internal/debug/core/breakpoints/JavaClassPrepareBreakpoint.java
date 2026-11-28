@@ -146,7 +146,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 		// deletion.
 		// Don't try updating the marker (decrementing the install count) if
 		// it no longer exists.
-		if (getMarker().exists()) {
+		if (markerExists()) {
 			decrementInstallCount();
 		}
 	}
