@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,7 +50,7 @@ public class StratumTests extends AbstractDebugTest {
 			Arrays.sort(strata);
 			String version = ((IJavaDebugTarget)thread.getDebugTarget()).getVersion();
 			// TODO ideally need to check "if NN or newer"
-			if (!JavaCore.isSupportedJavaVersion(version)) {
+			if (isLessThanJava25(version) && !JavaCore.isSupportedJavaVersion(version)) {
 				// as of 2018-11-15 java 12 was not supported by the sourcelookup agent
 				// as of 2019-05-05 java 12 is supported by the sourcelookup agent
 				// as of 2019-10-14 java 13 is supported by the sourcelookup agent
@@ -140,5 +140,9 @@ public class StratumTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
+	}
+
+	private boolean isLessThanJava25(String debuggeeVersion) {
+		return JavaCore.compareJavaVersions(debuggeeVersion, JavaCore.VERSION_25) < 0;
 	}
 }
