@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ExitToggleAction extends BreakpointToggleAction {
@@ -36,7 +37,12 @@ public class ExitToggleAction extends BreakpointToggleAction {
 	 */
 	@Override
 	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
-		((IJavaMethodBreakpoint)breakpoint).setExit(!((IJavaMethodBreakpoint)breakpoint).isExit());
+		if (!(breakpoint instanceof IJavaMethodBreakpoint)) {
+			return;
+		}
+		IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) breakpoint;
+		methodBreakpoint.setExit(!methodBreakpoint.isExit());
+		BreakpointUtils.updateMethodBreakpointLocation(methodBreakpoint);
 	}
 
 	/**
