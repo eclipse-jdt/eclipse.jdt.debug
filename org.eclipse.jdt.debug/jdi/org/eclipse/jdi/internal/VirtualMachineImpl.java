@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.eclipse.osgi.util.NLS;
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ByteValue;
 import com.sun.jdi.CharValue;
+import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.DoubleValue;
 import com.sun.jdi.FloatValue;
 import com.sun.jdi.IntegerValue;
@@ -97,6 +99,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	private final ValueCache fCachedReftypes = new ValueCache();
 	private final ValueCache fCachedObjects = new ValueCache();
+	/**
+	 * IDs of the cached reference type mirrors of which the signature is
+	 * known, by signature. This is used to find the mirrors of an unloaded
+	 * class without asking the VM, see {@link #removeKnownRefType(String)}.
+	 * Guarded by itself.
+	 */
+	private final Map<String, Set<JdwpReferenceTypeID>> fCachedReftypeIDsBySignature = new HashMap<>();
 
 	/** The following are the stored results of JDWP calls. */
 	private String fVersionDescription = null; // Text information on the VM
@@ -240,9 +249,83 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	public void addCachedMirror(ReferenceTypeImpl mirror) {
 		fCachedReftypes.put(mirror.getRefTypeID(), mirror);
+		signatureKnown(mirror);
 		// TBD: It is now yet possible to only ask for unload events for
 		// classes that we know of due to a limitation in the J9 VM.
 		// eventRequestManagerImpl().enableInternalClasUnloadEvent(mirror);
+	}
+
+	/**
+	 * Notifies that the signature of the given mirror may have become known,
+	 * so that the mirror can be found by {@link #removeKnownRefType(String)}.
+	 * Does nothing if the signature is not known or the mirror is not cached.
+	 * Array types are left out: no class unload event is sent for them, so
+	 * they would never be removed again.
+	 */
+	void signatureKnown(ReferenceTypeImpl mirror) {
+		String signature = mirror.fSignature;
+		if (signature == null || mirror instanceof ArrayTypeImpl) {
+			return;
+		}
+		JdwpReferenceTypeID id = mirror.getRefTypeID();
+		synchronized (fCachedReftypeIDsBySignature) {
+			if (fCachedReftypes.get(id) == mirror) {
+				Set<JdwpReferenceTypeID> ids = fCachedReftypeIDsBySignature.get(signature);
+				if (ids == null) {
+					ids = new HashSet<>(2);
+					fCachedReftypeIDsBySignature.put(signature, ids);
+				}
+				ids.add(id);
+			}
+		}
+	}
+
+	/**
+	 * Returns the cached mirrors that are known to have the given signature,
+	 * without asking the VM.
+	 */
+	private List<ReferenceTypeImpl> cachedRefTypesBySignature(String signature) {
+		synchronized (fCachedReftypeIDsBySignature) {
+			Set<JdwpReferenceTypeID> ids = fCachedReftypeIDsBySignature.get(signature);
+			if (ids == null) {
+				return List.of();
+			}
+			List<ReferenceTypeImpl> refTypes = new ArrayList<>(ids.size());
+			Iterator<JdwpReferenceTypeID> iter = ids.iterator();
+			while (iter.hasNext()) {
+				ReferenceTypeImpl refType = (ReferenceTypeImpl) fCachedReftypes.get(iter.next());
+				if (refType != null) {
+					refTypes.add(refType);
+				} else {
+					// No longer cached (garbage collected or redefined).
+					iter.remove();
+				}
+			}
+			if (ids.isEmpty()) {
+				fCachedReftypeIDsBySignature.remove(signature);
+			}
+			return refTypes;
+		}
+	}
+
+	/**
+	 * Flushes the given mirror, of which the class was unloaded, and removes
+	 * it from the cache.
+	 */
+	private void removeUnloadedRefType(ReferenceTypeImpl refType, String signature) {
+		// The types that depend on an unloaded type (its subclasses or
+		// implementors) cannot stay loaded either, and are reported as
+		// unloaded themselves. So there is no need to look for them in the
+		// whole cache, for every unloaded type.
+		refType.flushOwnStoredJdwpResults();
+		JdwpReferenceTypeID id = refType.getRefTypeID();
+		fCachedReftypes.remove(id);
+		synchronized (fCachedReftypeIDsBySignature) {
+			Set<JdwpReferenceTypeID> ids = fCachedReftypeIDsBySignature.get(signature);
+			if (ids != null && ids.remove(id) && ids.isEmpty()) {
+				fCachedReftypeIDsBySignature.remove(signature);
+			}
+		}
 	}
 
 	/**
@@ -272,38 +355,30 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * Removes a known class. A class/interface is known if we have ever
 	 * received its ReferenceTypeID and we have not received an unload event for
 	 * it.
+	 *
+	 * This is called for every class unload event, so the class is looked up
+	 * in the cache only. The VM must not be asked for the classes with this
+	 * signature: it has to walk all of its loaded classes to answer (which is
+	 * very slow when thousands of classes are unloaded at once, and keeps
+	 * classes from being unloaded meanwhile), and the answer would not contain
+	 * the unloaded class anyway.
 	 */
 	public final void removeKnownRefType(String signature) {
-		List<ReferenceType> refTypeList = classesBySignature(signature);
-		if (refTypeList.isEmpty()) {
-			return;
-		}
-
-		// If we have only one known class for this signature, we known that
-		// this is the class
-		// to be removed.
-		if (refTypeList.size() == 1) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl) refTypeList.get(0);
-			refType.flushStoredJdwpResults();
-			fCachedReftypes.remove(refType.getRefTypeID());
-			return;
-		}
-
-		// We have more than one known class for the signature, let's find the
-		// unloaded one(s).
-		Iterator<ReferenceType> iter = refTypeList.iterator();
-		while (iter.hasNext()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl) iter.next();
+		// A known class with this signature is not necessarily the unloaded
+		// one: a class with the same name may still be loaded by another
+		// class loader, and the same unload may be reported more than once
+		// (for the internal request and for requests of the client). So let's
+		// find the unloaded one(s). Asking for the status of a known class is
+		// cheap for the VM.
+		for (ReferenceTypeImpl refType : cachedRefTypesBySignature(signature)) {
 			boolean prepared = false;
 			try {
 				prepared = refType.isPrepared();
-			} catch (ObjectCollectedException exception) {
+			} catch (ObjectCollectedException | ClassNotPreparedException exception) {
 				// The type is unloaded. Fall through
 			}
 			if (!prepared) {
-				refType.flushStoredJdwpResults();
-				iter.remove();
-				fCachedReftypes.remove(refType.getRefTypeID());
+				removeUnloadedRefType(refType, signature);
 			}
 		}
 	}
@@ -667,6 +742,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 				if (elt == null) {
 					continue;
 				}
+				// Lets the mirror be found by signature when the class is
+				// unloaded.
+				elt.setSignature(signature);
 				elements.add(elt);
 			}
 			return elements;

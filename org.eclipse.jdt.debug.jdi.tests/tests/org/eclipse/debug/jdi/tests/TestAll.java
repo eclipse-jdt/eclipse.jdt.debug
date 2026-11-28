@@ -43,6 +43,7 @@ public class TestAll {
 		classes.addElement(ClassPrepareEventTest.class);
 		classes.addElement(ClassPrepareRequestTest.class);
 		classes.addElement(ClassTypeTest.class);
+		classes.addElement(ClassUnloadEventTest.class);
 		classes.addElement(DoubleValueTest.class);
 		classes.addElement(EventRequestManagerTest.class);
 		classes.addElement(EventRequestTest.class);
